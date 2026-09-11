@@ -1,1 +1,0 @@
-import{_ as e,x as t}from"./index-DS96QLtj.js";t();var n=e();function r({children:e,size:t=20,className:r=``}){return(0,n.jsx)(`svg`,{className:r,width:t,height:t,fill:`none`,stroke:`currentColor`,viewBox:`0 0 24 24`,"aria-hidden":`true`,children:e})}export{r as t};
