@@ -1,0 +1,1315 @@
+/* =========================================================
+   MI PERFIL - SPORTADMIN
+   CSS PURO
+========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+.mi-perfil-page,
+.mi-perfil-content {
+  --primary: var(--brand-secondary);
+  --primary-container: var(--brand-tertiary);
+  --primary-fixed: var(--clr-verde-300);
+
+  --secondary: var(--text-muted);
+  --secondary-fixed: var(--bg-surface);
+  --secondary-fixed-dim: var(--text-muted);
+
+  --tertiary: var(--func-primary);
+  --tertiary-container: var(--func-primary-hover);
+
+  --surface: var(--bg-main);
+  --surface-bright: var(--bg-main);
+  --surface-container-lowest: var(--bg-card);
+  --surface-container-low: var(--bg-surface);
+  --surface-container: var(--bg-surface);
+  --surface-container-high: var(--bg-surface);
+  --surface-container-highest: var(--bg-surface);
+
+  --on-surface: var(--text-main);
+  --on-surface-variant: var(--text-muted);
+  --on-background: var(--text-main);
+
+  --outline: var(--brand-accent);
+  --outline-variant: var(--border-main);
+
+  --error: #ba1a1a;
+
+  --sidebar-width: 280px;
+
+  font-family: 'Inter', sans-serif;
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+.mi-perfil-content,
+.mi-perfil-content * {
+  box-sizing: border-box;
+}
+
+.mi-perfil-page {
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+
+  background: var(--surface-bright);
+  color: var(--on-background);
+
+  overflow: hidden;
+
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mi-perfil-content button,
+.mi-perfil-content input {
+  font-family: inherit;
+}
+
+.mi-perfil-content a {
+  text-decoration: none;
+}
+
+.mi-perfil-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 100;
+
+  max-width: min(420px, calc(100vw - 48px));
+  padding: 16px 20px;
+
+  color: var(--clr-blanco-pura);
+  background: var(--secondary);
+  border-left: 4px solid var(--primary-container);
+  border-radius: 4px;
+  box-shadow: 0 12px 24px rgba(25, 28, 29, 0.2);
+
+  font-size: 14px;
+  line-height: 20px;
+
+  animation: mi-perfil-toast-in 0.25s ease-out;
+}
+
+@keyframes mi-perfil-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================================================
+   MATERIAL SYMBOLS
+========================================================= */
+
+.mi-perfil-content .material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+
+  font-size: 24px;
+  line-height: 1;
+
+  letter-spacing: normal;
+  text-transform: none;
+
+  display: inline-block;
+
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+
+  font-feature-settings: 'liga';
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.mi-perfil-sidebar {
+  position: fixed;
+
+  left: 0;
+  top: 0;
+
+  width: var(--sidebar-width);
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 24px 0;
+
+  background: var(--secondary);
+
+  z-index: 20;
+
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.mi-perfil-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+
+  padding: 0 32px;
+  margin-bottom: 24px;
+}
+
+.mi-perfil-brand-logo {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  overflow: hidden;
+
+  border-radius: 50%;
+
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.mi-perfil-brand-logo img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+.mi-perfil-brand h1 {
+  margin: 0;
+
+  color: var(--clr-blanco-pura);
+
+  font-size: 20px;
+  line-height: 28px;
+
+  font-weight: 700;
+
+  letter-spacing: -0.01em;
+}
+
+.mi-perfil-brand p {
+  margin: 0;
+
+  color: var(--text-muted);
+
+  font-size: 12px;
+  line-height: 16px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.05em;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.mi-perfil-navigation {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  margin-top: 16px;
+}
+
+.mi-perfil-nav-item {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  min-height: 44px;
+
+  padding: 12px 16px;
+
+  color: var(--secondary-fixed-dim);
+
+  font-size: 14px;
+  line-height: 20px;
+
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.mi-perfil-nav-item .material-symbols-outlined {
+  font-size: 24px;
+  font-variation-settings: 'wght' 200;
+}
+
+.mi-perfil-nav-item:hover {
+  color: var(--text-sidebar-hover);
+  background: var(--bg-sidebar-hover);
+}
+
+.mi-perfil-nav-item-active {
+  color: var(--primary-fixed);
+  background: rgba(0, 108, 73, 0.18);
+
+  font-weight: 700;
+
+  border-left: 4px solid var(--primary-container);
+
+  padding-left: 12px;
+
+  opacity: 0.95;
+}
+
+.mi-perfil-nav-item-active .material-symbols-outlined {
+  font-variation-settings: 'wght' 400;
+}
+
+
+/* =========================================================
+   SIDEBAR FOOTER
+========================================================= */
+
+.mi-perfil-sidebar-footer {
+  margin-top: auto;
+
+  padding: 0 24px;
+  margin-bottom: 24px;
+}
+
+.mi-perfil-logout {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 12px 16px;
+
+  border: none;
+  border-radius: 4px;
+
+  background: transparent;
+
+  color: var(--error);
+
+  cursor: pointer;
+
+  font-size: 12px;
+  line-height: 16px;
+
+  font-weight: 600;
+
+  transition: background-color 0.2s ease;
+}
+
+.mi-perfil-logout:hover {
+  background: rgba(186, 26, 26, 0.1);
+}
+
+.mi-perfil-logout .material-symbols-outlined {
+  font-size: 24px;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.mi-perfil-main {
+  width: calc(100% - var(--sidebar-width));
+
+  min-height: 100vh;
+
+  margin-left: var(--sidebar-width);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.mi-perfil-topbar {
+  position: fixed;
+
+  top: 0;
+  right: 0;
+
+  width: calc(100% - var(--sidebar-width));
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 32px;
+
+  background: var(--surface);
+
+  z-index: 10;
+}
+
+.mi-perfil-topbar-title h2 {
+  margin: 0;
+
+  color: var(--primary);
+
+  font-size: 20px;
+  line-height: 28px;
+
+  font-weight: 700;
+
+  letter-spacing: -0.01em;
+}
+
+.mi-perfil-topbar-right {
+  display: flex;
+  align-items: center;
+
+  gap: 24px;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.mi-perfil-search {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 4px 12px;
+
+  background: var(--surface-container);
+
+  border: 1px solid rgba(187, 202, 191, 0.3);
+
+  border-radius: 999px;
+}
+
+.mi-perfil-search .material-symbols-outlined {
+  color: var(--on-surface-variant);
+
+  font-size: 24px;
+}
+
+.mi-perfil-search input {
+  width: 192px;
+
+  border: none;
+  outline: none;
+
+  padding: 8px 0;
+
+  background: transparent;
+
+  color: var(--on-surface);
+
+  font-size: 14px;
+}
+
+.mi-perfil-search input::placeholder {
+  color: var(--text-muted);
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.mi-perfil-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+.mi-perfil-actions button {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+
+  color: var(--on-surface-variant);
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.mi-perfil-actions button:hover {
+  color: var(--primary);
+  background: var(--surface-container-low);
+}
+
+
+/* =========================================================
+   TOPBAR USER
+========================================================= */
+
+.mi-perfil-user {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding-left: 24px;
+
+  margin-left: 4px;
+
+  border-left: 1px solid rgba(187, 202, 191, 0.3);
+}
+
+.mi-perfil-user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.mi-perfil-user-name {
+  color: var(--on-surface);
+
+  font-size: 14px;
+  line-height: 20px;
+
+  font-weight: 700;
+}
+
+.mi-perfil-user-role {
+  color: var(--on-surface-variant);
+
+  font-size: 12px;
+  line-height: 16px;
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.05em;
+}
+
+.mi-perfil-user-avatar {
+  width: 40px;
+  height: 40px;
+
+  overflow: hidden;
+
+  border-radius: 50%;
+
+  background: var(--surface-container);
+
+  border: 1px solid rgba(187, 202, 191, 0.5);
+}
+
+.mi-perfil-user-avatar img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.mi-perfil-content {
+  flex: 1;
+
+  height: 100vh;
+
+  overflow-y: auto;
+
+  padding: 88px 32px 32px;
+
+  background: var(--surface-bright);
+}
+
+.mi-perfil-container {
+  width: 100%;
+  max-width: 800px;
+
+  margin: 0 auto;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.mi-perfil-page-header {
+  margin-bottom: 24px;
+}
+
+.mi-perfil-page-header h2 {
+  margin: 0;
+
+  color: var(--on-surface);
+
+  font-size: 24px;
+  line-height: 32px;
+
+  font-weight: 600;
+
+  letter-spacing: -0.01em;
+}
+
+.mi-perfil-page-header p {
+  margin: 8px 0 0;
+
+  color: var(--on-surface-variant);
+
+  font-size: 14px;
+  line-height: 20px;
+
+  font-weight: 400;
+}
+
+
+/* =========================================================
+   PROFILE GRID
+========================================================= */
+
+.mi-perfil-grid {
+  display: grid;
+
+  grid-template-columns: 1fr;
+
+  gap: 24px;
+}
+
+
+/* =========================================================
+   DETAILS (FULL WIDTH - SIN CARD LATERAL)
+========================================================= */
+
+.mi-perfil-details-full {
+  display: flex;
+  flex-direction: column;
+
+  gap: 24px;
+}
+
+
+/* =========================================================
+   GENERAL CARD
+========================================================= */
+
+.mi-perfil-card {
+  padding: 24px;
+
+  background: var(--bg-card);
+
+  border: 1px solid var(--surface-container);
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.mi-perfil-card h4 {
+  margin: 0;
+
+  color: var(--on-surface);
+
+  font-size: 20px;
+  line-height: 28px;
+
+  font-weight: 600;
+}
+
+.mi-perfil-section-divider {
+  width: 100%;
+  height: 1px;
+
+  margin-top: 4px;
+  margin-bottom: 16px;
+
+  background: var(--border-main);
+}
+
+
+/* =========================================================
+   INFO GRID
+========================================================= */
+
+.mi-perfil-info-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  column-gap: 24px;
+  row-gap: 16px;
+}
+
+.mi-perfil-field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.mi-perfil-field label {
+  color: var(--secondary);
+
+  font-size: 12px;
+  line-height: 16px;
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.05em;
+}
+
+.mi-perfil-readonly {
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 4px 12px;
+
+  background: var(--surface-container-low);
+
+  border: 1px solid rgba(187, 202, 191, 0.2);
+
+  border-radius: 4px;
+
+  color: var(--on-surface);
+
+  font-size: 14px;
+  line-height: 20px;
+}
+
+
+/* =========================================================
+   CARD TITLE
+========================================================= */
+
+.mi-perfil-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 0;
+}
+
+.mi-perfil-card-title-row .material-symbols-outlined {
+  color: var(--secondary);
+
+  font-size: 20px;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.mi-perfil-description {
+  margin: 0 0 16px;
+
+  color: var(--on-surface-variant);
+
+  font-size: 14px;
+  line-height: 20px;
+}
+
+
+/* =========================================================
+   CHIPS
+========================================================= */
+
+.mi-perfil-subareas-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mi-perfil-subarea-group-title {
+  margin: 0 0 10px;
+
+  color: var(--on-surface-variant);
+
+  font-size: 14px;
+  line-height: 20px;
+
+  font-weight: 700;
+}
+
+.mi-perfil-chips {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 12px;
+}
+
+.mi-perfil-chip {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 12px 16px;
+
+  background: var(--surface-container-high);
+
+  border: 1px solid rgba(187, 202, 191, 0.4);
+
+  border-radius: 8px;
+
+  color: var(--on-surface);
+
+  font-size: 14px;
+  line-height: 20px;
+
+  font-weight: 600;
+}
+
+.mi-perfil-chip-dot {
+  width: 8px;
+  height: 8px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+}
+
+.mi-perfil-chip-dot.primary {
+  background: var(--primary);
+}
+
+.mi-perfil-chip-dot.tertiary {
+  background: var(--tertiary);
+}
+
+
+/* =========================================================
+   READ ONLY MESSAGE
+========================================================= */
+
+.mi-perfil-readonly-message {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 8px;
+
+  margin-top: 4px;
+
+  color: var(--text-muted);
+
+  font-size: 12px;
+  line-height: 16px;
+
+  font-weight: 600;
+
+  text-align: right;
+}
+
+.mi-perfil-readonly-message .material-symbols-outlined {
+  flex-shrink: 0;
+
+  font-size: 16px;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.mi-perfil-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.mi-perfil-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mi-perfil-content::-webkit-scrollbar-thumb {
+  background: var(--outline-variant);
+  border-radius: 10px;
+}
+
+.mi-perfil-content::-webkit-scrollbar-thumb:hover {
+  background: var(--outline);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+  .mi-perfil-topbar {
+    padding: 0 24px;
+  }
+
+  .mi-perfil-content {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .mi-perfil-topbar-right {
+    gap: 16px;
+  }
+
+  .mi-perfil-search {
+    display: none;
+  }
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .mi-perfil-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mi-perfil-details-full {
+    grid-column: span 1;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767px) {
+
+  .mi-perfil-sidebar {
+    display: none;
+  }
+
+  .mi-perfil-main {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .mi-perfil-topbar {
+    width: 100%;
+    height: 60px;
+
+    padding: 0 16px;
+  }
+
+  .mi-perfil-topbar-title h2 {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .mi-perfil-user {
+    padding-left: 12px;
+    margin-left: 0;
+  }
+
+  .mi-perfil-user-info {
+    display: none;
+  }
+
+  .mi-perfil-topbar-right {
+    gap: 4px;
+  }
+
+  .mi-perfil-content {
+    padding: 76px 16px 24px;
+  }
+
+  .mi-perfil-container {
+    max-width: 100%;
+  }
+
+  .mi-perfil-page-header h2 {
+    font-size: 22px;
+    line-height: 28px;
+  }
+
+  .mi-perfil-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mi-perfil-card {
+    padding: 20px;
+  }
+
+  .mi-perfil-readonly-message {
+    justify-content: flex-start;
+
+    text-align: left;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+  .mi-perfil-content {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .mi-perfil-topbar {
+    padding: 0 12px;
+  }
+
+  .mi-perfil-topbar-title h2 {
+    font-size: 16px;
+  }
+
+  .mi-perfil-actions button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .mi-perfil-user-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .mi-perfil-card {
+    padding: 16px;
+  }
+
+  .mi-perfil-card h4 {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .mi-perfil-modal {
+    width: 95%;
+    max-width: 400px;
+  }
+
+}
+
+
+/* =========================================================
+   PASSWORD BUTTON
+========================================================= */
+
+.mi-perfil-password-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 12px 20px;
+
+  background: var(--primary);
+  color: var(--clr-blanco-pura);
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: background-color 0.2s ease;
+}
+
+.mi-perfil-password-button:hover {
+  background: var(--primary-container);
+}
+
+.mi-perfil-password-button .material-symbols-outlined {
+  font-size: 20px;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.mi-perfil-modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.5);
+
+  z-index: 1000;
+
+  padding: 20px;
+}
+
+.mi-perfil-modal {
+  width: 100%;
+  max-width: 500px;
+
+  background: var(--surface-container-lowest);
+
+  border-radius: 12px;
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+
+  overflow: hidden;
+}
+
+.mi-perfil-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 20px 24px;
+
+  border-bottom: 1px solid var(--surface-container);
+}
+
+.mi-perfil-modal-header h3 {
+  margin: 0;
+
+  color: var(--on-surface);
+
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.mi-perfil-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  background: transparent;
+
+  border: none;
+  border-radius: 50%;
+
+  color: var(--on-surface-variant);
+
+  cursor: pointer;
+
+  transition: background-color 0.2s ease;
+}
+
+.mi-perfil-modal-close:hover {
+  background: var(--surface-container);
+}
+
+.mi-perfil-modal-close .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.mi-perfil-modal-body {
+  padding: 24px;
+}
+
+.mi-perfil-modal-description {
+  margin: 0 0 20px;
+
+  color: var(--on-surface-variant);
+
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.mi-perfil-modal-description strong {
+  color: var(--on-surface);
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   PASSWORD STEP
+========================================================= */
+
+.mi-perfil-password-step {
+  display: flex;
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+.mi-perfil-form-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.mi-perfil-form-group label {
+  color: var(--secondary);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.05em;
+}
+
+.mi-perfil-input {
+  height: 44px;
+
+  padding: 8px 12px;
+
+  background: var(--surface-container-low);
+
+  border: 1px solid var(--outline-variant);
+
+  border-radius: 4px;
+
+  color: var(--on-surface);
+
+  font-size: 14px;
+
+  transition: border-color 0.2s ease;
+}
+
+.mi-perfil-input:focus {
+  outline: none;
+
+  border-color: var(--primary);
+}
+
+.mi-perfil-input::placeholder {
+  color: var(--on-surface-variant);
+
+  opacity: 0.7;
+}
+
+
+/* =========================================================
+   PRIMARY BUTTON
+========================================================= */
+
+.mi-perfil-primary-button {
+  height: 44px;
+
+  padding: 0 24px;
+
+  background: var(--primary);
+  color: var(--clr-blanco-pura);
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: background-color 0.2s ease;
+}
+
+.mi-perfil-primary-button:hover:not(:disabled) {
+  background: var(--primary-container);
+}
+
+.mi-perfil-primary-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+========================================================= */
+
+.mi-perfil-error-message {
+  padding: 12px;
+
+  background: rgba(186, 26, 26, 0.1);
+
+  border: 1px solid var(--error);
+
+  border-radius: 4px;
+
+  color: var(--error);
+
+  font-size: 13px;
+  line-height: 18px;
+}
+
+
+/* =========================================================
+   SUCCESS STEP
+========================================================= */
+
+.mi-perfil-success-step {
+  align-items: center;
+  text-align: center;
+
+  padding: 20px 0;
+}
+
+.mi-perfil-success-icon {
+  font-size: 48px;
+
+  color: var(--primary);
+
+  margin-bottom: 16px;
+}

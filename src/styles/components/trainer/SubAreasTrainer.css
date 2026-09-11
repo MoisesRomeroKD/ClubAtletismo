@@ -1,0 +1,987 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0..200&display=swap');
+
+/* =========================================================
+   VARIABLES
+   ========================================================= */
+
+.mis-subareas {
+  --color-primary: var(--brand-secondary);
+  --color-primary-container: var(--brand-secondary);
+  --color-primary-fixed: var(--clr-verde-300);
+
+  --color-secondary: var(--text-muted);
+  --color-secondary-fixed: var(--func-primary-bg-soft);
+  --color-secondary-fixed-dim: var(--text-muted);
+
+  --color-tertiary: var(--func-primary);
+  --color-tertiary-fixed: var(--func-primary-bg-soft);
+  --color-tertiary-fixed-dim: var(--func-primary-bg-soft);
+
+  --color-background: var(--bg-main);
+  --color-surface: var(--bg-surface);
+  --color-surface-container: var(--bg-surface);
+  --color-surface-container-low: var(--bg-surface);
+  --color-surface-container-high: var(--bg-surface);
+  --color-surface-container-highest: var(--bg-surface);
+  --color-surface-container-lowest: var(--bg-card);
+
+  --color-on-surface: var(--text-main);
+  --color-on-surface-variant: var(--text-muted);
+  --color-on-primary: var(--clr-blanco-pura);
+  --color-on-secondary: var(--clr-blanco-pura);
+
+  --color-outline: var(--brand-accent);
+  --color-outline-variant: var(--border-main);
+
+  --sidebar-width: 280px;
+  --topbar-height: 64px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.10);
+
+  font-family: 'Inter', sans-serif;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+.mis-subareas,
+.mis-subareas *,
+.mis-subareas *::before,
+.mis-subareas *::after {
+  box-sizing: border-box;
+}
+
+.mis-subareas button,
+.mis-subareas a {
+  font-family: inherit;
+}
+
+.mis-subareas button {
+  border: 0;
+}
+
+.mis-subareas a {
+  text-decoration: none;
+}
+
+
+/* =========================================================
+   MATERIAL SYMBOLS
+   ========================================================= */
+
+.mis-subareas .material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'liga';
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+
+/* =========================================================
+   LAYOUT GENERAL
+   ========================================================= */
+
+.mis-subareas {
+  width: 100%;
+  min-height: 100%;
+  background: var(--color-background);
+  color: var(--color-on-surface);
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.mis-subareas__sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 20;
+
+  width: var(--sidebar-width);
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 24px 0;
+
+  background: var(--color-secondary);
+  color: var(--color-primary);
+
+  box-shadow: var(--shadow-sm);
+}
+
+
+/* Brand */
+
+.mis-subareas__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 0 24px;
+  margin-bottom: 32px;
+}
+
+.mis-subareas__brand-icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: var(--color-primary-container);
+  color: var(--color-on-primary);
+}
+
+.mis-subareas__brand-icon .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.mis-subareas__brand-info {
+  min-width: 0;
+}
+
+.mis-subareas__brand-info h1 {
+  margin: 0;
+
+  color: var(--color-on-secondary);
+
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+}
+
+.mis-subareas__brand-info p {
+  margin: 0;
+
+  color: var(--color-secondary-fixed-dim);
+
+  font-size: 12px;
+  line-height: 16px;
+
+  opacity: 0.8;
+}
+
+
+/* Navigation */
+
+.mis-subareas__navigation {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.mis-subareas__nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  min-height: 44px;
+
+  margin-bottom: 8px;
+  padding: 10px 16px;
+
+  border-left: 4px solid transparent;
+
+  color: var(--color-secondary-fixed-dim);
+
+  font-size: 14px;
+  line-height: 20px;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.mis-subareas__nav-item:hover {
+  color: var(--color-on-secondary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mis-subareas__nav-item--active {
+  border-left-color: var(--color-primary-container);
+
+  background: rgba(16, 185, 129, 0.10);
+
+  color: var(--color-primary-fixed);
+
+  font-weight: 700;
+  opacity: 0.95;
+}
+
+.mis-subareas__nav-item--active:hover {
+  color: var(--color-primary-fixed);
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.mis-subareas__nav-item .material-symbols-outlined {
+  font-size: 22px;
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.mis-subareas__main {
+  width: calc(100% - var(--sidebar-width));
+  height: 100vh;
+
+  margin-left: var(--sidebar-width);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   TOPBAR
+   ========================================================= */
+
+.mis-subareas__topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 10;
+
+  width: calc(100% - var(--sidebar-width));
+  height: var(--topbar-height);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 32px;
+
+  background: var(--color-surface);
+
+  border-bottom: 1px solid var(--color-surface-container-highest);
+}
+
+
+.mis-subareas__topbar-title {
+  color: var(--color-primary);
+
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+}
+
+
+.mis-subareas__topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+
+.mis-subareas__topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
+.mis-subareas__icon-button {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border-radius: 50%;
+
+  background: transparent;
+  color: var(--color-on-surface-variant);
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.mis-subareas__icon-button:hover {
+  background: var(--color-surface-container);
+  color: var(--color-primary);
+}
+
+
+.mis-subareas__topbar-divider {
+  width: 1px;
+  height: 32px;
+
+  margin: 0 8px;
+
+  background: var(--color-outline-variant);
+}
+
+
+/* Profile */
+
+.mis-subareas__profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  cursor: pointer;
+
+  transition: opacity 0.2s ease;
+}
+
+.mis-subareas__profile:hover {
+  opacity: 0.8;
+}
+
+.mis-subareas__profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.mis-subareas__profile-role {
+  color: var(--color-on-surface-variant);
+
+  font-size: 12px;
+  line-height: 16px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.05em;
+}
+
+.mis-subareas__profile-name {
+  color: var(--color-on-surface);
+
+  font-size: 14px;
+  line-height: 20px;
+
+  font-weight: 700;
+}
+
+.mis-subareas__avatar {
+  width: 40px;
+  height: 40px;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+
+  border: 1px solid var(--color-surface-container-highest);
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.mis-subareas__content {
+  flex: 1;
+
+  margin-top: var(--topbar-height);
+
+  padding: 24px;
+
+  overflow-y: auto;
+
+  background: var(--color-background);
+}
+
+
+.mis-subareas__container {
+  width: 100%;
+  max-width: 1440px;
+
+  margin: 0 auto;
+}
+
+
+/* =========================================================
+   HEADER DE CONTENIDO
+   ========================================================= */
+
+.mis-subareas__heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  margin-bottom: 24px;
+}
+
+.mis-subareas__heading-text h2 {
+  margin: 0 0 8px;
+
+  color: var(--color-on-surface);
+
+  font-size: 24px;
+  line-height: 32px;
+
+  font-weight: 600;
+
+  letter-spacing: -0.01em;
+}
+
+.mis-subareas__heading-text p {
+  margin: 0;
+
+  color: var(--color-on-surface-variant);
+
+  font-size: 14px;
+  line-height: 20px;
+}
+
+
+/* Nueva subárea */
+
+.mis-subareas__new-button {
+  min-height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 10px 24px;
+
+  border-radius: 8px;
+
+  background: var(--color-primary-container);
+  color: var(--color-on-primary);
+
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+
+  letter-spacing: 0.05em;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.mis-subareas__new-button:hover {
+  background: var(--color-primary);
+}
+
+.mis-subareas__new-button:active {
+  transform: translateY(1px);
+}
+
+.mis-subareas__new-button .material-symbols-outlined {
+  font-size: 18px;
+}
+
+
+/* =========================================================
+   GRID
+   ========================================================= */
+
+.mis-subareas__grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 24px;
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.subarea-card {
+  min-height: 310px;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 24px;
+
+  background: var(--color-surface-container-lowest);
+
+  border: 1px solid var(--color-surface-container-highest);
+
+  border-radius: 12px;
+
+  box-shadow: var(--shadow-sm);
+
+  cursor: pointer;
+
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.subarea-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.subarea-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  margin-bottom: 16px;
+}
+
+
+/* Icono */
+
+.subarea-card__icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+}
+
+.subarea-card__icon .material-symbols-outlined {
+  font-size: 28px;
+}
+
+.subarea-card__icon--blue {
+  background: var(--color-tertiary-fixed);
+  color: var(--color-tertiary);
+}
+
+.subarea-card__icon--purple {
+  background: var(--color-secondary-fixed);
+  color: var(--color-tertiary);
+}
+
+
+/* Menú */
+
+.subarea-card__menu {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  background: transparent;
+
+  color: var(--color-on-surface-variant);
+
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.subarea-card__menu:hover {
+  color: var(--color-primary);
+  background: var(--color-surface-container);
+}
+
+
+/* Body */
+
+.subarea-card__body {
+  flex: 1;
+}
+
+.subarea-card__category {
+  display: inline-block;
+
+  margin-bottom: 12px;
+  padding: 4px 12px;
+
+  border-radius: 999px;
+
+  background: rgba(173, 198, 255, 0.30);
+
+  color: var(--color-tertiary);
+
+  font-size: 12px;
+  line-height: 16px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.05em;
+
+  text-transform: uppercase;
+}
+
+.subarea-card__body h3 {
+  margin: 0 0 8px;
+
+  color: var(--color-on-surface);
+
+  font-size: 20px;
+  line-height: 28px;
+
+  font-weight: 600;
+
+  transition: color 0.2s ease;
+}
+
+.subarea-card:hover .subarea-card__body h3 {
+  color: var(--color-primary);
+}
+
+.subarea-card__body p {
+  display: -webkit-box;
+
+  margin: 0;
+
+  overflow: hidden;
+
+  color: var(--color-on-surface-variant);
+
+  font-size: 14px;
+  line-height: 20px;
+
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+
+/* =========================================================
+   FOOTER CARD
+   ========================================================= */
+
+.subarea-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-top: 24px;
+  padding-top: 16px;
+
+  border-top: 1px solid var(--color-surface-container);
+}
+
+
+.subarea-card__athletes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: var(--color-on-surface-variant);
+
+  font-size: 12px;
+  line-height: 16px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.05em;
+}
+
+.subarea-card__athletes .material-symbols-outlined {
+  font-size: 18px;
+}
+
+
+.subarea-card__details {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 0;
+
+  background: transparent;
+
+  color: var(--color-primary);
+
+  font-size: 12px;
+  line-height: 16px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.05em;
+
+  cursor: pointer;
+}
+
+.subarea-card__details .material-symbols-outlined {
+  font-size: 16px;
+
+  transition: transform 0.2s ease;
+}
+
+.subarea-card__details:hover .material-symbols-outlined {
+  transform: translateX(3px);
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+.mis-subareas__content::-webkit-scrollbar,
+.mis-subareas__navigation::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mis-subareas__content::-webkit-scrollbar-track,
+.mis-subareas__navigation::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mis-subareas__content::-webkit-scrollbar-thumb,
+.mis-subareas__navigation::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 999px;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+  .mis-subareas__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET PEQUEÑO
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .mis-subareas {
+    --sidebar-width: 230px;
+  }
+
+  .mis-subareas__topbar {
+    padding: 0 20px;
+  }
+
+  .mis-subareas__content {
+    padding: 20px;
+  }
+
+  .mis-subareas__heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .mis-subareas__new-button {
+    width: auto;
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - MÓVIL
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+  .mis-subareas {
+    display: block;
+  }
+
+  /* Sidebar pasa a ocupar toda la parte superior */
+  .mis-subareas__sidebar {
+    position: fixed;
+
+    width: 100%;
+    height: auto;
+
+    padding: 12px 16px;
+
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .mis-subareas__brand {
+    margin: 0;
+    padding: 0;
+  }
+
+  .mis-subareas__brand-info p {
+    display: none;
+  }
+
+  .mis-subareas__navigation {
+    display: none;
+  }
+
+  /* Main */
+  .mis-subareas__main {
+    width: 100%;
+    height: 100vh;
+
+    margin-left: 0;
+  }
+
+  /* Topbar */
+  .mis-subareas__topbar {
+    top: 64px;
+
+    width: 100%;
+
+    height: 60px;
+
+    padding: 0 16px;
+  }
+
+  .mis-subareas__topbar-title {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .mis-subareas__topbar-actions {
+    display: none;
+  }
+
+  .mis-subareas__topbar-divider {
+    display: none;
+  }
+
+  .mis-subareas__profile-info {
+    display: none;
+  }
+
+  /* Content */
+  .mis-subareas__content {
+    margin-top: 124px;
+
+    padding: 16px;
+  }
+
+  /* Grid */
+  .mis-subareas__grid {
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+  }
+
+  /* Heading */
+  .mis-subareas__heading {
+    margin-bottom: 20px;
+  }
+
+  .mis-subareas__heading-text h2 {
+    font-size: 22px;
+    line-height: 30px;
+  }
+
+  .mis-subareas__new-button {
+    width: 100%;
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - MÓVIL PEQUEÑO
+   ========================================================= */
+
+@media (max-width: 420px) {
+
+  .mis-subareas__brand-info h1 {
+    font-size: 17px;
+    line-height: 24px;
+  }
+
+  .mis-subareas__topbar {
+    padding: 0 12px;
+  }
+
+  .mis-subareas__content {
+    padding: 12px;
+  }
+
+  .subarea-card {
+    padding: 18px;
+  }
+
+  .subarea-card__footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .subarea-card__details {
+    align-self: flex-end;
+  }
+
+}
+
+/* La navegación y el encabezado pertenecen a MainNav. Esta vista sólo define
+   el contenido de subáreas dentro del layout global. */
+.mis-subareas__content {
+  margin-top: 0;
+  padding: 24px;
+  overflow: visible;
+}
+
+@media (max-width: 900px) {
+  .mis-subareas__content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 700px) {
+  .mis-subareas__content {
+    margin-top: 0;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 420px) {
+  .mis-subareas__content {
+    padding: 12px;
+  }
+}

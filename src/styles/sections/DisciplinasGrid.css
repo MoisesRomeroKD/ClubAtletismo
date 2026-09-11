@@ -1,0 +1,270 @@
+/* ==========================================================================
+   ENTIDAD: Elite Track Club - Arquitectura de Estilos Puros (Híbrido Interactividad)
+   DISEÑO: Responsivo por Bloques de Dispositivos (Mobile-First)
+   ESCRITO POR: Moisés Romero
+   SECCIÓN: Disciplinas (Bento Grid Layout + Despliegue Dinámico)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. ESTILOS BASE / CELULAR (Mobile por defecto: hasta 480px)
+   -------------------------------------------------------------------------- */
+.disciplinas-section {
+  position: relative;
+  background-color: var(--clr-azul-profundo, #000615);
+  color: var(--clr-blanco, #ffffff);
+  padding: 4rem 0;
+  overflow: hidden;
+}
+
+.disciplinas-skew-bg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(181, 38, 25, 0.05);
+  transform: skewY(-6deg);
+  transform-origin: top left;
+  z-index: 0;
+}
+
+.disciplinas-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.disciplinas-header {
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.disciplinas-tagline {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--brand-secondary, #b52619);
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.disciplinas-title {
+  font-family: 'Anton', sans-serif;
+  font-size: 36px;
+  text-transform: uppercase;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+.disciplinas-divider {
+  display: none;
+  width: 6rem;
+  height: 6px;
+  background-color: var(--brand-secondary, #b52619);
+  margin: 0 auto;
+}
+
+.bento-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bento-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  width: 100%;
+  min-height: 380px; /* Asegura espacio para renderizar la lista completa en móvil */
+}
+
+.card-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: top center; /* <- Fuerza el enfoque en la parte superior para no cortar cabezas */
+  transition: transform 0.70s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+  z-index: 1;
+  transition: background 0.4s;
+}
+
+/* Indicador visual "Hint" - Oculto en móvil por defecto */
+.card-hint {
+  display: none;
+}
+
+.card-content {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  padding: 1.25rem;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.card-num {
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+.card-title {
+  font-family: 'Anton', sans-serif;
+  font-size: 28px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+/* En Móvil y Tablet: La lista se muestra completamente */
+.card-list {
+  list-style: none;
+  margin: 6px 0 0 0; padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 500px;
+  opacity: 1;
+}
+
+.glass-tag {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.35rem 0.65rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: 999px;
+  color: var(--clr-blanco, #ffffff);
+  display: inline-block;
+}
+
+/* --------------------------------------------------------------------------
+   2. TABLET (De 481px a 768px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 481px) and (max-width: 768px) {
+  .disciplinas-container { padding: 0 24px; }
+  .disciplinas-title { font-size: 44px; }
+  
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .bento-card { min-height: 340px; }
+}
+
+/* --------------------------------------------------------------------------
+   3. LAPTOP / PC (Desde 769px en adelante) -> ACTIVACIÓN DE EFECTOS HOVER
+   -------------------------------------------------------------------------- */
+@media (min-width: 769px) {
+  .disciplinas-section { padding: 6rem 0; }
+  .disciplinas-container { padding: 0 32px; }
+  .disciplinas-header { text-align: left; margin-bottom: 4rem; }
+  .disciplinas-title { font-size: 56px; }
+  .disciplinas-divider { display: block; margin: 0; }
+
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 100%));
+    gap: 24px;
+  }
+
+  /* Ajuste de proporciones matemáticas para 4 elementos en un grid de 12 */
+  .card-wide { grid-column: span 8; } 
+  .card-standard { grid-column: span 4; }
+  
+  /* Selector avanzado: Fuerza a las últimas dos tarjetas estándar a ocupar la mitad inferior (6 columnas c/u) */
+  .card-standard:nth-child(3),
+  .card-standard:nth-child(4) {
+    grid-column: span 6;
+  }
+
+  .bento-card { height: 380px; min-height: auto; cursor: pointer; }
+
+  /* Activación del Hint decorativo en PC */
+  .card-hint {
+    display: block;
+    position: absolute;
+    top: 22px; right: 22px;
+    background: var(--brand-secondary, #b52619);
+    color: #ffffff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 2px;
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .bento-card:hover .card-hint { opacity: 1; transform: translateY(0); }
+
+  /* Comportamiento del Hover sobre la Imagen y gradiente */
+  .bento-card:hover .card-image { transform: scale(1.08); }
+  .bento-card:hover .card-overlay {
+    background: linear-gradient(to top, rgba(181, 38, 25, 0.92) 0%, rgba(0, 0, 0, 0.6) 70%, transparent 100%);
+  }
+
+  .card-content { padding: 1.75rem; }
+
+  /* Ocultamos las subáreas por defecto en pantallas grandes */
+  .card-list {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s, margin-top 0.4s;
+  }
+
+  /* Despliegue dinámico al pasar el ratón */
+  .bento-card:hover .card-list {
+    max-height: 200px;
+    opacity: 1;
+    margin-top: 12px;
+  }
+  
+  .glass-tag {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. PC ESCRITORIO GRANDE (Desde 1201px en adelante)
+   -------------------------------------------------------------------------- */
+@media (min-width: 1201px) {
+  .disciplinas-section { padding: 8rem 0; }
+  .disciplinas-container { 
+    padding: 0 48px; 
+  }
+  .disciplinas-header { margin-bottom: 5rem; }
+  .disciplinas-tagline { font-size: 12px; margin-bottom: 1rem; }
+  .disciplinas-title { font-size: 72px; }
+  .disciplinas-divider { width: 8rem; height: 8px; }
+  
+  .bento-card { height: 410px; }
+  .card-content { padding: 2rem; }
+  .card-title { font-size: 48px; margin-bottom: 0.25rem; }
+  .card-num { font-size: 12px; }
+}

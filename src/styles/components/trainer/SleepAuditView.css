@@ -1,0 +1,116 @@
+/* ============================================================================
+   SleepAuditView.css - Auditoría Histórica del módulo de Sueño
+   Hereda paleta y estructura de theme.css
+   ============================================================================ */
+
+:root, body.light-mode {
+  --sl-primary: var(--clr-azul-institucional);
+  --sl-success: var(--clr-verde-elite);
+  --sl-danger: var(--clr-rojo-accion);
+  --sl-border: var(--border-main);
+  --sl-text-primary: var(--text-main);
+  --sl-text-muted: #94a3b8;
+  --sl-radius-md: var(--border-radius-md);
+  --sl-surface: var(--clr-blanco);
+  --sl-surface-alt: var(--clr-gris-superclaro);
+}
+
+body.dark-mode {
+  --sl-primary: var(--clr-azul-institucional);
+  --sl-success: var(--clr-verde-elite);
+  --sl-danger: var(--clr-rojo-accion);
+  --sl-border: var(--border-main);
+  --sl-text-primary: var(--text-main);
+  --sl-text-muted: #8290ab;
+  --sl-radius-md: var(--border-radius-md);
+  --sl-surface: var(--clr-azul-noche);
+  --sl-surface-alt: rgba(255, 255, 255, 0.04);
+}
+
+/* ---------- TARJETA BASE ---------- */
+.sl-card {
+  background-color: var(--sl-surface);
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  padding: 20px;
+  margin: var(--spacing-margin-mobile);
+  transition: var(--transition-theme);
+}
+
+@media (min-width: 900px) {
+  .sl-card {
+    margin: var(--spacing-margin-desktop);
+  }
+}
+
+.sl-card-header {
+  margin-bottom: 16px;
+}
+
+.sl-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--sl-text-primary);
+}
+
+/* ---------- TABLA DE AUDITORÍA ---------- */
+.sl-table-container {
+  overflow-x: auto;
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+}
+
+.sl-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sl-table thead {
+  position: sticky;
+  top: 0;
+  background-color: var(--sl-surface-alt);
+  z-index: 1;
+}
+
+.sl-table th {
+  text-align: left;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sl-text-muted);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--sl-border);
+}
+
+.sl-table td {
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  color: var(--sl-text-primary);
+  border-bottom: 1px solid var(--sl-border);
+}
+
+.sl-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.sl-table tbody tr:hover {
+  background-color: var(--sl-surface-alt);
+}
+
+/* ---------- INFO DE REGISTRO (quién lo registró) ---------- */
+.sl-registrar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sl-registrar-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sl-text-primary);
+}
+
+.sl-registrar-role {
+  font-size: 0.7rem;
+  color: var(--sl-text-muted);
+}

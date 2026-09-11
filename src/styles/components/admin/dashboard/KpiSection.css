@@ -1,0 +1,158 @@
+/* ============================================================================
+   KPI MODULE STYLES (Integrado con Theme Variables)
+   ============================================================================ */
+
+/* Grilla contenedora */
+.kpi-section-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem; /* 16px */
+    margin-bottom: 2rem; /* 32px */
+}
+
+/* Breakpoints responsivos */
+@media (min-width: 640px) {
+    .kpi-section-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .kpi-section-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .kpi-section-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+}
+
+/* Tarjeta base general */
+.kpi-card-base {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-main);
+    border-radius: 0.75rem; /* 12px - rounded-xl */
+    padding: 1.25rem; /* 20px */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: var(--transition-theme);
+}
+
+/* Variantes de borde superior */
+.kpi-card-border-blue {
+    border-top: 4px solid var(--clr-azul-institucional);
+}
+
+.kpi-card-border-slate {
+    border-top: 4px solid var(--text-muted);
+}
+
+.kpi-card-border-musgo {
+    border-top: 4px solid var(--clr-verde-musgo);
+}
+
+/* Layouts internos de tarjeta */
+.kpi-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.kpi-card-header-center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+/* Tipografía y textos */
+.kpi-title {
+    font-size: 0.875rem; /* text-sm (14px) */
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.kpi-value {
+    font-size: 1.875rem; /* text-3xl (30px) */
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.25rem;
+}
+
+.kpi-caption {
+    font-size: 0.75rem; /* text-xs (12px) */
+    color: var(--text-muted);
+}
+
+.kpi-caption-slate {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.kpi-footer-active {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--clr-verde-musgo);
+}
+
+.kpi-footer-caption {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Contenedores de Iconos */
+.kpi-icon-box {
+    padding: 0.625rem;
+    border-radius: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.kpi-icon-blue {
+    background-color: rgba(0, 0, 255, 0.1);
+    color: var(--clr-azul-institucional);
+}
+
+.kpi-icon-slate {
+    background-color: var(--bg-surface);
+    color: var(--text-muted);
+}
+
+.kpi-icon-musgo {
+    background-color: rgba(75, 138, 111, 0.15);
+    color: var(--clr-verde-musgo);
+}
+
+/* Badges de tendencias */
+.kpi-badge {
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.kpi-badge-up {
+    background-color: rgba(75, 138, 111, 0.2);
+    color: var(--clr-verde-musgo);
+}
+
+.kpi-badge-down {
+    background-color: rgba(181, 38, 25, 0.15);
+    color: var(--clr-rojo-accion);
+}
+
+.kpi-badge-neutral {
+    background-color: var(--bg-surface);
+    color: var(--text-muted);
+}

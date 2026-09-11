@@ -1,0 +1,265 @@
+/* ============================================================================
+   LAYOUT GENERAL Y CONTENEDORES CONTROLLERS
+   ============================================================================ */
+
+/* Contenedor de la página */
+.trainer-dashboard {
+  min-height: 100vh;
+  background-color: var(--bg-light); /* Mutación según el tema */
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition-theme);
+}
+
+/* Área de contenido principal */
+.trainer-main {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Sistema Grid Avanzado para la pantalla de inicio */
+.main-grid-layout {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+}
+
+/* ============================================================================
+   SECCIONES DE LA INTERFAZ (GRILLAS Y PANELES)
+   ============================================================================ */
+
+/* Banner superior de bienvenida */
+.welcome-banner {
+  grid-column: span 12;
+  padding: 2rem;
+}
+
+/* Sub-Panel Izquierdo: Gestión de Atletas */
+.athletes-section {
+  grid-column: span 7;
+  padding: 1.5rem;
+}
+
+/* Sub-Panel Derecho: Alertas de Fatiga */
+.alerts-section {
+  grid-column: span 5;
+  padding: 1.5rem;
+}
+
+/* Encabezados internos de cada panel */
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-light);
+}
+
+/* Contenedores de listas */
+.athletes-list-wrapper, 
+.alerts-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Grid alternativo para tarjetas de atletas */
+.athletes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+/* ============================================================================
+   COMPONENTES ATÓMICOS (TARJETAS Y ELEMENTOS DE TEXTO)
+   ============================================================================ */
+
+/* Tarjeta de Atleta Individual */
+.athlete-card {
+  background-color: var(--bg-light);
+  padding: 25px;
+  border-radius: 15px;
+  border: 1px solid var(--border-main); /* Verde institucional de Victor Campos */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.athlete-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.athlete-meta {
+  text-align: left;
+}
+
+/* Títulos y tipografía */
+.trainer-title {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.trainer-subtitle {
+  text-align: center;
+  color: var(--text-light);
+  margin-bottom: 40px;
+}
+
+.athlete-name {
+  color: var(--text-light);
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.athlete-info {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 20px;
+}
+
+/* ============================================================================
+   ALERTAS DE CONTROL DE CARGA (FATIGA)
+   ============================================================================ */
+
+.alert-item {
+  padding: 0.75rem 1rem;
+  background: rgba(239, 68, 68, 0.05);
+  border-left: 4px solid var(--accent-danger);
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alert-message {
+  font-size: 0.85rem;
+  margin: 0;
+  color: var(--text-light);
+}
+
+.alert-time {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.success-placeholder {
+  padding: 2rem;
+  text-align: center;
+}
+
+.placeholder-text, 
+.no-data-text {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-top: 0.5rem;
+}
+
+/* ============================================================================
+   BOTONES E INTERACCIONES
+   ============================================================================ */
+
+/* Botones Principales (Detalles del Atleta) */
+.btn-detail {
+  background-color: var(--brand-green); /* Verde oficial del club */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  width: auto;
+  transition: background 0.3s ease;
+}
+
+.btn-detail:hover {
+  filter: brightness(1.2); /* Sube la intensidad del verde sin alterar el hex base */
+}
+
+/* Botón de Retorno */
+.btn-back {
+  margin-bottom: 25px;
+  cursor: pointer;
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-main);
+  padding: 8px 18px;
+  border-radius: 6px;
+  color: var(--text-light);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+  filter: brightness(1.1);
+}
+
+/* Modificadores de color heredados para iconos Lucide */
+.icon-primary { color: var(--brand-green); }
+.icon-danger { color: var(--accent-danger); }
+.icon-success { color: var(--accent-success); }
+
+/* ============================================================================
+   ZONA CLÍNICA: AUDITORÍA DE DESCANSO INDIVIDUAL
+   ============================================================================ */
+
+.audit-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.tracker-card { 
+  grid-column: span 5; 
+}
+
+.chart-card { 
+  grid-column: span 7; 
+  height: 450px; 
+}
+
+/* ============================================================================
+   RESPONSIVIDAD (SISTEMA ADAPTABLE MOBILE)
+   ============================================================================ */
+
+@media (max-width: 900px) {
+  .main-grid-layout,
+  .audit-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .welcome-banner,
+  .athletes-section,
+  .alerts-section,
+  .tracker-card,
+  .chart-card {
+    grid-column: span 12;
+  }
+
+  .athlete-card {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .athlete-meta {
+    text-align: center;
+  }
+
+  .btn-detail {
+    width: 100%;
+  }
+}

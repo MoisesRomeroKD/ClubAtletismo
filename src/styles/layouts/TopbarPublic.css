@@ -1,0 +1,202 @@
+/* ============================================================================
+   HOJA DE ESTILOS: TOPBAR PÚBLICO (LANDING, LOGIN, REGISTRO)
+   ============================================================================ */
+
+/* Layout Base */
+.elite-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  background-color: var(--bg-topbar, rgba(20, 20, 25, 0.8));
+  color: var(--text-topbar, #ffffff);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border-main, transparent);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: var(--transition-theme, all 0.3s cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+.topbar-social-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.topbar-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.topbar-social-link:hover,
+.topbar-social-link:focus-visible {
+  opacity: 0.72;
+}
+
+.topbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Sección Izquierda: Branding */
+.topbar-left-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.topbar-brand-link {
+  text-decoration: none;
+}
+
+.topbar-logo-block {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  user-select: none;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.topbar-logo-img {
+  height: 40px;
+  width: auto;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Estilos de la marca e institución */
+.topbar-brand-title {
+  font-family: inherit;
+  font-size: 1.15rem;
+  font-weight: 800;
+  font-style: italic;
+  text-transform: uppercase;
+  color: var(--text-topbar, var(--text-primary, #ffffff));
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+}
+
+/* Sección Derecha: Links y Acciones */
+.topbar-right-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-links {
+  display: none; /* Se activa en pantallas grandes */
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  color: var(--text-muted, #ccc);
+  text-decoration: none;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: var(--brand-secondary, #ff0055);
+}
+
+.register-nav-link {
+  font-weight: 700;
+}
+
+.topbar-actions-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Botón de Modo Claro / Oscuro */
+.theme-toggle-btn {
+  background: transparent;
+  border: 1px solid var(--border-main, #374151);
+  color: var(--text-topbar, #ffffff);
+  padding: 0.45rem;
+  border-radius: var(--border-radius-md, 8px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-theme, all 0.3s ease);
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--bg-sidebar-hover, rgba(255, 255, 255, 0.05));
+}
+
+/* Botón Inclinado (Skew) */
+.btn-join-now {
+  display: none;
+  background-color: var(--brand-secondary, #ff0055);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1.5rem;
+  transform: skewX(-6deg);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.btn-join-now:hover {
+  transform: skewX(-6deg) scale(1.05);
+}
+
+.btn-text-fix {
+  display: inline-block;
+  transform: skewX(6deg);
+  font-size: 0.875rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .topbar-brand-link {
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .topbar-brand-link:active {
+    transform: scale(0.95);
+    opacity: 0.85;
+  }
+
+  .topbar-brand-title {
+    font-size: 0.95rem;
+  }
+
+  /* Al contraerse la pantalla, se ocultan todas las acciones y el botón de tema, dejando solo el logo que actúa como activador del sidebar */
+  .topbar-actions-wrapper,
+  .theme-toggle-btn {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .btn-join-now {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .nav-links {
+    display: flex;
+  }
+}

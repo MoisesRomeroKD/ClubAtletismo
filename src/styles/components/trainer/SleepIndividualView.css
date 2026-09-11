@@ -1,0 +1,271 @@
+/* ============================================================================
+   SleepIndividualView.css - Detalle Individual del módulo de Sueño
+   Hereda paleta y estructura de theme.css
+   ============================================================================ */
+
+:root, body.light-mode {
+  --sl-primary: var(--clr-azul-institucional);
+  --sl-success: var(--clr-verde-elite);
+  --sl-danger: var(--clr-rojo-accion);
+  --sl-warning: var(--clr-dorado-premium);
+  --sl-border: var(--border-main);
+  --sl-text-primary: var(--text-main);
+  --sl-text-secondary: #475569;
+  --sl-text-muted: #94a3b8;
+  --sl-radius-md: var(--border-radius-md);
+  --sl-surface: var(--clr-blanco);
+  --sl-surface-alt: var(--clr-gris-superclaro);
+}
+
+body.dark-mode {
+  --sl-primary: var(--clr-azul-institucional);
+  --sl-success: var(--clr-verde-elite);
+  --sl-danger: var(--clr-rojo-accion);
+  --sl-warning: var(--clr-dorado-premium);
+  --sl-border: var(--border-main);
+  --sl-text-primary: var(--text-main);
+  --sl-text-secondary: #cbd5e1;
+  --sl-text-muted: #8290ab;
+  --sl-radius-md: var(--border-radius-md);
+  --sl-surface: var(--clr-azul-noche);
+  --sl-surface-alt: rgba(255, 255, 255, 0.04);
+}
+
+/* ---------- LAYOUT GENERAL ---------- */
+.sl-tracking-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--spacing-gutter);
+  padding: var(--spacing-margin-mobile);
+}
+
+@media (min-width: 900px) {
+  .sl-tracking-grid {
+    padding: var(--spacing-margin-desktop);
+  }
+}
+
+@media (max-width: 900px) {
+  .sl-tracking-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- TARJETA BASE ---------- */
+.sl-card {
+  background-color: var(--sl-surface);
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  padding: 20px;
+  transition: var(--transition-theme);
+}
+
+.sl-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.sl-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--sl-text-primary);
+}
+
+/* ---------- LISTA DE PENDIENTES ---------- */
+.sl-pending-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.sl-pending-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background-color: var(--sl-surface);
+  border-radius: var(--sl-radius-md);
+  padding: 10px 12px;
+}
+
+.sl-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ---------- BOTONES ---------- */
+.sl-btn {
+  border: 1px solid var(--sl-border);
+  background-color: var(--sl-surface);
+  color: var(--sl-text-primary);
+  font-weight: 600;
+  border-radius: var(--sl-radius-md);
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: var(--transition-theme), transform 0.1s ease;
+}
+
+.sl-btn:hover {
+  background-color: var(--sl-surface-alt);
+}
+
+.sl-btn:active {
+  transform: scale(0.98);
+}
+
+.sl-btn-sm {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+
+.sl-btn-primary {
+  background-color: var(--sl-primary);
+  border-color: var(--sl-primary);
+  color: var(--clr-blanco);
+}
+
+.sl-btn-primary:hover {
+  filter: brightness(1.1);
+}
+
+/* ---------- CONTROLES DE TABLA (búsqueda / filtros) ---------- */
+.sl-table-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.sl-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  padding: 8px 12px;
+  flex: 1;
+  min-width: 200px;
+  color: var(--sl-text-muted);
+}
+
+.sl-search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--sl-text-primary);
+  font-size: 0.875rem;
+  width: 100%;
+}
+
+.sl-filter-group {
+  display: flex;
+  gap: 10px;
+}
+
+.sl-select {
+  border: 1px solid var(--sl-border);
+  background-color: var(--sl-surface);
+  color: var(--sl-text-primary);
+  border-radius: var(--sl-radius-md);
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* ---------- TABLA ---------- */
+.sl-table-container {
+  overflow-x: auto;
+}
+
+.sl-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sl-table th {
+  text-align: left;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sl-text-muted);
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--sl-border);
+}
+
+.sl-table td {
+  padding: 12px;
+  font-size: 0.875rem;
+  color: var(--sl-text-primary);
+  border-bottom: 1px solid var(--sl-border);
+}
+
+.sl-table tbody tr:hover {
+  background-color: var(--sl-surface-alt);
+}
+
+/* ---------- BADGES DE ESTADO ---------- */
+.sl-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.sl-badge.success {
+  background-color: color-mix(in srgb, var(--sl-success) 15%, transparent);
+  color: var(--sl-success);
+}
+
+.sl-badge.danger {
+  background-color: color-mix(in srgb, var(--sl-danger) 12%, transparent);
+  color: var(--sl-danger);
+}
+
+.sl-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.sl-status-dot.success {
+  background-color: var(--sl-success);
+}
+
+.sl-status-dot.danger {
+  background-color: var(--sl-danger);
+}
+
+/* ---------- INFO DE REGISTRO ---------- */
+.sl-registrar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sl-registrar-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sl-text-primary);
+}
+
+.sl-registrar-role {
+  font-size: 0.7rem;
+  color: var(--sl-text-muted);
+}

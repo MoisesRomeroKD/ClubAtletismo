@@ -1,0 +1,1700 @@
+/* ============================================================================
+   TrainerDashboardView.css - ELITE SPORT SYNC
+   Diseño Dashboard Deportivo / Glassmorphism
+
+   BREAKPOINTS:
+   2560px+
+   1440px - 2559px
+   1024px - 1439px
+   768px - 1023px
+   425px - 767px
+   375px - 424px
+   320px - 374px
+============================================================================ */
+
+
+/* ============================================================================
+   1. LAYOUT PRINCIPAL
+============================================================================ */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--spacing-gutter);
+
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  padding-bottom: var(--spacing-margin-desktop);
+
+  overflow-x: hidden;
+
+  animation: fadeInDashboard 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInDashboard {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ============================================================================
+   2. BOX SIZING
+============================================================================ */
+
+.dashboard-grid,
+.dashboard-grid * {
+  box-sizing: border-box;
+}
+
+
+/* ============================================================================
+   3. PROTECCIÓN GLOBAL CONTRA OVERFLOW
+============================================================================ */
+
+.dashboard-grid > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.glass-card,
+.metric-card,
+.attendance-card,
+.area-breakdown-card,
+.sleep-card,
+.subarea-plans-card,
+.subarea-plan-box,
+.area-group-box,
+.session-item,
+.pending-item {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.welcome-content,
+.metric-value-container,
+.session-info,
+.session-meta,
+.subarea-header {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.welcome-content h1,
+.welcome-content p,
+.metric-label,
+.metric-value,
+.metric-subtitle,
+.athlete-name,
+.subarea-tag,
+.area-group-title,
+.subarea-row,
+.subarea-header h4,
+.session-type,
+.session-meta {
+  overflow-wrap: anywhere;
+}
+
+
+/* ============================================================================
+   4. BASE GLASS CARD
+============================================================================ */
+
+.glass-card {
+  background: var(--bg-sidebar);
+
+  border: 1px solid var(--border-main);
+
+  border-radius: var(--border-radius-md);
+
+  padding: 1.25rem;
+
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.05);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-width: 100%;
+}
+
+.glass-card:hover {
+  border-color: rgba(0, 0, 255, 0.3);
+
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.12);
+}
+
+.section-title {
+  font-size: 1.05rem;
+
+  font-weight: 700;
+
+  letter-spacing: -0.01em;
+
+  display: flex;
+  align-items: center;
+
+  gap: 0.5rem;
+
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+
+  color: var(--text-main);
+
+  min-width: 0;
+}
+
+
+/* ============================================================================
+   5. WELCOME BANNER
+============================================================================ */
+
+.welcome-banner {
+  grid-column: 1 / -1;
+
+  background: linear-gradient(
+    135deg,
+    var(--bg-sidebar) 0%,
+    rgba(0, 0, 255, 0.08) 100%
+  );
+
+  border-left: 4px solid var(--clr-azul-institucional);
+
+  flex-direction: row;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 1rem;
+
+  padding: 1.5rem 2rem;
+
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.welcome-content {
+  flex: 1 1 auto;
+
+  min-width: 0;
+  max-width: 100%;
+}
+
+.welcome-content h1 {
+  font-size: 1.6rem;
+
+  font-weight: 800;
+
+  margin: 0 0 0.25rem 0;
+
+  letter-spacing: -0.02em;
+}
+
+.text-gradient {
+  background: linear-gradient(
+    90deg,
+    var(--text-main) 30%,
+    var(--clr-azul-institucional) 100%
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.welcome-content p {
+  margin: 0;
+
+  color: var(--text-main);
+
+  opacity: 0.75;
+
+  font-size: 0.9rem;
+}
+
+.date-display {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.5rem;
+
+  background: var(--bg-main);
+
+  padding: 0.5rem 1rem;
+
+  border-radius: 20px;
+
+  border: 1px solid var(--border-main);
+
+  font-size: 0.85rem;
+
+  font-weight: 600;
+
+  text-transform: capitalize;
+
+  min-width: 0;
+
+  max-width: 100%;
+
+  flex-shrink: 1;
+}
+
+
+/* ============================================================================
+   6. METRIC CARDS
+============================================================================ */
+
+.metric-card {
+  grid-column: span 3;
+
+  justify-content: space-between;
+
+  width: 100%;
+  min-width: 0;
+}
+
+.metric-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 0.5rem;
+
+  margin-bottom: 1rem;
+
+  min-width: 0;
+}
+
+.metric-label {
+  font-size: 0.8rem;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.05em;
+
+  opacity: 0.7;
+
+  min-width: 0;
+}
+
+.icon-wrapper {
+  width: 38px;
+  height: 38px;
+
+  min-width: 38px;
+
+  border-radius: 8px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 255, 0.1);
+
+  color: var(--clr-azul-institucional);
+
+  flex-shrink: 0;
+}
+
+.metric-value-container {
+  display: flex;
+
+  flex-direction: column;
+
+  min-width: 0;
+}
+
+.metric-value {
+  font-size: 2.1rem;
+
+  font-weight: 800;
+
+  line-height: 1;
+
+  letter-spacing: -0.03em;
+}
+
+.metric-subtitle {
+  font-size: 0.75rem;
+
+  margin-top: 0.4rem;
+
+  opacity: 0.65;
+}
+
+
+/* ============================================================================
+   7. INASISTENCIAS
+============================================================================ */
+
+.attendance-card {
+  grid-column: span 4;
+
+  width: 100%;
+  min-width: 0;
+}
+
+.absence-summary {
+  background: rgba(181, 38, 25, 0.06);
+
+  border: 1px dashed var(--clr-rojo-accion);
+
+  border-radius: var(--border-radius-md);
+
+  padding: 1rem;
+
+  text-align: center;
+
+  width: 100%;
+  max-width: 100%;
+}
+
+.absence-big-number {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+}
+
+.num-danger {
+  font-size: 2.5rem;
+
+  font-weight: 900;
+
+  color: var(--clr-rojo-accion);
+
+  line-height: 1;
+}
+
+.absence-big-number .label {
+  font-size: 0.8rem;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  margin-top: 0.25rem;
+
+  color: var(--clr-rojo-accion);
+}
+
+.pending-list {
+  list-style: none;
+
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.5rem;
+
+  max-height: 180px;
+
+  overflow-y: auto;
+
+  overflow-x: hidden;
+
+  width: 100%;
+}
+
+.pending-item {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 0.5rem;
+
+  padding: 0.5rem 0.75rem;
+
+  background: var(--bg-main);
+
+  border: 1px solid var(--border-main);
+
+  border-radius: 6px;
+
+  font-size: 0.85rem;
+
+  width: 100%;
+}
+
+.athlete-name {
+  font-weight: 600;
+
+  min-width: 0;
+}
+
+.subarea-tag {
+  font-size: 0.7rem;
+
+  padding: 0.15rem 0.5rem;
+
+  border-radius: 4px;
+
+  background: rgba(0, 0, 0, 0.05);
+
+  font-weight: 500;
+
+  opacity: 0.8;
+
+  min-width: 0;
+}
+
+
+/* ============================================================================
+   8. ÁREAS Y SUB-ÁREAS
+============================================================================ */
+
+.area-breakdown-card {
+  grid-column: span 4;
+
+  width: 100%;
+  min-width: 0;
+}
+
+.areas-container {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.75rem;
+
+  max-height: 290px;
+
+  overflow-y: auto;
+
+  overflow-x: hidden;
+
+  padding-right: 0.25rem;
+
+  width: 100%;
+
+  min-width: 0;
+}
+
+.areas-empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.area-group-box {
+  background: var(--bg-main);
+
+  border: 1px solid var(--border-main);
+
+  border-radius: 6px;
+
+  padding: 0.75rem;
+
+  width: 100%;
+}
+
+.area-group-title {
+  margin: 0 0 0.5rem 0;
+
+  font-size: 0.8rem;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.05em;
+
+  color: var(--clr-azul-institucional);
+}
+
+.subarea-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.35rem;
+
+  min-width: 0;
+}
+
+.subarea-row {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 0.5rem;
+
+  font-size: 0.8rem;
+
+  min-width: 0;
+}
+
+.subarea-count strong {
+  color: var(--clr-verde-elite);
+
+  white-space: nowrap;
+}
+
+
+/* ============================================================================
+   9. CALIDAD DEL SUEÑO
+============================================================================ */
+
+.sleep-card {
+  grid-column: span 4;
+
+  width: 100%;
+  min-width: 0;
+}
+
+.sleep-score-container {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: rgba(238, 220, 130, 0.12);
+
+  border: 1px solid var(--clr-dorado-premium);
+
+  border-radius: var(--border-radius-md);
+
+  padding: 1rem;
+
+  text-align: center;
+
+  width: 100%;
+}
+
+.score-big {
+  font-size: 2.5rem;
+
+  font-weight: 900;
+
+  line-height: 1;
+}
+
+.score-max {
+  font-size: 1rem;
+
+  opacity: 0.6;
+
+  font-weight: 500;
+}
+
+.score-label {
+  margin: 0.3rem 0 0 0;
+
+  font-size: 0.75rem;
+
+  font-weight: 600;
+
+  opacity: 0.8;
+}
+
+
+/* ============================================================================
+   10. PLANES POR SUB-ÁREA
+============================================================================ */
+
+.subarea-plans-card {
+  grid-column: 1 / -1;
+
+  width: 100%;
+  min-width: 0;
+}
+
+.subarea-plans-grid {
+  display: grid;
+
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(260px, 1fr)
+  );
+
+  gap: 1rem;
+
+  width: 100%;
+  min-width: 0;
+}
+
+.subarea-plan-box {
+  background: var(--bg-main);
+
+  border: 1px solid var(--border-main);
+
+  border-radius: var(--border-radius-md);
+
+  padding: 1rem;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.75rem;
+
+  width: 100%;
+}
+
+.subarea-header {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 0.25rem;
+
+  border-bottom: 1px solid var(--border-main);
+
+  padding-bottom: 0.5rem;
+}
+
+.area-badge {
+  font-size: 0.65rem;
+
+  text-transform: uppercase;
+
+  font-weight: 800;
+
+  padding: 0.1rem 0.4rem;
+
+  border-radius: 4px;
+
+  background: var(--clr-azul-institucional);
+
+  color: var(--clr-blanco);
+
+  max-width: 100%;
+}
+
+.subarea-header h4 {
+  margin: 0;
+
+  font-size: 0.95rem;
+
+  font-weight: 700;
+}
+
+.session-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.5rem;
+
+  min-width: 0;
+}
+
+.session-item {
+  background: var(--bg-sidebar);
+
+  border: 1px solid var(--border-main);
+
+  padding: 0.6rem;
+
+  border-radius: 6px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.3rem;
+
+  width: 100%;
+}
+
+.session-info {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 0.5rem;
+
+  font-size: 0.82rem;
+}
+
+.session-time {
+  font-weight: 700;
+
+  font-size: 0.75rem;
+
+  color: var(--clr-azul-institucional);
+
+  white-space: nowrap;
+}
+
+.session-type {
+  font-weight: 600;
+
+  text-align: right;
+
+  min-width: 0;
+}
+
+.session-meta {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 0.5rem;
+
+  font-size: 0.72rem;
+
+  opacity: 0.8;
+}
+
+.all-done-msg {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.4rem;
+
+  font-size: 0.8rem;
+
+  color: var(--clr-verde-elite);
+
+  font-weight: 600;
+
+  margin: 0;
+}
+
+
+/* ============================================================================
+   11. 2560px+
+============================================================================ */
+
+@media (min-width: 2560px) {
+
+  .dashboard-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+
+    gap: 1.5rem;
+  }
+
+  .glass-card {
+    padding: 1.5rem;
+  }
+
+  .welcome-banner {
+    padding: 1.75rem 2.5rem;
+  }
+
+  .welcome-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .welcome-content p {
+    font-size: 1rem;
+  }
+
+  .metric-value {
+    font-size: 2.35rem;
+  }
+
+  .metric-label {
+    font-size: 0.85rem;
+  }
+
+  .section-title {
+    font-size: 1.15rem;
+  }
+
+  .subarea-plans-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+
+/* ============================================================================
+   12. 1440px - 2559px
+============================================================================ */
+
+@media (max-width: 2559px) and (min-width: 1440px) {
+
+  .dashboard-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+
+    gap: 1.25rem;
+  }
+
+  .glass-card {
+    padding: 1.25rem;
+  }
+
+  .welcome-banner {
+    padding: 1.5rem 2rem;
+  }
+
+  .metric-value {
+    font-size: 2.1rem;
+  }
+
+  .subarea-plans-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+
+/* ============================================================================
+   13. 1024px - 1439px
+============================================================================ */
+
+@media (max-width: 1439px) and (min-width: 1024px) {
+
+  .dashboard-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+
+    gap: 1rem;
+
+    width: 100%;
+    max-width: 100%;
+
+    overflow-x: hidden;
+  }
+
+  .glass-card {
+    padding: 1rem;
+  }
+
+
+  /* WELCOME */
+
+  .welcome-banner {
+    grid-column: 1 / -1;
+
+    padding: 1.25rem 1.5rem;
+  }
+
+  .welcome-content h1 {
+    font-size: 1.4rem;
+  }
+
+  .welcome-content p {
+    font-size: 0.82rem;
+  }
+
+  .date-display {
+    max-width: 45%;
+
+    font-size: 0.78rem;
+  }
+
+
+  /* KPIs */
+
+  .metric-card {
+    grid-column: span 6;
+  }
+
+
+  /* MÓDULOS */
+
+  .attendance-card,
+  .area-breakdown-card,
+  .sleep-card {
+    grid-column: span 4;
+  }
+
+
+  /* PLANES */
+
+  .subarea-plans-card {
+    grid-column: 1 / -1;
+  }
+
+  .subarea-plans-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 0.85rem;
+  }
+
+  .metric-value {
+    font-size: 1.9rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+}
+
+
+/* ============================================================================
+   14. 768px - 1023px
+   TABLET
+
+   DISTRIBUCIÓN:
+
+   ┌──────────────────┬──────────────────┐
+   │                  │                  │
+   │   INASISTENCIAS  │  ÁREAS /        │
+   │                  │  SUB-ÁREAS      │
+   ├──────────────────┤                  │
+   │                  │                  │
+   │ CALIDAD SUEÑO    │                  │
+   │                  │                  │
+   └──────────────────┴──────────────────┘
+
+   La tarjeta de Áreas/Sub-áreas ocupa las dos
+   filas de la columna derecha.
+============================================================================ */
+
+@media (max-width: 1023px) and (min-width: 768px) {
+
+  .dashboard-grid {
+    display: grid;
+
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+
+    gap: 0.9rem;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    overflow-x: hidden;
+  }
+
+
+  /* ============================================================
+     BASE
+  ============================================================ */
+
+  .glass-card {
+    padding: 1rem;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+
+  /* ============================================================
+     WELCOME
+  ============================================================ */
+
+  .welcome-banner {
+    grid-column: 1 / -1;
+
+    grid-row: auto;
+
+    width: 100%;
+
+    padding: 1.25rem;
+
+    flex-direction: row;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 1rem;
+  }
+
+  .welcome-content {
+    flex: 1 1 auto;
+
+    min-width: 0;
+  }
+
+  .welcome-content h1 {
+    font-size: 1.35rem;
+  }
+
+  .welcome-content p {
+    font-size: 0.8rem;
+  }
+
+  .date-display {
+    max-width: 40%;
+
+    min-width: 0;
+
+    flex-shrink: 1;
+
+    font-size: 0.78rem;
+  }
+
+
+  /* ============================================================
+     KPI
+  ============================================================ */
+
+  .metric-card {
+    grid-column: span 3;
+
+    grid-row: auto;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+
+  /* ============================================================
+     INASISTENCIAS
+     
+     Columna izquierda.
+  ============================================================ */
+
+  .attendance-card {
+    grid-column: 1 / 4;
+
+    grid-row: auto;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+
+  /* ============================================================
+     ÁREAS Y SUB-ÁREAS
+     
+     Columna derecha.
+     
+     ESTA ES LA CORRECCIÓN DEL ESPACIO VACÍO.
+     
+     La tarjeta ocupa DOS filas.
+  ============================================================ */
+
+  .area-breakdown-card {
+    grid-column: 4 / 7;
+
+    grid-row: span 2;
+
+    align-self: stretch;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+  .area-breakdown-card .areas-container {
+    flex: 1 1 auto;
+
+    max-height: none;
+
+    min-height: 0;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+  }
+
+
+  /* ============================================================
+     CALIDAD DEL SUEÑO
+     
+     Segunda fila izquierda.
+  ============================================================ */
+
+  .sleep-card {
+    grid-column: 1 / 4;
+
+    grid-row: auto;
+
+    width: 100%;
+    min-width: 0;
+
+    height: auto;
+
+    align-self: stretch;
+  }
+
+  .sleep-score-container {
+    flex: 1 1 auto;
+
+    min-height: 0;
+  }
+
+
+  /* ============================================================
+     PLANES
+  ============================================================ */
+
+  .subarea-plans-card {
+    grid-column: 1 / -1;
+
+    grid-row: auto;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+  .subarea-plans-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 0.75rem;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+
+  /* ============================================================
+     TIPOGRAFÍA
+  ============================================================ */
+
+  .metric-value {
+    font-size: 1.8rem;
+  }
+
+  .metric-label {
+    font-size: 0.72rem;
+  }
+
+  .icon-wrapper {
+    width: 34px;
+    height: 34px;
+
+    min-width: 34px;
+  }
+
+  .section-title {
+    font-size: 0.95rem;
+  }
+
+
+  /* ============================================================
+     PROTECCIÓN OVERFLOW
+  ============================================================ */
+
+  .dashboard-grid > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .pending-list,
+  .areas-container,
+  .subarea-plans-grid,
+  .subarea-plan-box,
+  .session-list,
+  .session-item {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+
+/* ============================================================================
+   15. 425px - 767px
+============================================================================ */
+
+@media (max-width: 767px) and (min-width: 425px) {
+
+  .dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+
+    gap: 0.75rem;
+
+    width: 100%;
+    max-width: 100%;
+
+    overflow-x: hidden;
+  }
+
+  .glass-card {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 0.9rem;
+  }
+
+
+  /* WELCOME */
+
+  .welcome-banner {
+    grid-column: 1;
+
+    width: 100%;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 0.9rem;
+
+    padding: 1rem;
+  }
+
+  .welcome-content {
+    width: 100%;
+  }
+
+  .welcome-content h1 {
+    font-size: 1.2rem;
+  }
+
+  .welcome-content p {
+    font-size: 0.78rem;
+  }
+
+  .date-display {
+    width: 100%;
+
+    max-width: 100%;
+
+    justify-content: center;
+  }
+
+
+  /* TARJETAS */
+
+  .metric-card,
+  .attendance-card,
+  .area-breakdown-card,
+  .sleep-card,
+  .subarea-plans-card {
+    grid-column: 1;
+
+    width: 100%;
+    max-width: 100%;
+  }
+
+
+  /* En móvil no usamos filas expandidas */
+
+  .area-breakdown-card {
+    grid-row: auto;
+  }
+
+  .sleep-card {
+    grid-row: auto;
+
+    height: auto;
+
+    align-self: auto;
+  }
+
+  .sleep-score-container {
+    flex: initial;
+  }
+
+
+  /* PLANES */
+
+  .subarea-plans-grid {
+    grid-template-columns: minmax(0, 1fr);
+
+    width: 100%;
+  }
+
+  .metric-value {
+    font-size: 1.8rem;
+  }
+
+  .areas-container {
+    max-width: 100%;
+  }
+}
+
+
+/* ============================================================================
+   16. 375px - 424px
+============================================================================ */
+
+@media (max-width: 424px) and (min-width: 375px) {
+
+  .dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+
+    gap: 0.65rem;
+
+    width: 100%;
+    max-width: 100%;
+
+    overflow-x: hidden;
+  }
+
+  .glass-card {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 0.8rem;
+
+    border-radius: 10px;
+  }
+
+
+  /* WELCOME */
+
+  .welcome-banner {
+    grid-column: 1;
+
+    width: 100%;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 0.75rem;
+
+    padding: 0.9rem;
+  }
+
+  .welcome-content {
+    width: 100%;
+  }
+
+  .welcome-content h1 {
+    font-size: 1.1rem;
+  }
+
+  .welcome-content p {
+    font-size: 0.74rem;
+  }
+
+  .date-display {
+    width: 100%;
+
+    max-width: 100%;
+
+    justify-content: center;
+
+    padding: 0.45rem 0.6rem;
+
+    font-size: 0.7rem;
+  }
+
+
+  /* TARJETAS */
+
+  .metric-card,
+  .attendance-card,
+  .area-breakdown-card,
+  .sleep-card,
+  .subarea-plans-card {
+    grid-column: 1;
+
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .area-breakdown-card {
+    grid-row: auto;
+  }
+
+  .sleep-card {
+    height: auto;
+
+    align-self: auto;
+  }
+
+
+  /* KPI */
+
+  .metric-header {
+    margin-bottom: 0.75rem;
+  }
+
+  .metric-value {
+    font-size: 1.65rem;
+  }
+
+  .metric-label {
+    font-size: 0.68rem;
+  }
+
+  .metric-subtitle {
+    font-size: 0.7rem;
+  }
+
+  .icon-wrapper {
+    width: 32px;
+    height: 32px;
+
+    min-width: 32px;
+  }
+
+
+  /* PLANES */
+
+  .subarea-plans-grid {
+    width: 100%;
+
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .subarea-plan-box {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 0.8rem;
+  }
+
+
+  /* ÁREAS */
+
+  .areas-container {
+    max-width: 100%;
+  }
+
+  .pending-item {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 0.45rem 0.6rem;
+
+    font-size: 0.75rem;
+  }
+
+  .subarea-tag {
+    font-size: 0.65rem;
+  }
+}
+
+
+/* ============================================================================
+   17. 320px - 374px
+============================================================================ */
+
+@media (max-width: 374px) {
+
+  .dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+
+    gap: 0.5rem;
+
+    width: 100%;
+    max-width: 100%;
+
+    overflow-x: hidden;
+  }
+
+  .glass-card {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 0.7rem;
+
+    border-radius: 8px;
+  }
+
+
+  /* WELCOME */
+
+  .welcome-banner {
+    grid-column: 1;
+
+    width: 100%;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 0.65rem;
+
+    padding: 0.75rem;
+  }
+
+  .welcome-content {
+    width: 100%;
+  }
+
+  .welcome-content h1 {
+    font-size: 1rem;
+  }
+
+  .welcome-content p {
+    font-size: 0.7rem;
+  }
+
+  .date-display {
+    width: 100%;
+
+    max-width: 100%;
+
+    justify-content: center;
+
+    padding: 0.4rem 0.5rem;
+
+    font-size: 0.65rem;
+  }
+
+
+  /* TARJETAS */
+
+  .metric-card,
+  .attendance-card,
+  .area-breakdown-card,
+  .sleep-card,
+  .subarea-plans-card {
+    grid-column: 1;
+
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .area-breakdown-card {
+    grid-row: auto;
+  }
+
+  .sleep-card {
+    height: auto;
+
+    align-self: auto;
+  }
+
+
+  /* KPI */
+
+  .metric-header {
+    margin-bottom: 0.65rem;
+  }
+
+  .metric-label {
+    font-size: 0.62rem;
+
+    letter-spacing: 0.03em;
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+  }
+
+  .metric-subtitle {
+    font-size: 0.65rem;
+  }
+
+  .icon-wrapper {
+    width: 30px;
+    height: 30px;
+
+    min-width: 30px;
+  }
+
+
+  /* TÍTULOS */
+
+  .section-title {
+    font-size: 0.85rem;
+
+    margin-bottom: 0.8rem;
+  }
+
+
+  /* SUEÑO / INASISTENCIAS */
+
+  .num-danger,
+  .score-big {
+    font-size: 2rem;
+  }
+
+  .score-max {
+    font-size: 0.85rem;
+  }
+
+  .score-label {
+    font-size: 0.68rem;
+  }
+
+
+  /* PLANES */
+
+  .subarea-plans-grid {
+    width: 100%;
+
+    grid-template-columns: minmax(0, 1fr);
+
+    gap: 0.65rem;
+  }
+
+  .subarea-plan-box {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 0.7rem;
+  }
+
+  .subarea-header h4 {
+    font-size: 0.85rem;
+  }
+
+
+  /* SESIONES */
+
+  .session-item {
+    width: 100%;
+
+    padding: 0.5rem;
+  }
+
+  .session-info {
+    font-size: 0.75rem;
+  }
+
+  .session-meta {
+    font-size: 0.65rem;
+  }
+
+
+  /* INASISTENCIAS */
+
+  .pending-item {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 0.4rem 0.5rem;
+
+    font-size: 0.7rem;
+  }
+
+  .subarea-tag {
+    font-size: 0.6rem;
+
+    padding: 0.1rem 0.35rem;
+  }
+
+
+  /* ÁREAS */
+
+  .areas-container {
+    width: 100%;
+    max-width: 100%;
+
+    max-height: 210px;
+  }
+
+  .area-group-box {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 0.55rem;
+  }
+
+  .area-group-title {
+    font-size: 0.7rem;
+  }
+
+  .subarea-row {
+    font-size: 0.7rem;
+  }
+}

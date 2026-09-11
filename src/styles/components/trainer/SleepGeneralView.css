@@ -1,0 +1,177 @@
+/* ============================================================================
+   SleepGeneralView.css - Vista General / Métricas del módulo de Sueño
+   Hereda paleta y estructura de theme.css
+   ============================================================================ */
+
+:root, body.light-mode {
+  --sl-primary: var(--clr-azul-institucional);
+  --sl-success: var(--clr-verde-elite);
+  --sl-danger: var(--clr-rojo-accion);
+  --sl-warning: var(--clr-dorado-premium);
+  --sl-border: var(--border-main);
+  --sl-text-primary: var(--text-main);
+  --sl-text-secondary: #475569;
+  --sl-text-muted: #94a3b8;
+  --sl-radius-md: var(--border-radius-md);
+  --sl-surface: var(--clr-blanco);
+  --sl-surface-alt: var(--clr-gris-superclaro);
+}
+
+body.dark-mode {
+  --sl-primary: var(--clr-azul-institucional);
+  --sl-success: var(--clr-verde-elite);
+  --sl-danger: var(--clr-rojo-accion);
+  --sl-warning: var(--clr-dorado-premium);
+  --sl-border: var(--border-main);
+  --sl-text-primary: var(--text-main);
+  --sl-text-secondary: #cbd5e1;
+  --sl-text-muted: #8290ab;
+  --sl-radius-md: var(--border-radius-md);
+  --sl-surface: var(--clr-azul-noche);
+  --sl-surface-alt: rgba(255, 255, 255, 0.04);
+}
+
+/* ---------- CONTENEDOR / SCROLL ---------- */
+.sl-scroll-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gutter);
+  padding: var(--spacing-margin-mobile);
+}
+
+@media (min-width: 900px) {
+  .sl-scroll-area {
+    padding: var(--spacing-margin-desktop);
+  }
+}
+
+/* ---------- FILTRO DE TIEMPO ---------- */
+.sl-time-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  background-color: var(--sl-surface-alt);
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  padding: 6px;
+  width: fit-content;
+}
+
+.sl-time-btn {
+  border: none;
+  background: transparent;
+  color: var(--sl-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: calc(var(--sl-radius-md) - 2px);
+  cursor: pointer;
+  transition: var(--transition-theme);
+}
+
+.sl-time-btn:hover {
+  color: var(--sl-text-primary);
+  background-color: var(--sl-surface);
+}
+
+.sl-time-btn.active {
+  background-color: var(--sl-primary);
+  color: var(--clr-blanco);
+}
+
+/* ---------- TARJETA BASE ---------- */
+.sl-card {
+  background-color: var(--sl-surface);
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  padding: 20px;
+  transition: var(--transition-theme);
+}
+
+.sl-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.sl-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--sl-text-primary);
+}
+
+/* ---------- GRID DE KPIs ---------- */
+.sl-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-gutter);
+}
+
+.sl-kpi-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sl-text-secondary);
+  margin-bottom: 12px;
+}
+
+.sl-kpi-title svg {
+  opacity: 0.6;
+}
+
+.sl-kpi-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--sl-text-primary);
+  line-height: 1.1;
+}
+
+.sl-kpi-subtext {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: var(--sl-text-muted);
+}
+
+/* ---------- GRID DE GRÁFICOS ---------- */
+.sl-charts-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: var(--spacing-gutter);
+}
+
+@media (max-width: 800px) {
+  .sl-charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sl-chart-container {
+  position: relative;
+  width: 100%;
+  height: 220px;
+}
+
+/* Gráfico de línea (SVG) */
+.sl-chart-grid line {
+  stroke: var(--sl-border);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+.sl-line-chart-path {
+  fill: none;
+  stroke: var(--sl-primary);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Donut de estado de registros */
+.sl-chart-container svg circle {
+  transition: stroke-dashoffset 1s ease-out, stroke 0.3s ease;
+}

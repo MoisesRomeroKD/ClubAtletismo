@@ -1,0 +1,795 @@
+.roles-permisos {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+  color: var(--text-main);
+}
+
+
+/* ============================================================
+   HEADER
+============================================================ */
+
+.roles-permisos__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.roles-permisos__header-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.roles-permisos__icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: var(--func-primary-bg-soft);
+  color: var(--func-primary);
+}
+
+.roles-permisos__header h1 {
+  margin: 0;
+
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+
+  color: var(--text-main);
+}
+
+.roles-permisos__header p {
+  margin: 5px 0 0;
+
+  font-size: 14px;
+
+  color: #64748b;
+}
+
+
+/* ============================================================
+   SELECTOR DE ROLES
+============================================================ */
+
+.roles-permisos__roles {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+
+  margin-bottom: 20px;
+}
+
+.roles-permisos__role {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  padding: 18px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 13px;
+
+  background: #ffffff;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.roles-permisos__role:hover {
+  border-color: #a5b4fc;
+
+  background: #fafaff;
+
+  transform: translateY(-1px);
+}
+
+.roles-permisos__role--active {
+  border-color: #6366f1;
+
+  background: #eef2ff;
+
+  box-shadow:
+    0 0 0 1px #6366f1;
+}
+
+.roles-permisos__role-icon {
+  width: 46px;
+  height: 46px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.roles-permisos__role--active
+.roles-permisos__role-icon {
+  background: #ffffff;
+  color: #4f46e5;
+}
+
+.roles-permisos__role-info {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+  margin-left: 13px;
+
+  padding-right: 30px;
+}
+
+.roles-permisos__role-info strong {
+  font-size: 15px;
+
+  color: #0f172a;
+}
+
+.roles-permisos__role-info span {
+  font-size: 12px;
+
+  line-height: 1.45;
+
+  color: #64748b;
+}
+
+.roles-permisos__role-selected {
+  position: absolute;
+
+  top: 17px;
+  right: 17px;
+
+  width: 24px;
+  height: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+
+/* ============================================================
+   BANNER DEL ROL
+============================================================ */
+
+.roles-permisos__role-banner {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  padding: 17px 20px;
+
+  margin-bottom: 20px;
+
+  border: 1px solid #c7d2fe;
+
+  border-radius: 12px;
+
+  background: #eef2ff;
+}
+
+.roles-permisos__role-banner-icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #4f46e5;
+}
+
+.roles-permisos__role-banner-info {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  flex: 1;
+}
+
+.roles-permisos__role-banner-info strong {
+  font-size: 14px;
+
+  color: #312e81;
+}
+
+.roles-permisos__role-banner-info span {
+  font-size: 12px;
+
+  color: #6366f1;
+}
+
+.roles-permisos__role-count {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  gap: 1px;
+}
+
+.roles-permisos__role-count strong {
+  font-size: 20px;
+
+  color: #4338ca;
+}
+
+.roles-permisos__role-count span {
+  font-size: 10px;
+
+  text-transform: uppercase;
+
+  font-weight: 700;
+
+  color: #6366f1;
+}
+
+
+/* ============================================================
+   SECCIÓN DE PERMISOS
+============================================================ */
+
+.roles-permisos__section {
+  overflow: hidden;
+
+  margin-bottom: 20px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #ffffff;
+}
+
+.roles-permisos__section-header {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 20px 24px;
+
+  border: none;
+
+  background: #ffffff;
+
+  text-align: left;
+
+  color: #64748b;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease;
+}
+
+.roles-permisos__section-header:hover {
+  background: #f8fafc;
+}
+
+.roles-permisos__section-title {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+}
+
+.roles-permisos__section-title svg {
+  color: #4f46e5;
+}
+
+.roles-permisos__section-title h2 {
+  margin: 0;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  color: #334155;
+}
+
+.roles-permisos__section-header p {
+  margin: 6px 0 0 28px;
+
+  font-size: 12px;
+
+  color: #94a3b8;
+}
+
+
+/* ============================================================
+   CONTENIDO DE PERMISOS
+============================================================ */
+
+.roles-permisos__permissions {
+  padding: 20px 24px;
+
+  border-top: 1px solid #e2e8f0;
+}
+
+
+/* ============================================================
+   ACCIONES DE PERMISOS
+============================================================ */
+
+.roles-permisos__permission-actions {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 16px;
+
+  padding-bottom: 14px;
+
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.roles-permisos__permission-actions > span {
+  font-size: 12px;
+
+  color: #64748b;
+}
+
+.roles-permisos__permission-actions > div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.roles-permisos__permission-actions button {
+  padding: 6px 10px;
+
+  border: none;
+
+  background: transparent;
+
+  color: #4f46e5;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  border-radius: 6px;
+}
+
+.roles-permisos__permission-actions button:hover {
+  background: #eef2ff;
+}
+
+
+/* ============================================================
+   LISTA DE PERMISOS
+============================================================ */
+
+.roles-permisos__permission-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+
+/* ============================================================
+   PERMISO
+============================================================ */
+
+.roles-permisos__permission {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 11px;
+
+  padding: 14px;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.roles-permisos__permission:hover {
+  border-color: #a5b4fc;
+
+  background: #fafaff;
+}
+
+.roles-permisos__permission--active {
+  border-color: #a5b4fc;
+
+  background: #eef2ff;
+}
+
+.roles-permisos__permission input {
+  display: none;
+}
+
+
+/* ============================================================
+   CHECKBOX
+============================================================ */
+
+.roles-permisos__checkbox {
+  width: 18px;
+  height: 18px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 1px;
+
+  border: 2px solid #cbd5e1;
+
+  border-radius: 5px;
+
+  color: #ffffff;
+
+  box-sizing: border-box;
+}
+
+.roles-permisos__permission--active
+.roles-permisos__checkbox {
+  border-color: #4f46e5;
+
+  background: #4f46e5;
+}
+
+
+/* ============================================================
+   ICONO DEL PERMISO
+============================================================ */
+
+.roles-permisos__permission-icon {
+  width: 32px;
+  height: 32px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: #f1f5f9;
+
+  color: #64748b;
+}
+
+.roles-permisos__permission--active
+.roles-permisos__permission-icon {
+  background: #ffffff;
+
+  color: #4f46e5;
+}
+
+
+/* ============================================================
+   INFORMACIÓN DEL PERMISO
+============================================================ */
+
+.roles-permisos__permission-info {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.roles-permisos__permission-info strong {
+  font-size: 13px;
+
+  color: #334155;
+}
+
+.roles-permisos__permission-info small {
+  font-size: 11px;
+
+  line-height: 1.45;
+
+  color: #94a3b8;
+}
+
+
+/* ============================================================
+   RESUMEN
+============================================================ */
+
+.roles-permisos__summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 15px;
+
+  margin-bottom: 18px;
+}
+
+.roles-permisos__summary > div {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+  padding: 15px 17px;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 10px;
+
+  background: #f8fafc;
+}
+
+.roles-permisos__summary span {
+  font-size: 10px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.04em;
+
+  color: #94a3b8;
+}
+
+.roles-permisos__summary strong {
+  font-size: 15px;
+
+  color: #334155;
+}
+
+
+/* ============================================================
+   MENSAJE
+============================================================ */
+
+.roles-permisos__message {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 18px;
+
+  padding: 11px 14px;
+
+  border: 1px solid #a7f3d0;
+
+  border-radius: 9px;
+
+  background: #ecfdf5;
+
+  color: #047857;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+
+/* ============================================================
+   ACCIONES PRINCIPALES
+============================================================ */
+
+.roles-permisos__actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+}
+
+.roles-permisos__save {
+  height: 42px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 0 20px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #4f46e5;
+
+  color: #ffffff;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.roles-permisos__save:hover:not(:disabled) {
+  background: #4338ca;
+
+  transform: translateY(-1px);
+}
+
+.roles-permisos__save:disabled {
+  opacity: 0.65;
+
+  cursor: not-allowed;
+}
+
+
+/* ============================================================
+   SPINNER
+============================================================ */
+
+.roles-permisos__spinner {
+  width: 15px;
+  height: 15px;
+
+  border: 2px solid rgba(255, 255, 255, 0.35);
+
+  border-top-color: #ffffff;
+
+  border-radius: 50%;
+
+  animation:
+    roles-permisos-spin 0.7s linear infinite;
+}
+
+@keyframes roles-permisos-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 900px) {
+
+  .roles-permisos {
+    padding: 18px;
+  }
+
+  .roles-permisos__permission-list {
+    grid-template-columns: 1fr;
+  }
+
+  .roles-permisos__summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 650px) {
+
+  .roles-permisos {
+    padding: 14px;
+  }
+
+  .roles-permisos__header h1 {
+    font-size: 21px;
+  }
+
+  .roles-permisos__header p {
+    font-size: 12px;
+  }
+
+  .roles-permisos__roles {
+    grid-template-columns: 1fr;
+  }
+
+  .roles-permisos__role-banner {
+    align-items: flex-start;
+  }
+
+  .roles-permisos__role-count {
+    display: none;
+  }
+
+  .roles-permisos__permissions {
+    padding: 16px;
+  }
+
+  .roles-permisos__section-header {
+    padding: 17px;
+  }
+
+  .roles-permisos__permission-actions {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 10px;
+  }
+
+  .roles-permisos__permission-actions > div {
+    width: 100%;
+  }
+
+  .roles-permisos__permission-actions button {
+    padding-left: 0;
+  }
+
+  .roles-permisos__actions {
+    width: 100%;
+  }
+
+  .roles-permisos__save {
+    width: 100%;
+  }
+}

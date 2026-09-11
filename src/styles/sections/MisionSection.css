@@ -1,0 +1,197 @@
+/* ==========================================================================
+   ENTIDAD: Elite Track Club - Arquitectura de Estilos Puros
+   DISEÑO: Responsivo por Bloques de Dispositivos (Mobile-First)
+   ESCRITO POR: Moisés Romero
+   SECCIÓN: Misión y Visión
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. ESTILOS BASE / CELULAR (Mobile por defecto: hasta 480px)
+   - Layouts en una sola columna.
+   - Padding lateral: var(--margin-mobile, 16px).
+   - Fuentes a escala móvil (headline-lg-mobile: 32px).
+   -------------------------------------------------------------------------- */
+.mision-section {
+  padding: 4rem 0;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-main, #f7fafd);
+}
+
+.mision-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--bg-topbar, #f1f4f7);
+  opacity: 0.5;
+  z-index: 0;
+}
+
+.mision-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1280px; /* var(--container-max) */
+  margin: 0 auto;
+  padding: 0 16px; /* var(--margin-mobile) */
+  box-sizing: border-box;
+}
+
+.mision-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.mision-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: relative;
+}
+
+.mision-header {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.icon-display {
+  font-size: 32px;
+}
+
+.mision-heading {
+  font-family: 'Anton', sans-serif;
+  font-size: 32px; /* headline-lg-mobile */
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.mision-text {
+  font-family: 'Lexend', sans-serif;
+  font-size: 16px; /* body-md por defecto en móvil */
+  color: var(--text-main, #44474d);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Colores Dinámicos e Identidad */
+.color-primary { color: var(--brand-primary, #000615); }
+.color-secondary { color: var(--brand-secondary, #b52619); }
+
+.mision-animated-line {
+  height: 4px;
+  width: 80px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s ease-in-out;
+}
+
+.bg-color-primary { background-color: var(--brand-primary, #000615); }
+.bg-color-secondary { background-color: var(--brand-secondary, #b52619); }
+
+/* Gatillos de Hover Activos */
+.group-vision:hover .mision-animated-line,
+.group-mision:hover .mision-animated-line {
+  transform: scaleX(1);
+}
+
+
+@media (min-width: 481px) and (max-width: 768px) {
+  /* ------------------------------------------------------------------------
+      2. TABLET (De 481px a 768px)
+      - Incremento sutil de fuentes y ensanchamiento de márgenes a gutter.
+      - Mantiene distribución vertical pero con más aire.
+      ------------------------------------------------------------------------ */
+  .mision-section {
+    padding: 5rem 0;
+  }
+
+  .mision-container {
+    padding: 0 24px; /* var(--gutter) */
+  }
+
+  .mision-grid {
+    gap: 4rem;
+  }
+
+  .mision-heading {
+    font-size: 38px;
+  }
+
+  .mision-text {
+    font-size: 17px;
+  }
+}
+
+
+@media (min-width: 769px) and (max-width: 1200px) {
+  /* ------------------------------------------------------------------------
+      3. LAPTOP / PANTALLAS MEDIANAS (De 769px a 1200px)
+      - Activación de la grilla en paralelo (2 columnas).
+      - Tipografía y líneas escaladas a nivel intermedio.
+      ------------------------------------------------------------------------ */
+  .mision-section {
+    padding: 5.5rem 0;
+  }
+
+  .mision-container {
+    padding: 0 32px; 
+  }
+
+  .mision-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3.5rem;
+  }
+
+  .mision-heading {
+    font-size: 42px;
+  }
+
+  .mision-text {
+    font-size: 17.5px;
+  }
+
+  .mision-animated-line {
+    width: 88px;
+  }
+}
+
+
+@media (min-width: 1201px) {
+  /* ------------------------------------------------------------------------
+      4. PC / ESCRITORIO GRANDE (Desde 1201px en adelante)
+      - Despliegue a máxima escala.
+      - Padding lateral de diseño: var(--margin-desktop, 48px).
+      - Fuentes definitivas: headline-lg (48px) y body-lg (18px).
+      ------------------------------------------------------------------------ */
+  .mision-section {
+    padding: 6rem 0;
+  }
+
+  .mision-container {
+    padding: 0 48px; /* var(--margin-desktop) */
+  }
+
+  .mision-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4rem;
+  }
+
+  .icon-display {
+    font-size: 36px;
+  }
+
+  .mision-heading {
+    font-size: 48px; /* headline-lg */
+  }
+
+  .mision-text {
+    font-size: 18px; /* body-lg */
+  }
+
+  .mision-animated-line {
+    width: 96px; /* w-24 */
+  }
+}

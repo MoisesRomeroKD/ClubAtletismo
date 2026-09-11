@@ -1,0 +1,331 @@
+/* ============================================================================
+   HOJA DE ESTILOS: ASIGNACIÓN DE TESTS Y CINEANTROPOMETRÍA
+   ============================================================================ */
+
+.ta-nav-header {
+  width: 100%;
+}
+
+.ta-dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1.5rem;
+  width: 100%;
+}
+
+/* ─── FORMULARIO DE ASIGNACIÓN ─── */
+.ta-section-panel {
+  padding: 2rem;
+  width: 100%;
+}
+
+.ta-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.ta-panel-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0 0;
+}
+
+.ta-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.ta-label {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.ta-input-full {
+  width: 100%;
+}
+
+.ta-textarea {
+  min-height: 100px;
+  resize: vertical;
+  width: 100%;
+}
+
+.ta-col-span-2 {
+  grid-column: span 2;
+}
+
+.ta-text-right {
+  text-align: right;
+}
+
+/* ─── MÓDULOS CINEANTROPOMÉTRICOS ─── */
+.ta-modules-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.ta-athlete-header {
+  width: 100%;
+}
+
+.ta-athlete-name {
+  margin: 0;
+}
+
+.ta-grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.ta-col-span-4 { grid-column: span 4; }
+.ta-col-span-5 { grid-column: span 5; }
+.ta-col-span-3 { grid-column: span 3; }
+
+.ta-section-title {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+}
+
+.ta-form-scroll {
+  max-height: 420px;
+}
+
+.ta-metric-row {
+  margin-bottom: 0.75rem;
+}
+
+/* ─── RADAR CHART ─── */
+.ta-radar-title {
+  margin: 0;
+}
+
+.ta-radar-legend {
+  gap: 1rem;
+}
+
+.ta-legend-item {
+  margin-right: 0.5rem;
+}
+
+.ta-legend-dot-blue {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  opacity: 0.5;
+  margin-right: 0.5rem;
+}
+
+.ta-legend-dot-border {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  margin-right: 0.5rem;
+}
+
+/* ─── PANEL DE INTERPRETACIÓN ─── */
+.ta-interpretation-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ta-insight-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ta-insight-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+}
+
+.ta-insight-text {
+  margin: 0;
+}
+
+.ta-score-badge {
+  padding: 0.25rem 0.5rem;
+}
+
+/* ─── TARJETAS KPI NORMALIZADAS ─── */
+.ta-kpi-section {
+  width: 100%;
+}
+
+.ta-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+  width: 100%;
+}
+
+.ta-kpi-card {
+  padding: 1rem;
+}
+
+.ta-kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.ta-kpi-icon-box {
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.ta-kpi-title {
+  margin: 0 0 4px 0;
+  font-size: 0.9rem;
+}
+
+.ta-kpi-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.ta-kpi-subtitle {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ta-kpi-unit {
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+
+.ta-progress-bg {
+  height: 6px;
+  border-radius: 4px;
+  margin-top: 0.75rem;
+  background: var(--bg-surface);
+  overflow: hidden;
+}
+
+.ta-progress-fill {
+  height: 100%;
+}
+
+/* ─── TABLA DE HISTORIAL ─── */
+.ta-table-section {
+  width: 100%;
+  overflow: hidden;
+}
+
+.ta-table-header {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-surface);
+}
+
+.ta-table-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.ta-btn-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.ta-table-wrapper {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ta-th-left { padding: 1rem; text-align: left; }
+.ta-th-center { padding: 1rem; text-align: center; }
+.ta-th-right { padding: 1rem; text-align: right; }
+
+.ta-tr-highlight {
+  background: rgba(239, 246, 255, 0.4);
+}
+.ta-tr-standard {
+  background: transparent;
+}
+
+.ta-td-primary {
+  padding: 1rem;
+  font-weight: 500;
+  color: var(--text-main);
+}
+.ta-td-secondary {
+  padding: 1rem;
+  color: #475569;
+}
+.ta-td-center-bold {
+  padding: 1rem;
+  text-align: center;
+  font-weight: 500;
+}
+.ta-td-actions {
+  padding: 1rem;
+  text-align: right;
+}
+
+.ta-flex-center {
+  display: flex;
+  align-items: center;
+}
+
+.ta-active-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  margin-right: 8px;
+}
+
+.ta-action-primary {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  font-weight: 600;
+}
+.ta-action-secondary {
+  background: none;
+  border: none;
+  color: #475569;
+  cursor: pointer;
+  font-weight: 600;
+}
+.ta-divider {
+  color: #cbd5e1;
+  margin: 0 8px;
+}
+
+/* Responsividad Móvil */
+@media (max-width: 1024px) {
+  .ta-kpi-grid { grid-template-columns: repeat(3, 1fr); }
+  .ta-col-span-4, .ta-col-span-5, .ta-col-span-3 { grid-column: span 12; }
+  .ta-form-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .ta-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}

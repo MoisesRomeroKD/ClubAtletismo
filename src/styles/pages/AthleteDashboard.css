@@ -1,0 +1,92 @@
+/* Contenedor Base */
+.dashboard-page {
+  background-color: #f4f7f6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-content {
+  padding: 30px 20px;
+  flex: 1;
+}
+
+/* Tipografía y Títulos */
+.welcome-header {
+  color: #1a2a3a;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.section-title {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+/* Tarjetas (Cards) */
+.dashboard-card {
+  background-color: var(--bg-card);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  margin: 0 auto;
+}
+
+.max-w-wide { max-width: 1000px; }
+.max-w-mid { max-width: 800px; }
+.max-w-form { max-width: 600px; }
+
+/* Estado Vacío / Carga */
+.empty-state {
+  padding: 40px;
+  background-color: var(--bg-card);
+  border-radius: 15px;
+  color: #95a5a6;
+  text-align: center;
+  border: 2px dashed #e0e0e0;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-weight: bold;
+  color: #2A6BFF;
+  font-size: 1.2rem;
+}
+
+/* Estilos de la Rutina */
+.routine-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.routine-item {
+  display: flex;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f1f1;
+  align-items: center;
+}
+
+.routine-item:last-child {
+  border-bottom: none;
+}
+
+.day-label {
+  color: #2A6BFF;
+  font-weight: 800;
+  width: 120px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.task-text {
+  color: #4a5568;
+  flex: 1;
+}

@@ -1,0 +1,1130 @@
+.gestionUsuarios {
+  --gu-bg-body: #f8f9fa;
+  --gu-bg-surface: #ffffff;
+  --gu-bg-hover: #f1f3f5;
+  --gu-bg-active: #e9ecef;
+
+  --gu-border-light: #e5e7eb;
+  --gu-border-focus: #9ca3af;
+
+  --gu-text-main: #111827;
+  --gu-text-muted: #6b7280;
+  --gu-text-disabled: #9ca3af;
+
+  --gu-primary: #000000;
+  --gu-primary-hover: #374151;
+
+  --gu-accent: #2563eb;
+  --gu-accent-hover: #1d4ed8;
+  --gu-accent-bg: #eff6ff;
+
+  --gu-danger: #dc2626;
+  --gu-danger-bg: #fef2f2;
+
+  --gu-success: #059669;
+  --gu-success-bg: #ecfdf5;
+
+  --gu-font:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+
+  --gu-radius-sm: 4px;
+  --gu-radius-md: 6px;
+  --gu-radius-lg: 8px;
+  --gu-radius-xl: 12px;
+
+  --gu-shadow-sm:
+    0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+  --gu-shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  --gu-shadow-modal:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  --gu-transition:
+    0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  font-family: var(--gu-font);
+  background-color: var(--gu-bg-body);
+  color: var(--gu-text-main);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+.gestionUsuarios *,
+.gestionUsuarios *::before,
+.gestionUsuarios *::after {
+  box-sizing: border-box;
+}
+
+.gestionUsuarios button,
+.gestionUsuarios input,
+.gestionUsuarios select {
+  font-family: inherit;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+.gu-moduleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--gu-border-light);
+  padding-bottom: 16px;
+}
+
+.gu-moduleTitle {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px;
+}
+
+.gu-topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.gu-topBarLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.gu-topBarRight {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.gu-filtersGroup {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.gu-inputGroup {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.gu-input {
+  padding: 8px 12px;
+  border: 1px solid var(--gu-border-light);
+  border-radius: var(--gu-radius-md);
+  font-size: 13px;
+  outline: none;
+  transition: border-color var(--gu-transition);
+  background-color: var(--gu-bg-surface);
+  min-width: 200px;
+  color: var(--gu-text-main);
+}
+
+.gu-input:focus {
+  border-color: var(--gu-border-focus);
+}
+
+.gu-select {
+  appearance: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.gu-searchInput {
+  width: 100%;
+  max-width: 420px;
+}
+
+.gu-filterSelect {
+  min-width: 140px;
+}
+
+.gu-orderSelect {
+  min-width: 150px;
+}
+
+/* =========================
+   TABS
+========================= */
+
+.gu-tabGroup {
+  display: flex;
+  gap: 24px;
+}
+
+.gu-tab {
+  position: relative;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gu-text-muted);
+  cursor: pointer;
+  padding: 8px 4px;
+  transition: color var(--gu-transition);
+}
+
+.gu-tab:hover,
+.gu-tab.active {
+  color: var(--gu-text-main);
+}
+
+.gu-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -17px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--gu-primary);
+  border-radius: 2px;
+}
+
+/* =========================
+   SEARCH
+========================= */
+
+.gu-searchHint {
+  font-size: 11px;
+  color: var(--gu-text-muted);
+  margin-top: 4px;
+  min-height: 14px;
+  transition: color var(--gu-transition);
+}
+
+.gu-searchHint.warning {
+  color: #d97706;
+}
+
+.gu-searchHint.active {
+  color: var(--gu-accent);
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.gu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: var(--gu-radius-md);
+  cursor: pointer;
+  transition: all var(--gu-transition);
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.gu-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.gu-btnPrimary {
+  background-color: var(--gu-primary);
+  color: #ffffff;
+}
+
+.gu-btnPrimary:hover:not(:disabled) {
+  background-color: var(--gu-primary-hover);
+}
+
+.gu-btnSecondary {
+  background-color: var(--gu-bg-surface);
+  color: var(--gu-text-main);
+  border-color: var(--gu-border-light);
+  box-shadow: var(--gu-shadow-sm);
+}
+
+.gu-btnSecondary:hover:not(:disabled) {
+  background-color: var(--gu-bg-hover);
+}
+
+.gu-btnDanger {
+  background-color: var(--gu-danger);
+  color: #ffffff;
+}
+
+.gu-btnDanger:hover:not(:disabled) {
+  filter: brightness(0.9);
+}
+
+.gu-btnGhost {
+  background: transparent;
+  color: var(--gu-text-muted);
+}
+
+.gu-btnGhost:hover:not(:disabled) {
+  background: var(--gu-bg-hover);
+  color: var(--gu-text-main);
+}
+
+.gu-accentButton {
+  color: var(--gu-accent);
+}
+
+/* =========================
+   WORKSPACE
+========================= */
+
+.gu-workspace {
+  display: grid;
+  grid-template-columns: 1fr 0;
+  gap: 0;
+  height: calc(100% - 160px);
+  min-height: 0;
+  overflow: hidden;
+  transition:
+    grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    gap 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gu-workspace.panel-open {
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 24px;
+}
+
+.gu-mainContent {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  background: var(--gu-bg-surface);
+  border: 1px solid var(--gu-border-light);
+  border-radius: var(--gu-radius-lg);
+  box-shadow: var(--gu-shadow-sm);
+  min-width: 0;
+}
+
+/* =========================
+   SELECTION TOOLBAR
+========================= */
+
+.gu-selectionToolbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 48px;
+  background-color: var(--gu-accent-bg);
+  color: var(--gu-accent);
+  border-bottom: 1px solid var(--gu-accent);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  transform: translateY(-100%);
+  transition: transform var(--gu-transition);
+  z-index: 10;
+}
+
+.gu-selectionToolbar.active {
+  transform: translateY(0);
+}
+
+.gu-selectionActions {
+  display: flex;
+  gap: 8px;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.gu-tableContainer {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.gu-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.gu-table th,
+.gu-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gu-border-light);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.gu-table th {
+  font-weight: 500;
+  color: var(--gu-text-muted);
+  position: sticky;
+  top: 0;
+  background: var(--gu-bg-surface);
+  z-index: 5;
+}
+
+.gu-table tbody tr:hover td {
+  background-color: var(--gu-bg-hover);
+}
+
+.gu-table tbody tr.selected td {
+  background-color: #f3f4f6;
+}
+
+.gu-checkboxColumn {
+  width: 40px;
+}
+
+.gu-actionsHeader {
+  text-align: right;
+}
+
+.gu-avatarCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+}
+
+.gu-avatar {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--gu-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gu-text-muted);
+}
+
+.gu-primaryData {
+  font-weight: 500;
+}
+
+.gu-secondaryData {
+  font-size: 11px;
+  color: var(--gu-text-muted);
+  margin-top: 2px;
+}
+
+.gu-mutedText {
+  color: var(--gu-text-muted);
+}
+
+.gu-emptyState {
+  padding: 48px 20px !important;
+  text-align: center;
+  color: var(--gu-text-muted);
+}
+
+/* =========================
+   BADGES
+========================= */
+
+.gu-badge {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.gu-badgeActive {
+  background: var(--gu-success-bg);
+  color: var(--gu-success);
+}
+
+.gu-badgeInactive {
+  background: var(--gu-danger-bg);
+  color: var(--gu-danger);
+}
+
+/* =========================
+   ACTIONS
+========================= */
+
+.gu-tableActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.gu-actionBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--gu-radius-sm);
+  color: var(--gu-text-muted);
+  transition:
+    background var(--gu-transition),
+    color var(--gu-transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gu-actionBtn:hover {
+  background: var(--gu-bg-active);
+  color: var(--gu-text-main);
+}
+
+.gu-actionBtn.delete:hover {
+  background: var(--gu-danger-bg);
+  color: var(--gu-danger);
+}
+
+/* =========================
+   CHECKBOX
+========================= */
+
+.gu-checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid var(--gu-border-focus);
+  appearance: none;
+  cursor: pointer;
+  position: relative;
+  outline: none;
+  background: #ffffff;
+  vertical-align: middle;
+}
+
+.gu-checkbox:checked {
+  background: var(--gu-accent);
+  border-color: var(--gu-accent);
+}
+
+.gu-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* =========================
+   PAGINATION
+========================= */
+
+.gu-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-top: 1px solid var(--gu-border-light);
+  background: var(--gu-bg-surface);
+  font-size: 13px;
+  color: var(--gu-text-muted);
+}
+
+.gu-paginationLinks {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.gu-pageBtn {
+  padding: 4px 10px;
+  border-radius: var(--gu-radius-sm);
+  border: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  color: var(--gu-text-main);
+}
+
+.gu-pageBtn:hover:not(:disabled) {
+  background: var(--gu-bg-hover);
+}
+
+.gu-pageBtn.active {
+  background: var(--gu-primary);
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.gu-pageBtn:disabled {
+  color: var(--gu-text-disabled);
+  cursor: not-allowed;
+}
+
+.gu-paginationDots {
+  padding: 0 4px;
+}
+
+/* =========================
+   SIDE PANEL
+========================= */
+
+.gu-sidePanel {
+  background: var(--gu-bg-surface);
+  border: 1px solid var(--gu-border-light);
+  border-radius: var(--gu-radius-lg);
+  box-shadow: var(--gu-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(120%);
+  transition: transform 0.3s ease;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.gu-workspace.panel-open .gu-sidePanel {
+  transform: translateX(0);
+}
+
+.gu-sidePanelHeader {
+  padding: 20px;
+  border-bottom: 1px solid var(--gu-border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gu-sidePanelTitle {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.gu-sidePanelBody {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gu-sidePanelFooter {
+  padding: 20px;
+  border-top: 1px solid var(--gu-border-light);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.gu-formRow {
+  display: flex;
+  gap: 12px;
+}
+
+.gu-formRow .gu-inputGroup {
+  flex: 1;
+}
+
+.gu-formLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gu-text-main);
+  margin-bottom: 6px;
+}
+
+/* =========================
+   MODALS
+========================= */
+
+.gu-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--gu-transition);
+  z-index: 100;
+  padding: 20px;
+}
+
+.gu-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.gu-modal {
+  background: var(--gu-bg-surface);
+  border-radius: var(--gu-radius-xl);
+  box-shadow: var(--gu-shadow-modal);
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateY(20px) scale(0.98);
+  transition: all var(--gu-transition);
+}
+
+.gu-overlay.active .gu-modal {
+  transform: translateY(0) scale(1);
+}
+
+.gu-modalSmall {
+  max-width: 400px;
+}
+
+.gu-modalTopbar {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gu-modalLabel {
+  color: var(--gu-text-muted);
+  font-weight: 500;
+  font-size: 13px;
+}
+
+/* =========================
+   PROFILE
+========================= */
+
+.gu-profileLayout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: 600px;
+}
+
+.gu-profileSidebar {
+  width: 200px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--gu-border-light);
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.gu-profileTab {
+  padding: 10px 24px;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gu-text-muted);
+  cursor: pointer;
+  transition: background var(--gu-transition);
+  border-left: 3px solid transparent;
+}
+
+.gu-profileTab:hover {
+  background: var(--gu-bg-hover);
+  color: var(--gu-text-main);
+}
+
+.gu-profileTab.active {
+  background: var(--gu-bg-active);
+  color: var(--gu-text-main);
+  border-left-color: var(--gu-primary);
+}
+
+.gu-profileContent {
+  flex: 1;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+.gu-profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.gu-profileHeader .gu-profileAvatar {
+  width: 80px;
+  height: 80px;
+  font-size: 24px;
+  border-radius: 16px;
+}
+
+.gu-profileHeader h2 {
+  font-size: 20px;
+  margin: 0 0 4px;
+}
+
+.gu-profileHeader p {
+  color: var(--gu-text-muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+.gu-successText {
+  color: var(--gu-success);
+}
+
+.gu-profileGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.gu-dataPoint {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gu-dataPoint label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gu-text-muted);
+}
+
+.gu-dataPoint span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.gu-mutedParagraph {
+  color: var(--gu-text-muted);
+  font-size: 13px;
+}
+
+/* =========================
+   RADAR
+========================= */
+
+.gu-sectionTitle {
+  margin: 0 0 16px;
+  font-size: 14px;
+}
+
+.gu-radarContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  background: var(--gu-bg-hover);
+  padding: 24px;
+  border-radius: var(--gu-radius-lg);
+}
+
+.gu-radarContainer canvas {
+  max-width: 250px;
+  max-height: 250px;
+}
+
+.gu-radarIndicators {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* =========================
+   VALIDATION
+========================= */
+
+.gu-modalDescription {
+  font-size: 13px;
+  color: var(--gu-text-muted);
+  margin: 0 0 8px;
+}
+
+.gu-validationList {
+  margin-top: 16px;
+  border: 1px solid var(--gu-border-light);
+  border-radius: var(--gu-radius-md);
+  overflow: hidden;
+}
+
+.gu-validationItem {
+  display: flex;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gu-border-light);
+  background: var(--gu-bg-surface);
+  font-size: 13px;
+}
+
+.gu-validationItem:last-child {
+  border-bottom: none;
+}
+
+.gu-rowTag {
+  background: var(--gu-danger-bg);
+  color: var(--gu-danger);
+  padding: 2px 6px;
+  border-radius: var(--gu-radius-sm);
+  font-weight: 600;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* =========================
+   PERMISSIONS
+========================= */
+
+.gu-permissionList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--gu-border-light);
+  border: 1px solid var(--gu-border-light);
+  border-radius: var(--gu-radius-lg);
+  overflow: hidden;
+}
+
+.gu-permissionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: var(--gu-bg-surface);
+}
+
+.gu-permissionInfo h4 {
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+
+.gu-permissionInfo p {
+  font-size: 12px;
+  color: var(--gu-text-muted);
+  margin: 0;
+}
+
+.gu-switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.gu-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.gu-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: var(--gu-border-focus);
+  transition: 0.2s;
+  border-radius: 20px;
+}
+
+.gu-slider::before {
+  position: absolute;
+  content: '';
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #ffffff;
+  transition: 0.2s;
+  border-radius: 50%;
+  box-shadow: var(--gu-shadow-sm);
+}
+
+.gu-switch input:checked + .gu-slider {
+  background-color: var(--gu-success);
+}
+
+.gu-switch input:checked + .gu-slider::before {
+  transform: translateX(16px);
+}
+
+/* =========================
+   DELETE MODAL
+========================= */
+
+.gu-deleteModal {
+  padding: 24px;
+}
+
+.gu-deleteModal h3 {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+
+.gu-deleteModal p {
+  font-size: 13px;
+  color: var(--gu-text-muted);
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.gu-deleteActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1100px) {
+  .gu-topBar {
+    flex-direction: column;
+  }
+
+  .gu-topBarRight {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .gu-workspace.panel-open {
+    grid-template-columns: minmax(0, 1fr) 350px;
+  }
+}
+
+@media (max-width: 800px) {
+  .gestionUsuarios {
+    overflow-y: auto;
+  }
+
+  .gu-moduleHeader {
+    margin-bottom: 16px;
+  }
+
+  .gu-topBarRight {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .gu-workspace,
+  .gu-workspace.panel-open {
+    height: auto;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    overflow: visible;
+  }
+
+  .gu-sidePanel {
+    min-height: 500px;
+  }
+
+  .gu-profileLayout {
+    height: auto;
+    max-height: 70vh;
+  }
+
+  .gu-profileSidebar {
+    width: 160px;
+  }
+
+  .gu-profileContent {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .gu-tabGroup {
+    gap: 12px;
+    overflow-x: auto;
+  }
+
+  .gu-filtersGroup {
+    flex-direction: column;
+  }
+
+  .gu-filterSelect,
+  .gu-searchInput {
+    max-width: none;
+    width: 100%;
+  }
+
+  .gu-topBarRight {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .gu-topBarRight .gu-btn,
+  .gu-orderSelect {
+    width: 100%;
+  }
+
+  .gu-selectionToolbar {
+    height: auto;
+    min-height: 48px;
+    padding: 8px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .gu-selectionActions {
+    flex-wrap: wrap;
+  }
+
+  .gu-profileLayout {
+    flex-direction: column;
+  }
+
+  .gu-profileSidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--gu-border-light);
+    padding: 8px 0;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .gu-profileTab {
+    white-space: nowrap;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+
+  .gu-profileTab.active {
+    border-left-color: transparent;
+    border-bottom-color: var(--gu-primary);
+  }
+
+  .gu-profileGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .gu-radarContainer {
+    flex-direction: column;
+  }
+
+  .gu-pagination {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+}

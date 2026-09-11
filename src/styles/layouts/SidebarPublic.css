@@ -1,0 +1,316 @@
+/* ==========================================================================
+   SIDEBAR PUBLIC
+   ========================================================================== */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  z-index: 1000;
+
+  background: var(--bg-sidebar);
+  color: var(--text-sidebar);
+
+  border-right: 1px solid var(--border-main);
+
+  box-shadow: 8px 0 30px rgba(0, 0, 0, 0.15);
+
+  box-sizing: border-box;
+
+  transition:
+    transform 0.3s ease,
+    visibility 0.3s ease;
+
+  /* Estado base = MÓVIL (mobile-first): oculto fuera de pantalla */
+  transform: translateX(-100%);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 70px;
+
+  padding: 0 1rem;
+
+  box-sizing: border-box;
+
+  border-bottom: 1px solid var(--border-main);
+}
+
+
+.sidebar-title {
+  font-size: 1rem;
+  font-weight: 800;
+
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+
+/* ==========================================================================
+   BOTÓN CERRAR
+   ========================================================================== */
+
+.sidebar-close-btn {
+  display: flex;
+
+  width: 40px;
+  height: 40px;
+
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: var(--text-sidebar);
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.sidebar-close-btn:hover {
+  background: var(--bg-sidebar-hover);
+
+  transform: rotate(90deg);
+}
+
+
+/* ==========================================================================
+   NAV
+   ========================================================================== */
+
+.sidebar-nav {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.35rem;
+
+  padding: 1rem;
+
+  overflow-y: auto;
+}
+
+
+/* ==========================================================================
+   NAV ITEMS
+   ========================================================================== */
+
+.sidebar .nav-item {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-height: 46px;
+
+  gap: 0.85rem;
+
+  padding: 0.7rem 0.85rem;
+
+  box-sizing: border-box;
+
+  border: none;
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: var(--text-muted);
+
+  text-decoration: none;
+
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.sidebar .nav-item:hover {
+  background: var(--bg-sidebar-hover);
+  color: var(--text-sidebar-hover);
+  transform: translateX(2px);
+}
+
+
+/* Activo = verde elite institucional (antes era magenta, fuera de paleta) */
+.sidebar .nav-item.active {
+  background: color-mix(in srgb, var(--brand-secondary) 15%, transparent);
+  color: var(--brand-secondary);
+}
+
+
+/* ==========================================================================
+   LABEL
+   ========================================================================== */
+
+.nav-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* ==========================================================================
+   DIVIDER
+   ========================================================================== */
+
+.sidebar-divider {
+  width: 100%;
+  height: 1px;
+
+  margin: 0.75rem 0;
+
+  background: var(--border-main);
+}
+
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+
+.sidebar-footer {
+  padding: 1rem;
+
+  border-top: 1px solid var(--border-main);
+}
+
+
+.theme-toggle {
+  width: 100%;
+}
+
+
+/* ==========================================================================
+   OVERLAY
+   ==========================================================================
+   Scrim neutro (negro con opacidad): se mantiene igual en ambos modos porque
+   su función es oscurecer el fondo, no representar marca.
+   Por defecto NO interfiere con el sidebar de escritorio (ver 1024px+).
+   ========================================================================== */
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.5);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  z-index: 999;
+
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+
+
+.sidebar-overlay-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+
+/* ==========================================================================
+   BODY
+   ========================================================================== */
+
+body.sidebar-public-open {
+  overflow: hidden;
+}
+
+
+/* ==========================================================================
+   MOBILE-FIRST RESPONSIVE — un @media por breakpoint (min-width)
+   Escala: 320 / 375 / 425 / 768 / 1024 / 1440 / 2560
+   Estado base (arriba) = oculto/off-canvas. Desde 1024px se vuelve panel
+   fijo siempre visible (comportamiento de escritorio).
+   ========================================================================== */
+
+/* 320px — móvil pequeño */
+@media (min-width: 320px) {
+  .sidebar {
+    width: 90vw;
+  }
+}
+
+/* 375px — móvil estándar */
+@media (min-width: 375px) {
+  .sidebar {
+    width: min(290px, 88vw);
+  }
+}
+
+/* 425px — móvil grande */
+@media (min-width: 425px) {
+  .sidebar {
+    width: min(300px, 86vw);
+  }
+}
+
+/* 768px — tablet (todavía off-canvas, solo cambia el ancho) */
+@media (min-width: 768px) {
+  .sidebar {
+    width: min(300px, 82vw);
+  }
+}
+
+
+
+/* ==========================================================================
+   ESTADO ABIERTO EN MÓVIL/TABLET (< 1024px)
+   Se aplica fuera de los @media anteriores porque debe funcionar en
+   cualquier ancho por debajo de 1024px (activado vía JS con la clase).
+   ========================================================================== */
+
+@media (max-width: 1023px) {
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+
+/* ==========================================================================
+   REDUCED MOTION
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar-overlay,
+  .sidebar-close-btn,
+  .sidebar .nav-item {
+    transition: none;
+  }
+}
