@@ -25,7 +25,7 @@ const BuilderPlanForm = lazyWithDelay(() => import('../components/trainer/builde
 const TrainerDashboardView = lazyWithDelay(() => import('../components/trainer/dashboard/TrainerDashboardView'));
 
 // 📐 Importación perezosa del Módulo de Cineantropometría
-const CineantropometriaTrainer = lazyWithDelay(() => import('../components/trainer/cineantropometria/cineantropometriaTrainer'));
+const CineantropometriaTrainer = lazyWithDelay(() => import('../components/trainer/cineantropometria/CineantropometriaTrainer'));
 
 // 💤 Importación perezosa de los componentes del módulo de Sueño y Descanso
 const SleepGeneralView = lazyWithDelay(() => import('../components/trainer/sleeptracker/SleepGeneralView'));
