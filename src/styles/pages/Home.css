@@ -17,7 +17,7 @@
   width: 100%;
   display: flex;
   flex-direction: column; /* Cambiado a columna para que los componentes se apilen uno abajo del otro */
-  background-color: var(--background, #f7fafd); /* Sincronizado con el fondo claro del diseño */
+  background-color: var(--bg-main);
   position: relative;
 }
 

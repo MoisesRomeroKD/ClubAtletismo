@@ -9,13 +9,13 @@
   left: 0;
   width: 100%;
   z-index: 50;
-  background-color: var(--bg-topbar, rgba(20, 20, 25, 0.8));
-  color: var(--text-topbar, #ffffff);
+  background-color: var(--bg-topbar);
+  color: var(--text-topbar);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border-bottom: 1px solid var(--border-main, transparent);
+  border-bottom: 1px solid var(--border-main);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: var(--transition-theme, all 0.3s cubic-bezier(0.4, 0, 0.2, 1));
+  transition: var(--transition-theme);
 }
 
 .topbar-social-links {
@@ -82,7 +82,7 @@
   font-weight: 800;
   font-style: italic;
   text-transform: uppercase;
-  color: var(--text-topbar, var(--text-primary, #ffffff));
+  color: var(--text-topbar);
   letter-spacing: 0.03em;
   line-height: 1.2;
 }
@@ -101,7 +101,7 @@
 }
 
 .nav-link {
-  color: var(--text-muted, #ccc);
+  color: var(--text-muted);
   text-decoration: none;
   font-weight: 500;
   text-transform: uppercase;
@@ -111,7 +111,7 @@
 }
 
 .nav-link:hover {
-  color: var(--brand-secondary, #ff0055);
+  color: var(--brand-secondary);
 }
 
 .register-nav-link {
@@ -127,26 +127,26 @@
 /* Botón de Modo Claro / Oscuro */
 .theme-toggle-btn {
   background: transparent;
-  border: 1px solid var(--border-main, #374151);
-  color: var(--text-topbar, #ffffff);
+  border: 1px solid var(--border-main);
+  color: var(--text-topbar);
   padding: 0.45rem;
-  border-radius: var(--border-radius-md, 8px);
+  border-radius: var(--border-radius-md);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition-theme, all 0.3s ease);
+  transition: var(--transition-theme);
 }
 
 .theme-toggle-btn:hover {
-  background-color: var(--bg-sidebar-hover, rgba(255, 255, 255, 0.05));
+  background-color: var(--bg-sidebar-hover);
 }
 
 /* Botón Inclinado (Skew) */
 .btn-join-now {
   display: none;
-  background-color: var(--brand-secondary, #ff0055);
-  color: #fff;
+  background-color: var(--brand-secondary);
+  color: var(--clr-blanco-pura);
   text-decoration: none;
   padding: 0.5rem 1.5rem;
   transform: skewX(-6deg);

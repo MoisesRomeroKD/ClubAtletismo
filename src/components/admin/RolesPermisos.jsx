@@ -75,14 +75,14 @@ const RolesPermisos = () => {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%', backgroundColor: '#ffffff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%', backgroundColor: 'var(--bg-card)', color: 'var(--text-main)', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
       
       {/* HEADER PRINCIPAL */}
-      <div style={{ borderBottom: '2px solid #2A6BFF', paddingBottom: '0.75rem' }}>
-        <h2 style={{ margin: 0, fontSize: '1.6rem', color: '#111827', fontWeight: '800' }}>
+      <div style={{ borderBottom: '2px solid var(--func-primary)', paddingBottom: '0.75rem' }}>
+        <h2 style={{ margin: 0, fontSize: '1.6rem', color: 'var(--text-main)', fontWeight: '800' }}>
           Gestión de Permisos y Perfiles
         </h2>
-        <p style={{ margin: '0.25rem 0 0 0', color: '#6B7280', fontSize: '0.9rem' }}>
+        <p style={{ margin: '0.25rem 0 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
           Asigna y modifica el perfil de acceso (Grupos Django) para el personal administrativo y cuerpo técnico
         </p>
       </div>
@@ -99,9 +99,9 @@ const RolesPermisos = () => {
               style={{
                 padding: '8px 16px',
                 borderRadius: '6px',
-                border: filtroRol === rol ? '2px solid #2A6BFF' : '1px solid #D1D5DB',
-                backgroundColor: filtroRol === rol ? '#E0E7FF' : '#ffffff',
-                color: filtroRol === rol ? '#1E40AF' : '#374151',
+                border: filtroRol === rol ? '2px solid var(--func-primary)' : '1px solid var(--border-main)',
+                backgroundColor: filtroRol === rol ? 'var(--func-primary-bg-soft)' : 'var(--bg-card)',
+                color: filtroRol === rol ? 'var(--func-primary)' : 'var(--text-main)',
                 fontWeight: '700',
                 fontSize: '0.85rem',
                 cursor: 'pointer'
@@ -121,7 +121,7 @@ const RolesPermisos = () => {
           style={{
             padding: '8px 14px',
             borderRadius: '6px',
-            border: '1px solid #D1D5DB',
+            border: '1px solid var(--border-main)',
             fontSize: '0.88rem',
             width: '280px'
           }}
@@ -130,12 +130,12 @@ const RolesPermisos = () => {
 
       {/* TABLA DE USUARIOS Y PERMISOS */}
       {isLoading ? (
-        <div style={{ padding: '2rem', textAlign: 'center', color: '#6B7280' }}>Cargando permisos de personal...</div>
+        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Cargando permisos de personal...</div>
       ) : (
-        <div style={{ overflowX: 'auto', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
+        <div style={{ overflowX: 'auto', borderRadius: '8px', border: '1px solid var(--border-main)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
             <thead>
-              <tr style={{ backgroundColor: '#F9FAFB', borderBottom: '1px solid #E5E7EB', color: '#374151' }}>
+              <tr style={{ backgroundColor: 'var(--bg-surface)', borderBottom: '1px solid var(--border-main)', color: 'var(--text-main)' }}>
                 <th style={{ padding: '12px 16px' }}>Cédula / ID</th>
                 <th style={{ padding: '12px 16px' }}>Personal</th>
                 <th style={{ padding: '12px 16px' }}>Correo Electrónico</th>
@@ -145,16 +145,16 @@ const RolesPermisos = () => {
             </thead>
             <tbody>
               {usuariosFiltrados.map((item) => (
-                <tr key={item.id} style={{ borderBottom: '1px solid #F3F4F6' }}>
-                  <td style={{ padding: '12px 16px', fontWeight: '600', color: '#374151' }}>{item.cedula}</td>
-                  <td style={{ padding: '12px 16px', fontWeight: '700', color: '#111827' }}>{item.nombre}</td>
-                  <td style={{ padding: '12px 16px', color: '#6B7280' }}>{item.email}</td>
+                <tr key={item.id} style={{ borderBottom: '1px solid var(--border-main)' }}>
+                  <td style={{ padding: '12px 16px', fontWeight: '600', color: 'var(--text-main)' }}>{item.cedula}</td>
+                  <td style={{ padding: '12px 16px', fontWeight: '700', color: 'var(--text-main)' }}>{item.nombre}</td>
+                  <td style={{ padding: '12px 16px', color: 'var(--text-muted)' }}>{item.email}</td>
                   
                   {/* Etiquetas con módulos permitidos */}
                   <td style={{ padding: '12px 16px' }}>
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                       {(item.modulos || []).map((mod, idx) => (
-                        <span key={idx} style={{ backgroundColor: '#F3F4F6', color: '#374151', padding: '3px 8px', borderRadius: '4px', fontSize: '0.78rem', fontWeight: '600' }}>
+                        <span key={idx} style={{ backgroundColor: 'var(--bg-surface)', color: 'var(--text-main)', padding: '3px 8px', borderRadius: '4px', fontSize: '0.78rem', fontWeight: '600' }}>
                           ✓ {mod}
                         </span>
                       ))}
@@ -170,9 +170,9 @@ const RolesPermisos = () => {
                       style={{
                         padding: '8px 12px',
                         borderRadius: '6px',
-                        border: '2px solid #2A6BFF',
-                        backgroundColor: item.grupo === 'Administrador' ? '#EEF2FF' : item.grupo === 'Administración' ? '#ECFDF5' : '#FEF3C7',
-                        color: item.grupo === 'Administrador' ? '#3730A3' : item.grupo === 'Administración' ? '#065F46' : '#92400E',
+                        border: '2px solid var(--func-primary)',
+                        backgroundColor: item.grupo === 'Administrador' ? 'var(--func-primary-bg-soft)' : item.grupo === 'Administración' ? 'var(--clr-verde-100)' : 'var(--bg-surface)',
+                        color: item.grupo === 'Administrador' ? 'var(--func-primary)' : item.grupo === 'Administración' ? 'var(--clr-verde-900)' : 'var(--text-main)',
                         fontWeight: '800',
                         fontSize: '0.85rem',
                         cursor: 'pointer',

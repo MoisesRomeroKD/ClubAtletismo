@@ -26,11 +26,11 @@ const CustomTooltip = ({ active, payload, label }) => {
         borderRadius: '8px',
         boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)'
       }}>
-        <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 600 }}>
+        <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>
           {label || 'Registro'}
         </p>
         <p style={{ margin: '4px 0 0 0', fontWeight: 700, color: '#38bdf8', fontSize: '1rem' }}>
-          Calidad: {payload[0].value} <span style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>/ 10</span>
+          Calidad: {payload[0].value} <span style={{ fontSize: '0.75rem', color: 'var(--clr-gris-light)' }}>/ 10</span>
         </p>
       </div>
     );
@@ -84,7 +84,7 @@ const SleepIndividualView = ({
 
   const compliancePct = stats.compliancePct ?? 0;
   const pieData = [
-    { name: 'Adherencia', value: compliancePct, color: '#2563eb' },
+    { name: 'Adherencia', value: compliancePct, color: 'var(--clr-azul-base)' },
     { name: 'Faltante', value: Math.max(0, 100 - compliancePct), color: 'rgba(226, 232, 240, 0.3)' }
   ];
 
@@ -224,8 +224,8 @@ const SleepIndividualView = ({
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(203, 213, 225, 0.4)" />
-                <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                <YAxis domain={[0, 10]} ticks={[0, 2, 4, 6, 8, 10]} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
+                <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+                <YAxis domain={[0, 10]} ticks={[0, 2, 4, 6, 8, 10]} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area
                   type="monotone"
@@ -234,7 +234,7 @@ const SleepIndividualView = ({
                   strokeWidth={3}
                   fillOpacity={1}
                   fill="url(#indivQualityGradient)"
-                  activeDot={{ r: 6, fill: '#10b981', stroke: '#fff', strokeWidth: 2 }}
+                  activeDot={{ r: 6, fill: '#10b981', stroke: 'var(--clr-blanco-pura)', strokeWidth: 2 }}
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -276,10 +276,10 @@ const SleepIndividualView = ({
                 pointerEvents: 'none'
               }}
             >
-              <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--sl-text-primary, #0f172a)' }}>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--sl-text-primary, var(--bg-main))' }}>
                 {compliancePct}%
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 500 }}>Adherencia</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>Adherencia</div>
             </div>
           </div>
         </div>

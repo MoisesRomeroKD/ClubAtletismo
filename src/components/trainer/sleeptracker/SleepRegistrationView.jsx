@@ -36,7 +36,7 @@ export default function SleepRegistrationView({
 
         {selectedAthleteForReg && (
           <>
-            <div style={{ marginBottom: 24, padding: 12, background: '#eff6ff', borderRadius: 'var(--sl-radius-md)' }}>
+            <div style={{ marginBottom: 24, padding: 12, background: 'var(--func-primary-bg-soft)', borderRadius: 'var(--sl-radius-md)' }}>
               <div style={{ fontSize: '.875rem', color: 'var(--sl-text-secondary)' }}>Atleta seleccionado:</div>
               <div style={{ fontWeight: 600, fontSize: '1.125rem' }}>{selectedAthleteForReg.name}</div>
               <div style={{ fontSize: '.875rem', color: 'var(--sl-text-muted)', marginTop: 4 }}>
@@ -73,7 +73,7 @@ export default function SleepRegistrationView({
               <button 
                 className="sl-btn" 
                 type="button" 
-                style={{ background: 'white', border: '1px solid var(--sl-border)' }} 
+                style={{ background: 'var(--clr-blanco-pura)', border: '1px solid var(--sl-border)' }} 
                 onClick={() => { setSelectedAthleteForReg(null); setSelectedQuality(null); }}
               >
                 Limpiar Formulario

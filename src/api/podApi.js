@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const podApi = axios.create({
-    baseURL: 'https://clubatletismo.onrender.com/api', 
+    baseURL: 'http://clubatletismo.onrender.com/api', 
     headers: {
         'Content-Type': 'application/json',
     }

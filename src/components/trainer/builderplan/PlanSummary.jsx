@@ -239,20 +239,20 @@ export const PlanSummary = React.memo(({
                   style={{
                     padding: '8px 12px',
                     borderRadius: '6px',
-                    background: 'var(--bg-subtle, #f8fafc)',
-                    border: '1px solid var(--border-color, #e2e8f0)',
+                    background: 'var(--bg-subtle, var(--text-main))',
+                    border: '1px solid var(--border-color, var(--clr-gris-light))',
                     display: 'flex',
                     justify: 'space-between',
                     alignItems: 'center'
                   }}
                 >
                   <div>
-                    <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#0f172a' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--bg-main)' }}>
                       {isAthlete ? item.name : item}
                     </div>
                     
                     {isAthlete && (
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted, #64748b)', marginTop: '2px' }}>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted, var(--text-muted))', marginTop: '2px' }}>
                         Subáreas: {item.subareas.join(' | ')}
                       </div>
                     )}
@@ -274,7 +274,7 @@ export const PlanSummary = React.memo(({
           </div>
         ) : (
           readOnly && (
-            <div style={{ fontSize: '0.85rem', color: '#94a3b8', fontStyle: 'italic', marginTop: '6px' }}>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontStyle: 'italic', marginTop: '6px' }}>
               Sin asignaciones asignadas aún.
             </div>
           )

@@ -1,20 +1,58 @@
+/*
+ * TODO (futuro): migrar navegación interna a URLs reales.
+ *
+ * Estado actual: `currentView` + `selectedAthlete` viven en useState, así
+ * que al recargar la página se pierde el contexto (vuelve a la vista global).
+ *
+ * Plan:
+ *   - Los filtros (periodo, area, subarea, categoria) → query params.
+ *   - El atleta seleccionado → también query param (más simple que rutas
+ *     anidadas: `?area=Velocidad&sub=200m&cat=U20&atleta=25123456`).
+ *   - La URL como fuente de verdad (leer de useSearchParams, no de useState
+ *     + useEffect espejo), para que refresh / atrás / links compartidos
+ *     funcionen sin lógica extra.
+ *
+ * Ejemplos:
+ *   /admin/asistencias
+ *   /admin/asistencias?area=Velocidad&sub=200m
+ *   /admin/asistencias?area=Velocidad&sub=200m&atleta=25123456
+ *
+ * Sin URLs implementadas, no hay breadcrumb ni botón "←" en la UI:
+ * el estado "dónde estoy" es visible solo en los selects.
+ * Cuando se implementen las URLs, el navegador (barra de dirección + botón
+ * atrás) cubre la navegación, y tampoco hará falta breadcrumb.
+ */
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, 
   LineChart, Line, PieChart, Pie, Cell 
 } from 'recharts';
 import { 
-  Search, Calendar, Filter, ChevronRight, ArrowLeft, Activity, User, 
+  Search, Calendar, Filter, ChevronRight, User, 
   CheckCircle, XCircle, AlertCircle, Clock, MapPin, Target, Layers, 
   AlertTriangle, Info
 } from 'lucide-react';
 import '../../../styles/components/admin/asistencia/AsistenciaAdminView.css';
 
-// Constantes de colores para estados
+// Colores de estado: referencian las variables del theme (definidas en
+// AsistenciaAdminView.css), no valores fijos. Así los charts respetan
+// automáticamente el modo claro/oscuro sin lógica adicional en JS.
 const COLORS = {
-  ASISTENCIA: '#22c55e', // Verde
-  INASISTENCIA: '#ef4444', // Rojo
-  JUSTIFICADA: '#3b82f6', // Azul
+  ASISTENCIA: 'var(--status-green)',
+  INASISTENCIA: 'var(--status-red)',
+  JUSTIFICADA: 'var(--status-blue)',
+};
+
+const TOOLTIP_CONTENT_STYLE = {
+  borderRadius: 'var(--border-radius-md)',
+  border: 'none',
+  boxShadow: 'var(--shadow-md)',
+  backgroundColor: 'var(--bg-card)',
+  color: 'var(--text-primary)',
+};
+
+const TOOLTIP_LABEL_STYLE = {
+  color: 'var(--text-secondary)',
 };
 
 const AREAS_ESTRUCTURA = {
@@ -32,7 +70,6 @@ const SUBAREA_TO_AREA = Object.entries(AREAS_ESTRUCTURA).reduce((acc, [area, sub
   return acc;
 }, {});
 
-// Generador de datos ficticios
 const ATHLETES = [
   { id: '25123456', name: 'Carlos Pérez', category: 'U20', subareas: ['100 m', '200 m', 'Salto largo'] },
   { id: '26234567', name: 'María González', category: 'U18', subareas: ['400 m', '800 m'] },
@@ -284,11 +321,6 @@ export default function AsistenciaAdminView() {
     setCurrentView('athlete');
   };
 
-  const handleBackToGlobal = () => {
-    setCurrentView('global');
-    setSelectedAthlete(null);
-  };
-
   const Card = ({ children, className = '' }) => (
     <div className={`card ${className}`}>
       {children}
@@ -304,55 +336,52 @@ export default function AsistenciaAdminView() {
 
   return (
     <div className="admin-container">
-      
-      {/* HEADER PRINCIPAL */}
-      <header className="admin-header">
-        <div className="header-content">
-          
-          <div className="header-left">
-            <div className="brand-logo">
-              <Activity className="brand-icon" />
-              POD
-            </div>
-            <div className="header-divider"></div>
-            
-            {/* BREADCRUMBS */}
-            <nav className="breadcrumbs-nav">
-              <ol className="breadcrumbs-list">
-                <li>
-                  <button onClick={handleBackToGlobal} className="breadcrumb-link">
-                    Asistencias
-                  </button>
-                </li>
-                {areaFilter !== 'Todas' && (
-                  <>
-                    <ChevronRight size={14} />
-                    <li className="breadcrumb-item">{areaFilter}</li>
-                  </>
-                )}
-                {subareaFilter !== 'Todas' && (
-                  <>
-                    <ChevronRight size={14} />
-                    <li className="breadcrumb-item">{subareaFilter}</li>
-                  </>
-                )}
-                {categoriaFilter !== 'Todas' && (
-                  <>
-                    <ChevronRight size={14} />
-                    <li className="breadcrumb-item">{categoriaFilter}</li>
-                  </>
-                )}
-                {currentView === 'athlete' && selectedAthlete && (
-                  <>
-                    <ChevronRight size={14} />
-                    <li className="breadcrumb-item-active">{selectedAthlete.name}</li>
-                  </>
-                )}
-              </ol>
-            </nav>
+
+      {/* FILTROS + BUSCADOR */}
+      <div className="filters-bar">
+        <div className="filters-container">
+
+          <div className="filter-label">
+            <Filter size={16} /> Filtros:
           </div>
 
-          {/* BUSCADOR */}
+          <select
+            value={periodo}
+            onChange={(e) => setPeriodo(e.target.value)}
+            className="filter-select"
+          >
+            {PERIODOS.map(p => <option key={p.id} value={p.id}>{p.label}</option>)}
+          </select>
+
+          <select
+            value={areaFilter}
+            onChange={(e) => setAreaFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option value="Todas">Todas las Áreas</option>
+            {Object.keys(AREAS_ESTRUCTURA).map(a => <option key={a} value={a}>{a}</option>)}
+          </select>
+
+          <select
+            value={subareaFilter}
+            onChange={(e) => setSubareaFilter(e.target.value)}
+            disabled={areaFilter === 'Todas'}
+            className="filter-select"
+          >
+            <option value="Todas">Todas las Subáreas</option>
+            {availableSubareas.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+
+          <select
+            value={categoriaFilter}
+            onChange={(e) => setCategoriaFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option value="Todas">Todas las Categorías</option>
+            {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+
+          {/* Buscador (empujado a la derecha) */}
           <div className="search-wrapper">
             <form onSubmit={handleSearchSelect} className="search-form">
               <Search className="search-icon" size={18} />
@@ -363,7 +392,6 @@ export default function AsistenciaAdminView() {
                 onChange={(e) => setSearchValue(e.target.value)}
                 className="search-input"
               />
-              {/* ESTADOS DE BÚSQUEDA */}
               {searchState !== 'idle' && (
                 <div className="search-dropdown">
                   {searchState === 'searching_local' && (
@@ -395,52 +423,7 @@ export default function AsistenciaAdminView() {
               )}
             </form>
           </div>
-          
-        </div>
-      </header>
 
-      {/* FILTROS GLOBALES BAR */}
-      <div className="filters-bar">
-        <div className="filters-container">
-          <div className="filter-label">
-            <Filter size={16} /> Filtros:
-          </div>
-          
-          <select 
-            value={periodo} 
-            onChange={(e) => setPeriodo(e.target.value)}
-            className="filter-select"
-          >
-            {PERIODOS.map(p => <option key={p.id} value={p.id}>{p.label}</option>)}
-          </select>
-
-          <select 
-            value={areaFilter} 
-            onChange={(e) => setAreaFilter(e.target.value)}
-            className="filter-select"
-          >
-            <option value="Todas">Todas las Áreas</option>
-            {Object.keys(AREAS_ESTRUCTURA).map(a => <option key={a} value={a}>{a}</option>)}
-          </select>
-
-          <select 
-            value={subareaFilter} 
-            onChange={(e) => setSubareaFilter(e.target.value)}
-            disabled={areaFilter === 'Todas'}
-            className="filter-select"
-          >
-            <option value="Todas">Todas las Subáreas</option>
-            {availableSubareas.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-
-          <select 
-            value={categoriaFilter} 
-            onChange={(e) => setCategoriaFilter(e.target.value)}
-            className="filter-select"
-          >
-            <option value="Todas">Todas las Categorías</option>
-            {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
         </div>
       </div>
 
@@ -522,12 +505,13 @@ export default function AsistenciaAdminView() {
                 <div className="chart-container">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={chartDataAreas} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border-main)" />
                       <XAxis type="number" domain={[0, 100]} hide />
-                      <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} width={100} />
+                      <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 12}} width={100} />
                       <RechartsTooltip 
-                        cursor={{fill: '#f8fafc'}}
-                        contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                        cursor={{fill: 'var(--module-row-hover)'}}
+                        contentStyle={TOOLTIP_CONTENT_STYLE}
+                        labelStyle={TOOLTIP_LABEL_STYLE}
                         formatter={(value, name, props) => [`${value}%`, 'Asistencia', `(Total sesiones: ${props.payload.total})`]}
                       />
                       <Bar dataKey="asistencia" radius={[0, 4, 4, 0]}>
@@ -549,12 +533,13 @@ export default function AsistenciaAdminView() {
                   {chartDataSubareas.length > 0 ? (
                      <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartDataSubareas} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border-main)" />
                         <XAxis type="number" domain={[0, 100]} hide />
-                        <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} width={90} />
+                        <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 12}} width={90} />
                         <RechartsTooltip 
-                          cursor={{fill: '#f8fafc'}}
-                          contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                          cursor={{fill: 'var(--module-row-hover)'}}
+                          contentStyle={TOOLTIP_CONTENT_STYLE}
+                          labelStyle={TOOLTIP_LABEL_STYLE}
                           formatter={(value) => [`${value}%`, 'Asistencia']}
                         />
                         <Bar dataKey="asistencia" fill={COLORS.ASISTENCIA} radius={[0, 4, 4, 0]} opacity={0.7} />
@@ -575,14 +560,15 @@ export default function AsistenciaAdminView() {
               <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={chartDataEvolution} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12, dy: 10}} />
-                    <YAxis domain={[0, 100]} axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} tickFormatter={(val) => `${val}%`} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-main)" />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 12, dy: 10}} />
+                    <YAxis domain={[0, 100]} axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 12}} tickFormatter={(val) => `${val}%`} />
                     <RechartsTooltip 
-                        contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                        contentStyle={TOOLTIP_CONTENT_STYLE}
+                        labelStyle={TOOLTIP_LABEL_STYLE}
                         formatter={(value) => [`${value}%`, 'Asistencia']}
                     />
-                    <Line type="monotone" dataKey="Asistencia %" stroke={COLORS.ASISTENCIA} strokeWidth={3} dot={{r: 4, fill: COLORS.ASISTENCIA, strokeWidth: 2, stroke: '#fff'}} activeDot={{r: 6}} />
+                    <Line type="monotone" dataKey="Asistencia %" stroke={COLORS.ASISTENCIA} strokeWidth={3} dot={{r: 4, fill: COLORS.ASISTENCIA, strokeWidth: 2, stroke: 'var(--bg-card)'}} activeDot={{r: 6}} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -617,12 +603,12 @@ export default function AsistenciaAdminView() {
                         key={row.id} 
                         className={`table-row ${idx % 2 === 0 ? 'bg-even' : 'bg-odd'}`}
                       >
-                        <td className="table-td font-medium text-slate-600">{row.id}</td>
-                        <td className="table-td font-semibold text-slate-800">{row.name}</td>
+                        <td className="table-td font-medium text-muted">{row.id}</td>
+                        <td className="table-td font-semibold text-primary-color">{row.name}</td>
                         <td className="table-td">
                           <span className="category-tag">{row.category}</span>
                         </td>
-                        <td className="table-td text-center text-slate-600">{row.total}</td>
+                        <td className="table-td text-center text-muted">{row.total}</td>
                         <td className="table-td text-center">
                           <span className={`perc-badge ${row.perc >= 85 ? 'high' : row.perc >= 70 ? 'mid' : 'low'}`}>
                             {row.perc}%
@@ -648,7 +634,7 @@ export default function AsistenciaAdminView() {
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan="7" className="table-td text-center py-8 text-slate-500">No hay atletas que coincidan con los filtros actuales.</td>
+                        <td colSpan="7" className="table-td text-center py-8 text-muted">No hay atletas que coincidan con los filtros actuales.</td>
                       </tr>
                     )}
                   </tbody>
@@ -663,28 +649,19 @@ export default function AsistenciaAdminView() {
             
             {/* Header del Atleta */}
             <div className="athlete-header">
-              <div className="athlete-info-wrapper">
-                <button 
-                  onClick={handleBackToGlobal}
-                  className="btn-back"
-                  aria-label="Volver"
-                >
-                  <ArrowLeft size={18} />
-                </button>
-                <div>
-                  <h2 className="athlete-name">{selectedAthlete.name}</h2>
-                  <div className="athlete-meta">
-                    <span className="flex-center gap-1 font-medium"><MapPin size={14} className="text-slate-400"/> C.I. {selectedAthlete.id}</span>
-                    <span className="dot-divider"></span>
-                    <span className="badge-indigo">{selectedAthlete.category}</span>
-                  </div>
-                  <div className="chips-wrapper">
-                    {selectedAthlete.subareas.map(sub => (
-                       <span key={sub} className="subarea-chip">
-                         {SUBAREA_TO_AREA[sub]} → {sub}
-                       </span>
-                    ))}
-                  </div>
+              <div>
+                <h2 className="athlete-name">{selectedAthlete.name}</h2>
+                <div className="athlete-meta">
+                  <span className="flex-center gap-1 font-medium"><MapPin size={14} className="text-muted"/> C.I. {selectedAthlete.id}</span>
+                  <span className="dot-divider"></span>
+                  <span className="badge-indigo">{selectedAthlete.category}</span>
+                </div>
+                <div className="chips-wrapper">
+                  {selectedAthlete.subareas.map(sub => (
+                     <span key={sub} className="subarea-chip">
+                       {SUBAREA_TO_AREA[sub]} → {sub}
+                     </span>
+                  ))}
                 </div>
               </div>
             </div>
@@ -755,7 +732,7 @@ export default function AsistenciaAdminView() {
                                   </Pie>
                                   <RechartsTooltip 
                                     formatter={(value, name) => [value, name]}
-                                    contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                                    contentStyle={TOOLTIP_CONTENT_STYLE}
                                   />
                                 </PieChart>
                               </ResponsiveContainer>
@@ -799,8 +776,8 @@ export default function AsistenciaAdminView() {
                               return (
                                 <div key={area} className="area-progress-block">
                                   <div className="flex-between text-sm mb-1">
-                                    <span className="font-medium text-slate-700">{area}</span>
-                                    <span className="font-bold text-slate-800">{aPerc}%</span>
+                                    <span className="font-medium text-primary-color">{area}</span>
+                                    <span className="font-bold text-primary-color">{aPerc}%</span>
                                   </div>
                                   <div className="progress-bg">
                                     <div className="progress-fill" style={{ width: `${aPerc}%` }}></div>
@@ -814,9 +791,9 @@ export default function AsistenciaAdminView() {
                                       const sAsist = subSes.filter(s => s.status === 'ASISTENCIA').length;
                                       const sPerc = Math.round((sAsist / sTotal) * 100);
                                       return (
-                                        <div key={sub} className="flex-between text-xs text-slate-500">
+                                        <div key={sub} className="flex-between text-xs text-muted">
                                           <span>{sub}</span>
-                                          <span className="font-medium">{sPerc}% <span className="text-slate-300 ml-1">({sAsist}/{sTotal})</span></span>
+                                          <span className="font-medium">{sPerc}% <span className="text-faint ml-1">({sAsist}/{sTotal})</span></span>
                                         </div>
                                       );
                                     })}
@@ -864,7 +841,7 @@ export default function AsistenciaAdminView() {
                         const daySessions = sesionesAtleta.filter(s => s.date === dateStr);
                         
                         return (
-                          <div key={day} className="calendar-day group">
+                          <div key={day} className="calendar-day">
                             <span className={`day-number ${daySessions.length > 0 ? 'active' : 'inactive'}`}>
                               {day}
                             </span>
@@ -941,7 +918,7 @@ export default function AsistenciaAdminView() {
                         ))}
                       </div>
                     ) : (
-                      <div className="p-8 text-center text-slate-500">
+                      <div className="p-8 text-center text-muted">
                         No hay historial reciente para mostrar con los filtros actuales.
                       </div>
                     )}

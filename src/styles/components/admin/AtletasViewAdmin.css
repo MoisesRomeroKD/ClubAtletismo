@@ -1,0 +1,381 @@
+/* ============================================================================
+   ATLETAS VIEW ADMIN STYLES - Theme CSS Variables
+   ============================================================================ */
+
+.atletas-admin-container {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  padding: 1.5rem;
+  border-radius: 12px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Estado Pill */
+.atletas-estado-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.atletas-estado-pill.activo {
+  background-color: var(--clr-verde-500);
+  color: var(--clr-blanco-pura);
+}
+
+.atletas-estado-pill.inactivo {
+  background-color: #dc2626;
+  color: var(--clr-blanco-pura);
+}
+
+/* Data Point */
+.atletas-data-point {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.atletas-data-point-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.atletas-data-point-value {
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+
+/* Perfil Drawer Overlay */
+.atletas-perfil-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 40;
+}
+
+.atletas-perfil-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Perfil Drawer Panel */
+.atletas-perfil-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(400px, 100%);
+  background-color: var(--bg-surface);
+  border-left: 1px solid var(--border-main);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.4);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.atletas-perfil-panel.open {
+  transform: translateX(0);
+}
+
+/* Perfil Header */
+.atletas-perfil-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.atletas-perfil-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--brand-secondary);
+}
+
+.atletas-perfil-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 4px;
+}
+
+.atletas-perfil-close-btn:hover {
+  color: var(--text-main);
+}
+
+/* Perfil Body */
+.atletas-perfil-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Perfil Atleta Header */
+.atletas-perfil-atleta-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.atletas-perfil-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.atletas-perfil-name {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.atletas-perfil-cedula {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Perfil Section */
+.atletas-perfil-section-title {
+  margin: 0 0 0.75rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.atletas-perfil-section-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.atletas-perfil-section-block.single {
+  grid-template-columns: 1fr;
+}
+
+/* Perfil Footer */
+.atletas-perfil-footer {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border-main);
+}
+
+.atletas-perfil-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.atletas-perfil-btn-ghost {
+  background-color: transparent;
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+}
+
+.atletas-perfil-btn-ghost:hover {
+  background-color: var(--bg-surface);
+}
+
+.atletas-perfil-btn-primary {
+  background-color: var(--brand-secondary);
+  border: none;
+  color: var(--clr-blanco-pura);
+}
+
+.atletas-perfil-btn-primary:hover {
+  background-color: var(--clr-verde-700);
+}
+
+/* Filtros y Acciones */
+.atletas-filtros-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.atletas-search-input {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  padding: 9px 14px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  width: 260px;
+  max-width: 100%;
+}
+
+.atletas-search-input:focus {
+  outline: none;
+  border-color: var(--brand-secondary);
+  box-shadow: 0 0 0 1px var(--brand-secondary);
+}
+
+.atletas-counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.atletas-btn-nuevo {
+  margin-left: auto;
+  background-color: var(--brand-secondary);
+  color: var(--clr-blanco-pura);
+  border: none;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.atletas-btn-nuevo:hover {
+  background-color: var(--clr-verde-700);
+}
+
+/* Tabla */
+.atletas-tabla-wrap {
+  display: none;
+}
+
+.atletas-tabla-wrap.visible {
+  display: block;
+}
+
+.atletas-tabla-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border-main);
+}
+
+.atletas-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.atletas-tabla thead tr {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-main);
+  color: var(--text-muted);
+}
+
+.atletas-tabla th {
+  padding: 12px 16px;
+}
+
+.atletas-tabla tbody tr {
+  border-bottom: 1px solid var(--border-main);
+}
+
+.atletas-tabla td {
+  padding: 12px 16px;
+}
+
+.atletas-tabla-nombre {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.atletas-tabla-cedula {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.atletas-tabla-subarea-badge {
+  background-color: var(--bg-surface);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.atletas-tabla-contacto {
+  color: var(--text-muted);
+}
+
+.atletas-tabla-contacto-sm {
+  font-size: 0.75rem;
+}
+
+.atletas-btn-ver {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.atletas-btn-ver:hover {
+  background-color: var(--brand-secondary);
+  color: var(--clr-blanco-pura);
+}
+
+/* Cards (responsive) */
+.atletas-cards-wrap {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 870px) {
+  .atletas-tabla-wrap {
+    display: block;
+  }
+  .atletas-cards-wrap {
+    display: none;
+  }
+}
+
+/* Loading */
+.atletas-loading {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}

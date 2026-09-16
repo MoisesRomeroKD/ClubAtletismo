@@ -28,13 +28,13 @@ const CustomTooltip = ({
   return (
     <div
       style={{
-        background: '#13151a',
-        border: '1px solid #2b303b',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-main)',
         borderRadius: '8px',
         padding: '10px 12px',
         boxShadow:
           '0 8px 24px rgba(0, 0, 0, 0.35)',
-        color: '#f8fafc',
+        color: 'var(--text-main)',
         fontSize: '12px'
       }}
     >
@@ -49,7 +49,7 @@ const CustomTooltip = ({
 
       <div
         style={{
-          color: '#a78bfa',
+          color: 'var(--func-primary)',
           fontWeight: 600
         }}
       >
@@ -78,7 +78,7 @@ const PercentageLabel = ({
       x={x + width / 2}
       y={y - 7}
       textAnchor="middle"
-      fill="#e2e8f0"
+      fill="var(--text-main)"
       fontSize={10}
       fontWeight={700}
     >
@@ -114,7 +114,7 @@ export const DashboardBarChart = ({
         barCategoryGap="25%"
       >
         <CartesianGrid
-          stroke="#222631"
+          stroke="var(--border-main)"
           vertical={false}
         />
 
@@ -123,7 +123,7 @@ export const DashboardBarChart = ({
           axisLine={false}
           tickLine={false}
           tick={{
-            fill: '#94a3b8',
+            fill: 'var(--text-muted)',
             fontSize: 10
           }}
         />
@@ -140,7 +140,7 @@ export const DashboardBarChart = ({
           axisLine={false}
           tickLine={false}
           tick={{
-            fill: '#94a3b8',
+            fill: 'var(--text-muted)',
             fontSize: 10
           }}
           tickFormatter={(value) =>
@@ -150,7 +150,7 @@ export const DashboardBarChart = ({
 
         <Tooltip
           cursor={{
-            fill: 'rgba(139, 92, 246, 0.08)'
+            fill: 'var(--func-primary-bg-soft)'
           }}
           content={
             <CustomTooltip />

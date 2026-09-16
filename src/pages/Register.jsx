@@ -528,7 +528,7 @@ export default function Register() {
                   className="auth-form-label"
                   style={{
                     textTransform: 'none',
-                    color: '#ccc',
+                    color: 'var(--clr-gris-base)',
                     fontSize: '0.9rem',
                     marginBottom: '1rem',
                     lineHeight: '1.4'

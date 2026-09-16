@@ -15,13 +15,13 @@
   padding: 4rem 0;
   position: relative;
   overflow: hidden;
-  background-color: var(--bg-main, #f7fafd);
+  background-color: var(--bg-main);
 }
 
 .mision-bg-overlay {
   position: absolute;
   inset: 0;
-  background-color: var(--bg-topbar, #f1f4f7);
+  background-color: var(--bg-surface);
   opacity: 0.5;
   z-index: 0;
 }
@@ -71,14 +71,14 @@
 .mision-text {
   font-family: 'Lexend', sans-serif;
   font-size: 16px; /* body-md por defecto en móvil */
-  color: var(--text-main, #44474d);
+  color: var(--text-main);
   line-height: 1.6;
   margin: 0;
 }
 
 /* Colores Dinámicos e Identidad */
-.color-primary { color: var(--brand-primary, #000615); }
-.color-secondary { color: var(--brand-secondary, #b52619); }
+.color-primary { color: var(--brand-primary); }
+.color-secondary { color: #b52619; }
 
 .mision-animated-line {
   height: 4px;
@@ -88,8 +88,8 @@
   transition: transform 0.5s ease-in-out;
 }
 
-.bg-color-primary { background-color: var(--brand-primary, #000615); }
-.bg-color-secondary { background-color: var(--brand-secondary, #b52619); }
+.bg-color-primary { background-color: var(--brand-primary); }
+.bg-color-secondary { background-color: #b52619; }
 
 /* Gatillos de Hover Activos */
 .group-vision:hover .mision-animated-line,

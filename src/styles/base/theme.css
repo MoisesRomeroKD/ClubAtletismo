@@ -84,6 +84,11 @@
     --bg-topbar: var(--clr-blanco-muted);
     --text-topbar: var(--clr-negro-soft);
     --border-main: var(--clr-gris-light);
+
+    /* Estados de input (buscadores, formularios, selects) */
+    --border-input: var(--clr-gris-light);       /* borde base en reposo */
+    --border-input-hover: var(--clr-gris-base);  /* borde al pasar el cursor */
+    --border-input-focus: var(--func-primary);   /* borde al enfocar (azul funcional) */
 }
 
 /* 9. MODO OSCURO */
@@ -112,6 +117,11 @@ body.dark-mode {
     --bg-topbar: var(--clr-negro-muted);
     --text-topbar: var(--clr-blanco-pura);
     --border-main: var(--clr-gris-dark);
+
+    /* Estados de input (versión dark: el hover sube a un gris más claro) */
+    --border-input: var(--clr-gris-dark);
+    --border-input-hover: var(--clr-gris-light);
+    --border-input-focus: var(--func-primary);
 }
 
 /* 10. APLICACIÓN Y ESTRUCTURA GLOBAL */

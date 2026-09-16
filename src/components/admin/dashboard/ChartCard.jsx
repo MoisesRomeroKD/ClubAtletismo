@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../../styles/components/admin/dashboard/ChartCard.css';
 
 export const ChartCard = ({
   title,
@@ -10,11 +11,11 @@ export const ChartCard = ({
 
   return (
     <div
-      className={`card ${
+      className={`dashboard-chart-card ${
         isLarge ? 'chart-card-lg' : 'chart-card-sm'
       }`}
     >
-      <div className="card-header">
+      <div className="dashboard-chart-card-header">
         <h3>{title}</h3>
 
         {actions && (

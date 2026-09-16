@@ -58,7 +58,7 @@ const SleepAuditView = ({
                 <button
                   className="sl-btn sl-btn-sm"
                   type="button"
-                  style={{ background: 'white', color: '#991b1b', border: '1px solid #fca5a5' }}
+                  style={{ background: 'var(--clr-blanco-pura)', color: '#991b1b', border: '1px solid #fca5a5' }}
                   onClick={(e) => { e.stopPropagation(); openRegistrationModal?.(athlete); }}
                 >
                   Registrar

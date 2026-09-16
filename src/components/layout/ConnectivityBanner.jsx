@@ -42,7 +42,7 @@ const bannerStyle = {
   left: '50%',
   transform: 'translateX(-50%)',
   backgroundColor: '#f39c12', // Naranja preventivo
-  color: 'white',
+  color: 'var(--clr-blanco-pura)',
   padding: '15px 25px',
   borderRadius: '10px',
   boxShadow: '0 8px 30px rgba(0,0,0,0.2)',

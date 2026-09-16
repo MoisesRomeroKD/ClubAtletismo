@@ -11,7 +11,7 @@
 .disciplinas-section {
   position: relative;
   background-color: var(--clr-azul-profundo, #000615);
-  color: var(--clr-blanco, #ffffff);
+  color: var(--clr-blanco, var(--clr-blanco-pura));
   padding: 4rem 0;
   overflow: hidden;
 }
@@ -152,7 +152,7 @@
   font-weight: 700;
   letter-spacing: 0.05em;
   border-radius: 999px;
-  color: var(--clr-blanco, #ffffff);
+  color: var(--clr-blanco, var(--clr-blanco-pura));
   display: inline-block;
 }
 
@@ -205,7 +205,7 @@
     position: absolute;
     top: 22px; right: 22px;
     background: var(--brand-secondary, #b52619);
-    color: #ffffff;
+    color: var(--clr-blanco-pura);
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
     font-weight: 700;

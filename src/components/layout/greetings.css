@@ -5,9 +5,9 @@
   --bg-topbar: rgba(10, 15, 28, 0.75);
   --border-cyber: rgba(56, 189, 248, 0.15);
   --neon-glow: rgba(56, 189, 248, 0.35);
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary: var(--text-main);
+  --text-secondary: var(--text-muted);
+  --text-muted: var(--text-muted);
   --accent-danger: #ef4444;
 }
 

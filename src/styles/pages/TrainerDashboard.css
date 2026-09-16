@@ -173,7 +173,7 @@
 /* Botones Principales (Detalles del Atleta) */
 .btn-detail {
   background-color: var(--brand-green); /* Verde oficial del club */
-  color: white;
+  color: var(--clr-blanco-pura);
   border: none;
   padding: 10px 20px;
   border-radius: 8px;

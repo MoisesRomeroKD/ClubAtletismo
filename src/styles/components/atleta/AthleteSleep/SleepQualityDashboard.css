@@ -183,7 +183,7 @@
     justify-content: center;
 }
 .score-btn:hover { background: var(--bg-surface-hover); color: var(--text-main); }
-.score-btn.selected { background: var(--primary); color: white; transform: scale(1.1); box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+.score-btn.selected { background: var(--primary); color: var(--clr-blanco-pura); transform: scale(1.1); box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
 
 .score-labels {
     display: flex;
@@ -196,7 +196,7 @@
 
 .btn-submit {
     background-color: var(--primary);
-    color: white;
+    color: var(--clr-blanco-pura);
     border: none;
     padding: 1rem;
     border-radius: var(--radius-md);

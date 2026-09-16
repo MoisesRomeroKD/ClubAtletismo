@@ -9,8 +9,8 @@
    1. ESTILOS BASE / CELULAR (Mobile por defecto: hasta 480px)
    -------------------------------------------------------------------------- */
 .footer-wrapper {
-  background-color: var(--clr-azul-profundo, #0b1f3a);
-  color: var(--clr-blanco, #ffffff);
+  background-color: #0b1f3a;
+  color: var(--clr-blanco-pura);
   padding-top: 4rem;
   padding-bottom: 2.5rem;
   border-top-left-radius: 0.25rem;
@@ -104,7 +104,7 @@
   font-family: 'Anton', sans-serif;
   font-size: 20px;
   text-transform: uppercase;
-  color: var(--brand-secondary, #b52619);
+  color: #b52619;
   margin: 0;
 }
 
@@ -127,7 +127,7 @@
 }
 
 .footer-icon-red {
-  color: var(--brand-secondary, #b52619);
+  color: #b52619;
   margin-top: 2px;
 }
 
@@ -162,7 +162,7 @@
 }
 
 .footer-legal-link:hover {
-  color: var(--clr-blanco, #ffffff);
+  color: var(--clr-blanco-pura);
 }
 
 /* --------------------------------------------------------------------------

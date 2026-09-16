@@ -81,7 +81,7 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
       isDarkMode={isDarkMode}
       onToggleTheme={onToggleTheme}
     >
-      <div className="dashboard-page" style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', minHeight: '100vh' }}>
+      <div className="dashboard-page" style={{ padding: '1.5rem', backgroundColor: 'var(--bg-main)', minHeight: '100vh' }}>
         <div className="dashboard-content" style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
           {/* VISTA HOME */}
@@ -91,23 +91,23 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
               {/* BANNER PRINCIPAL DE BIENVENIDA */}
               <div style={{ 
                 padding: '1.75rem', 
-                backgroundColor: '#ffffff', 
+                backgroundColor: 'var(--clr-blanco-pura)', 
                 borderRadius: '12px', 
-                borderLeft: '6px solid #2A6BFF',
+                borderLeft: '6px solid var(--func-primary)',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' 
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
                   <div>
-                    <h1 style={{ margin: 0, fontSize: '1.8rem', color: '#111827', fontWeight: '800' }}>
+                    <h1 style={{ margin: 0, fontSize: '1.8rem', color: 'var(--text-main)', fontWeight: '800' }}>
                       Bienvenido, {userData.name || 'Atleta'} 👋
                     </h1>
-                    <p style={{ color: '#6B7280', marginTop: '0.3rem', fontSize: '0.95rem' }}>
+                    <p style={{ color: 'var(--clr-gris-base)', marginTop: '0.3rem', fontSize: '0.95rem' }}>
                       Plataforma de Optimización Deportiva | Estado Biológico y Rendimiento
                     </p>
                   </div>
                   <span style={{ 
-                    backgroundColor: '#E0E7FF', 
-                    color: '#3730A3', 
+                    backgroundColor: 'var(--func-primary-bg-soft)', 
+                    color: 'var(--func-primary)', 
                     padding: '6px 14px', 
                     borderRadius: '20px', 
                     fontWeight: '600', 
@@ -122,24 +122,24 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
                 
                 {/* KPI 1: Sueño / Descanso */}
-                <div style={{ padding: '1.25rem', backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
-                  <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#6B7280', textTransform: 'uppercase' }}>Descanso Biológico</span>
+                <div style={{ padding: '1.25rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--clr-gris-base)', textTransform: 'uppercase' }}>Descanso Biológico</span>
                   <div style={{ fontSize: '2rem', fontWeight: '800', margin: '0.4rem 0', color: sleepData.length > 0 && sleepData[0].calidad < 5 ? '#EF4444' : '#10B981' }}>
                     {sleepData.length > 0 ? `${sleepData[0].calidad} / 10` : 'Sin registros'}
                   </div>
                   <button 
                     type="button"
                     onClick={() => handleTabChange('sueno')}
-                    style={{ background: 'none', border: 'none', color: '#2A6BFF', padding: 0, cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}
+                    style={{ background: 'none', border: 'none', color: 'var(--func-primary)', padding: 0, cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}
                   >
                     Registrar o ver historial →
                   </button>
                 </div>
 
                 {/* KPI 2: Rutinas */}
-                <div style={{ padding: '1.25rem', backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
-                  <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#6B7280', textTransform: 'uppercase' }}>Plan Semanal</span>
-                  <div style={{ fontSize: '1.2rem', fontWeight: '700', margin: '0.8rem 0', color: '#111827' }}>
+                <div style={{ padding: '1.25rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--clr-gris-base)', textTransform: 'uppercase' }}>Plan Semanal</span>
+                  <div style={{ fontSize: '1.2rem', fontWeight: '700', margin: '0.8rem 0', color: 'var(--text-main)' }}>
                     {routine ? 'Rutina Asignada' : 'Sin plan activo'}
                   </div>
                   <button 
@@ -152,9 +152,9 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
                 </div>
 
                 {/* KPI 3: Asistencia */}
-                <div style={{ padding: '1.25rem', backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
-                  <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#6B7280', textTransform: 'uppercase' }}>Asistencia</span>
-                  <div style={{ fontSize: '1.2rem', fontWeight: '700', margin: '0.8rem 0', color: '#111827' }}>
+                <div style={{ padding: '1.25rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--clr-gris-base)', textTransform: 'uppercase' }}>Asistencia</span>
+                  <div style={{ fontSize: '1.2rem', fontWeight: '700', margin: '0.8rem 0', color: 'var(--text-main)' }}>
                     Sincronizada
                   </div>
                   <button 
@@ -172,11 +172,11 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
                 
                 {/* BLOQUE GRÁFICA DE RECUPERACIÓN (BARRA VISUAL SIMPLE) */}
-                <div style={{ padding: '1.5rem', backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
-                  <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', color: '#111827' }}>📈 Tendencia de Descanso Reciente</h3>
+                <div style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', color: 'var(--text-main)' }}>📈 Tendencia de Descanso Reciente</h3>
                   
                   {sleepData.length > 0 ? (
-                    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', height: '140px', padding: '10px 0', borderBottom: '1px solid #E5E7EB' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', height: '140px', padding: '10px 0', borderBottom: '1px solid var(--border-main)' }}>
                       {sleepData.slice(0, 7).reverse().map((item, idx) => (
                         <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
                           <div 
@@ -189,36 +189,36 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
                             }} 
                             title={`Fecha: ${item.date} - Nota: ${item.calidad}/10`}
                           />
-                          <span style={{ fontSize: '0.75rem', color: '#6B7280' }}>{item.calidad}/10</span>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--clr-gris-base)' }}>{item.calidad}/10</span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div style={{ padding: '2rem 0', textAlign: 'center', color: '#9CA3AF', fontSize: '0.9rem' }}>
+                    <div style={{ padding: '2rem 0', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                       Registra tu sueño para generar la gráfica de tendencia biológica.
                     </div>
                   )}
-                  <p style={{ margin: '0.75rem 0 0 0', fontSize: '0.8rem', color: '#6B7280' }}>
+                  <p style={{ margin: '0.75rem 0 0 0', fontSize: '0.8rem', color: 'var(--clr-gris-base)' }}>
                     * Gráfica calculada con base en la escala psicométrica de fatiga.
                   </p>
                 </div>
 
                 {/* BLOQUE ESTADO CINEANTROPOMÉTRICO / EVALUACIÓN */}
-                <div style={{ padding: '1.5rem', backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
-                  <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', color: '#111827' }}>🏃‍♂️ Datos Biológicos y Composición</h3>
+                <div style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', color: 'var(--text-main)' }}>🏃‍♂️ Datos Biológicos y Composición</h3>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', backgroundColor: '#F3F4F6', borderRadius: '6px' }}>
-                      <span style={{ color: '#4B5563', fontSize: '0.9rem' }}>Estado Biológico:</span>
-                      <strong style={{ color: '#111827', fontSize: '0.9rem' }}>En Monitoreo</strong>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', backgroundColor: 'var(--bg-surface)', borderRadius: '6px' }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Estado Biológico:</span>
+                      <strong style={{ color: 'var(--text-main)', fontSize: '0.9rem' }}>En Monitoreo</strong>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', backgroundColor: '#F3F4F6', borderRadius: '6px' }}>
-                      <span style={{ color: '#4B5563', fontSize: '0.9rem' }}>Evaluación Antropométrica:</span>
-                      <strong style={{ color: '#2A6BFF', fontSize: '0.9rem' }}>Al Día</strong>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', backgroundColor: 'var(--bg-surface)', borderRadius: '6px' }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Evaluación Antropométrica:</span>
+                      <strong style={{ color: 'var(--func-primary)', fontSize: '0.9rem' }}>Al Día</strong>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', backgroundColor: '#F3F4F6', borderRadius: '6px' }}>
-                      <span style={{ color: '#4B5563', fontSize: '0.9rem' }}>Especialidad / Prueba:</span>
-                      <strong style={{ color: '#111827', fontSize: '0.9rem' }}>Asignada en Admin</strong>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', backgroundColor: 'var(--bg-surface)', borderRadius: '6px' }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Especialidad / Prueba:</span>
+                      <strong style={{ color: 'var(--text-main)', fontSize: '0.9rem' }}>Asignada en Admin</strong>
                     </div>
                   </div>
                 </div>
@@ -230,8 +230,8 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
 
           {/* VISTA RUTINA */}
           {activeAction === 'rutina' && (
-            <div className="dashboard-card max-w-mid" style={{ padding: '1.5rem', backgroundColor: '#fff', borderRadius: '12px' }}>
-              <h3 className="section-title" style={{ borderBottom: '2px solid #2A6BFF', display: 'inline-block', paddingBottom: '5px' }}>
+            <div className="dashboard-card max-w-mid" style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px' }}>
+              <h3 className="section-title" style={{ borderBottom: '2px solid var(--func-primary)', display: 'inline-block', paddingBottom: '5px' }}>
                 Mi Plan Semanal
               </h3>
               {routine ? (
@@ -244,7 +244,7 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
                   ))}
                 </ul>
               ) : (
-                <div className="empty-state" style={{ marginTop: '1rem', color: '#6B7280' }}>No tienes rutinas asignadas aún.</div>
+                <div className="empty-state" style={{ marginTop: '1rem', color: 'var(--clr-gris-base)' }}>No tienes rutinas asignadas aún.</div>
               )}
             </div>
           )}
@@ -259,7 +259,7 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
 
           {/* VISTA ASISTENCIA */}
           {(activeAction === 'asistencia' || activeAction === 'asistencias') && (
-            <div className="dashboard-card width-full" style={{ padding: '1.5rem', backgroundColor: '#fff', borderRadius: '12px' }}>
+            <div className="dashboard-card width-full" style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px' }}>
               <AsistenciaAtletaView 
                 athleteId={userData.id} 
                 athleteName={userData.name} 
@@ -269,7 +269,7 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
 
           {/* VISTA EVALUACIONES */}
 {(activeAction === 'evaluaciones' || activeAction === 'evaluacion' || activeAction === 'mis-evaluaciones') && (
-  <div className="dashboard-card width-full" style={{ padding: '1.5rem', backgroundColor: '#fff', borderRadius: '12px' }}>
+  <div className="dashboard-card width-full" style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px' }}>
     <EvaluacionesAtletaView 
       athleteId={userData.id} 
       athleteName={userData.name} 
@@ -279,7 +279,7 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
 
 {/* VISTA ANTROPOMETRÍA */}
 {(activeAction === 'antropometria' || activeAction === 'antropometría') && (
-  <div className="dashboard-card width-full" style={{ padding: '1.5rem', backgroundColor: '#fff', borderRadius: '12px' }}>
+  <div className="dashboard-card width-full" style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px' }}>
     <AntropometriaAtletaView 
       athleteId={userData.id} 
       athleteName={userData.name} 

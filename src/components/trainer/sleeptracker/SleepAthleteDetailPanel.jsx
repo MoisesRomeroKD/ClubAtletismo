@@ -151,7 +151,7 @@ export default function SleepAthleteDetailPanel({
           <div className="sl-detail-stats-grid">
             <div className="sl-detail-stat-card">
               <p className="sl-detail-stat-label">Media 30d</p>
-              <p className="sl-detail-stat-value" style={{ color: 'var(--sl-primary, #1d4ed8)' }}>
+              <p className="sl-detail-stat-value" style={{ color: 'var(--sl-primary, var(--clr-azul-dark))' }}>
                 {windowStats.avg} <span className="sl-detail-stat-unit">/10</span>
               </p>
             </div>

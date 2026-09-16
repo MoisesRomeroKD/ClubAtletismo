@@ -10,8 +10,8 @@
   --sl-warning: var(--clr-dorado-premium);
   --sl-border: var(--border-main);
   --sl-text-primary: var(--text-main);
-  --sl-text-secondary: #475569;
-  --sl-text-muted: #94a3b8;
+  --sl-text-secondary: var(--text-muted);
+  --sl-text-muted: var(--text-muted);
   --sl-radius-md: var(--border-radius-md);
   --sl-surface: var(--clr-blanco);
   --sl-surface-alt: var(--clr-gris-superclaro);
@@ -24,8 +24,8 @@ body.dark-mode {
   --sl-warning: var(--clr-dorado-premium);
   --sl-border: var(--border-main);
   --sl-text-primary: var(--text-main);
-  --sl-text-secondary: #cbd5e1;
-  --sl-text-muted: #8290ab;
+  --sl-text-secondary: var(--clr-gris-light);
+  --sl-text-muted: var(--text-muted);
   --sl-radius-md: var(--border-radius-md);
   --sl-surface: var(--clr-azul-noche);
   --sl-surface-alt: rgba(255, 255, 255, 0.04);

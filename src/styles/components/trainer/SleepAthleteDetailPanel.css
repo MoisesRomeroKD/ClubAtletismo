@@ -20,8 +20,8 @@
   right: 0;
   height: 100%;
   width: min(420px, 100vw);
-  background: var(--sl-surface, #ffffff);
-  border-left: 1px solid var(--sl-border, #e2e8f0);
+  background: var(--sl-surface, var(--clr-blanco-pura));
+  border-left: 1px solid var(--sl-border, var(--clr-gris-light));
   box-shadow: -12px 0 32px rgba(15, 23, 42, 0.18);
   display: flex;
   flex-direction: column;
@@ -38,15 +38,15 @@
   align-items: center;
   gap: 12px;
   padding: 20px;
-  background: var(--sl-primary, #1e293b);
-  color: #ffffff;
+  background: var(--sl-primary, var(--bg-card));
+  color: var(--clr-blanco-pura);
   flex-shrink: 0;
 }
 
 .sl-panel-close-btn {
   background: transparent;
   border: none;
-  color: #ffffff;
+  color: var(--clr-blanco-pura);
   padding: 6px;
   border-radius: var(--sl-radius-md, 8px);
   cursor: pointer;
@@ -68,7 +68,7 @@
 /* Bloque de registro rápido */
 .sl-quick-register {
   background: rgba(37, 99, 235, 0.05);
-  border: 2px dashed var(--sl-primary, #2563eb);
+  border: 2px dashed var(--sl-primary, var(--clr-azul-base));
   border-radius: var(--sl-radius-md, 8px);
   padding: 16px;
 }
@@ -78,7 +78,7 @@
   align-items: center;
   gap: 8px;
   font-weight: 700;
-  color: var(--sl-primary, #1d4ed8);
+  color: var(--sl-primary, var(--clr-azul-dark));
   margin-bottom: 12px;
   font-size: 0.95rem;
 }
@@ -103,7 +103,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.7rem;
-  color: var(--sl-text-muted, #64748b);
+  color: var(--sl-text-muted, var(--text-muted));
   margin-top: 4px;
 }
 
@@ -122,7 +122,7 @@
   font-size: 0.7rem;
   text-transform: uppercase;
   font-weight: 700;
-  color: var(--sl-text-muted, #64748b);
+  color: var(--sl-text-muted, var(--text-muted));
   margin: 0 0 4px 0;
 }
 .sl-detail-stat-value {
@@ -133,19 +133,19 @@
 .sl-detail-stat-unit {
   font-size: 0.8rem;
   font-weight: 400;
-  color: var(--sl-text-muted, #64748b);
+  color: var(--sl-text-muted, var(--text-muted));
 }
 
 .sl-detail-section-title {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--sl-text-muted, #64748b);
+  color: var(--sl-text-muted, var(--text-muted));
   margin: 0 0 12px 0;
 }
 
 .sl-detail-history-table-wrap {
-  border: 1px solid var(--sl-border, #e2e8f0);
+  border: 1px solid var(--sl-border, var(--clr-gris-light));
   border-radius: var(--sl-radius-md, 8px);
   overflow: hidden;
 }

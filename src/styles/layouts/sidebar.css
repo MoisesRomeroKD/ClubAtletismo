@@ -629,7 +629,7 @@
 
 /* Modificador para el botón de cierre de sesión */
 .user-sidebar__nav-item--logout {
-  color: var(--accent-danger, #ff4d4d);
+  color: #ef4444;
 }
 
 /* Ajuste para el contenedor de los grupos colapsables */

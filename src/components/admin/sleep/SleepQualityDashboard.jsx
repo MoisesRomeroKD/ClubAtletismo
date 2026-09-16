@@ -192,14 +192,14 @@ export default function SleepQualityDashboard() {
       const chartW = rect.width - padding.left - padding.right;
       const chartH = rect.height - padding.top - padding.bottom;
 
-      ctx.strokeStyle = '#e5e7eb';
+      ctx.strokeStyle = 'var(--border-main)';
       ctx.lineWidth = 1;
       ctx.beginPath();
       [0, 2, 4, 6, 8, 10].forEach(val => {
         const y = padding.top + chartH - ((val / 10) * chartH);
         ctx.moveTo(padding.left, y);
         ctx.lineTo(rect.width - padding.right, y);
-        ctx.fillStyle = '#9ca3af';
+        ctx.fillStyle = 'var(--text-muted)';
         ctx.font = '10px sans-serif';
         ctx.textAlign = 'right';
         ctx.fillText(val, padding.left - 5, y + 3);
@@ -241,7 +241,7 @@ export default function SleepQualityDashboard() {
 
       ctx.beginPath();
       ctx.arc(center, center, radius, 0, 2 * Math.PI);
-      ctx.strokeStyle = '#e5e7eb';
+      ctx.strokeStyle = 'var(--border-main)';
       ctx.lineWidth = 16;
       ctx.stroke();
 
@@ -255,7 +255,7 @@ export default function SleepQualityDashboard() {
         ctx.stroke();
       }
 
-      ctx.fillStyle = '#111827';
+      ctx.fillStyle = 'var(--text-main)';
       ctx.font = 'bold 20px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';

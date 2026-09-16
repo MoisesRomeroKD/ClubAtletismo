@@ -207,7 +207,7 @@ const AsistenciaAtletaView = () => {
                                     ))}
                                 </Pie>
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: '#1E293B', borderRadius: '8px', color: '#fff', border: 'none' }}
+                                    contentStyle={{ backgroundColor: 'var(--bg-card)', borderRadius: '8px', color: 'var(--clr-blanco-pura)', border: 'none' }}
                                     formatter={(value, name) => [`${value} sesiones`, name]}
                                 />
                             </PieChart>
@@ -427,7 +427,7 @@ const AsistenciaAtletaView = () => {
                             <span><span className="dot asis"></span> Asistencia</span>
                             <span><span className="dot inasis"></span> Inasistencia</span>
                             <span><span className="dot just"></span> Justificada</span>
-                            <span><span className="dot" style={{ backgroundColor: '#CBD5E1' }}></span> Sin sesión</span>
+                            <span><span className="dot" style={{ backgroundColor: 'var(--clr-gris-light)' }}></span> Sin sesión</span>
                         </div>
                     </div>
                 </div>
@@ -515,36 +515,36 @@ const AsistenciaAtletaView = () => {
                             <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%" stopColor="#1E293B" stopOpacity={0.2} />
-                                        <stop offset="100%" stopColor="#1E293B" stopOpacity={0} />
+                                        <stop offset="0%" stopColor="var(--bg-card)" stopOpacity={0.2} />
+                                        <stop offset="100%" stopColor="var(--bg-card)" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="5 5" vertical={false} stroke="#E2E8F0" />
+                                <CartesianGrid strokeDasharray="5 5" vertical={false} stroke="var(--clr-gris-light)" />
                                 <XAxis 
                                     dataKey="month" 
                                     axisLine={false} 
                                     tickLine={false} 
-                                    tick={{ fill: '#64748B', fontFamily: 'Inter' }} 
+                                    tick={{ fill: 'var(--text-muted)', fontFamily: 'Inter' }} 
                                 />
                                 <YAxis 
                                     domain={[60, 100]} 
                                     axisLine={false} 
                                     tickLine={false} 
-                                    tick={{ fill: '#64748B', fontFamily: 'Inter' }} 
+                                    tick={{ fill: 'var(--text-muted)', fontFamily: 'Inter' }} 
                                     tickFormatter={(val) => `${val}%`} 
                                 />
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: '#1E293B', borderRadius: '8px', color: '#fff', border: 'none' }}
+                                    contentStyle={{ backgroundColor: 'var(--bg-card)', borderRadius: '8px', color: 'var(--clr-blanco-pura)', border: 'none' }}
                                     formatter={(value) => [`${value}% Asistencia`, '']}
                                 />
                                 <Area
                                     type="monotone"
                                     dataKey="pct"
-                                    stroke="#1E293B"
+                                    stroke="var(--bg-card)"
                                     strokeWidth={3}
                                     fillOpacity={1}
                                     fill="url(#trendGradient)"
-                                    dot={{ fill: '#1E293B', stroke: '#fff', strokeWidth: 2, r: 5 }}
+                                    dot={{ fill: 'var(--bg-card)', stroke: 'var(--clr-blanco-pura)', strokeWidth: 2, r: 5 }}
                                     activeDot={{ r: 7 }}
                                 />
                             </AreaChart>

@@ -2394,7 +2394,7 @@ const CineantropometriaTrainer = () => {
                           <Radar
                             name="Puntuación"
                             dataKey="score"
-                            stroke="#2563eb"
+                            stroke="var(--clr-azul-base)"
                             fill="#3b82f6"
                             fillOpacity={0.4}
                           />

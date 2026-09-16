@@ -40,7 +40,7 @@ export default function PasswordCreate({ onFinish, setStatus, setErrorMsg, userE
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center', width: '100%' }}>
       <h3>Crea tu contraseña</h3>
-      <p style={{ fontSize: '12px', color: '#666' }}>Mínimo 12 caracteres, incluya números y una mayúscula.</p>
+      <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Mínimo 12 caracteres, incluya números y una mayúscula.</p>
       
       <div className="password-input-wrapper" style={{ width: '90%' }}>
         <input 
@@ -50,7 +50,7 @@ export default function PasswordCreate({ onFinish, setStatus, setErrorMsg, userE
           onChange={(e) => setPass(e.target.value)}
           disabled={isLoading}
           className="password-input-with-toggle"
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid var(--clr-gris-base)' }}
         />
         <PasswordToggleButton
           isVisible={showPass}
@@ -65,7 +65,7 @@ export default function PasswordCreate({ onFinish, setStatus, setErrorMsg, userE
           onChange={(e) => setConfirmPass(e.target.value)}
           disabled={isLoading}
           className="password-input-with-toggle"
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid var(--clr-gris-base)' }}
         />
         <PasswordToggleButton
           isVisible={showConfirmPass}
@@ -77,8 +77,8 @@ export default function PasswordCreate({ onFinish, setStatus, setErrorMsg, userE
         onClick={handleSave}
         disabled={isLoading || !pass}
         style={{ 
-          backgroundColor: isLoading ? '#cccccc' : '#0000FF', 
-          color: 'white', 
+          backgroundColor: isLoading ? 'var(--clr-gris-base)ccc' : '#0000FF', 
+          color: 'var(--clr-blanco-pura)', 
           padding: '12px 40px', 
           borderRadius: '25px', 
           border: 'none', 

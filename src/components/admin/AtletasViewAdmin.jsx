@@ -1,27 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import podApi from '../../api/podApi';
-
-// Paleta equivalente a la usada en el mockup dark, llevada a valores hex
-// planos para no depender de un tailwind.config con tokens personalizados.
-const COLORS = {
-  bg: '#131313',
-  onBg: '#e5e2e1',
-  panelBg: 'rgba(20,20,20,0.7)',
-  panelBorder: '#262626',
-  surfaceContainer: '#201f1f',
-  surfaceContainerLowest: '#0e0e0e',
-  surfaceContainerHigh: '#2a2a2a',
-  surfaceContainerHighest: '#353534',
-  outline: '#84967e',
-  outlineVariant: '#3b4b37',
-  onSurfaceVariant: '#b9ccb2',
-  primary: '#72ff70',
-  surfaceDim: '#131313',
-  activoBg: '#0f6e56',
-  activoText: '#e1f5ee',
-  inhabilitadoBg: '#791f1f',
-  inhabilitadoText: '#fcebeb',
-};
+import '../../styles/components/admin/AtletasViewAdmin.css';
 
 const iniciales = (nombre = '') =>
   nombre
@@ -33,35 +12,18 @@ const iniciales = (nombre = '') =>
     .toUpperCase();
 
 const EstadoPill = ({ activo }) => (
-  <span
-    style={{
-      padding: '4px 10px',
-      borderRadius: '999px',
-      fontSize: '0.75rem',
-      fontWeight: 600,
-      backgroundColor: activo ? COLORS.activoBg : COLORS.inhabilitadoBg,
-      color: activo ? COLORS.activoText : COLORS.inhabilitadoText,
-      whiteSpace: 'nowrap',
-    }}
-  >
+  <span className={`atletas-estado-pill ${activo ? 'activo' : 'inactivo'}`}>
     {activo ? 'Activo' : 'Inhabilitado'}
   </span>
 );
 
 function DataPoint({ label, value }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-      <span
-        style={{
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: '0.65rem',
-          letterSpacing: '0.05em',
-          color: COLORS.onSurfaceVariant,
-        }}
-      >
+    <div className="atletas-data-point">
+      <span className="atletas-data-point-label">
         {label}
       </span>
-      <span style={{ fontSize: '0.9rem', color: COLORS.onBg }}>{value || '—'}</span>
+      <span className="atletas-data-point-value">{value || '—'}</span>
     </div>
   );
 }
@@ -94,15 +56,15 @@ function PerfilDrawer({ atleta, onClose }) {
           right: 0,
           height: '100%',
           width: 'min(400px, 100%)',
-          backgroundColor: '#191919',
-          borderLeft: `1px solid ${COLORS.outlineVariant}`,
+          backgroundColor: 'var(--bg-surface)',
+          borderLeft: '1px solid var(--border-main)',
           boxShadow: '-8px 0 24px rgba(0,0,0,0.4)',
           transform: open ? 'translateX(0)' : 'translateX(100%)',
           transition: 'transform 0.3s ease',
           zIndex: 50,
           display: 'flex',
           flexDirection: 'column',
-          color: COLORS.onBg,
+          color: 'var(--text-main)',
           fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
         }}
       >
@@ -114,7 +76,7 @@ function PerfilDrawer({ atleta, onClose }) {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '1.25rem 1.5rem',
-                borderBottom: `1px solid ${COLORS.outlineVariant}`,
+                borderBottom: '1px solid var(--border-main)',
               }}
             >
               <span
@@ -122,7 +84,7 @@ function PerfilDrawer({ atleta, onClose }) {
                   fontFamily: "'JetBrains Mono', monospace",
                   fontSize: '0.75rem',
                   letterSpacing: '0.1em',
-                  color: COLORS.primary,
+                  color: 'var(--brand-secondary)',
                 }}
               >
                 PERFIL DE ATLETA
@@ -134,7 +96,7 @@ function PerfilDrawer({ atleta, onClose }) {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: COLORS.onSurfaceVariant,
+                  color: 'var(--text-muted)',
                   cursor: 'pointer',
                   fontSize: '1.1rem',
                   lineHeight: 1,
@@ -153,8 +115,8 @@ function PerfilDrawer({ atleta, onClose }) {
                     width: 56,
                     height: 56,
                     borderRadius: '50%',
-                    backgroundColor: COLORS.surfaceContainerHighest,
-                    border: `1px solid ${COLORS.outlineVariant}`,
+                    backgroundColor: 'var(--bg-surface)',
+                    border: '1px solid var(--border-main)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -169,7 +131,7 @@ function PerfilDrawer({ atleta, onClose }) {
                   <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700 }}>
                     {atleta.nombre || atleta.nombres || '-'}
                   </h2>
-                  <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: COLORS.onSurfaceVariant }}>
+                  <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                     C.I. {atleta.cedula || '-'}
                   </p>
                 </div>
@@ -185,7 +147,7 @@ function PerfilDrawer({ atleta, onClose }) {
                   fontFamily: "'JetBrains Mono', monospace",
                   fontSize: '0.7rem',
                   letterSpacing: '0.1em',
-                  color: COLORS.onSurfaceVariant,
+                  color: 'var(--text-muted)',
                   textTransform: 'uppercase',
                 }}
               >
@@ -196,8 +158,8 @@ function PerfilDrawer({ atleta, onClose }) {
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
                   gap: '1rem',
-                  backgroundColor: COLORS.panelBg,
-                  border: `1px solid ${COLORS.panelBorder}`,
+                  backgroundColor: 'var(--bg-card)',
+                  border: '1px solid var(--border-main)',
                   borderRadius: '10px',
                   padding: '1rem',
                   marginBottom: '1.5rem',
@@ -221,7 +183,7 @@ function PerfilDrawer({ atleta, onClose }) {
                   fontFamily: "'JetBrains Mono', monospace",
                   fontSize: '0.7rem',
                   letterSpacing: '0.1em',
-                  color: COLORS.onSurfaceVariant,
+                  color: 'var(--text-muted)',
                   textTransform: 'uppercase',
                 }}
               >
@@ -229,8 +191,8 @@ function PerfilDrawer({ atleta, onClose }) {
               </p>
               <div
                 style={{
-                  backgroundColor: COLORS.panelBg,
-                  border: `1px solid ${COLORS.panelBorder}`,
+                  backgroundColor: 'var(--bg-card)',
+                  border: '1px solid var(--border-main)',
                   borderRadius: '10px',
                   padding: '1rem',
                   marginBottom: '1.5rem',
@@ -246,7 +208,7 @@ function PerfilDrawer({ atleta, onClose }) {
                   fontFamily: "'JetBrains Mono', monospace",
                   fontSize: '0.7rem',
                   letterSpacing: '0.1em',
-                  color: COLORS.onSurfaceVariant,
+                  color: 'var(--text-muted)',
                   textTransform: 'uppercase',
                 }}
               >
@@ -257,8 +219,8 @@ function PerfilDrawer({ atleta, onClose }) {
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
                   gap: '1rem',
-                  backgroundColor: COLORS.panelBg,
-                  border: `1px solid ${COLORS.panelBorder}`,
+                  backgroundColor: 'var(--bg-card)',
+                  border: '1px solid var(--border-main)',
                   borderRadius: '10px',
                   padding: '1rem',
                 }}
@@ -273,7 +235,7 @@ function PerfilDrawer({ atleta, onClose }) {
                 display: 'flex',
                 gap: '0.75rem',
                 padding: '1.25rem 1.5rem',
-                borderTop: `1px solid ${COLORS.outlineVariant}`,
+                borderTop: '1px solid var(--border-main)',
               }}
             >
               <button
@@ -282,8 +244,8 @@ function PerfilDrawer({ atleta, onClose }) {
                 style={{
                   flex: 1,
                   backgroundColor: 'transparent',
-                  border: `1px solid ${COLORS.outlineVariant}`,
-                  color: COLORS.onBg,
+                  border: '1px solid var(--border-main)',
+                  color: 'var(--text-main)',
                   padding: '10px',
                   borderRadius: '8px',
                   fontWeight: 600,
@@ -298,9 +260,9 @@ function PerfilDrawer({ atleta, onClose }) {
                 onClick={() => alert(`Editar detalle de: ${atleta.nombre || atleta.nombres}`)}
                 style={{
                   flex: 1,
-                  backgroundColor: COLORS.primary,
+                  backgroundColor: 'var(--brand-secondary)',
                   border: 'none',
-                  color: COLORS.surfaceDim,
+                  color: 'var(--clr-blanco-pura)',
                   padding: '10px',
                   borderRadius: '8px',
                   fontWeight: 700,
@@ -420,8 +382,8 @@ const AtletasViewAdmin = () => {
   return (
     <div
       style={{
-        backgroundColor: COLORS.bg,
-        color: COLORS.onBg,
+        backgroundColor: 'var(--bg-main)',
+        color: 'var(--text-main)',
         padding: '1.5rem',
         borderRadius: '12px',
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
@@ -435,8 +397,8 @@ const AtletasViewAdmin = () => {
           .atletas-tabla-wrap { display: block; }
           .atletas-cards-wrap { display: none; }
         }
-        .atletas-btn-ver:hover { background-color: ${COLORS.primary}; color: ${COLORS.surfaceDim}; }
-        .atletas-search:focus { outline: none; border-color: ${COLORS.primary}; box-shadow: 0 0 0 1px ${COLORS.primary}; }
+        .atletas-btn-ver:hover { background-color: var(--brand-secondary); color: var(--clr-blanco-pura); }
+        .atletas-search:focus { outline: none; border-color: var(--brand-secondary); box-shadow: 0 0 0 1px var(--brand-secondary); }
       `}</style>
 
       {/* FILTRO + ACCIONES */}
@@ -446,8 +408,8 @@ const AtletasViewAdmin = () => {
           flexWrap: 'wrap',
           alignItems: 'center',
           gap: '1rem',
-          backgroundColor: COLORS.panelBg,
-          border: `1px solid ${COLORS.panelBorder}`,
+          backgroundColor: 'var(--bg-card)',
+          border: '1px solid var(--border-main)',
           borderRadius: '12px',
           padding: '1rem',
           marginBottom: '1.5rem',
@@ -460,11 +422,11 @@ const AtletasViewAdmin = () => {
           value={filtro}
           onChange={(e) => setFiltro(e.target.value)}
           style={{
-            backgroundColor: COLORS.surfaceContainerLowest,
-            border: `1px solid ${COLORS.outlineVariant}`,
+            backgroundColor: 'var(--bg-input)',
+            border: '1px solid var(--border-main)',
             borderRadius: '8px',
             padding: '9px 14px',
-            color: COLORS.onBg,
+            color: 'var(--text-main)',
             fontSize: '0.9rem',
             width: '260px',
             maxWidth: '100%',
@@ -474,7 +436,7 @@ const AtletasViewAdmin = () => {
           style={{
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: '0.75rem',
-            color: COLORS.onSurfaceVariant,
+            color: 'var(--text-muted)',
           }}
         >
           Mostrando {atletasFiltrados.length} atletas
@@ -484,8 +446,8 @@ const AtletasViewAdmin = () => {
           onClick={handleNuevo}
           style={{
             marginLeft: 'auto',
-            backgroundColor: COLORS.primary,
-            color: COLORS.surfaceDim,
+            backgroundColor: 'var(--brand-secondary)',
+            color: 'var(--clr-blanco-pura)',
             border: 'none',
             padding: '9px 20px',
             borderRadius: '8px',
@@ -499,7 +461,7 @@ const AtletasViewAdmin = () => {
       </div>
 
       {isLoading ? (
-        <div style={{ padding: '2rem', textAlign: 'center', color: COLORS.onSurfaceVariant }}>
+        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
           Cargando lista de atletas...
         </div>
       ) : (
@@ -507,15 +469,15 @@ const AtletasViewAdmin = () => {
           {/* TABLA: visible SOLO en pc/laptop (>=870px). Solo info relevante + Ver perfil */}
           <div
             className="atletas-tabla-wrap"
-            style={{ overflowX: 'auto', borderRadius: '8px', border: `1px solid ${COLORS.outlineVariant}` }}
+            style={{ overflowX: 'auto', borderRadius: '8px', border: '1px solid var(--border-main)' }}
           >
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
               <thead>
                 <tr
                   style={{
-                    backgroundColor: COLORS.surfaceContainer,
-                    borderBottom: `1px solid ${COLORS.outlineVariant}`,
-                    color: COLORS.onSurfaceVariant,
+                    backgroundColor: 'var(--bg-surface)',
+                    borderBottom: '1px solid var(--border-main)',
+                    color: 'var(--text-muted)',
                   }}
                 >
                   <th style={{ padding: '12px 16px' }}>Nombre</th>
@@ -528,17 +490,17 @@ const AtletasViewAdmin = () => {
               </thead>
               <tbody>
                 {atletasFiltrados.map((item, idx) => (
-                  <tr key={item.id ?? idx} style={{ borderBottom: `1px solid ${COLORS.outlineVariant}55` }}>
+                  <tr key={item.id ?? idx} style={{ borderBottom: '1px solid var(--border-main)' }}>
                     <td style={{ padding: '12px 16px' }}>
                       <div style={{ fontWeight: 700 }}>{item.nombre || item.nombres || '-'}</div>
-                      <div style={{ fontSize: '0.75rem', color: COLORS.onSurfaceVariant, fontFamily: "'JetBrains Mono', monospace" }}>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: "'JetBrains Mono', monospace" }}>
                         C.I. {item.cedula || '-'}
                       </div>
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       <span
                         style={{
-                          backgroundColor: COLORS.surfaceContainer,
+                          backgroundColor: 'var(--bg-surface)',
                           padding: '4px 10px',
                           borderRadius: '6px',
                           fontSize: '0.8rem',
@@ -549,7 +511,7 @@ const AtletasViewAdmin = () => {
                       </span>
                     </td>
                     <td style={{ padding: '12px 16px' }}>{item.entrenador || '—'}</td>
-                    <td style={{ padding: '12px 16px', color: COLORS.onSurfaceVariant }}>
+                    <td style={{ padding: '12px 16px', color: 'var(--text-muted)' }}>
                       <div>{item.familiar || '—'}</div>
                       <div style={{ fontSize: '0.75rem' }}>{item.telefonoFamiliar || ''}</div>
                     </td>
@@ -562,9 +524,9 @@ const AtletasViewAdmin = () => {
                         className="atletas-btn-ver"
                         onClick={() => handleVerPerfil(item)}
                         style={{
-                          backgroundColor: COLORS.surfaceContainer,
-                          border: `1px solid ${COLORS.outlineVariant}`,
-                          color: COLORS.onBg,
+                          backgroundColor: 'var(--bg-surface)',
+                          border: '1px solid var(--border-main)',
+                          color: 'var(--text-main)',
                           padding: '6px 12px',
                           borderRadius: '6px',
                           cursor: 'pointer',
@@ -587,8 +549,8 @@ const AtletasViewAdmin = () => {
               <div
                 key={item.id ?? idx}
                 style={{
-                  backgroundColor: COLORS.panelBg,
-                  border: `1px solid ${COLORS.panelBorder}`,
+                  backgroundColor: 'var(--bg-card)',
+                  border: '1px solid var(--border-main)',
                   borderRadius: '12px',
                   padding: '1.5rem',
                 }}
@@ -600,8 +562,8 @@ const AtletasViewAdmin = () => {
                         width: 48,
                         height: 48,
                         borderRadius: '50%',
-                        backgroundColor: COLORS.surfaceContainerHighest,
-                        border: `1px solid ${COLORS.outlineVariant}`,
+                        backgroundColor: 'var(--bg-surface)',
+                        border: '1px solid var(--border-main)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -620,7 +582,7 @@ const AtletasViewAdmin = () => {
                         style={{
                           margin: 0,
                           fontSize: '0.7rem',
-                          color: COLORS.onSurfaceVariant,
+                          color: 'var(--text-muted)',
                           fontFamily: "'JetBrains Mono', monospace",
                         }}
                       >
@@ -633,13 +595,13 @@ const AtletasViewAdmin = () => {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
                   <div>
-                    <p style={{ margin: 0, fontSize: '0.65rem', color: COLORS.onSurfaceVariant, fontFamily: "'JetBrains Mono', monospace" }}>
+                    <p style={{ margin: 0, fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: "'JetBrains Mono', monospace" }}>
                       SUBÁREA
                     </p>
                     <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600 }}>{item.subarea || '—'}</p>
                   </div>
                   <div>
-                    <p style={{ margin: 0, fontSize: '0.65rem', color: COLORS.onSurfaceVariant, fontFamily: "'JetBrains Mono', monospace" }}>
+                    <p style={{ margin: 0, fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: "'JetBrains Mono', monospace" }}>
                       ENTRENADOR
                     </p>
                     <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600 }}>{item.entrenador || '—'}</p>
@@ -648,7 +610,7 @@ const AtletasViewAdmin = () => {
 
                 <div
                   style={{
-                    borderTop: `1px solid ${COLORS.outlineVariant}`,
+                    borderTop: '1px solid var(--border-main)',
                     paddingTop: '1rem',
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -658,11 +620,11 @@ const AtletasViewAdmin = () => {
                   }}
                 >
                   <div>
-                    <p style={{ margin: 0, fontSize: '0.65rem', color: COLORS.onSurfaceVariant, fontFamily: "'JetBrains Mono', monospace" }}>
+                    <p style={{ margin: 0, fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: "'JetBrains Mono', monospace" }}>
                       FAMILIAR / CONTACTO
                     </p>
                     <p style={{ margin: 0, fontSize: '0.85rem' }}>{item.familiar || '—'}</p>
-                    <p style={{ margin: 0, fontSize: '0.75rem', color: COLORS.onSurfaceVariant }}>
+                    <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                       {item.telefonoFamiliar || ''}
                     </p>
                   </div>
@@ -671,9 +633,9 @@ const AtletasViewAdmin = () => {
                     className="atletas-btn-ver"
                     onClick={() => handleVerPerfil(item)}
                     style={{
-                      backgroundColor: COLORS.surfaceContainer,
-                      border: `1px solid ${COLORS.outline}`,
-                      color: COLORS.onBg,
+                      backgroundColor: 'var(--bg-surface)',
+                      border: '1px solid var(--border-main)',
+                      color: 'var(--text-main)',
                       padding: '6px 14px',
                       borderRadius: '6px',
                       fontSize: '0.75rem',
@@ -689,7 +651,7 @@ const AtletasViewAdmin = () => {
             ))}
 
             {atletasFiltrados.length === 0 && (
-              <div style={{ padding: '2rem', textAlign: 'center', color: COLORS.onSurfaceVariant }}>
+              <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
                 No se encontraron atletas con ese criterio.
               </div>
             )}

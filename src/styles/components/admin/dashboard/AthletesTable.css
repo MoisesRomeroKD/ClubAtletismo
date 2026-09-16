@@ -1,0 +1,136 @@
+.athletes-table-card {
+  margin-bottom: var(--spacing-gutter);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-gutter);
+  display: flex;
+  flex-direction: column;
+}
+
+.athletes-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.athletes-table-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.link-action {
+  color: var(--func-primary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.link-action:hover {
+  color: var(--clr-azul-light);
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.data-table th {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-main);
+  font-weight: 600;
+}
+
+.data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-main);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.athlete-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.athlete-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background-color: var(--bg-sidebar-hover);
+  color: var(--func-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: 1px solid var(--border-main);
+}
+
+.athlete-name {
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.status-pill {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-optimal {
+  background-color: var(--clr-verde-100);
+  color: var(--clr-verde-700);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-danger {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.btn-icon {
+  background: transparent;
+  border: 1px solid var(--border-main);
+  color: var(--text-muted);
+  padding: 0.4rem;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background-color: var(--bg-sidebar-hover);
+  color: var(--text-main);
+  border-color: var(--clr-gris-dark);
+}

@@ -430,9 +430,9 @@ const DashboardView = ({
             <div className="chart-box-height">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={areasData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--clr-gris-light)" />
                   <XAxis type="number" domain={[0, 100]} hide />
-                  <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} width={80} />
+                  <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 12}} width={80} />
                   <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{borderRadius: '8px'}} formatter={(value) => [`${value}%`, 'Asistencia']}/>
                   <Bar dataKey="asistencia" fill="#6366f1" radius={[0, 4, 4, 0]} barSize={20} />
                 </BarChart>
@@ -446,8 +446,8 @@ const DashboardView = ({
           <div className="chart-box-height">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={subareasData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--clr-gris-light)" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 12}} />
                 <YAxis domain={[0, 100]} hide />
                 <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{borderRadius: '8px'}} formatter={(value) => [`${value}%`, 'Asistencia']}/>
                 <Bar dataKey="asistencia" fill="#10b981" radius={[4, 4, 0, 0]} barSize={32} />
@@ -461,11 +461,11 @@ const DashboardView = ({
            <div className="chart-box-height">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={evolutionData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0"/>
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                <YAxis domain={[0, 100]} axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} width={30} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--clr-gris-light)"/>
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 12}} />
+                <YAxis domain={[0, 100]} axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 12}} width={30} />
                 <Tooltip contentStyle={{borderRadius: '8px'}} formatter={(value) => [`${value}%`, 'Asistencia']}/>
-                <Line type="monotone" dataKey="asistencia" stroke="#6366f1" strokeWidth={3} dot={{r: 4, fill: '#6366f1', strokeWidth: 2, stroke: '#fff'}} activeDot={{r: 6}} />
+                <Line type="monotone" dataKey="asistencia" stroke="#6366f1" strokeWidth={3} dot={{r: 4, fill: '#6366f1', strokeWidth: 2, stroke: 'var(--clr-blanco-pura)'}} activeDot={{r: 6}} />
               </LineChart>
             </ResponsiveContainer>
           </div>

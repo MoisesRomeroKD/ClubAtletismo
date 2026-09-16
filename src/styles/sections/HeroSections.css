@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;
   overflow: hidden;
-  background-color: var(--clr-azul-profundo, #000615);
+  background-color: #000615;
 }
 
 .hero-bg-wrapper {
@@ -24,10 +24,10 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    to bottom, 
-    rgba(0, 6, 21, 0.9) 0%, 
-    rgba(0, 6, 21, 0.7) 60%, 
-    var(--clr-azul-profundo, #000615) 100%
+    to bottom,
+    rgba(0, 6, 21, 0.9) 0%,
+    rgba(0, 6, 21, 0.7) 60%,
+    #000615 100%
   );
   z-index: 10;
 }
@@ -54,7 +54,7 @@
 }
 
 .hero-text-block {
-  color: var(--clr-blanco, #ffffff);
+  color: var(--clr-blanco-pura);
 }
 
 .hero-title {
@@ -66,7 +66,7 @@
 }
 
 .hero-title-italic {
-  color: var(--brand-secondary, #b52619);
+  color: #b52619;
   font-style: italic;
 }
 
@@ -99,23 +99,23 @@
 }
 
 .btn-hero-primary {
-  background-color: var(--brand-secondary, #b52619);
-  color: var(--clr-blanco, #ffffff);
+  background-color: #b52619;
+  color: var(--clr-blanco-pura);
 }
 
 .btn-hero-primary:hover {
-  background-color: var(--clr-rojo-accion, rgba(181, 38, 25, 0.9));
+  background-color: rgba(181, 38, 25, 0.9);
 }
 
 .btn-hero-secondary {
-  border: 2px solid var(--clr-blanco, #ffffff);
-  color: var(--clr-blanco, #ffffff);
+  border: 2px solid var(--clr-blanco-pura);
+  color: var(--clr-blanco-pura);
   background: transparent;
 }
 
 .btn-hero-secondary:hover {
-  background-color: var(--clr-blanco, #ffffff);
-  color: var(--clr-azul-profundo, #000615);
+  background-color: var(--clr-blanco-pura);
+  color: #000615;
 }
 
 .btn-text-fix {
@@ -158,9 +158,9 @@
 @media (min-width: 769px) {
   .hero-gradient-overlay {
     background: linear-gradient(
-      to right, 
-      var(--clr-azul-profundo, #000615) 0%, 
-      rgba(0, 6, 21, 0.85) 60%, 
+      to right,
+      #000615 0%,
+      rgba(0, 6, 21, 0.85) 60%,
       transparent 100%
     );
   }

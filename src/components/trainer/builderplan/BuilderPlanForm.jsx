@@ -254,8 +254,8 @@ export default function BuilderPlanForm() {
               {/* TARJETA INFORMATIVA DE ASIGNACIÓN Y PARÁMETROS */}
               <div
                 style={{
-                  backgroundColor: "#f8fafc",
-                  border: "1px solid #e2e8f0",
+                  backgroundColor: "var(--text-main)",
+                  border: "1px solid var(--clr-gris-light)",
                   borderRadius: "8px",
                   padding: "16px",
                   marginBottom: "24px",
@@ -265,7 +265,7 @@ export default function BuilderPlanForm() {
                   style={{
                     margin: "0 0 12px 0",
                     fontSize: "1rem",
-                    color: "#1e293b",
+                    color: "var(--bg-card)",
                   }}
                 >
                   🎯 Destinatario y Detalles del Plan
@@ -326,7 +326,7 @@ export default function BuilderPlanForm() {
                     <div
                       key={week.id}
                       style={{
-                        border: "1px solid #cbd5e1",
+                        border: "1px solid var(--clr-gris-light)",
                         borderRadius: "8px",
                         overflow: "hidden",
                       }}
@@ -346,7 +346,7 @@ export default function BuilderPlanForm() {
                         <span style={{ fontWeight: "600" }}>
                           Semana {idx + 1}: {week.title || "Sin Título"}
                         </span>
-                        <span style={{ fontSize: "0.85rem", color: "#64748b" }}>
+                        <span style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
                           {weekExerciseCount} Ejercicios{" "}
                           {isExpanded ? "▲" : "▼"}
                         </span>
@@ -357,7 +357,7 @@ export default function BuilderPlanForm() {
                         <div
                           style={{
                             padding: "16px",
-                            backgroundColor: "#ffffff",
+                            backgroundColor: "var(--clr-blanco-pura)",
                           }}
                         >
                           <div
@@ -372,7 +372,7 @@ export default function BuilderPlanForm() {
                               <div
                                 key={day.id}
                                 style={{
-                                  border: "1px dashed #cbd5e1",
+                                  border: "1px dashed var(--clr-gris-light)",
                                   padding: "10px",
                                   borderRadius: "6px",
                                 }}
@@ -381,7 +381,7 @@ export default function BuilderPlanForm() {
                                   style={{
                                     fontWeight: "600",
                                     fontSize: "0.85rem",
-                                    color: "#0f172a",
+                                    color: "var(--bg-main)",
                                     marginBottom: "6px",
                                   }}
                                 >
@@ -393,7 +393,7 @@ export default function BuilderPlanForm() {
                                       margin: 0,
                                       paddingLeft: "16px",
                                       fontSize: "0.8rem",
-                                      color: "#334155",
+                                      color: "var(--border-main)",
                                     }}
                                   >
                                     {day.exercises.map((ex, exIdx) => (
@@ -410,7 +410,7 @@ export default function BuilderPlanForm() {
                                   <span
                                     style={{
                                       fontSize: "0.75rem",
-                                      color: "#94a3b8",
+                                      color: "var(--text-muted)",
                                       fontStyle: "italic",
                                     }}
                                   >

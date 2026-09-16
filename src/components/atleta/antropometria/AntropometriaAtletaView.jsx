@@ -30,21 +30,21 @@ const AntropometriaAtletaView = ({ athleteId, athleteName }) => {
 
   if (isLoading) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#6B7280' }}>
+      <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--clr-gris-base)' }}>
         Cargando historial antropométrico y composición corporal...
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '1.5rem', backgroundColor: '#ffffff', borderRadius: '12px' }}>
+    <div style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px' }}>
       
       {/* HEADER */}
-      <div style={{ borderBottom: '2px solid #2A6BFF', paddingBottom: '0.75rem', marginBottom: '1.5rem' }}>
-        <h2 style={{ margin: 0, fontSize: '1.5rem', color: '#111827', fontWeight: '800' }}>
+      <div style={{ borderBottom: '2px solid var(--func-primary)', paddingBottom: '0.75rem', marginBottom: '1.5rem' }}>
+        <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)', fontWeight: '800' }}>
           Perfil Cineantropométrico
         </h2>
-        <p style={{ margin: '0.25rem 0 0 0', color: '#6B7280', fontSize: '0.9rem' }}>
+        <p style={{ margin: '0.25rem 0 0 0', color: 'var(--clr-gris-base)', fontSize: '0.9rem' }}>
           Evolución de mediciones corporales, pliegues cutáneos y somatocarta
         </p>
       </div>
@@ -54,7 +54,7 @@ const AntropometriaAtletaView = ({ athleteId, athleteName }) => {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
             <thead>
-              <tr style={{ backgroundColor: '#F9FAFB', borderBottom: '1px solid #E5E7EB' }}>
+              <tr style={{ backgroundColor: 'var(--bg-main)', borderBottom: '1px solid var(--border-main)' }}>
                 <th style={{ padding: '12px 16px' }}>Fecha</th>
                 <th style={{ padding: '12px 16px' }}>Peso (kg)</th>
                 <th style={{ padding: '12px 16px' }}>Talla (cm)</th>
@@ -65,23 +65,23 @@ const AntropometriaAtletaView = ({ athleteId, athleteName }) => {
             </thead>
             <tbody>
               {antropometria.map((item, idx) => (
-                <tr key={idx} style={{ borderBottom: '1px solid #F3F4F6' }}>
+                <tr key={idx} style={{ borderBottom: '1px solid var(--bg-surface)' }}>
                   <td style={{ padding: '12px 16px', fontWeight: '600' }}>{item.fecha || '-'}</td>
                   <td style={{ padding: '12px 16px' }}>{item.peso || '-'} kg</td>
                   <td style={{ padding: '12px 16px' }}>{item.talla || '-'} cm</td>
                   <td style={{ padding: '12px 16px', color: '#EF4444', fontWeight: '600' }}>{item.porcentaje_grasa || '-'}%</td>
                   <td style={{ padding: '12px 16px', color: '#10B981', fontWeight: '600' }}>{item.porcentaje_musculo || '-'}%</td>
-                  <td style={{ padding: '12px 16px', color: '#4B5563' }}>{item.evaluador || 'Cuerpo Técnico'}</td>
+                  <td style={{ padding: '12px 16px', color: 'var(--text-muted)' }}>{item.evaluador || 'Cuerpo Técnico'}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       ) : (
-        <div style={{ padding: '3rem 1.5rem', textAlign: 'center', border: '1px dashed #D1D5DB', borderRadius: '12px' }}>
+        <div style={{ padding: '3rem 1.5rem', textAlign: 'center', border: '1px dashed var(--border-main)', borderRadius: '12px' }}>
           <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📏</div>
-          <h3 style={{ margin: 0, color: '#374151', fontSize: '1.1rem' }}>No posees registros antropométricos</h3>
-          <p style={{ color: '#9CA3AF', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+          <h3 style={{ margin: 0, color: 'var(--clr-gris-dark)', fontSize: '1.1rem' }}>No posees registros antropométricos</h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.25rem' }}>
             Las evaluaciones de pliegues, peso, talla y somatotipo cargadas por el especialista aparecerán reflejadas aquí.
           </p>
         </div>

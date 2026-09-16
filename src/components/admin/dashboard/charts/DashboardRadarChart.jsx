@@ -45,13 +45,13 @@ const CustomTooltip = ({ active, payload }) => {
   return (
     <div
       style={{
-        background: '#13151a',
-        border: '1px solid #2b303b',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-main)',
         borderRadius: '8px',
         padding: '10px 12px',
         boxShadow:
           '0 8px 24px rgba(0, 0, 0, 0.35)',
-        color: '#f8fafc',
+        color: 'var(--text-main)',
         fontSize: '12px'
       }}
     >
@@ -74,7 +74,7 @@ const CustomTooltip = ({ active, payload }) => {
 
       <div
         style={{
-          color: '#94a3b8',
+          color: 'var(--text-muted)',
           marginTop: '3px'
         }}
       >
@@ -107,13 +107,13 @@ export const DashboardRadarChart = ({
         outerRadius="72%"
       >
         <PolarGrid
-          stroke="#222631"
+          stroke="var(--border-main)"
         />
 
         <PolarAngleAxis
           dataKey="label"
           tick={{
-            fill: '#f8fafc',
+            fill: 'var(--text-main)',
             fontSize: 10
           }}
         />
@@ -121,7 +121,7 @@ export const DashboardRadarChart = ({
         <PolarRadiusAxis
           domain={[0, 100]}
           tick={{
-            fill: '#64748b',
+            fill: 'var(--text-muted)',
             fontSize: 9
           }}
           tickFormatter={(value) =>

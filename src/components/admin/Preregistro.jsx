@@ -261,7 +261,7 @@ const Preregistro = () => {
 
       {/* BLOQUE 1: REGISTRO INDIVIDUAL - Solo para Atleta */}
       {selectedRole === 'Atleta' && mode === 'individual' && <div className="preregistro-card">
-        <h3 style={{ margin: '0 0 1.25rem 0', fontSize: '1.2rem', color: '#111827', fontWeight: '700', borderBottom: '1px solid #E5E7EB', paddingBottom: '0.5rem' }}>
+        <h3 style={{ margin: '0 0 1.25rem 0', fontSize: '1.2rem', color: 'var(--text-main)', fontWeight: '700', borderBottom: '1px solid var(--border-main)', paddingBottom: '0.5rem' }}>
           📝 Preregistro individual <span className="preregistro-step-label">{individualStep}/2</span>
         </h3>
 
@@ -306,25 +306,25 @@ const Preregistro = () => {
 
           {individualStep === 2 && <>
           <div>
-            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: '600', color: '#374151' }}>Cédula</label>
-            <input 
-              type="text" 
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)' }}>Cédula</label>
+            <input
+              type="text"
               name="cedula"
               value={formData.cedula}
               onChange={handleInputChange}
               required
               placeholder="Ej. V12345678"
-              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.9rem' }}
+              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid var(--border-main)', fontSize: '0.9rem', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)' }}
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: '600', color: '#374151' }}>Rol / Función Inicial</label>
-            <select 
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)' }}>Rol / Función Inicial</label>
+            <select
               name="rol"
               value={formData.rol}
               onChange={handleInputChange}
-              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.9rem', backgroundColor: '#fff' }}
+              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid var(--border-main)', fontSize: '0.9rem', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)' }}
             >
               <option value="Atleta">Atleta</option>
               <option value="Entrenador">Entrenador</option>
@@ -332,63 +332,63 @@ const Preregistro = () => {
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: '600', color: '#374151' }}>Nombres</label>
-            <input 
-              type="text" 
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)' }}>Nombres</label>
+            <input
+              type="text"
               name="nombres"
               value={formData.nombres}
               onChange={handleInputChange}
               required
               placeholder="Nombres completos"
-              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.9rem' }}
+              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid var(--border-main)', fontSize: '0.9rem', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)' }}
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: '600', color: '#374151' }}>Apellidos</label>
-            <input 
-              type="text" 
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)' }}>Apellidos</label>
+            <input
+              type="text"
               name="apellidos"
               value={formData.apellidos}
               onChange={handleInputChange}
               required
               placeholder="Apellidos completos"
-              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.9rem' }}
+              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid var(--border-main)', fontSize: '0.9rem', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)' }}
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: '600', color: '#374151' }}>Fecha de Nacimiento</label>
-            <input 
-              type="date" 
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)' }}>Fecha de Nacimiento</label>
+            <input
+              type="date"
               name="fechaNacimiento"
               value={formData.fechaNacimiento}
               onChange={handleInputChange}
               required
-              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.9rem' }}
+              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid var(--border-main)', fontSize: '0.9rem', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)' }}
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: '600', color: '#374151' }}>Correo Electrónico</label>
-            <input 
-              type="email" 
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)' }}>Correo Electrónico</label>
+            <input
+              type="email"
               name="correo"
               value={formData.correo}
               onChange={handleInputChange}
               required
               placeholder="correo@ejemplo.com"
-              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.9rem' }}
+              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid var(--border-main)', fontSize: '0.9rem', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)' }}
             />
           </div>
 
           <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
             <button type="button" className="preregistro-back-button" onClick={() => setIndividualStep(1)}>Atrás</button>
-            <button 
+            <button
               type="submit"
               style={{
-                backgroundColor: '#2A6BFF',
-                color: '#ffffff',
+                backgroundColor: 'var(--func-primary)',
+                color: 'var(--clr-blanco-pura)',
                 border: 'none',
                 padding: '12px 28px',
                 borderRadius: '6px',
@@ -405,32 +405,32 @@ const Preregistro = () => {
       </div>}
 
       {/* BLOQUE 2: CARGA MASIVA PARÁMETRIZADA CON AUDITORÍA PREVIA - Solo para Atleta */}
-      {selectedRole === 'Atleta' && mode === 'masivo' && <div className="preregistro-card" style={{ 
-        padding: '1.75rem', 
-        backgroundColor: '#ECFDF5', 
-        borderRadius: '12px', 
-        border: '2px solid #10B981',
-        boxShadow: '0 4px 6px -1px rgba(16, 185, 129, 0.1)' 
+      {selectedRole === 'Atleta' && mode === 'masivo' && <div className="preregistro-card" style={{
+        padding: '1.75rem',
+        backgroundColor: 'var(--clr-verde-100)',
+        borderRadius: '12px',
+        border: '2px solid var(--clr-verde-500)',
+        boxShadow: '0 4px 6px -1px rgba(0, 128, 0, 0.1)'
       }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #A7F3D0', paddingBottom: '0.75rem' }}>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--clr-verde-300)', paddingBottom: '0.75rem' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#065F46', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--clr-verde-900)', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 📊 Carga Masiva de Atletas por Excel
               </h3>
-              <p style={{ margin: '0.25rem 0 0 0', color: '#047857', fontSize: '0.88rem' }}>
+              <p style={{ margin: '0.25rem 0 0 0', color: 'var(--clr-verde-700)', fontSize: '0.88rem' }}>
                 Cada fila representa un atleta y su representante: <code>representante_nombres, representante_apellidos, representante_cedula, representante_telefono, representante_relacion, cedula, rol, nombres, apellidos, fecha_nacimiento, correo, telefono, categoria</code>
               </p>
             </div>
 
-            <button 
+            <button
               type="button"
               onClick={handleDownloadTemplate}
               style={{
-                backgroundColor: '#ffffff',
-                color: '#047857',
-                border: '1px solid #059669',
+                backgroundColor: 'var(--bg-card)',
+                color: 'var(--clr-verde-700)',
+                border: '1px solid var(--clr-verde-500)',
                 padding: '9px 16px',
                 borderRadius: '6px',
                 fontWeight: '700',
@@ -447,25 +447,25 @@ const Preregistro = () => {
           </div>
 
           {/* INPUT SUBIR ARCHIVO + BOTÓN DE VALIDACIÓN */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', backgroundColor: '#ffffff', padding: '1rem', borderRadius: '8px', border: '1px solid #A7F3D0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', backgroundColor: 'var(--bg-card)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--clr-verde-300)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#374151' }}>Seleccionar Archivo Excel:</span>
-              <input 
-                type="file" 
-                accept=".xlsx, .xls, .csv" 
+              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)' }}>Seleccionar Archivo Excel:</span>
+              <input
+                type="file"
+                accept=".xlsx, .xls, .csv"
                 ref={fileInputRef}
                 onChange={handleFileChange}
                 style={{ fontSize: '0.85rem' }}
               />
             </div>
 
-            <button 
+            <button
               type="button"
               disabled={!file || isValidating || isUploading}
               onClick={handleValidateExcel}
               style={{
-                backgroundColor: file && !isValidating ? '#059669' : '#D1D5DB',
-                color: '#ffffff',
+                backgroundColor: file && !isValidating ? 'var(--clr-verde-500)' : 'var(--text-muted)',
+                color: 'var(--clr-blanco-pura)',
                 border: 'none',
                 padding: '11px 20px',
                 borderRadius: '6px',
@@ -484,17 +484,17 @@ const Preregistro = () => {
               
               {/* TARJETAS DE MÉTRICAS */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
-                <div style={{ backgroundColor: '#ffffff', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid #2A6BFF' }}>
-                  <div style={{ fontSize: '0.8rem', color: '#6B7280', fontWeight: '600' }}>TOTAL FILAS</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: '800', color: '#111827' }}>{validationResult.resumen.total}</div>
+                <div style={{ backgroundColor: 'var(--bg-card)', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid var(--func-primary)' }}>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '600' }}>TOTAL FILAS</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)' }}>{validationResult.resumen.total}</div>
                 </div>
 
-                <div style={{ backgroundColor: '#ffffff', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid #10B981' }}>
-                  <div style={{ fontSize: '0.8rem', color: '#047857', fontWeight: '600' }}>VÁLIDOS PARA IMPORTAR</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: '800', color: '#10B981' }}>{validationResult.resumen.validas}</div>
+                <div style={{ backgroundColor: 'var(--bg-card)', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid var(--clr-verde-500)' }}>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--clr-verde-700)', fontWeight: '600' }}>VÁLIDOS PARA IMPORTAR</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--clr-verde-500)' }}>{validationResult.resumen.validas}</div>
                 </div>
 
-                <div style={{ backgroundColor: '#ffffff', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid #EF4444' }}>
+                <div style={{ backgroundColor: 'var(--bg-card)', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid #EF4444' }}>
                   <div style={{ fontSize: '0.8rem', color: '#B91C1C', fontWeight: '600' }}>CON INCONSISTENCIAS</div>
                   <div style={{ fontSize: '1.4rem', fontWeight: '800', color: '#EF4444' }}>{validationResult.resumen.con_error}</div>
                 </div>
@@ -524,8 +524,8 @@ const Preregistro = () => {
                     disabled={isUploading}
                     onClick={handleConfirmCargaMasiva}
                     style={{
-                      backgroundColor: '#2A6BFF',
-                      color: '#ffffff',
+                      backgroundColor: 'var(--func-primary)',
+                      color: 'var(--clr-blanco-pura)',
                       border: 'none',
                       padding: '12px 28px',
                       borderRadius: '6px',
@@ -549,7 +549,7 @@ const Preregistro = () => {
       {/* BLOQUE 3: FORMULARIO ENTRENADOR */}
       {selectedRole === 'Entrenador' && (
         <div className="preregistro-card">
-          <h3 style={{ margin: '0 0 1.25rem 0', fontSize: '1.2rem', color: '#111827', fontWeight: '700', borderBottom: '1px solid #E5E7EB', paddingBottom: '0.5rem' }}>
+          <h3 style={{ margin: '0 0 1.25rem 0', fontSize: '1.2rem', color: 'var(--text-main)', fontWeight: '700', borderBottom: '1px solid var(--border-main)', paddingBottom: '0.5rem' }}>
             📋 Registro de Entrenador
           </h3>
 
@@ -593,7 +593,7 @@ const Preregistro = () => {
       {/* BLOQUE 4: FORMULARIO ADMINISTRADOR */}
       {selectedRole === 'Administrador' && (
         <div className="preregistro-card">
-          <h3 style={{ margin: '0 0 1.25rem 0', fontSize: '1.2rem', color: '#111827', fontWeight: '700', borderBottom: '1px solid #E5E7EB', paddingBottom: '0.5rem' }}>
+          <h3 style={{ margin: '0 0 1.25rem 0', fontSize: '1.2rem', color: 'var(--text-main)', fontWeight: '700', borderBottom: '1px solid var(--border-main)', paddingBottom: '0.5rem' }}>
             🔑 Registro de Administrador
           </h3>
 

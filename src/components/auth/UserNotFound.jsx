@@ -18,7 +18,7 @@ export default function UserNotFound({ onRetry }) {
         <span style={{ fontSize: '24px', marginBottom: '10px' }}>⚠️</span>
         
         <p style={{ 
-          color: '#333', 
+          color: 'var(--text-main)', 
           fontSize: '14px', 
           margin: '0 25px', 
           lineHeight: '1.6',

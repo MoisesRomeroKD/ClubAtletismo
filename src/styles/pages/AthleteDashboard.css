@@ -1,6 +1,6 @@
 /* Contenedor Base */
 .dashboard-page {
-  background-color: #f4f7f6;
+  background-color: var(--bg-main);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -13,7 +13,7 @@
 
 /* Tipografía y Títulos */
 .welcome-header {
-  color: #1a2a3a;
+  color: var(--text-main);
   font-size: 2rem;
   font-weight: 700;
   text-align: center;
@@ -21,7 +21,7 @@
 }
 
 .section-title {
-  color: #2c3e50;
+  color: var(--text-main);
   text-align: center;
   margin-bottom: 25px;
   font-weight: 600;
@@ -45,9 +45,9 @@
   padding: 40px;
   background-color: var(--bg-card);
   border-radius: 15px;
-  color: #95a5a6;
+  color: var(--text-muted);
   text-align: center;
-  border: 2px dashed #e0e0e0;
+  border: 2px dashed var(--border-main);
 }
 
 .loading-container {
@@ -56,7 +56,7 @@
   align-items: center;
   height: 100vh;
   font-weight: bold;
-  color: #2A6BFF;
+  color: var(--func-primary);
   font-size: 1.2rem;
 }
 
@@ -70,7 +70,7 @@
 .routine-item {
   display: flex;
   padding: 12px 0;
-  border-bottom: 1px solid #f1f1f1;
+  border-bottom: 1px solid var(--border-main);
   align-items: center;
 }
 
@@ -79,7 +79,7 @@
 }
 
 .day-label {
-  color: #2A6BFF;
+  color: var(--func-primary);
   font-weight: 800;
   width: 120px;
   text-transform: uppercase;
@@ -87,6 +87,6 @@
 }
 
 .task-text {
-  color: #4a5568;
+  color: var(--text-muted);
   flex: 1;
 }

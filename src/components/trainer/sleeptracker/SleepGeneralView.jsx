@@ -26,11 +26,11 @@ const CustomTooltip = ({ active, payload, label }) => {
         borderRadius: '8px',
         boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)'
       }}>
-        <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 600 }}>
+        <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>
           {label || 'Fecha'}
         </p>
         <p style={{ margin: '4px 0 0 0', fontWeight: 700, color: '#38bdf8', fontSize: '1rem' }}>
-          Calidad: {payload[0].value} <span style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>/ 10</span>
+          Calidad: {payload[0].value} <span style={{ fontSize: '0.75rem', color: 'var(--clr-gris-light)' }}>/ 10</span>
         </p>
       </div>
     );
@@ -145,22 +145,22 @@ export default function SleepGeneralView({
               <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                 <defs>
                   <linearGradient id="sleepQualityGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#2563eb" stopOpacity={0.0} />
+                    <stop offset="5%" stopColor="var(--clr-azul-base)" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="var(--clr-azul-base)" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(203, 213, 225, 0.4)" />
-                <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                <YAxis domain={[0, 10]} ticks={[0, 2, 4, 6, 8, 10]} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
+                <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+                <YAxis domain={[0, 10]} ticks={[0, 2, 4, 6, 8, 10]} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area
                   type="monotone"
                   dataKey="quality"
-                  stroke="#2563eb"
+                  stroke="var(--clr-azul-base)"
                   strokeWidth={3}
                   fillOpacity={1}
                   fill="url(#sleepQualityGradient)"
-                  activeDot={{ r: 6, fill: '#2563eb', stroke: '#fff', strokeWidth: 2 }}
+                  activeDot={{ r: 6, fill: 'var(--clr-azul-base)', stroke: 'var(--clr-blanco-pura)', strokeWidth: 2 }}
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -203,10 +203,10 @@ export default function SleepGeneralView({
                 pointerEvents: 'none'
               }}
             >
-              <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--sl-text-primary, #0f172a)' }}>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--sl-text-primary, var(--bg-main))' }}>
                 {registeredPct}%
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 500 }}>Completado</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>Completado</div>
             </div>
           </div>
         </div>

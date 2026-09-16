@@ -862,6 +862,22 @@ function ProfileModal({
     ) {
       drawRadarChart(canvasRef.current);
     }
+
+    const themeObserver = new MutationObserver(() => {
+      if (
+        currentTab === 'atletas' &&
+        activeTab === 'Antropometría'
+      ) {
+        drawRadarChart(canvasRef.current);
+      }
+    });
+
+    themeObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => themeObserver.disconnect();
   }, [currentTab, activeTab]);
 
   return (
@@ -1204,6 +1220,13 @@ function drawRadarChart(canvas) {
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
+  const theme = getComputedStyle(document.body);
+  const themeColor = (name, fallback) =>
+    theme.getPropertyValue(name).trim() || fallback;
+  const borderColor = themeColor('--border-main', 'var(--border-main)');
+  const mutedTextColor = themeColor('--text-muted', 'var(--clr-gris-base)');
+  const primaryColor = themeColor('--func-primary', 'var(--clr-azul-base)');
+  const surfaceColor = themeColor('--bg-card', 'var(--clr-blanco-pura)');
 
   const cw = canvas.width;
   const ch = canvas.height;
@@ -1216,7 +1239,7 @@ function drawRadarChart(canvas) {
 
   ctx.clearRect(0, 0, cw, ch);
 
-  ctx.strokeStyle = '#e5e7eb';
+  ctx.strokeStyle = borderColor;
   ctx.lineWidth = 1;
 
   for (let step = 1; step <= 4; step += 1) {
@@ -1250,7 +1273,7 @@ function drawRadarChart(canvas) {
     'Agilidad',
   ];
 
-  ctx.fillStyle = '#6b7280';
+  ctx.fillStyle = mutedTextColor;
   ctx.font = '10px Inter';
   ctx.textAlign = 'center';
 
@@ -1306,10 +1329,12 @@ function drawRadarChart(canvas) {
     }
   }
 
-  ctx.fillStyle = 'rgba(37, 99, 235, 0.2)';
+  ctx.fillStyle = primaryColor;
+  ctx.globalAlpha = 0.2;
   ctx.fill();
+  ctx.globalAlpha = 1;
 
-  ctx.strokeStyle = '#2563eb';
+  ctx.strokeStyle = primaryColor;
   ctx.lineWidth = 2;
   ctx.stroke();
 
@@ -1325,10 +1350,10 @@ function drawRadarChart(canvas) {
     ctx.beginPath();
     ctx.arc(x, y, 4, 0, Math.PI * 2);
 
-    ctx.fillStyle = '#2563eb';
+    ctx.fillStyle = primaryColor;
     ctx.fill();
 
-    ctx.strokeStyle = '#fff';
+    ctx.strokeStyle = surfaceColor;
     ctx.stroke();
   }
 }

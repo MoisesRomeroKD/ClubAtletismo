@@ -83,9 +83,9 @@ const SleepQualityDashboard = ({ athleteName, sleepData = [] }) => {
                                             onClick={() => setSelectedScore(num)}
                                             style={{
                                                 padding: '10px 14px',
-                                                border: selectedScore === num ? '2px solid #2A6BFF' : '1px solid #ccc',
-                                                backgroundColor: selectedScore === num ? '#2A6BFF' : '#fff',
-                                                color: selectedScore === num ? '#fff' : '#000',
+                                                border: selectedScore === num ? '2px solid var(--func-primary)' : '1px solid var(--clr-gris-base)',
+                                                backgroundColor: selectedScore === num ? 'var(--func-primary)' : 'var(--clr-blanco-pura)',
+                                                color: selectedScore === num ? 'var(--clr-blanco-pura)' : 'var(--clr-negro-pura)',
                                                 borderRadius: '6px',
                                                 cursor: 'pointer',
                                                 fontWeight: 'bold'
@@ -95,7 +95,7 @@ const SleepQualityDashboard = ({ athleteName, sleepData = [] }) => {
                                         </button>
                                     ))}
                                 </div>
-                                <div className="score-labels" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#666' }}>
+                                <div className="score-labels" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                                     <span>1 - Muy mala</span>
                                     <span>5 - Regular</span>
                                     <span>10 - Excelente</span>
@@ -110,8 +110,8 @@ const SleepQualityDashboard = ({ athleteName, sleepData = [] }) => {
                                 style={{
                                     marginTop: '1.5rem',
                                     padding: '12px 24px',
-                                    backgroundColor: selectedScore && !isSubmitting ? '#2A6BFF' : '#cccccc',
-                                    color: '#ffffff',
+                                    backgroundColor: selectedScore && !isSubmitting ? 'var(--func-primary)' : 'var(--clr-gris-base)ccc',
+                                    color: 'var(--clr-blanco-pura)',
                                     border: 'none',
                                     borderRadius: '6px',
                                     cursor: selectedScore && !isSubmitting ? 'pointer' : 'not-allowed',

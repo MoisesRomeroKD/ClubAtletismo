@@ -130,7 +130,7 @@
 /* Botones Operacionales */
 .btn-cyber-sync {
   background-color: var(--brand-secondary); /* Rojo Acción / Color asignado */
-  color: #fff;
+  color: var(--clr-blanco-pura);
   border: none;
   padding: 10px 20px;
   border-radius: 4px;
@@ -144,7 +144,7 @@
 }
 
 .btn-cyber-sync:disabled {
-  background-color: #555;
+  background-color: var(--text-muted);
   cursor: not-allowed;
 }
 

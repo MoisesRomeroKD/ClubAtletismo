@@ -1,28 +1,28 @@
 .gestionUsuarios {
-  --gu-bg-body: #f8f9fa;
-  --gu-bg-surface: #ffffff;
-  --gu-bg-hover: #f1f3f5;
-  --gu-bg-active: #e9ecef;
+  --gu-bg-body: var(--bg-main);
+  --gu-bg-surface: var(--bg-card);
+  --gu-bg-hover: var(--bg-sidebar-hover);
+  --gu-bg-active: var(--bg-surface);
 
-  --gu-border-light: #e5e7eb;
-  --gu-border-focus: #9ca3af;
+  --gu-border-light: var(--border-main);
+  --gu-border-focus: var(--func-primary);
 
-  --gu-text-main: #111827;
-  --gu-text-muted: #6b7280;
-  --gu-text-disabled: #9ca3af;
+  --gu-text-main: var(--text-main);
+  --gu-text-muted: var(--text-muted);
+  --gu-text-disabled: var(--text-muted);
 
-  --gu-primary: #000000;
-  --gu-primary-hover: #374151;
+  --gu-primary: var(--brand-primary);
+  --gu-primary-hover: var(--brand-accent);
 
-  --gu-accent: #2563eb;
-  --gu-accent-hover: #1d4ed8;
-  --gu-accent-bg: #eff6ff;
+  --gu-accent: var(--func-primary);
+  --gu-accent-hover: var(--func-primary-hover);
+  --gu-accent-bg: var(--func-primary-bg-soft);
 
   --gu-danger: #dc2626;
-  --gu-danger-bg: #fef2f2;
+  --gu-danger-bg: rgba(220, 38, 38, 0.12);
 
-  --gu-success: #059669;
-  --gu-success-bg: #ecfdf5;
+  --gu-success: var(--clr-verde-700);
+  --gu-success-bg: var(--clr-verde-100);
 
   --gu-font:
     'Inter',
@@ -248,7 +248,7 @@
 
 .gu-btnPrimary {
   background-color: var(--gu-primary);
-  color: #ffffff;
+  color: var(--clr-blanco-pura);
 }
 
 .gu-btnPrimary:hover:not(:disabled) {
@@ -268,7 +268,7 @@
 
 .gu-btnDanger {
   background-color: var(--gu-danger);
-  color: #ffffff;
+  color: var(--clr-blanco-pura);
 }
 
 .gu-btnDanger:hover:not(:disabled) {
@@ -391,7 +391,7 @@
 }
 
 .gu-table tbody tr.selected td {
-  background-color: #f3f4f6;
+  background-color: var(--gu-bg-active);
 }
 
 .gu-checkboxColumn {
@@ -513,7 +513,7 @@
   cursor: pointer;
   position: relative;
   outline: none;
-  background: #ffffff;
+  background: var(--gu-bg-surface);
   vertical-align: middle;
 }
 
@@ -529,7 +529,7 @@
   top: 1px;
   width: 4px;
   height: 8px;
-  border: solid #ffffff;
+  border: solid var(--clr-blanco-pura);
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
@@ -570,7 +570,7 @@
 
 .gu-pageBtn.active {
   background: var(--gu-primary);
-  color: #ffffff;
+  color: var(--clr-blanco-pura);
   font-weight: 500;
 }
 
@@ -953,7 +953,7 @@
   width: 16px;
   left: 2px;
   bottom: 2px;
-  background-color: #ffffff;
+  background-color: var(--gu-bg-surface);
   transition: 0.2s;
   border-radius: 50%;
   box-shadow: var(--gu-shadow-sm);

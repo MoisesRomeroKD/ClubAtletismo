@@ -24,6 +24,7 @@
  */
 
 import React from 'react';
+import '../../../styles/components/admin/dashboard/DashboardHeader.css';
 
 export const DashboardHeader = ({ title, subtitle, currentDate }) => {
   return (

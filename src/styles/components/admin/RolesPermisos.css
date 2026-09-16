@@ -54,7 +54,7 @@
 
   font-size: 14px;
 
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 
@@ -83,10 +83,10 @@
 
   padding: 18px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--clr-gris-light);
   border-radius: 13px;
 
-  background: #ffffff;
+  background: var(--clr-blanco-pura);
 
   text-align: left;
 
@@ -110,7 +110,7 @@
 .roles-permisos__role--active {
   border-color: #6366f1;
 
-  background: #eef2ff;
+  background: var(--func-primary-bg-soft);
 
   box-shadow:
     0 0 0 1px #6366f1;
@@ -129,12 +129,12 @@
   border-radius: 11px;
 
   background: #f1f5f9;
-  color: #475569;
+  color: var(--text-muted);
 }
 
 .roles-permisos__role--active
 .roles-permisos__role-icon {
-  background: #ffffff;
+  background: var(--clr-blanco-pura);
   color: #4f46e5;
 }
 
@@ -153,7 +153,7 @@
 .roles-permisos__role-info strong {
   font-size: 15px;
 
-  color: #0f172a;
+  color: var(--bg-main);
 }
 
 .roles-permisos__role-info span {
@@ -161,7 +161,7 @@
 
   line-height: 1.45;
 
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .roles-permisos__role-selected {
@@ -180,7 +180,7 @@
   border-radius: 50%;
 
   background: #4f46e5;
-  color: #ffffff;
+  color: var(--clr-blanco-pura);
 }
 
 
@@ -203,7 +203,7 @@
 
   border-radius: 12px;
 
-  background: #eef2ff;
+  background: var(--func-primary-bg-soft);
 }
 
 .roles-permisos__role-banner-icon {
@@ -218,7 +218,7 @@
 
   border-radius: 9px;
 
-  background: #ffffff;
+  background: var(--clr-blanco-pura);
 
   color: #4f46e5;
 }
@@ -281,10 +281,10 @@
 
   margin-bottom: 20px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--clr-gris-light);
   border-radius: 14px;
 
-  background: #ffffff;
+  background: var(--clr-blanco-pura);
 }
 
 .roles-permisos__section-header {
@@ -298,11 +298,11 @@
 
   border: none;
 
-  background: #ffffff;
+  background: var(--clr-blanco-pura);
 
   text-align: left;
 
-  color: #64748b;
+  color: var(--text-muted);
 
   cursor: pointer;
 
@@ -311,7 +311,7 @@
 }
 
 .roles-permisos__section-header:hover {
-  background: #f8fafc;
+  background: var(--text-main);
 }
 
 .roles-permisos__section-title {
@@ -331,7 +331,7 @@
   font-size: 16px;
   font-weight: 700;
 
-  color: #334155;
+  color: var(--border-main);
 }
 
 .roles-permisos__section-header p {
@@ -339,7 +339,7 @@
 
   font-size: 12px;
 
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 
@@ -350,7 +350,7 @@
 .roles-permisos__permissions {
   padding: 20px 24px;
 
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--clr-gris-light);
 }
 
 
@@ -374,7 +374,7 @@
 .roles-permisos__permission-actions > span {
   font-size: 12px;
 
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .roles-permisos__permission-actions > div {
@@ -404,7 +404,7 @@
 }
 
 .roles-permisos__permission-actions button:hover {
-  background: #eef2ff;
+  background: var(--func-primary-bg-soft);
 }
 
 
@@ -435,11 +435,11 @@
 
   padding: 14px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--clr-gris-light);
 
   border-radius: 10px;
 
-  background: #ffffff;
+  background: var(--clr-blanco-pura);
 
   cursor: pointer;
 
@@ -458,7 +458,7 @@
 .roles-permisos__permission--active {
   border-color: #a5b4fc;
 
-  background: #eef2ff;
+  background: var(--func-primary-bg-soft);
 }
 
 .roles-permisos__permission input {
@@ -482,11 +482,11 @@
 
   margin-top: 1px;
 
-  border: 2px solid #cbd5e1;
+  border: 2px solid var(--clr-gris-light);
 
   border-radius: 5px;
 
-  color: #ffffff;
+  color: var(--clr-blanco-pura);
 
   box-sizing: border-box;
 }
@@ -517,12 +517,12 @@
 
   background: #f1f5f9;
 
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .roles-permisos__permission--active
 .roles-permisos__permission-icon {
-  background: #ffffff;
+  background: var(--clr-blanco-pura);
 
   color: #4f46e5;
 }
@@ -543,7 +543,7 @@
 .roles-permisos__permission-info strong {
   font-size: 13px;
 
-  color: #334155;
+  color: var(--border-main);
 }
 
 .roles-permisos__permission-info small {
@@ -551,7 +551,7 @@
 
   line-height: 1.45;
 
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 
@@ -579,11 +579,11 @@
 
   padding: 15px 17px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--clr-gris-light);
 
   border-radius: 10px;
 
-  background: #f8fafc;
+  background: var(--text-main);
 }
 
 .roles-permisos__summary span {
@@ -595,13 +595,13 @@
 
   letter-spacing: 0.04em;
 
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .roles-permisos__summary strong {
   font-size: 15px;
 
-  color: #334155;
+  color: var(--border-main);
 }
 
 
@@ -664,7 +664,7 @@
 
   background: #4f46e5;
 
-  color: #ffffff;
+  color: var(--clr-blanco-pura);
 
   font-size: 13px;
 
@@ -700,7 +700,7 @@
 
   border: 2px solid rgba(255, 255, 255, 0.35);
 
-  border-top-color: #ffffff;
+  border-top-color: var(--clr-blanco-pura);
 
   border-radius: 50%;
 

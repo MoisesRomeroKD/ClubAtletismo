@@ -68,11 +68,11 @@ export default function CodeVerify({ email, setStatus, setErrorMsg, onValidated 
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center', width: '100%' }}>
-      <p style={{ fontSize: '12px', color: '#555', textAlign: 'center' }}>
+      <p style={{ fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center' }}>
         Se ha enviado un código a: <br/> <strong>{email}</strong>
       </p>
 
-      <div style={{ fontSize: '18px', fontWeight: 'bold', color: timeLeft < 60 ? 'red' : '#333' }}>
+      <div style={{ fontSize: '18px', fontWeight: 'bold', color: timeLeft < 60 ? 'red' : 'var(--text-main)' }}>
         ⏱️ {formatTime()}
       </div>
       
@@ -87,7 +87,7 @@ export default function CodeVerify({ email, setStatus, setErrorMsg, onValidated 
           width: '80%', 
           padding: '12px', 
           borderRadius: '4px', 
-          border: isValido ? '2px solid #28a745' : '1px solid #ccc', 
+          border: isValido ? '2px solid #28a745' : '1px solid var(--clr-gris-base)', 
           textAlign: 'center',
           fontSize: '20px',
           letterSpacing: '5px'
@@ -98,8 +98,8 @@ export default function CodeVerify({ email, setStatus, setErrorMsg, onValidated 
         type="submit"
         disabled={!isValido || isProcessing || timeLeft <= 0}
         style={{ 
-          backgroundColor: (!isValido || isProcessing || timeLeft <= 0) ? '#cccccc' : '#0000FF', 
-          color: 'white', 
+          backgroundColor: (!isValido || isProcessing || timeLeft <= 0) ? 'var(--clr-gris-base)ccc' : '#0000FF', 
+          color: 'var(--clr-blanco-pura)', 
           padding: '12px 40px', 
           borderRadius: '25px', 
           border: 'none', 

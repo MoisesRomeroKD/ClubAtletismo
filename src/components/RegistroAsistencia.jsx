@@ -11,19 +11,19 @@ const pureCSS = `
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    color: #333;
-    background-color: #f9fafb;
+    color: var(--text-main);
+    background-color: var(--bg-main);
     min-height: 100vh;
   }
   .header {
     margin-bottom: 24px;
-    border-bottom: 2px solid #e5e7eb;
+    border-bottom: 2px solid var(--border-main);
     padding-bottom: 16px;
   }
   .header h1 {
     margin: 0 0 16px 0;
     font-size: 24px;
-    color: #111827;
+    color: var(--text-main);
   }
   .controls {
     display: flex;
@@ -38,15 +38,15 @@ const pureCSS = `
   .control-group label {
     font-size: 14px;
     font-weight: 600;
-    color: #4b5563;
+    color: var(--text-muted);
   }
   .control-group input, .control-group select {
     padding: 8px 12px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-main);
     border-radius: 6px;
     font-size: 15px;
     outline: none;
-    background: #fff;
+    background: var(--clr-blanco-pura);
   }
   .control-group input:focus, .control-group select:focus {
     border-color: #3b82f6;
@@ -69,8 +69,8 @@ const pureCSS = `
   }
   
   .athlete-card {
-    background: #fff;
-    border: 1px solid #e5e7eb;
+    background: var(--clr-blanco-pura);
+    border: 1px solid var(--border-main);
     border-radius: 8px;
     padding: 16px;
     display: flex;
@@ -80,7 +80,7 @@ const pureCSS = `
   }
   .athlete-card:hover {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    border-color: #d1d5db;
+    border-color: var(--border-main);
   }
   
   .athlete-info {
@@ -93,12 +93,12 @@ const pureCSS = `
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #e5e7eb;
+    background-color: var(--border-main);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    color: #6b7280;
+    color: var(--clr-gris-base);
     flex-shrink: 0;
   }
   .athlete-details {
@@ -111,7 +111,7 @@ const pureCSS = `
   }
   .athlete-time {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--text-muted);
   }
 
   .actions-container {
@@ -127,29 +127,29 @@ const pureCSS = `
   }
   .btn-status {
     padding: 8px 16px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-main);
     border-radius: 20px;
-    background: #f9fafb;
+    background: var(--bg-main);
     cursor: pointer;
     font-weight: 500;
     font-size: 14px;
     transition: all 0.2s;
-    color: #4b5563;
+    color: var(--text-muted);
   }
   .btn-status:hover {
-    background: #f3f4f6;
+    background: var(--bg-surface);
   }
   
   /* Estados Visuales */
-  .btn-status.present.active { background-color: #10b981; border-color: #10b981; color: white; }
-  .btn-status.absent.active { background-color: #ef4444; border-color: #ef4444; color: white; }
-  .btn-status.justified.active { background-color: #f59e0b; border-color: #f59e0b; color: white; }
+  .btn-status.present.active { background-color: #10b981; border-color: #10b981; color: var(--clr-blanco-pura); }
+  .btn-status.absent.active { background-color: #ef4444; border-color: #ef4444; color: var(--clr-blanco-pura); }
+  .btn-status.justified.active { background-color: #f59e0b; border-color: #f59e0b; color: var(--clr-blanco-pura); }
 
   .observation-input {
     width: 100%;
     max-width: 300px;
     padding: 8px 12px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-main);
     border-radius: 6px;
     font-size: 14px;
     resize: vertical;
@@ -161,8 +161,8 @@ const pureCSS = `
   .btn-save {
     width: 100%;
     padding: 16px;
-    background-color: #2563eb;
-    color: white;
+    background-color: var(--clr-azul-base);
+    color: var(--clr-blanco-pura);
     border: none;
     border-radius: 8px;
     font-size: 16px;
@@ -170,7 +170,7 @@ const pureCSS = `
     cursor: pointer;
     transition: background-color 0.2s;
   }
-  .btn-save:hover { background-color: #1d4ed8; }
+  .btn-save:hover { background-color: var(--clr-azul-dark); }
   .btn-save:disabled { background-color: #93c5fd; cursor: not-allowed; }
 
   /* MOBILE RESPONSIVE */

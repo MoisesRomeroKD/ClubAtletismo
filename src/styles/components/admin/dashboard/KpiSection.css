@@ -44,7 +44,7 @@
 
 /* Variantes de borde superior */
 .kpi-card-border-blue {
-    border-top: 4px solid var(--clr-azul-institucional);
+    border-top: 4px solid var(--func-primary);
 }
 
 .kpi-card-border-slate {
@@ -52,7 +52,7 @@
 }
 
 .kpi-card-border-musgo {
-    border-top: 4px solid var(--clr-verde-musgo);
+    border-top: 4px solid var(--brand-tertiary);
 }
 
 /* Layouts internos de tarjeta */
@@ -70,14 +70,15 @@
 }
 
 /* Tipografía y textos */
-.kpi-title {
+.kpi-card-base .kpi-title {
     font-size: 0.875rem; /* text-sm (14px) */
     font-weight: 600;
-    color: var(--text-muted);
+    color: var(--text-main);
+    opacity: 0.82;
     margin-bottom: 0.25rem;
 }
 
-.kpi-value {
+.kpi-card-base .kpi-value {
     font-size: 1.875rem; /* text-3xl (30px) */
     font-weight: 700;
     color: var(--text-main);
@@ -101,7 +102,7 @@
     gap: 0.25rem;
     font-size: 0.75rem;
     font-weight: 500;
-    color: var(--clr-verde-musgo);
+    color: var(--brand-tertiary);
 }
 
 .kpi-footer-caption {
@@ -120,8 +121,8 @@
 }
 
 .kpi-icon-blue {
-    background-color: rgba(0, 0, 255, 0.1);
-    color: var(--clr-azul-institucional);
+    background-color: var(--func-primary-bg-soft);
+    color: var(--func-primary);
 }
 
 .kpi-icon-slate {
@@ -130,8 +131,8 @@
 }
 
 .kpi-icon-musgo {
-    background-color: rgba(75, 138, 111, 0.15);
-    color: var(--clr-verde-musgo);
+    background-color: var(--clr-verde-100);
+    color: var(--brand-tertiary);
 }
 
 /* Badges de tendencias */
@@ -143,13 +144,13 @@
 }
 
 .kpi-badge-up {
-    background-color: rgba(75, 138, 111, 0.2);
-    color: var(--clr-verde-musgo);
+    background-color: var(--clr-verde-100);
+    color: var(--brand-tertiary);
 }
 
 .kpi-badge-down {
     background-color: rgba(181, 38, 25, 0.15);
-    color: var(--clr-rojo-accion);
+    color: #dc2626;
 }
 
 .kpi-badge-neutral {

@@ -1,9 +1,10 @@
 import React from 'react';
+import '../../../styles/components/admin/dashboard/AthletesTable.css';
 
 export const AthletesTable = ({ athletes = [] }) => {
   return (
-    <section className="card table-card">
-      <div className="card-header">
+    <section className="athletes-table-card">
+      <div className="athletes-table-header">
         <h3>Atletas Destacados / Monitoreo</h3>
         <a href="#atletas" className="link-action">Ver todos →</a>
       </div>

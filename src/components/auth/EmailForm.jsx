@@ -37,7 +37,7 @@ const EmailForm = ({ cedula, setStatus, setErrorMsg, setPaso, setUserEmail }) =>
   return (
     <div className="email-setup-form">
       <h2>Completar Perfil</h2>
-      <p style={{ marginBottom: "20px", color: "#555" }}>
+      <p style={{ marginBottom: "20px", color: "var(--text-muted)" }}>
         Tu cédula está registrada, pero aún no tienes un correo electrónico asociado. 
         Ingresa el correo donde deseas recibir tu código de seguridad.
       </p>

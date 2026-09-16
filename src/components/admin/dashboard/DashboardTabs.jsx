@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../../styles/components/admin/dashboard/DashboardTabs.css';
 
 const TABS = [
   { id: 'all', label: 'Global / Todos' },

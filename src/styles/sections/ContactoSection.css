@@ -127,7 +127,7 @@
   display: inline-flex;
   align-items: center;
   background-color: var(--brand-primary, #000615);
-  color: var(--clr-blanco, #ffffff);
+  color: var(--clr-blanco, var(--clr-blanco-pura));
   padding: 0.875rem 1.75rem;
   font-family: 'Anton', sans-serif;
   text-transform: uppercase;

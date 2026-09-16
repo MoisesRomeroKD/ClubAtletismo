@@ -29,13 +29,13 @@ const CustomTooltip = ({
   return (
     <div
       style={{
-        background: '#13151a',
-        border: '1px solid #2b303b',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-main)',
         borderRadius: '8px',
         padding: '10px 12px',
         boxShadow:
           '0 8px 24px rgba(0, 0, 0, 0.35)',
-        color: '#f8fafc',
+        color: 'var(--text-main)',
         fontSize: '12px'
       }}
     >
@@ -57,7 +57,7 @@ const CustomTooltip = ({
 
       <div
         style={{
-          color: '#94a3b8',
+          color: 'var(--text-muted)',
           marginTop: '3px'
         }}
       >
@@ -117,7 +117,7 @@ const CustomLegend = ({
               <div>
                 <div
                   style={{
-                    color: '#f8fafc'
+                    color: 'var(--text-main)'
                   }}
                 >
                   {item.name}
@@ -125,7 +125,7 @@ const CustomLegend = ({
 
                 <div
                   style={{
-                    color: '#64748b',
+                    color: 'var(--text-muted)',
                     marginTop: '2px'
                   }}
                 >
@@ -185,7 +185,7 @@ export const DashboardPieChart = ({
           innerRadius="55%"
           outerRadius="78%"
           paddingAngle={2}
-          stroke="#13151a"
+          stroke="var(--bg-card)"
           strokeWidth={2}
           animationDuration={700}
         >
@@ -220,7 +220,7 @@ export const DashboardPieChart = ({
           y="47%"
           textAnchor="middle"
           dominantBaseline="middle"
-          fill="#f8fafc"
+          fill="var(--text-main)"
           fontSize={24}
           fontWeight={700}
         >
@@ -232,7 +232,7 @@ export const DashboardPieChart = ({
           y="57%"
           textAnchor="middle"
           dominantBaseline="middle"
-          fill="#64748b"
+          fill="var(--text-muted)"
           fontSize={10}
         >
           Atletas

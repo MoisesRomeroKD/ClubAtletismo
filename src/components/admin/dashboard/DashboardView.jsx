@@ -9,7 +9,7 @@ import DashboardRadarChart from './charts/DashboardRadarChart.jsx';
 import DashboardBarChart from './charts/DashboardBarChart.jsx';
 import DashboardPieChart from './charts/DashboardPieChart.jsx';
 import { DASHBOARD_MOCK_DATA } from './dashboardMock.js';
-import '../../../styles/components/admin/DashboardView.css';
+import '../../../styles/components/admin/dashboard/DashboardView.css';
 
 export const DashboardView = () => {
   // Estado para la navegación entre áreas

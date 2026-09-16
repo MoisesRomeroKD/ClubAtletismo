@@ -6,16 +6,16 @@
     
     --text-light: var(--text-muted);
     
-    --border-light: #E2E8F0;
+    --border-light: var(--clr-gris-light);
     
-    --brand-primary: #1E293B; /* Dark Slate */
+    --brand-primary: var(--bg-card); /* Dark Slate */
     --brand-accent: #38BDF8; /* Light Blue for POD logo accent */
     
     /* Status Colors */
     --color-asis: #10B981; /* Emerald 500 */
     --color-inasis: #EF4444; /* Red 500 */
     --color-just: #3B82F6; /* Blue 500 */
-    --color-none: #CBD5E1; /* Slate 300 for no session */
+    --color-none: var(--clr-gris-light); /* Slate 300 for no session */
 
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -138,7 +138,7 @@ h1, h2, h3, h4 { font-weight: 600; color: var(--text-main); }
 
 .athlete-identity {
     background: var(--brand-primary);
-    color: white;
+    color: var(--clr-blanco-pura);
     padding: 1rem 1.5rem;
     border-radius: var(--radius-lg);
     display: flex;
@@ -160,7 +160,7 @@ h1, h2, h3, h4 { font-weight: 600; color: var(--text-main); }
 }
 
 .athlete-info h2 {
-    color: white;
+    color: var(--clr-blanco-pura);
     font-size: 1.125rem;
     margin-bottom: 0.125rem;
 }
@@ -215,7 +215,7 @@ h1, h2, h3, h4 { font-weight: 600; color: var(--text-main); }
 }
 .nav-btn.active {
     background: var(--brand-primary);
-    color: white;
+    color: var(--clr-blanco-pura);
     box-shadow: var(--shadow-sm);
 }
 
@@ -440,7 +440,7 @@ h1, h2, h3, h4 { font-weight: 600; color: var(--text-main); }
 }
 .calendar-nav button:hover {
     background: var(--brand-primary);
-    color: white;
+    color: var(--clr-blanco-pura);
     border-color: var(--brand-primary);
 }
 
@@ -473,7 +473,7 @@ h1, h2, h3, h4 { font-weight: 600; color: var(--text-main); }
     background: transparent;
 }
 .calendar-day:not(.empty):hover {
-    background: #E2E8F0;
+    background: var(--clr-gris-light);
 }
 .calendar-day .date-num {
     font-size: 0.75rem;
@@ -483,7 +483,7 @@ h1, h2, h3, h4 { font-weight: 600; color: var(--text-main); }
 }
 .calendar-day.today .date-num {
     background: var(--brand-primary);
-    color: white;
+    color: var(--clr-blanco-pura);
     width: 20px;
     height: 20px;
     display: flex;
@@ -519,7 +519,7 @@ h1, h2, h3, h4 { font-weight: 600; color: var(--text-main); }
     left: 50%;
     transform: translateX(-50%) translateY(10px);
     background: var(--brand-primary);
-    color: white;
+    color: var(--clr-blanco-pura);
     padding: 0.75rem;
     border-radius: var(--radius-md);
     width: max-content;
