@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Home,
   Zap,
@@ -23,6 +24,16 @@ export default function SidebarAthlete({
   isDarkMode,
   onToggleTheme,
 }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const routePaths = {
+    home: '/atleta/dashboard',
+    asistencias: '/atleta/asistencia',
+    evaluaciones: '/atleta/evaluaciones',
+    antropometria: '/atleta/antropometria',
+  };
+  const routeActiveTab = Object.entries(routePaths).find(([, path]) => path === location.pathname)?.[0];
+  const selectedTab = routeActiveTab || activeTab;
   const navItems = [
     { id: 'home', label: 'Mi Dashboard', icon: Home, category: 'principal' },
     { id: 'evaluaciones', label: 'Mis Evaluaciones', icon: ClipboardList, category: 'rendimiento' },
@@ -34,8 +45,18 @@ export default function SidebarAthlete({
   ];
 
   const handleNavigation = (tab) => {
+    if (routeActiveTab) {
+      navigate('/atleta');
+    }
     onTabChange(tab);
     // Solo colapsa el menú si la pantalla es de tamaño móvil (menor a 1024px)
+    if (isOpen && window.innerWidth < 1024) {
+      toggleSidebar();
+    }
+  };
+
+  const handleRouteNavigation = (path) => {
+    navigate(path);
     if (isOpen && window.innerWidth < 1024) {
       toggleSidebar();
     }
@@ -56,9 +77,11 @@ export default function SidebarAthlete({
       return (
         <div
           key={item.id}
-          onClick={() => handleNavigation(item.id)}
+          onClick={() => routePaths[item.id]
+            ? handleRouteNavigation(routePaths[item.id])
+            : handleNavigation(item.id)}
           className={`user-sidebar__nav-item ${
-            activeTab === item.id ? 'is-active' : ''
+            selectedTab === item.id ? 'is-active' : ''
           }`}
         >
           <Icon size={20} />

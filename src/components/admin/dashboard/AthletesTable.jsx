@@ -50,6 +50,15 @@ export const AthletesTable = ({ athletes = [] }) => {
           </tbody>
         </table>
       </div>
+      <div className="athletes-cards-wrap">
+        {athletes.map((athlete) => (
+          <article className="athlete-dashboard-card" key={athlete.id}>
+            <div className="athlete-cell"><div className="athlete-avatar">{athlete.name.charAt(0)}</div><span className="athlete-name">{athlete.name}</span></div>
+            <div className="athlete-dashboard-card-grid"><span>Disciplina <b>{athlete.sport}</b></span><span>IGR <b>{athlete.igr}</b></span><span>Fatiga <b>{athlete.fatigue}</b></span><span>Estado <b>{athlete.status}</b></span></div>
+            <button className="btn-icon" aria-label="Ver ficha del atleta"><span aria-hidden="true">&#8594;</span></button>
+          </article>
+        ))}
+      </div>
     </section>
   );
 };

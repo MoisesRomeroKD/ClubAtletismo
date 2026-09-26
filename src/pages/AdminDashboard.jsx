@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import MainNav from '../components/layout/user/MainNav';
 import DashboardView from '../components/admin/dashboard/DashboardView';
@@ -21,6 +22,15 @@ export default function AdminDashboard({
   onToggleTheme,
 }) {
   const [activeTab, setActiveTab] = useState(currentAction || 'home');
+  const location = useLocation();
+  const routeActiveTab = {
+    '/admin/dashboard': 'home',
+    '/admin/asistencias': 'asistencias',
+    '/admin/evaluaciones': 'evaluaciones',
+    '/admin/atletas': 'athletes',
+    '/admin/cineantropometria': 'cineantropometria',
+  }[location.pathname];
+  const effectiveTab = routeActiveTab || activeTab;
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
@@ -36,7 +46,7 @@ export default function AdminDashboard({
     <MainNav
       role="administrador"
       roleTitle="Administrador"
-      activeTab={activeTab}
+      activeTab={effectiveTab}
       onTabChange={handleTabChange}
       onLogout={handleLogout}
       isDarkMode={isDarkMode}
@@ -45,70 +55,70 @@ export default function AdminDashboard({
       <div className="admin-dashboard-container">
 
         {/* DASHBOARD HOME */}
-        {activeTab === 'home' && (
+        {effectiveTab === 'home' && (
           <DashboardView />
         )}
 
         {/* EVALUACIONES DEPORTIVAS */}
-        {(activeTab === 'evaluaciones' || activeTab === 'evaluacion') && (
+        {(effectiveTab === 'evaluaciones' || effectiveTab === 'evaluacion') && (
           <section className="dashboard-section">
             <AdminEvaluacionesView />
           </section>
         )}
 
         {/* CONTROL DE SUEÑO */}
-        {activeTab === 'sueño' && (
+        {effectiveTab === 'sueño' && (
           <SleepQualityDashboard />
         )}
 
         {/* ANTROPOMETRÍA / CINEANTROPOMETRÍA */}
-        {(activeTab === 'cineantropometria' || activeTab === 'antropometria' || activeTab === 'antropometria-view') && (
+        {(effectiveTab === 'cineantropometria' || effectiveTab === 'antropometria' || effectiveTab === 'antropometria-view') && (
           <section className="dashboard-section">
             <CineantropometriaAdmin />
           </section>
         )}
 
         {/* EXCEL / CARGA MASIVA */}
-        {activeTab === 'excel' && (
+        {effectiveTab === 'excel' && (
           <section className="dashboard-section">
             <h2>Cargar Datos desde Excel</h2>
           </section>
         )}
 
         {/* DISCIPLINAS */}
-        {activeTab === 'disciplinas' && (
+        {effectiveTab === 'disciplinas' && (
           <section className="dashboard-section">
             <h2>Gestión de Disciplinas</h2>
           </section>
         )}
 
         {/* ASISTENCIA */}
-        {activeTab === 'asistencias' && (
+        {effectiveTab === 'asistencias' && (
           <AsistenciaAdminView />
         )}
 
         {/* ATLETAS */}
-        {activeTab === 'athletes' && (
+        {effectiveTab === 'athletes' && (
           <AtletasViewAdmin />
         )}
 
         {/* NUEVO PRERREGISTRO */}
-        {activeTab === 'prerregistro' && (
+        {effectiveTab === 'prerregistro' && (
           <Preregistro />
         )}
 
         {/* PRERREGISTROS PENDIENTES */}
-        {activeTab === 'prerregistros-pendientes' && (
+        {effectiveTab === 'prerregistros-pendientes' && (
           <PrerregistrosPendientes />
         )}
 
         {/* ROLES Y PERMISOS */}
-        {activeTab === 'roles-permisos' && (
+        {effectiveTab === 'roles-permisos' && (
           <RolesPermisos />
         )}
 
         {/* GESTIÓN DE ADMINISTRADORES */}
-        {activeTab === 'administradores' && (
+        {effectiveTab === 'administradores' && (
           <section className="dashboard-section" style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px', width: '100%' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '2px solid var(--func-primary)', paddingBottom: '0.75rem', marginBottom: '1.5rem' }}>
               <div>
@@ -165,7 +175,7 @@ export default function AdminDashboard({
         )}
 
         {/* GESTIÓN DE ENTRENADORES */}
-        {activeTab === 'entrenadores' && (
+        {effectiveTab === 'entrenadores' && (
           <section className="dashboard-section" style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px', width: '100%', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '2px solid var(--func-primary)', paddingBottom: '0.75rem', marginBottom: '1.5rem' }}>
               <div>
@@ -251,7 +261,7 @@ export default function AdminDashboard({
         )}
 
         {/* GESTIÓN DE REPRESENTANTES */}
-        {activeTab === 'representantes' && (
+        {effectiveTab === 'representantes' && (
           <section className="dashboard-section" style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px', width: '100%', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '2px solid var(--func-primary)', paddingBottom: '0.75rem', marginBottom: '1.5rem' }}>
               <div>
@@ -316,11 +326,11 @@ export default function AdminDashboard({
         )}
 
         {/* SECCIONES COMPLEMENTARIAS */}
-        {activeTab === 'reportes' && <section className="dashboard-section"><h2>Reportes</h2></section>}
-        {activeTab === 'auditoria' && <section className="dashboard-section"><h2>Auditoría</h2></section>}
-        {activeTab === 'areas-subareas' && <section className="dashboard-section"><h2>Áreas y Subáreas</h2></section>}
-        {activeTab === 'categorias' && <section className="dashboard-section"><h2>Categorías</h2></section>}
-        {activeTab === 'ejercicios' && <section className="dashboard-section"><h2>Ejercicios</h2></section>}
+        {effectiveTab === 'reportes' && <section className="dashboard-section"><h2>Reportes</h2></section>}
+        {effectiveTab === 'auditoria' && <section className="dashboard-section"><h2>Auditoría</h2></section>}
+        {effectiveTab === 'areas-subareas' && <section className="dashboard-section"><h2>Áreas y Subáreas</h2></section>}
+        {effectiveTab === 'categorias' && <section className="dashboard-section"><h2>Categorías</h2></section>}
+        {effectiveTab === 'ejercicios' && <section className="dashboard-section"><h2>Ejercicios</h2></section>}
 
       </div>
     </MainNav>

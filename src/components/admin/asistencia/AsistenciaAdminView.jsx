@@ -584,7 +584,7 @@ export default function AsistenciaAdminView() {
                   Mostrando {tableData.length} registros
                 </span>
               </div>
-              <div className="table-wrapper">
+              <div className="admin-asistencia-tabla-wrap table-wrapper">
                 <table className="athletes-table">
                   <thead className="table-head">
                     <tr>
@@ -639,6 +639,16 @@ export default function AsistenciaAdminView() {
                     )}
                   </tbody>
                 </table>
+              </div>
+              <div className="admin-asistencia-cards-wrap">
+                {tableData.length > 0 ? tableData.map((row) => (
+                  <article className="admin-asistencia-card" key={row.id}>
+                    <div className="admin-asistencia-card-header"><div><strong>{row.name}</strong><span>{row.id}</span></div><span className={`perc-badge ${row.perc >= 85 ? 'high' : row.perc >= 70 ? 'mid' : 'low'}`}>{row.perc}%</span></div>
+                    <div className="admin-asistencia-card-meta">{row.category}</div>
+                    <div className="admin-asistencia-card-stats"><span>Sesiones <b>{row.total}</b></span><span>Asistencias <b>{row.asist}</b></span><span>Inasistencias <b>{row.inasist}</b></span><span>Justificadas <b>{row.justif}</b></span></div>
+                    <button onClick={() => handleAthleteSelect(row)} className="btn-detail">Ver detalle <ChevronRight size={14} className="chevron-icon" /></button>
+                  </article>
+                )) : <div className="table-td text-center py-8 text-muted">No hay atletas que coincidan con los filtros actuales.</div>}
               </div>
             </Card>
           </div>

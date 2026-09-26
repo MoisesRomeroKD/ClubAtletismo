@@ -414,6 +414,7 @@ function GestionUsuarios() {
           />
 
           <div className="gu-tableContainer">
+            <style>{`.gu-mobile-cards { display:none; } @media (max-width:869px) { .gu-tableContainer .gu-table { display:none; } .gu-mobile-cards { display:grid; gap:1rem; } } .gu-mobile-card { display:grid; gap:.65rem; padding:1rem; border:1px solid var(--border-main); border-radius:8px; background:var(--bg-card); color:var(--text-main); } .gu-mobile-card-meta { color:var(--text-muted); font-size:.8rem; }`}</style>
             <table className="gu-table">
               <thead>
                 <tr>
@@ -492,6 +493,20 @@ function GestionUsuarios() {
                 )}
               </tbody>
             </table>
+            <div className="gu-mobile-cards">
+              {filteredData.length > 0 ? filteredData.map((user) => (
+                <article className="gu-mobile-card" key={user.id}>
+                  <strong>{user.nombre}</strong>
+                  <span className="gu-mobile-card-meta">Cédula: {user.id}</span>
+                  {currentTab !== 'admin' && <span className="gu-mobile-card-meta">Área/Subárea: {user.area} / {user.subarea}</span>}
+                  {currentTab === 'atletas' && <span className="gu-mobile-card-meta">Categoría: {user.categoria} · Entrenador: {user.entrenador}</span>}
+                  {currentTab === 'entrenadores' && <span className="gu-mobile-card-meta">Atletas asignados: {user.atletasAsignados}</span>}
+                  {currentTab === 'admin' && <span className="gu-mobile-card-meta">Rol: {user.rol} · Último acceso: {user.ultimoAcceso}</span>}
+                  <span className="gu-badge">{user.estado}</span>
+                  <div className="gu-tableActions"><button type="button" className="gu-actionBtn" title="Ver Perfil" onClick={() => openProfile(user)}><Icon name="eye" /></button><button type="button" className="gu-actionBtn" title="Editar" onClick={() => openAddPanel(`Editar ${currentTab === 'atletas' ? 'Atleta' : 'Usuario'}`)}><Icon name="edit" /></button><button type="button" className="gu-actionBtn delete" title="Eliminar" onClick={() => openDeleteModal(user.id)}><Icon name="trash" /></button></div>
+                </article>
+              )) : <div className="gu-emptyState">No se encontraron usuarios.</div>}
+            </div>
           </div>
 
           <Pagination total={156} />

@@ -1,6 +1,51 @@
 import React, { useEffect, useState } from 'react';
+import { Zap, MoveVertical, Users, ArrowRight } from 'lucide-react';
 import '../../../styles/components/trainer/SubAreasTrainer.css';
 import UserService from '../../../api/services/Userservice';
+
+const ICON_MAP = {
+  sprint: Zap,
+  height: MoveVertical,
+};
+
+const normalize = (value) =>
+  String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\s\-\.\/_]/g, '');
+
+const getAthleteSubareas = (athlete) => {
+  if (!athlete) return [];
+
+  const raw = [];
+
+  if (Array.isArray(athlete.subareas_nombres)) {
+    raw.push(...athlete.subareas_nombres);
+  }
+
+  if (Array.isArray(athlete.assignments)) {
+    athlete.assignments.forEach((a) => {
+      if (a?.subarea) raw.push(a.subarea);
+      if (a?.area && a?.subarea) raw.push(`${a.area} ${a.subarea}`);
+    });
+  }
+
+  if (typeof athlete.subareas_lista_texto === 'string') {
+    raw.push(
+      ...athlete.subareas_lista_texto
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    );
+  }
+
+  if (athlete.subarea_nombre_principal) {
+    raw.push(athlete.subarea_nombre_principal);
+  }
+
+  return raw.filter(Boolean);
+};
 
 const SubAreasTrainer = () => {
   const [subareas, setSubareas] = useState([]);
@@ -10,20 +55,34 @@ const SubAreasTrainer = () => {
   useEffect(() => {
     let componenteActivo = true;
 
-    const cargarSubareas = async () => {
+    const cargarDatos = async () => {
       try {
-        const respuesta = await UserService.getMySubareas();
-        const datos = Array.isArray(respuesta) ? respuesta : [];
-        const subareasNormalizadas = datos.map((relacion) => {
+        const [subareasResponse, athletesResponse] = await Promise.all([
+          UserService.getMySubareas(),
+          UserService.getMyAthletes(),
+        ]);
+
+        const subareasData = Array.isArray(subareasResponse) ? subareasResponse : [];
+        const athletesData = Array.isArray(athletesResponse) ? athletesResponse : [];
+
+        const subareasNormalizadas = subareasData.map((relacion) => {
           const nombreArea = relacion.subarea_detalle?.area?.nombre || '';
+          const nombreSubarea = relacion.subarea_detalle?.nombre || 'Subárea sin nombre';
           const esSalto = nombreArea.toLowerCase().includes('salto');
+
+          const target = normalize(nombreSubarea);
+          const atletas = athletesData.filter((athlete) => {
+            const nombres = getAthleteSubareas(athlete);
+            return nombres.some((sub) => normalize(sub) === target);
+          }).length;
 
           return {
             id: relacion.id,
-            nombre: relacion.subarea_detalle?.nombre || 'Subárea sin nombre',
+            nombre: nombreSubarea,
             categoria: nombreArea || 'Área sin nombre',
             icono: esSalto ? 'height' : 'sprint',
             color: esSalto ? 'purple' : 'blue',
+            atletas,
           };
         });
 
@@ -40,7 +99,7 @@ const SubAreasTrainer = () => {
       }
     };
 
-    cargarSubareas();
+    cargarDatos();
 
     return () => {
       componenteActivo = false;
@@ -51,97 +110,56 @@ const SubAreasTrainer = () => {
     console.log('Ver detalles:', subarea);
   };
 
-  const handleMenu = (subarea) => {
-    console.log('Menú:', subarea);
-  };
-
   return (
     <main className="mis-subareas">
-        <div className="mis-subareas__content">
+      <div className="mis-subareas__content">
 
-          <div className="mis-subareas__container">
+        <div className="mis-subareas__container">
 
-            {/* Encabezado */}
-            <div className="mis-subareas__heading">
+          <div className="mis-subareas__heading">
+            <h2>Mis Subáreas</h2>
+          </div>
 
-              <div className="mis-subareas__heading-text">
+          <div className="mis-subareas__grid">
 
-                <h2>Mis Subáreas</h2>
+            {cargando ? (
+              <p>Cargando subáreas...</p>
+            ) : error ? (
+              <p>{error}</p>
+            ) : subareas.length === 0 ? (
+              <p>No tienes subáreas habilitadas.</p>
+            ) : subareas.map((subarea) => {
+              const IconComponent = ICON_MAP[subarea.icono] || Zap;
 
-                <p>
-                  Gestiona y visualiza el progreso de tus grupos deportivos.
-                </p>
-
-              </div>
-
-            </div>
-
-            {/* Grid */}
-            <div className="mis-subareas__grid">
-
-              {cargando ? (
-                <p>Cargando subáreas...</p>
-              ) : error ? (
-                <p>{error}</p>
-              ) : subareas.length === 0 ? (
-                <p>No tienes subáreas habilitadas.</p>
-              ) : subareas.map((subarea) => (
+              return (
                 <article
                   key={subarea.id}
                   className="subarea-card"
                   onClick={() => handleDetalles(subarea)}
                 >
 
-                  {/* Parte superior */}
                   <div className="subarea-card__top">
-
-                    <div
-                      className={`subarea-card__icon subarea-card__icon--${subarea.color}`}
-                    >
-                      <span className="material-symbols-outlined">
-                        {subarea.icono}
-                      </span>
+                    <div className={`subarea-card__icon subarea-card__icon--${subarea.color}`}>
+                      <IconComponent size={28} />
                     </div>
-
-                    <button
-                      type="button"
-                      className="subarea-card__menu"
-                      aria-label={`Opciones de ${subarea.nombre}`}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleMenu(subarea);
-                      }}
-                    >
-                      <span className="material-symbols-outlined">
-                        more_vert
-                      </span>
-                    </button>
-
                   </div>
 
-                  {/* Información */}
                   <div className="subarea-card__body">
-
                     <span className="subarea-card__category">
                       {subarea.categoria}
                     </span>
-
-                    <h3>
-                      {subarea.nombre}
-                    </h3>
-
+                    <h3>{subarea.nombre}</h3>
                   </div>
 
-                  {/* Footer */}
                   <div className="subarea-card__footer">
 
                     <div className="subarea-card__athletes">
-                      <span className="material-symbols-outlined">
-                        group
+                      <Users size={18} />
+                      <span className="subarea-card__athletes-count">
+                        {subarea.atletas}
                       </span>
-
-                      <span>
-                        Atletas asignados
+                      <span className="subarea-card__athletes-label">
+                        {subarea.atletas === 1 ? 'atleta' : 'atletas'}
                       </span>
                     </div>
 
@@ -154,22 +172,20 @@ const SubAreasTrainer = () => {
                       }}
                     >
                       <span>Ver detalles</span>
-
-                      <span className="material-symbols-outlined">
-                        arrow_forward
-                      </span>
+                      <ArrowRight size={16} />
                     </button>
 
                   </div>
 
                 </article>
-              ))}
-
-            </div>
+              );
+            })}
 
           </div>
 
         </div>
+
+      </div>
     </main>
   );
 };

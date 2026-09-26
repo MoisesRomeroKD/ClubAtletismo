@@ -9,6 +9,13 @@
    inconsistencias (65px vs 70px, por ejemplo) que además pueden hacer
    pensar que el theming "no aplica" cuando en realidad es un choque de
    variables de layout, no de color.
+
+   FIX (v2):
+   El sidebar de escritorio (position: fixed) ya NO empuja el contenido
+   con margin-left (que provocaba 100% + Npx = desborde horizontal).
+   Ahora el padre .main-nav-body reserva el espacio con padding-left,
+   y el hijo .main-content-wrapper se ENCOGE realmente. En móvil/tablet
+   el sidebar sigue siendo overlay (transform + backdrop).
    ============================================================================ */
 
 
@@ -21,16 +28,22 @@
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   background-color: var(--bg-main);
   transition: var(--transition-theme);
+  overflow-x: hidden;
 }
 
 .main-nav-body {
   display: flex;
   flex: 1;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding-top: var(--topbar-height);
   box-sizing: border-box;
+  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 
@@ -91,15 +104,18 @@
    ============================================================================ */
 
 .main-content-wrapper {
-  flex: 1;
+  flex: 1 1 0;
 
   min-width: 0;
+  max-width: 100%;
 
   box-sizing: border-box;
 
   position: relative;
 
   z-index: 1;
+
+  overflow-x: hidden;
 
   transition:
     margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -405,6 +421,7 @@
 
 /* ============================================================================
    COMPORTAMIENTO MÓVIL (320px — 767px)
+   Sidebar overlay: no reserva espacio, se superpone.
    ============================================================================ */
 
 @media (max-width: 767px) {
@@ -420,9 +437,14 @@
     transform: translateX(0);
   }
 
+  .main-nav-body {
+    padding-left: 0 !important;
+  }
+
   .main-content-wrapper {
     margin-left: 0 !important;
     width: 100% !important;
+    max-width: 100% !important;
   }
 
   .user-sidebar-backdrop {
@@ -437,6 +459,7 @@
 
 /* ============================================================================
    BREAKPOINT 4 — 768px (TABLET)
+   Sidebar overlay: no reserva espacio, se superpone.
    ============================================================================ */
 
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -453,9 +476,14 @@
     transform: translateX(0);
   }
 
+  .main-nav-body {
+    padding-left: 0 !important;
+  }
+
   .main-content-wrapper {
     margin-left: 0 !important;
     width: 100% !important;
+    max-width: 100% !important;
   }
 
   .user-sidebar-backdrop {
@@ -470,6 +498,7 @@
 
 /* ============================================================================
    BREAKPOINT 5 — 1024px (LAPTOP)
+   Sidebar "encoge" el contenido: el padre reserva espacio con padding-left.
    ============================================================================ */
 
 @media (min-width: 1024px) and (max-width: 1439px) {
@@ -489,12 +518,13 @@
     transform: translateX(-100%);
   }
 
-  .sidebar-visible .main-content-wrapper {
-    margin-left: 260px;
+  /* ✅ FIX: el PADRE reserva el hueco, el hijo se encoge realmente */
+  .sidebar-visible .main-nav-body {
+    padding-left: 260px;
   }
 
-  .sidebar-hidden .main-content-wrapper {
-    margin-left: 0;
+  .sidebar-hidden .main-nav-body {
+    padding-left: 0;
   }
 
   .user-sidebar-backdrop,
@@ -525,12 +555,13 @@
     transform: translateX(-100%);
   }
 
-  .sidebar-visible .main-content-wrapper {
-    margin-left: 275px;
+  /* ✅ FIX */
+  .sidebar-visible .main-nav-body {
+    padding-left: 275px;
   }
 
-  .sidebar-hidden .main-content-wrapper {
-    margin-left: 0;
+  .sidebar-hidden .main-nav-body {
+    padding-left: 0;
   }
 
   .user-sidebar__header {
@@ -581,12 +612,13 @@
     transform: translateX(-100%);
   }
 
-  .sidebar-visible .main-content-wrapper {
-    margin-left: 310px;
+  /* ✅ FIX */
+  .sidebar-visible .main-nav-body {
+    padding-left: 310px;
   }
 
-  .sidebar-hidden .main-content-wrapper {
-    margin-left: 0;
+  .sidebar-hidden .main-nav-body {
+    padding-left: 0;
   }
 
   .user-sidebar__header {
@@ -642,4 +674,3 @@
   align-items: center;
   gap: 10px;
 }
-

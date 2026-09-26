@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { 
-  Users, UserCheck, UserX, AlertCircle, 
-  Moon, Calendar, Clock, Layers, CheckCircle2 
+import {
+  Users, UserCheck, AlertCircle,
+  Moon, Calendar, Clock, Layers, CheckCircle2
 } from 'lucide-react';
 
 import '../../../styles/components/trainer/TrainerDashboardView.css';
@@ -14,9 +14,9 @@ import UserService from '../../../api/services/Userservice';
 const MOCK_ATHLETE_METRICS = {
   totales: 42,
   disponibles: 37,
-  justificados: 3, 
-  sinRegistroSueno: 4, 
-  calidadSuenoGrupal: 8.2, 
+  justificados: 3,
+  sinRegistroSueno: 4,
+  calidadSuenoGrupal: 8.2,
 };
 
 // Planes de Entrenamiento del día por Sub-área de Atletismo
@@ -73,11 +73,11 @@ const WelcomeBanner = () => (
   </div>
 );
 
-const StatCard = ({ title, value, subtitle, icon: Icon, colorClass }) => (
+const StatCard = ({ title, value, subtitle, icon: Icon }) => (
   <div className="glass-card metric-card">
     <div className="metric-header">
       <span className="metric-label">{title}</span>
-      <div className={`icon-wrapper ${colorClass || ''}`}>
+      <div className="icon-wrapper">
         {React.createElement(Icon, { size: 18, className: 'metric-icon' })}
       </div>
     </div>
@@ -89,44 +89,41 @@ const StatCard = ({ title, value, subtitle, icon: Icon, colorClass }) => (
 );
 
 // Control de Inasistencias (100% Informativo para el Entrenador)
-const AbsenceControlCard = ({ absentToday, absentAthletes, isLoading, error }) => {
-  return (
-    <div className="glass-card attendance-card">
-      <h3 className="section-title">Inasistencias del Día</h3>
-      
-      <div className="absence-summary">
-        <div className="absence-big-number">
-          <span className="num-danger">{isLoading ? '...' : error ? '--' : absentToday}</span>
-          <span className="label">Atletas Ausentes Hoy</span>
-        </div>
-      </div>
+const AbsenceControlCard = ({ absentToday, absentAthletes, isLoading, error }) => (
+  <div className="glass-card attendance-card">
+    <h3 className="section-title">Inasistencias del Día</h3>
 
-      <div className="absent-athletes-section" style={{ marginTop: '1rem' }}>
-        <h4 className="sub-title" style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-          Detalle de Ausencias:
-        </h4>
-        {isLoading ? (
-          <p className="areas-empty">Cargando asistencias...</p>
-        ) : error ? (
-          <p className="areas-empty">No fue posible cargar las asistencias.</p>
-        ) : absentAthletes.length > 0 ? (
-          <ul className="pending-list" style={{ marginTop: '0.5rem' }}>
-            {absentAthletes.map((athlete) => (
-              <li key={athlete.id} className="pending-item">
-                <span className="athlete-name">{athlete.name}</span>
-                <span className="subarea-tag">{athlete.subareas.join(', ') || 'Sin subárea'}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="all-done-msg" style={{ marginTop: '0.5rem' }}>
-            <CheckCircle2 size={14} color="var(--accent-cyan)" /> Plantilla completa hoy.
-          </p>
-        )}
+    <div className="absence-summary">
+      <div className="absence-big-number">
+        <span className="num-danger">{isLoading ? '...' : error ? '--' : absentToday}</span>
+        <span className="label">Atletas Ausentes Hoy</span>
       </div>
     </div>
-  );
-};
+
+    <div className="absent-athletes-section">
+      <h4 className="sub-title">Detalle de Ausencias:</h4>
+      {isLoading ? (
+        <p className="areas-empty">Cargando asistencias...</p>
+      ) : error ? (
+        <p className="areas-empty">No fue posible cargar las asistencias.</p>
+      ) : absentAthletes.length > 0 ? (
+        <ul className="pending-list">
+          {absentAthletes.map((athlete) => (
+            <li key={athlete.id} className="pending-item">
+              <span className="athlete-name">{athlete.name}</span>
+              <span className="subarea-tag">{athlete.subareas.join(', ') || 'Sin subárea'}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="all-done-msg">
+          <CheckCircle2 size={14} />
+          Plantilla completa hoy.
+        </p>
+      )}
+    </div>
+  </div>
+);
 
 // Módulo de Áreas y Sub-áreas de Atletismo
 const AtletismAreasCard = ({ areas, isLoading, error }) => (
@@ -166,15 +163,18 @@ const SleepQualityCard = ({ score, pendingList, isLoading, error }) => (
     <div className="section-title">
       <Moon size={18} /> Calidad de Sueño (1 - 10)
     </div>
-    
+
     <div className="sleep-score-container">
-      <div className="score-big">{isLoading ? '...' : error ? '--' : (score ?? '--')} <span className="score-max">/ 10</span></div>
+      <div className="score-big">
+        {isLoading ? '...' : error ? '--' : (score ?? '--')}{' '}
+        <span className="score-max">/ 10</span>
+      </div>
       <p className="score-label">Promedio de descanso del equipo hoy</p>
     </div>
 
     <div className="pending-sleep-section">
-      <h4 className="sub-title" style={{ marginTop: '1rem' }}>
-        <AlertCircle size={14} color="var(--state-warning)" />
+      <h4 className="sub-title">
+        <AlertCircle size={14} className="icon-warning" />
         Pendientes por ingresar su nota ({isLoading || error ? '--' : pendingList.length})
       </h4>
       {isLoading ? (
@@ -191,7 +191,10 @@ const SleepQualityCard = ({ score, pendingList, isLoading, error }) => (
           ))}
         </ul>
       ) : (
-        <p className="all-done-msg"><CheckCircle2 size={14} /> ¡Todos los atletas ingresaron su calificación de sueño!</p>
+        <p className="all-done-msg">
+          <CheckCircle2 size={14} />
+          ¡Todos los atletas ingresaron su calificación de sueño!
+        </p>
       )}
     </div>
   </div>
@@ -199,7 +202,7 @@ const SleepQualityCard = ({ score, pendingList, isLoading, error }) => (
 
 // Módulo del Plan de Entrenamiento por Sub-área
 const SubAreaPlansCard = ({ plans }) => (
-  <div className="glass-card subarea-plans-card" style={{ gridColumn: '1 / -1' }}>
+  <div className="glass-card subarea-plans-card">
     <h3 className="section-title">
       <Calendar size={18} /> Plan de Entrenamiento del Día (por Sub-área)
     </h3>
@@ -219,8 +222,11 @@ const SubAreaPlansCard = ({ plans }) => (
                   <span className="session-type">{session.type}</span>
                 </div>
                 <div className="session-meta">
-                  <span><Clock size={12} style={{ display: 'inline', marginRight: '4px' }} />{session.duration}</span>
-                  <span style={{ color: session.intensity === 'Alta' ? 'var(--state-danger)' : 'var(--text-secondary)' }}>
+                  <span>
+                    <Clock size={12} className="icon-inline" />
+                    {session.duration}
+                  </span>
+                  <span className={session.intensity === 'Alta' ? 'intensity-high' : 'intensity-normal'}>
                     {session.intensity}
                   </span>
                 </div>
@@ -318,28 +324,28 @@ export const TrainerDashboardView = () => {
       <WelcomeBanner />
 
       {/* KPI Cards Superiores */}
-      <StatCard 
-        title="Atletas Totales" 
+      <StatCard
+        title="Atletas Totales"
         value={myAthletes === null ? '—' : myAthletes.length}
-        icon={Users} 
+        icon={Users}
       />
-      <StatCard 
-        title="Atletas Disponibles" 
-        value={MOCK_ATHLETE_METRICS.disponibles} 
+      <StatCard
+        title="Atletas Disponibles"
+        value={MOCK_ATHLETE_METRICS.disponibles}
         subtitle="Listos en pista/campo"
-        icon={UserCheck} 
+        icon={UserCheck}
       />
-      <StatCard 
-        title="Atletas Justificados" 
-        value={MOCK_ATHLETE_METRICS.justificados} 
+      <StatCard
+        title="Atletas Justificados"
+        value={MOCK_ATHLETE_METRICS.justificados}
         subtitle="Reposo / Permisos"
-        icon={AlertCircle} 
+        icon={AlertCircle}
       />
-      <StatCard 
-        title="Pendientes Nota Sueño" 
-        value={MOCK_ATHLETE_METRICS.sinRegistroSueno} 
+      <StatCard
+        title="Pendientes Nota Sueño"
+        value={MOCK_ATHLETE_METRICS.sinRegistroSueno}
         subtitle="Faltan por registrar (1-10)"
-        icon={Moon} 
+        icon={Moon}
       />
 
       {/* Módulos Principales de Operación */}
@@ -350,7 +356,11 @@ export const TrainerDashboardView = () => {
         error={summaryError}
       />
 
-      <AtletismAreasCard areas={athletesByArea} isLoading={myAthletes === null} error={assignmentError} />
+      <AtletismAreasCard
+        areas={athletesByArea}
+        isLoading={myAthletes === null}
+        error={assignmentError}
+      />
 
       <SleepQualityCard
         score={dashboardSummary?.sleep?.average_today}

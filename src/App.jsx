@@ -14,6 +14,8 @@ import ConnectivityBanner from "./components/layout/ConnectivityBanner";
 import TopbarPublic from "./components/layout/public/TopbarPublic";
 import SidebarPublic from "./components/layout/public/SidebarPublic";
 
+import "./App.css";
+
 function AppContent({
   role,
   setRole,
@@ -30,7 +32,9 @@ function AppContent({
   return (
     <div
       style={{
-        width: '100vw',
+        width: '100%',
+        maxWidth: '100%',
+        minWidth: 0,
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
@@ -65,6 +69,8 @@ function AppContent({
           display: 'flex',
           flex: 1,
           width: '100%',
+          maxWidth: '100%',
+          minWidth: 0,
           overflow: 'hidden',
           position: 'relative'
         }}
@@ -73,6 +79,8 @@ function AppContent({
           className="main-content-wrapper"
           style={{
             width: '100%',
+            maxWidth: '100%',
+            minWidth: 0,
             flex: 1
           }}
         >

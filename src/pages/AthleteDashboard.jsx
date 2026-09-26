@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MainNav from '../components/layout/user/MainNav';
 import podApi from '../api/podApi';
 import '../styles/pages/AthleteDashboard.css';
@@ -10,6 +11,15 @@ import AntropometriaAtletaView from '../components/atleta/antropometria/Antropom
 
 export default function AthleteDashboard({ currentAction, onActionChange, onLogout, isDarkMode, onToggleTheme }) {
   const [activeAction, setActiveAction] = useState(currentAction || 'home');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const routeActiveAction = {
+    '/atleta/dashboard': 'home',
+    '/atleta/asistencia': 'asistencia',
+    '/atleta/evaluaciones': 'evaluaciones',
+    '/atleta/antropometria': 'antropometria',
+  }[location.pathname];
+  const effectiveAction = routeActiveAction || activeAction;
 
   useEffect(() => {
     if (currentAction) {
@@ -18,6 +28,9 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
   }, [currentAction]);
 
   const handleTabChange = (newTab) => {
+    if (routeActiveAction) {
+      navigate('/atleta');
+    }
     setActiveAction(newTab);
     if (onActionChange && typeof onActionChange === 'function') {
       onActionChange(newTab);
@@ -75,7 +88,7 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
     <MainNav
       role="atleta"
       roleTitle="Atleta"
-      activeTab={activeAction}
+      activeTab={effectiveAction}
       onTabChange={handleTabChange}
       onLogout={onLogout}
       isDarkMode={isDarkMode}
@@ -85,7 +98,7 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
         <div className="dashboard-content" style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
           {/* VISTA HOME */}
-          {activeAction === 'home' && (
+          {effectiveAction === 'home' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               
               {/* BANNER PRINCIPAL DE BIENVENIDA */}
@@ -229,7 +242,7 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
           )}
 
           {/* VISTA RUTINA */}
-          {activeAction === 'rutina' && (
+          {effectiveAction === 'rutina' && (
             <div className="dashboard-card max-w-mid" style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px' }}>
               <h3 className="section-title" style={{ borderBottom: '2px solid var(--func-primary)', display: 'inline-block', paddingBottom: '5px' }}>
                 Mi Plan Semanal
@@ -250,7 +263,7 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
           )}
 
           {/* VISTA SUEÑO */}
-          {activeAction === 'sueno' && (
+          {effectiveAction === 'sueno' && (
             <SleepQualityDashboard 
               athleteName={userData.name} 
               sleepData={sleepData} 
@@ -258,7 +271,7 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
           )}
 
           {/* VISTA ASISTENCIA */}
-          {(activeAction === 'asistencia' || activeAction === 'asistencias') && (
+          {(effectiveAction === 'asistencia' || effectiveAction === 'asistencias') && (
             <div className="dashboard-card width-full" style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px' }}>
               <AsistenciaAtletaView 
                 athleteId={userData.id} 
@@ -268,7 +281,7 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
           )}
 
           {/* VISTA EVALUACIONES */}
-{(activeAction === 'evaluaciones' || activeAction === 'evaluacion' || activeAction === 'mis-evaluaciones') && (
+{(effectiveAction === 'evaluaciones' || effectiveAction === 'evaluacion' || effectiveAction === 'mis-evaluaciones') && (
   <div className="dashboard-card width-full" style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px' }}>
     <EvaluacionesAtletaView 
       athleteId={userData.id} 
@@ -278,7 +291,7 @@ export default function AthleteDashboard({ currentAction, onActionChange, onLogo
 )}
 
 {/* VISTA ANTROPOMETRÍA */}
-{(activeAction === 'antropometria' || activeAction === 'antropometría') && (
+{(effectiveAction === 'antropometria' || effectiveAction === 'antropometría') && (
   <div className="dashboard-card width-full" style={{ padding: '1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px' }}>
     <AntropometriaAtletaView 
       athleteId={userData.id} 

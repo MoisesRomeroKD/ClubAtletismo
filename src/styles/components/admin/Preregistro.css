@@ -319,6 +319,12 @@
   overflow-x: auto;
 }
 
+.preregistro-cards-wrap { display: none; }
+@media (max-width: 869px) {
+  .preregistro-table-wrapper > .preregistro-table { display: none; }
+  .preregistro-cards-wrap { display: block; }
+}
+
 .preregistro-table {
   width: 100%;
   border-collapse: collapse;

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, lazy, Suspense } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Users, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 
 // 🔝 IMPORTACIÓN DEL LAYOUT CONTENEDOR
@@ -30,6 +31,7 @@ const CineantropometriaTrainer = lazyWithDelay(() => import('../components/train
 // 💤 Importación perezosa de los componentes del módulo de Sueño y Descanso
 const SleepGeneralView = lazyWithDelay(() => import('../components/trainer/sleeptracker/SleepGeneralView'));
 const SleepIndividualView = lazyWithDelay(() => import('../components/trainer/sleeptracker/SleepIndividualView'));
+const SleepPendingView = lazyWithDelay(() => import('../components/trainer/sleeptracker/SleepPendingView'));
 const SleepAuditView = lazyWithDelay(() => import('../components/trainer/sleeptracker/SleepAuditView'));
 const SleepRegistrationView = lazyWithDelay(() => import('../components/trainer/sleeptracker/SleepRegistrationView'));
 const SleepAthleteDetailPanel = lazyWithDelay(() => import('../components/trainer/sleeptracker/SleepAthleteDetailPanel'));
@@ -38,7 +40,7 @@ const SleepAthleteDetailPanel = lazyWithDelay(() => import('../components/traine
 const AsistenciasTrainerView = lazyWithDelay(() => import('../components/trainer/asistencias/AsistenciasTrainerView'));
 
 // 👥 Importación perezosa del componente Atletas Trainer
-const AtletasTrainer = lazyWithDelay(() => import('../components/trainer/atletasTrainer/AtletasTrainer'));
+const AtletasTrainer = lazyWithDelay(() => import('../components/trainer/AtletasViewTrainer/AtletasViewTrainer'));
 
 // 📂 Importación perezosa del componente SubAreas Trainer
 const SubAreasTrainer = lazyWithDelay(() => import('../components/trainer/subareasTrainer/SubAreasTrainer'));
@@ -66,6 +68,13 @@ export default function TrainerDashboard({
   isDarkMode,
   onToggleTheme
 }) {
+  const location = useLocation();
+  const routeAction = {
+    '/entrenador/dashboard': 'home',
+    '/entrenador/asistencias': 'asistencias',
+    '/entrenador/entrenamientos': 'rutina',
+  }[location.pathname];
+  const effectiveAction = routeAction || currentAction;
 
   // ────────────────────────────────────────────────────────────
   // 💤 ESTADO DEL MÓDULO DE SUEÑO Y DESCANSO
@@ -77,16 +86,17 @@ export default function TrainerDashboard({
   const [timeRange, setTimeRange] = useState('week');
   const [selectedAthleteForReg, setSelectedAthleteForReg] = useState(null);
   const [selectedQuality, setSelectedQuality] = useState(null);
-  
+  const [sleepPeriod, setSleepPeriod] = useState('hoy'); // Nuevo filtro de período para pendientes
+
   // Atleta actualmente abierto en el panel lateral de detalle (null = panel cerrado)
   const [selectedAthleteForPanel, setSelectedAthleteForPanel] = useState(null);
-  
+
   // Estado para la vista individual
   const [selectedIndividualId, setSelectedIndividualId] = useState(null);
 
   useEffect(() => {
     let active = true;
-    UserService.getTrainerDashboardSummary()
+    UserService.getTrainerDashboardSummary({ sleep_period: sleepPeriod })
       .then((data) => {
         if (!active) return;
         setTrainerData(data);
@@ -94,7 +104,7 @@ export default function TrainerDashboard({
       })
       .catch(() => { if (active) setSleepLoadError(true); });
     return () => { active = false; };
-  }, []);
+  }, [sleepPeriod]);
 
   // Sincronización del Sidebar
   useEffect(() => {
@@ -172,16 +182,16 @@ export default function TrainerDashboard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [myAthletes, filters, sleepRecords, activeSleepRecords]);
 
-  // Atletas que aún no registraron sueño hoy
+  // Atletas que aún no registraron sueño hoy (usando datos del backend)
   const pendingAthletes = useMemo(() => {
-    return myAthletes.filter((athlete) => !getAthleteStats(athlete.id).todayRecord);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [myAthletes, sleepRecords]);
+    return trainerData?.sleep?.pending_athletes || [];
+  }, [trainerData]);
 
   // KPIs para la Vista General
   const dashboardStats = useMemo(() => {
     const totalAthletes = myAthletes.length;
-    const registeredToday = totalAthletes - pendingAthletes.length;
+    const pendingToday = trainerData?.sleep?.pending_today || 0;
+    const registeredToday = totalAthletes - pendingToday;
     const registeredPct = totalAthletes ? Math.round((registeredToday / totalAthletes) * 100) : 0;
     const todayQualities = myAthletes
       .map((athlete) => getAthleteStats(athlete.id).todayRecord?.quality)
@@ -194,11 +204,11 @@ export default function TrainerDashboard({
       totalAthletes,
       registeredToday,
       registeredPct,
-      pendingToday: pendingAthletes.length,
+      pendingToday,
       avgQualityToday,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [myAthletes, pendingAthletes, sleepRecords, activeSleepRecords]);
+  }, [myAthletes, trainerData, sleepRecords, activeSleepRecords]);
 
   // 📊 Serie de datos estructurada para Recharts (AreaChart)
   const chartData = useMemo(() => {
@@ -267,14 +277,14 @@ export default function TrainerDashboard({
     <MainNav
       role="entrenador"
       roleTitle="Entrenador"
-      activeTab={currentAction}
+      activeTab={effectiveAction}
       onTabChange={setCurrentAction}
       onLogout={onLogout}
       isDarkMode={isDarkMode}
       onToggleTheme={onToggleTheme}
     >
       <div className="trainer-dashboard">
-      {sleepLoadError && currentAction.startsWith('sueño') && (
+      {sleepLoadError && effectiveAction.startsWith('sueño') && (
         <div className="no-data-cell">No se pudieron sincronizar los datos de sueño.</div>
       )}
         <Suspense fallback={
@@ -287,19 +297,19 @@ export default function TrainerDashboard({
           </div>
         }>
 
-          {(currentAction === 'home' || currentAction === 'dashboard_view') && (
+          {(effectiveAction === 'home' || effectiveAction === 'dashboard_view') && (
             <div className="view-fade-in">
               <TrainerDashboardView />
             </div>
           )}
 
-          {currentAction === 'rutina' && (
+          {effectiveAction === 'rutina' && (
             <div className="view-fade-in">
               <BuilderPlanForm athletes={athletes} />
             </div>
           )}
 
-          {(currentAction === 'asistencias' || currentAction === 'asistencia') && (
+          {(effectiveAction === 'asistencias' || effectiveAction === 'asistencia') && (
             <div className="view-fade-in">
               <AsistenciasTrainerView
                 athletes={athletes}
@@ -308,31 +318,31 @@ export default function TrainerDashboard({
             </div>
           )}
 
-          {currentAction === 'mis_atletas' && (
+          {effectiveAction === 'mis_atletas' && (
             <div className="view-fade-in">
               <AtletasTrainer />
             </div>
           )}
 
-          {currentAction === 'subareas' && (
+          {effectiveAction === 'subareas' && (
             <div className="view-fade-in">
               <SubAreasTrainer />
             </div>
           )}
 
-          {currentAction === 'perfil' && (
+          {effectiveAction === 'perfil' && (
             <div className="view-fade-in">
               <PerfilTrainer />
             </div>
           )}
 
-          {(currentAction === 'cineantropometria' || currentAction === 'cineantropometria_trainer') && (
+          {(effectiveAction === 'cineantropometria' || effectiveAction === 'cineantropometria_trainer') && (
             <div className="view-fade-in">
               <CineantropometriaTrainer />
             </div>
           )}
 
-          {currentAction === 'sueño_general' && (
+          {effectiveAction === 'sueño_general' && (
             <div className="view-fade-in">
               <SleepGeneralView
                 timeRange={timeRange}
@@ -343,7 +353,7 @@ export default function TrainerDashboard({
             </div>
           )}
 
-          {(currentAction === 'sueno' || currentAction === 'sueño_individual') && (
+          {(effectiveAction === 'sueno' || effectiveAction === 'sueño_individual') && (
             <div className="view-fade-in">
               <SleepIndividualView
                 athletes={myAthletes}
@@ -356,7 +366,7 @@ export default function TrainerDashboard({
                   const expectedDays = timeRange === 'week' ? 7 : timeRange === 'month' ? 30 : 1;
                   const compliancePct = Math.min(Math.round((records.length / expectedDays) * 100), 100) || 0;
                   const individualPoints = records.map(r => r.quality);
-                  
+
                   return {
                     avgQuality,
                     totalRecords: records.length,
@@ -377,10 +387,20 @@ export default function TrainerDashboard({
             </div>
           )}
 
-          {currentAction === 'sueño_auditoria' && (
+          {effectiveAction === 'sueño_pendientes' && (
+            <div className="view-fade-in">
+              <SleepPendingView
+                pendingAthletes={pendingAthletes}
+                openRegistrationModal={openRegistrationModal}
+                sleepPeriod={sleepPeriod}
+                setSleepPeriod={setSleepPeriod}
+              />
+            </div>
+          )}
+
+          {effectiveAction === 'sueño_auditoria' && (
             <div className="view-fade-in">
               <SleepAuditView
-                sleepRecords={sleepRecords}
                 pendingAthletes={pendingAthletes}
                 athletes={myAthletes}
                 systemDate={SYSTEM_DATE}
@@ -390,7 +410,7 @@ export default function TrainerDashboard({
             </div>
           )}
 
-          {currentAction === 'sueño_registro' && (
+          {effectiveAction === 'sueño_registro' && (
             <div className="view-fade-in">
               <SleepRegistrationView
                 athletes={myAthletes}

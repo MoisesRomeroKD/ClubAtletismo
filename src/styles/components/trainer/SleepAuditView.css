@@ -1,49 +1,60 @@
 /* ============================================================================
    SleepAuditView.css - Auditoría Histórica del módulo de Sueño
-   Hereda paleta y estructura de theme.css
-   ============================================================================ */
 
-:root, body.light-mode {
-  --sl-primary: var(--clr-azul-institucional);
-  --sl-success: var(--clr-verde-elite);
-  --sl-danger: var(--clr-rojo-accion);
+   ARCHIVO AUTOCONTENIDO. Solo SleepAuditView.jsx.
+
+   Cambios v4:
+     - Padding lateral movido al root
+     - .sl-card solo separa verticalmente (no margen lateral)
+     - Eliminados estilos de pendientes (ahora viven solo en SleepPendingView)
+============================================================================ */
+
+.sleep-audit-view {
+  --sl-primary: var(--func-primary);
+  --sl-success: var(--clr-verde-500);
+  --sl-danger: var(--clr-rojo-500);
+  --sl-warning: var(--clr-dorado-500);
   --sl-border: var(--border-main);
   --sl-text-primary: var(--text-main);
+  --sl-text-secondary: var(--text-muted);
   --sl-text-muted: var(--text-muted);
   --sl-radius-md: var(--border-radius-md);
-  --sl-surface: var(--clr-blanco);
-  --sl-surface-alt: var(--clr-gris-superclaro);
+  --sl-surface: var(--bg-card);
+  --sl-surface-alt: var(--bg-surface);
+
+  padding: var(--spacing-margin);
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-body.dark-mode {
-  --sl-primary: var(--clr-azul-institucional);
-  --sl-success: var(--clr-verde-elite);
-  --sl-danger: var(--clr-rojo-accion);
-  --sl-border: var(--border-main);
-  --sl-text-primary: var(--text-main);
-  --sl-text-muted: var(--text-muted);
-  --sl-radius-md: var(--border-radius-md);
-  --sl-surface: var(--clr-azul-noche);
+body.dark-mode .sleep-audit-view {
   --sl-surface-alt: rgba(255, 255, 255, 0.04);
 }
 
-/* ---------- TARJETA BASE ---------- */
+/* ============================================================================
+   CARD
+============================================================================ */
 .sl-card {
   background-color: var(--sl-surface);
   border: 1px solid var(--sl-border);
   border-radius: var(--sl-radius-md);
   padding: 20px;
-  margin: var(--spacing-margin-mobile);
+  margin: 0 0 var(--spacing-gutter) 0;
   transition: var(--transition-theme);
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-@media (min-width: 900px) {
-  .sl-card {
-    margin: var(--spacing-margin-desktop);
-  }
-}
+.sl-card:last-child { margin-bottom: 0; }
 
 .sl-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 16px;
 }
 
@@ -51,13 +62,65 @@ body.dark-mode {
   font-size: 1rem;
   font-weight: 700;
   color: var(--sl-text-primary);
+  margin: 0;
 }
 
-/* ---------- TABLA DE AUDITORÍA ---------- */
+/* ============================================================================
+   FILTROS DE HISTORIAL
+============================================================================ */
+.sl-history-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background-color: var(--sl-surface-alt);
+  border-radius: var(--sl-radius-md);
+}
+
+.sl-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.sl-filter-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--sl-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.sl-select,
+.sl-input {
+  padding: 8px 12px;
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  background-color: var(--sl-surface);
+  color: var(--sl-text-primary);
+  font-size: 0.875rem;
+  transition: var(--transition-theme);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.sl-select:focus,
+.sl-input:focus {
+  outline: none;
+  border-color: var(--sl-primary);
+}
+
+/* ============================================================================
+   TABLA
+============================================================================ */
 .sl-table-container {
   overflow-x: auto;
   border: 1px solid var(--sl-border);
   border-radius: var(--sl-radius-md);
+  max-width: 100%;
 }
 
 .sl-table {
@@ -80,6 +143,7 @@ body.dark-mode {
   color: var(--sl-text-muted);
   padding: 10px 14px;
   border-bottom: 1px solid var(--sl-border);
+  font-weight: 700;
 }
 
 .sl-table td {
@@ -89,19 +153,27 @@ body.dark-mode {
   border-bottom: 1px solid var(--sl-border);
 }
 
-.sl-table tbody tr:last-child td {
-  border-bottom: none;
+.sl-table tbody tr:last-child td { border-bottom: none; }
+.sl-table tbody tr:hover { background-color: var(--sl-surface-alt); }
+
+.sl-table__cell--strong { font-weight: 600; }
+.sl-table__row--clickable { cursor: pointer; }
+
+.sl-table__empty {
+  text-align: center;
+  color: var(--sl-text-muted);
+  padding: 24px 14px;
+  font-size: 0.875rem;
 }
 
-.sl-table tbody tr:hover {
-  background-color: var(--sl-surface-alt);
-}
-
-/* ---------- INFO DE REGISTRO (quién lo registró) ---------- */
+/* ============================================================================
+   INFO DE REGISTRO
+============================================================================ */
 .sl-registrar-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .sl-registrar-name {
@@ -110,7 +182,123 @@ body.dark-mode {
   color: var(--sl-text-primary);
 }
 
+.sl-registrar-name--with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sl-registrar-name--with-icon svg {
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
 .sl-registrar-role {
   font-size: 0.7rem;
+  color: var(--sl-text-muted);
+}
+
+/* ============================================================================
+   CARDS MOBILE (dentro de .responsive-list__cards)
+============================================================================ */
+.sl-sleep-cards-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sl-sleep-card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--sl-border);
+  background: var(--bg-card);
+  min-width: 0;
+  cursor: pointer;
+}
+
+.sl-sleep-card:last-child { border-bottom: none; }
+
+.sl-sleep-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  color: var(--sl-text-primary);
+  min-width: 0;
+}
+
+.sl-sleep-card-header strong {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.sl-sleep-card-header b { flex-shrink: 0; }
+
+.sl-sleep-card-meta {
+  color: var(--sl-text-muted);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.sl-sleep-card-meta--with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sl-sleep-card-meta--with-icon svg {
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+/* ============================================================================
+   ESTADO VACÍO (audit)
+============================================================================ */
+.sl-empty-card {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--sl-text-muted);
+  font-size: 0.875rem;
+  border-radius: var(--sl-radius-md);
+}
+
+/* ============================================================================
+   PAGINACIÓN
+============================================================================ */
+.sl-history-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.sl-history-pagination button {
+  padding: 8px 16px;
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  background-color: var(--sl-surface);
+  color: var(--sl-text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: var(--transition-theme);
+  font-weight: 600;
+}
+
+.sl-history-pagination button:hover:not(:disabled) {
+  background-color: var(--sl-surface-alt);
+  border-color: var(--sl-primary);
+}
+
+.sl-history-pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sl-history-pagination span {
+  font-size: 0.875rem;
   color: var(--sl-text-muted);
 }

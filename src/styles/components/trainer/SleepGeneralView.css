@@ -1,33 +1,33 @@
 /* ============================================================================
    SleepGeneralView.css - Vista General / Métricas del módulo de Sueño
-   Hereda paleta y estructura de theme.css
-   ============================================================================ */
 
-:root, body.light-mode {
-  --sl-primary: var(--clr-azul-institucional);
-  --sl-success: var(--clr-verde-elite);
-  --sl-danger: var(--clr-rojo-accion);
-  --sl-warning: var(--clr-dorado-premium);
+   Cambios v4:
+     - Padding lateral movido al root (--spacing-margin responsive)
+     - .sl-scroll-area sin padding ni @media (ya no hace falta)
+     - Resto igual que v3
+============================================================================ */
+
+.sleep-general-view {
+  --sl-primary: var(--func-primary);
+  --sl-success: var(--clr-verde-500);
+  --sl-danger: var(--clr-rojo-500);
+  --sl-warning: var(--clr-dorado-500);
   --sl-border: var(--border-main);
   --sl-text-primary: var(--text-main);
   --sl-text-secondary: var(--text-muted);
   --sl-text-muted: var(--text-muted);
   --sl-radius-md: var(--border-radius-md);
-  --sl-surface: var(--clr-blanco);
-  --sl-surface-alt: var(--clr-gris-superclaro);
+  --sl-surface: var(--bg-card);
+  --sl-surface-alt: var(--bg-surface);
+
+  padding: var(--spacing-margin);
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-body.dark-mode {
-  --sl-primary: var(--clr-azul-institucional);
-  --sl-success: var(--clr-verde-elite);
-  --sl-danger: var(--clr-rojo-accion);
-  --sl-warning: var(--clr-dorado-premium);
-  --sl-border: var(--border-main);
-  --sl-text-primary: var(--text-main);
-  --sl-text-secondary: var(--clr-gris-light);
-  --sl-text-muted: var(--text-muted);
-  --sl-radius-md: var(--border-radius-md);
-  --sl-surface: var(--clr-azul-noche);
+body.dark-mode .sleep-general-view {
   --sl-surface-alt: rgba(255, 255, 255, 0.04);
 }
 
@@ -36,13 +36,10 @@ body.dark-mode {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-gutter);
-  padding: var(--spacing-margin-mobile);
-}
-
-@media (min-width: 900px) {
-  .sl-scroll-area {
-    padding: var(--spacing-margin-desktop);
-  }
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* ---------- FILTRO DE TIEMPO ---------- */
@@ -55,6 +52,9 @@ body.dark-mode {
   border-radius: var(--sl-radius-md);
   padding: 6px;
   width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .sl-time-btn {
@@ -76,7 +76,7 @@ body.dark-mode {
 
 .sl-time-btn.active {
   background-color: var(--sl-primary);
-  color: var(--clr-blanco);
+  color: var(--clr-blanco-pura);
 }
 
 /* ---------- TARJETA BASE ---------- */
@@ -86,12 +86,18 @@ body.dark-mode {
   border-radius: var(--sl-radius-md);
   padding: 20px;
   transition: var(--transition-theme);
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
+
+.sl-card--padded { padding: 24px; }
 
 .sl-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin-bottom: 16px;
 }
 
@@ -99,6 +105,7 @@ body.dark-mode {
   font-size: 1rem;
   font-weight: 700;
   color: var(--sl-text-primary);
+  margin: 0;
 }
 
 /* ---------- GRID DE KPIs ---------- */
@@ -106,12 +113,14 @@ body.dark-mode {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: var(--spacing-gutter);
+  min-width: 0;
 }
 
 .sl-kpi-title {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -120,15 +129,26 @@ body.dark-mode {
   margin-bottom: 12px;
 }
 
-.sl-kpi-title svg {
-  opacity: 0.6;
-}
+.sl-kpi-title svg { opacity: 0.6; flex-shrink: 0; }
 
 .sl-kpi-value {
   font-size: 2rem;
   font-weight: 800;
   color: var(--sl-text-primary);
   line-height: 1.1;
+  word-break: break-word;
+}
+
+.sl-kpi-value__unit {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--sl-text-muted);
+}
+
+.sl-kpi-value__pct {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--sl-text-muted);
 }
 
 .sl-kpi-subtext {
@@ -137,14 +157,24 @@ body.dark-mode {
   color: var(--sl-text-muted);
 }
 
+/* ---------- ESTADOS ---------- */
+.sl-card--danger   { border-color: var(--clr-rojo-500); }
+.sl-card--success  { border-color: var(--clr-verde-500); }
+.sl-kpi-title--danger  { color: var(--clr-rojo-500); }
+.sl-kpi-title--success { color: var(--clr-verde-500); }
+.sl-kpi-value--danger  { color: var(--clr-rojo-500); }
+.sl-kpi-value--success { color: var(--clr-verde-500); }
+.sl-kpi-value--sm      { font-size: 1.5rem; }
+
 /* ---------- GRID DE GRÁFICOS ---------- */
 .sl-charts-grid {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
   gap: var(--spacing-gutter);
+  min-width: 0;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1023px) {
   .sl-charts-grid {
     grid-template-columns: 1fr;
   }
@@ -153,10 +183,16 @@ body.dark-mode {
 .sl-chart-container {
   position: relative;
   width: 100%;
+  min-width: 0;
   height: 220px;
 }
 
-/* Gráfico de línea (SVG) */
+.sl-chart-container--relative {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .sl-chart-grid line {
   stroke: var(--sl-border);
   stroke-width: 1;
@@ -171,7 +207,62 @@ body.dark-mode {
   stroke-linejoin: round;
 }
 
-/* Donut de estado de registros */
 .sl-chart-container svg circle {
   transition: stroke-dashoffset 1s ease-out, stroke 0.3s ease;
+}
+
+/* ---------- DONUT ---------- */
+.sl-donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+}
+
+.sl-donut-center__value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--sl-text-primary);
+  line-height: 1;
+}
+
+.sl-donut-center__label {
+  font-size: 0.75rem;
+  color: var(--sl-text-muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- TOOLTIP ---------- */
+.sl-tooltip {
+  background: var(--sl-surface);
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  padding: 8px 12px;
+  box-shadow: var(--shadow-card);
+  font-size: 0.8rem;
+}
+
+.sl-tooltip__label {
+  color: var(--sl-text-muted);
+  margin-bottom: 4px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.sl-tooltip__value {
+  color: var(--sl-text-primary);
+  font-weight: 700;
+}
+
+.sl-tooltip__unit {
+  color: var(--sl-text-muted);
+  font-weight: 500;
 }

@@ -83,6 +83,15 @@ export const ExerciseTable = React.memo(({ exercises, onEdit, onDelete, onDuplic
           ))}
         </tbody>
       </table>
+      <div className="exercise-cards-wrap">
+        {exercises.map((row) => (
+          <article className="exercise-card" key={row.id}>
+            <strong>{row.exercise}</strong>
+            <div className="exercise-card-stats"><span>Series <b>{row.sets}</b></span><span>Reps <b>{row.reps}</b></span><span>Micro <b>{row.micro}</b></span><span>Macro <b>{row.macro}</b></span></div>
+            <div className="exercise-card-footer"><span className="chip">{row.intensity || '-'}</span><div style={{ display: 'flex', gap: '4px' }}><button className="btn-icon primary" title="Editar" onClick={() => onEdit(row)}><Icons.Edit /></button><button className="btn-icon" title="Duplicar" onClick={() => onDuplicate(row)}><Icons.Duplicate /></button><button className="btn-icon danger" title="Eliminar" onClick={() => onDelete(row.id)}><Icons.Delete /></button></div></div>
+          </article>
+        ))}
+      </div>
     </div>
   );
 });

@@ -1,76 +1,84 @@
 /* ============================================================================
-   THEME.CSS - ELITE SPORT SYNC (Paleta Institucional en Gamas + Azul Funcional)
-   ============================================================================
-   Marca institucional: blanco, negro, verde (en escalas, no colores planos).
-   El blanco puro se evita como fondo grande porque es el que más escandila;
-   el negro puro se evita igual por consistencia, dejando tonos suaves.
-   Azul: color FUNCIONAL (botones/links/estados), fuera de la marca oficial.
+   THEME.CSS - ELITE SPORT SYNC (Paleta Institucional + Sistema de Tokens)
    ============================================================================ */
 
 :root {
-    /* 1. GAMA DE BLANCOS (3 tonos) — de más puro a más suave/mate */
-    --clr-blanco-pura: #ffffff;   /* uso puntual: cards pequeñas, iconos, texto sobre oscuro */
-    --clr-blanco-soft: #fafafa;   /* fondo principal en modo claro (reduce el deslumbre) */
-    --clr-blanco-muted: #f2f2f0;  /* superficies secundarias, sidebar/topbar en claro */
+    /* 1. GAMA DE BLANCOS (3 tonos) */
+    --clr-blanco-pura: #ffffff;
+    --clr-blanco-soft: #fafafa;
+    --clr-blanco-muted: #f2f2f0;
 
     /* 2. GAMA DE NEGROS (3 tonos) */
-    --clr-negro-pura: #000000;    /* uso puntual: texto de máximo contraste, no como fondo grande */
-    --clr-negro-soft: #0a0a0a;    /* fondo principal en modo oscuro */
-    --clr-negro-muted: #171717;   /* superficies/cards en modo oscuro */
+    --clr-negro-pura: #000000;
+    --clr-negro-soft: #0a0a0a;
+    --clr-negro-muted: #171717;
 
-    /* 3. GAMA DE GRISES (3 tonos) — puente entre blanco y negro */
-    --clr-gris-light: #e2e8f0;    /* bordes en claro / texto muted en oscuro */
-    --clr-gris-base: #6b7280;     /* texto muted en claro / gris neutro general */
-    --clr-gris-dark: #374151;     /* bordes en oscuro / acentos fuertes en claro */
+    /* 3. GAMA DE GRISES (3 tonos) */
+    --clr-gris-light: #e2e8f0;
+    --clr-gris-base: #6b7280;
+    --clr-gris-dark: #374151;
 
-    /* 4. GAMA DE VERDES (5 tonos) — institucional, incluye elite + musgo */
-    --clr-verde-100: #e6f4ea;     /* tinte muy claro: fondos de éxito/badges suaves */
-    --clr-verde-300: #4b8a6f;     /* verde musgo (preferido del equipo) */
-    --clr-verde-500: #008000;     /* verde elite (preferido tuyo / institucional base) */
-    --clr-verde-700: #046307;     /* elite oscurecido: hover/estados activos */
-    --clr-verde-900: #0d3b1e;     /* verde más oscuro: texto sobre fondos claros, alto contraste */
+    /* 4. GAMA DE VERDES (5 tonos) — Institucional */
+    --clr-verde-100: #e6f4ea;
+    --clr-verde-300: #4b8a6f;
+    --clr-verde-500: #008000;
+    --clr-verde-700: #046307;
+    --clr-verde-900: #0d3b1e;
 
-    /* 5. GAMA DE AZULES (3 tonos) — FUNCIONAL, no institucional.
-       Solo para botones, links y estados de interacción. */
-    --clr-azul-light: #60a5fa;    /* fondos suaves, hover claro */
-    --clr-azul-base: #2563eb;     /* botón/link primario funcional */
-    --clr-azul-dark: #1d4ed8;     /* estado activo/presionado */
+    /* 5. GAMA DE AZULES (3 tonos) — Funcional */
+    --clr-azul-light: #60a5fa;
+    --clr-azul-base: #2563eb;
+    --clr-azul-dark: #1d4ed8;
 
-    /* 6. ESTRUCTURA Y ESPACIADO (Layout Control) */
+    /* 6. GAMA DE ROJOS (3 tonos) — Estados */
+    --clr-rojo-100: #fee2e2;
+    --clr-rojo-500: #dc2626;
+    --clr-rojo-700: #b91c1c;
+
+    /* 7. GAMA DORADA (2 tonos) — Premium/Warning */
+    --clr-dorado-100: #fef3c7;
+    --clr-dorado-500: #eab308;
+
+    /* 8. ALIAS SEMÁNTICOS REUTILIZABLES */
+    --state-success: var(--clr-verde-500);
+    --state-warning: var(--clr-dorado-500);
+    --state-danger:  var(--clr-rojo-500);
+    --accent-cyan:   var(--clr-azul-light);
+
+    /* 9. ESTRUCTURA Y ESPACIADO */
     --sidebar-width: 260px;
     --topbar-height: 70px;
     --spacing-margin-mobile: 16px;
+    --spacing-margin-tablet: 24px;
     --spacing-margin-desktop: 48px;
+    --spacing-margin: var(--spacing-margin-mobile);
     --spacing-gutter: 24px;
     --border-radius-md: 8px;
     --transition-theme: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 
-    /* 7. BREAKPOINTS DE REFERENCIA (documentación, no usables en @media) */
-    --bp-xs: 320px;
-    --bp-sm: 375px;
-    --bp-md: 425px;
-    --bp-lg: 768px;
-    --bp-xl: 1024px;
-    --bp-2xl: 1440px;
-    --bp-3xl: 2560px;
+    /* 10. SOMBRAS REUTILIZABLES */
+    --shadow-card:  0 8px 24px -6px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 12px 32px -8px rgba(0, 0, 0, 0.12);
 }
 
-/* 8. MODO CLARO */
+/* ============================================================================
+   11. MODO CLARO (default)
+============================================================================ */
 :root, body.light-mode {
-    --bg-main: var(--clr-blanco-soft);      /* nunca blanco puro de fondo grande */
+    --bg-main: var(--clr-blanco-soft);
     --bg-surface: var(--clr-blanco-muted);
-    --bg-card: var(--clr-blanco-pura);      /* el blanco puro se reserva a superficies pequeñas */
+    --bg-card: var(--clr-blanco-pura);
     --bg-input: var(--clr-blanco-pura);
     --text-main: var(--clr-negro-soft);
     --text-muted: var(--clr-gris-base);
 
-    /* Branding institucional (solo blanco/negro/verde) */
+    /* Branding institucional */
     --brand-primary: var(--clr-negro-soft);
-    --brand-secondary: var(--clr-verde-500);   /* elite: acción institucional principal */
-    --brand-tertiary: var(--clr-verde-300);    /* musgo: badges / highlights */
+    --brand-secondary: var(--clr-verde-500);
+    --brand-tertiary: var(--clr-verde-300);
     --brand-accent: var(--clr-gris-dark);
 
-    /* Funcional (fuera de marca): botones/links */
+    /* Funcional */
     --func-primary: var(--clr-azul-base);
     --func-primary-hover: var(--clr-azul-dark);
     --func-primary-bg-soft: var(--clr-azul-light);
@@ -85,15 +93,23 @@
     --text-topbar: var(--clr-negro-soft);
     --border-main: var(--clr-gris-light);
 
-    /* Estados de input (buscadores, formularios, selects) */
-    --border-input: var(--clr-gris-light);       /* borde base en reposo */
-    --border-input-hover: var(--clr-gris-base);  /* borde al pasar el cursor */
-    --border-input-focus: var(--func-primary);   /* borde al enfocar (azul funcional) */
+    /* Estados de input */
+    --border-input: var(--clr-gris-light);
+    --border-input-hover: var(--clr-gris-base);
+    --border-input-focus: var(--func-primary);
+
+    /* ⭐ ACCENT DE CARDS — en claro: VERDE institucional */
+    --accent-card: var(--clr-verde-500);          /* iconos, texto destacado, borde activo */
+    --accent-card-soft: var(--clr-verde-300);     /* variante secundaria */
+    --accent-card-bg: var(--clr-verde-100);       /* fondo suave (chips, cajas de icono) */
+    --accent-card-text: var(--clr-verde-700);     /* texto sobre el fondo suave */
 }
 
-/* 9. MODO OSCURO */
+/* ============================================================================
+   12. MODO OSCURO
+============================================================================ */
 body.dark-mode {
-    --bg-main: var(--clr-negro-soft);       /* nunca negro puro de fondo grande, por consistencia */
+    --bg-main: var(--clr-negro-soft);
     --bg-surface: var(--clr-negro-muted);
     --bg-card: var(--clr-negro-muted);
     --bg-input: var(--clr-negro-muted);
@@ -118,49 +134,34 @@ body.dark-mode {
     --text-topbar: var(--clr-blanco-pura);
     --border-main: var(--clr-gris-dark);
 
-    /* Estados de input (versión dark: el hover sube a un gris más claro) */
     --border-input: var(--clr-gris-dark);
     --border-input-hover: var(--clr-gris-light);
     --border-input-focus: var(--func-primary);
+
+    /* ⭐ ACCENT DE CARDS — en oscuro: AZUL funcional (contrasta mejor) */
+    --accent-card: var(--clr-azul-light);
+    --accent-card-soft: var(--clr-azul-base);
+    --accent-card-bg: rgba(37, 99, 235, 0.15);
+    --accent-card-text: var(--clr-azul-light);
 }
 
-/* 10. APLICACIÓN Y ESTRUCTURA GLOBAL */
+/* ============================================================================
+   13. ESTILOS DE ELEMENTOS Y COMPONENTES BASE
+============================================================================ */
 body {
     background-color: var(--bg-main);
     color: var(--text-main);
     transition: var(--transition-theme);
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    width: 100%;
 }
 
-.layout-wrapper {
-    display: flex;
-    width: 100%;
-}
-
-aside.sidebar {
-    width: var(--sidebar-width);
-    background-color: var(--bg-sidebar);
-    color: var(--text-sidebar);
-    min-height: 100vh;
-    border-right: 1px solid var(--border-main);
-}
-
-main.content {
-    flex-grow: 1;
-    padding: var(--spacing-margin-mobile);
-    background-color: var(--bg-main);
-}
-
-/* Tarjetas y contenedores */
+/* Tarjetas y contenedores con aislamiento de overflow */
 .card, .box, .container-surface, .modal-content {
     background-color: var(--bg-card);
     color: var(--text-main);
     border: 1px solid var(--border-main);
     transition: var(--transition-theme);
+    max-width: 100%;
+    overflow-x: auto;
 }
 
 /* Inputs */
@@ -170,6 +171,7 @@ input, select, textarea {
     border: 1px solid var(--border-main);
     border-radius: var(--border-radius-md);
     transition: var(--transition-theme);
+    max-width: 100%;
 }
 
 input::placeholder, textarea::placeholder {
@@ -181,19 +183,19 @@ table {
     background-color: var(--bg-card);
     color: var(--text-main);
     border-collapse: collapse;
+    width: 100%;
 }
 
 th, td {
     border-bottom: 1px solid var(--border-main);
 }
 
-/* Acentos institucionales — verde musgo */
+/* Botones institucionales y funcionales */
 .btn-accent, .badge-active, .highlight-musgo {
     background-color: var(--clr-verde-300);
     color: var(--clr-blanco-pura);
 }
 
-/* Acentos institucionales — verde elite (acción principal) */
 .btn-primary, .badge-primary {
     background-color: var(--clr-verde-500);
     color: var(--clr-blanco-pura);
@@ -202,7 +204,6 @@ th, td {
     background-color: var(--clr-verde-700);
 }
 
-/* Botones/links FUNCIONALES en azul (fuera de marca institucional) */
 .btn-secondary, a.link {
     background-color: transparent;
     color: var(--func-primary);
@@ -216,50 +217,16 @@ th, td {
 }
 
 /* ============================================================================
-   11. RESPONSIVE — un @media por breakpoint, mobile-first (min-width)
-   Escala: 320 / 375 / 425 / 768 / 1024 / 1440 / 2560
-   ============================================================================ */
-
-/* 320px — móvil pequeño (base) */
+   14. BREAKPOINTS — Actualización de Tokens de Espaciado
+============================================================================ */
 @media (min-width: 320px) {
-    :root {
-        --spacing-margin: var(--spacing-margin-mobile);
-    }
+    :root { --spacing-margin: var(--spacing-margin-mobile); }
 }
 
-/* 375px — móvil estándar */
-@media (min-width: 375px) {
-
-}
-
-/* 425px — móvil grande */
-@media (min-width: 425px) {
-
-}
-
-/* 768px — tablet */
 @media (min-width: 768px) {
-    main.content {
-        padding: var(--spacing-gutter);
-    }
+    :root { --spacing-margin: var(--spacing-margin-tablet); }
 }
 
-/* 1024px — laptop */
 @media (min-width: 1024px) {
-    :root {
-        --spacing-margin: var(--spacing-margin-desktop);
-    }
-}
-
-/* 1440px — desktop */
-@media (min-width: 1440px) {
-
-}
-
-/* 2560px — pantallas grandes (2K/4K) */
-@media (min-width: 2560px) {
-    body {
-        width: 90%;
-        margin: 0 auto;
-    }
+    :root { --spacing-margin: var(--spacing-margin-desktop); }
 }

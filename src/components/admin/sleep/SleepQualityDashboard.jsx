@@ -9,7 +9,7 @@ import {
   ArrowLeft, 
   Search 
 } from 'lucide-react';
-import '../../../styles/components/admin/sleep/SleepQualityDashboard.css';
+import '../../../styles/components/admin/sleep/SleepQualityDashboardAdmin.css';
 
 const HIERARCHY = {
   'Velocidad': ['100m', '200m', '400m', 'Relevos'],
@@ -459,6 +459,15 @@ export default function SleepQualityDashboard() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+                <div className="sleep-admin-cards-wrap">
+                  {athleteStats.map((s) => (
+                    <article key={s.id} className="sleep-admin-card" onClick={() => handleOpenDetail(s)}>
+                      <div className="sleep-admin-card-header"><strong>{s.name}</strong><span>{s.status === 'registered' ? 'Con registro' : 'Pendiente hoy'}</span></div>
+                      <div className="sleep-admin-card-meta">{s.area} / {s.subarea}</div>
+                      <div className="sleep-admin-card-stats"><span>Calidad <b>{s.avgQuality ? `${s.avgQuality.toFixed(1)} / 10` : '—'}</b></span><span>Último registro <b>{s.lastRecord ? s.lastRecord.date : '—'}</b></span></div>
+                    </article>
+                  ))}
                 </div>
               </div>
 

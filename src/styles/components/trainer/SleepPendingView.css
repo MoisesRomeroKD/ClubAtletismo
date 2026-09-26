@@ -1,0 +1,287 @@
+/* ============================================================================
+   SleepPendingView.css - Atletas pendientes del módulo de Sueño
+
+   ARCHIVO AUTOCONTENIDO. Solo SleepPendingView.jsx.
+
+   Cambios v4:
+     - Padding lateral movido al root
+     - .sl-tracking-grid ya no es grid → display:block (era 320px+1fr con 1 hijo)
+============================================================================ */
+
+.sleep-pending-view {
+  --sl-primary: var(--func-primary);
+  --sl-success: var(--clr-verde-500);
+  --sl-danger: var(--clr-rojo-500);
+  --sl-warning: var(--clr-dorado-500);
+  --sl-border: var(--border-main);
+  --sl-text-primary: var(--text-main);
+  --sl-text-secondary: var(--text-muted);
+  --sl-text-muted: var(--text-muted);
+  --sl-radius-md: var(--border-radius-md);
+  --sl-surface: var(--bg-card);
+  --sl-surface-alt: var(--bg-surface);
+
+  padding: var(--spacing-margin);
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+body.dark-mode .sleep-pending-view {
+  --sl-surface-alt: rgba(255, 255, 255, 0.04);
+}
+
+/* ============================================================================
+   LAYOUT
+============================================================================ */
+.sl-tracking-grid {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* ============================================================================
+   CARD
+============================================================================ */
+.sl-card {
+  background-color: var(--sl-surface);
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  padding: 20px;
+  transition: var(--transition-theme);
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.sl-card--alert { border-color: var(--sl-danger); }
+
+.sl-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sl-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--sl-text-primary);
+  margin: 0;
+}
+
+.sl-card-title--alert { color: var(--sl-danger); }
+
+/* ============================================================================
+   FILTRO DE PERÍODO
+============================================================================ */
+.sl-period-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: var(--sl-surface-alt);
+  border-radius: var(--sl-radius-md);
+}
+
+.sl-period-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  background-color: var(--sl-surface);
+  color: var(--sl-text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: var(--transition-theme);
+}
+
+.sl-period-btn:hover {
+  background-color: var(--sl-surface-alt);
+  border-color: var(--sl-primary);
+}
+
+.sl-period-btn.active {
+  background-color: var(--sl-primary);
+  color: var(--clr-blanco-pura);
+  border-color: var(--sl-primary);
+}
+
+/* ============================================================================
+   CONTROLES / BÚSQUEDA / SELECT
+============================================================================ */
+.sl-table-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.sl-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  padding: 8px 12px;
+  flex: 1;
+  min-width: 200px;
+  color: var(--sl-text-muted);
+  background: var(--sl-surface);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.sl-search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--sl-text-primary);
+  font-size: 0.875rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.sl-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.sl-select {
+  border: 1px solid var(--sl-border);
+  background-color: var(--sl-surface);
+  color: var(--sl-text-primary);
+  border-radius: var(--sl-radius-md);
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: var(--transition-theme);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.sl-select:focus {
+  outline: none;
+  border-color: var(--sl-primary);
+}
+
+/* ============================================================================
+   LISTA DE PENDIENTES
+============================================================================ */
+.sl-pending-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.sl-pending-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background-color: var(--sl-surface);
+  border-radius: var(--sl-radius-md);
+  padding: 10px 12px;
+  min-width: 0;
+}
+
+.sl-pending-item__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.sl-pending-item__name {
+  font-weight: 600;
+  color: var(--sl-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.sl-pending-item__sub {
+  font-size: 0.8rem;
+  color: var(--sl-text-muted);
+  overflow-wrap: anywhere;
+}
+
+/* ============================================================================
+   AVATAR
+============================================================================ */
+.sl-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+}
+
+.sl-avatar--alert {
+  background-color: var(--clr-rojo-500);
+  color: var(--clr-blanco-pura);
+}
+
+/* ============================================================================
+   BOTONES
+============================================================================ */
+.sl-btn {
+  border: 1px solid var(--sl-border);
+  background-color: var(--sl-surface);
+  color: var(--sl-text-primary);
+  font-weight: 600;
+  border-radius: var(--sl-radius-md);
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: var(--transition-theme), transform 0.1s ease;
+  font-size: 0.9rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.sl-btn:hover { background-color: var(--sl-surface-alt); }
+.sl-btn:active { transform: scale(0.98); }
+
+.sl-btn-sm {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+/* ============================================================================
+   ESTADOS VACÍOS
+============================================================================ */
+.sl-empty-card {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--sl-text-muted);
+  font-size: 0.875rem;
+  border-radius: var(--sl-radius-md);
+}
+
+.sl-empty-card--success { color: var(--sl-success); }

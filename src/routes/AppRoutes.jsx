@@ -32,6 +32,41 @@ export default function AppRoutes({
     return '/';
   };
 
+  const trainerDashboardElement = (
+    <ProtectedRoute allowedRoles={['entrenador']} role={normalizedRole}>
+      <TrainerDashboard
+        currentAction={currentAction}
+        setCurrentAction={setCurrentAction}
+        onLogout={handleLogout}
+        isDarkMode={isDarkMode}
+        onToggleTheme={toggleTheme}
+      />
+    </ProtectedRoute>
+  );
+
+  const adminDashboardElement = (
+    <ProtectedRoute allowedRoles={['admin', 'gestion']} role={normalizedRole}>
+      <AdminDashboard
+        currentAction={currentAction}
+        setCurrentAction={setCurrentAction}
+        onLogout={handleLogout}
+        isDarkMode={isDarkMode}
+        onToggleTheme={toggleTheme}
+      />
+    </ProtectedRoute>
+  );
+
+  const athleteDashboardElement = (
+    <ProtectedRoute allowedRoles={['atleta']} role={normalizedRole}>
+      <AthleteDashboard
+        currentAction={currentAction}
+        onLogout={handleLogout}
+        isDarkMode={isDarkMode}
+        onToggleTheme={toggleTheme}
+      />
+    </ProtectedRoute>
+  );
+
   return (
     <Suspense fallback={<div className="loading-container">Iniciando entorno seguro...</div>}>
       <AnimatePresence mode="wait">
@@ -76,55 +111,28 @@ export default function AppRoutes({
           />
 
           {/* ----------------- Rutas Protegidas (con /* para subrutas) ----------------- */}
-          <Route
-            path="/admin/*"
-            element={
-              <ProtectedRoute allowedRoles={['admin', 'gestion']} role={normalizedRole}>
-                <AdminDashboard 
-                  currentAction={currentAction} 
-                  setCurrentAction={setCurrentAction}
-                  onLogout={handleLogout}
-                  isDarkMode={isDarkMode}
-                  onToggleTheme={toggleTheme}
-                />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/admin/dashboard" element={adminDashboardElement} />
+          <Route path="/admin/asistencias" element={adminDashboardElement} />
+          <Route path="/admin/evaluaciones" element={adminDashboardElement} />
+          <Route path="/admin/atletas" element={adminDashboardElement} />
+          <Route path="/admin/cineantropometria" element={adminDashboardElement} />
+          <Route path="/admin/*" element={adminDashboardElement} />
 
           <Route
             path="/gestion/*"
             element={<Navigate to="/admin" replace />}
           />
 
-          <Route
-            path="/entrenador/*"
-            element={
-              <ProtectedRoute allowedRoles={['entrenador']} role={normalizedRole}>
-                <TrainerDashboard 
-                  currentAction={currentAction} 
-                  setCurrentAction={setCurrentAction}
-                  onLogout={handleLogout}
-                  isDarkMode={isDarkMode}
-                  onToggleTheme={toggleTheme}
-                />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/entrenador/dashboard" element={trainerDashboardElement} />
+          <Route path="/entrenador/asistencias" element={trainerDashboardElement} />
+          <Route path="/entrenador/entrenamientos" element={trainerDashboardElement} />
+          <Route path="/entrenador/*" element={trainerDashboardElement} />
 
-          <Route
-            path="/atleta/*"
-            element={
-              <ProtectedRoute allowedRoles={['atleta']} role={normalizedRole}>
-                <AthleteDashboard 
-                  currentAction={currentAction} 
-                  setCurrentAction={setCurrentAction}
-                  onLogout={handleLogout}
-                  isDarkMode={isDarkMode}
-                  onToggleTheme={toggleTheme}
-                />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/atleta/dashboard" element={athleteDashboardElement} />
+          <Route path="/atleta/asistencia" element={athleteDashboardElement} />
+          <Route path="/atleta/evaluaciones" element={athleteDashboardElement} />
+          <Route path="/atleta/antropometria" element={athleteDashboardElement} />
+          <Route path="/atleta/*" element={athleteDashboardElement} />
 
           {/* ----------------- Redirecciones de Consistencia ----------------- */}
           <Route path="/admin-dashboard" element={<Navigate to="/admin" replace />} />

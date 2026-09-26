@@ -9,40 +9,29 @@ import {
   CartesianGrid,
   PieChart,
   Pie,
-  Cell
+  Cell,
 } from 'recharts';
-import { Icon } from './Icon';
+import { Users, Zap, CheckCircle2, AlertCircle } from 'lucide-react';
 import '../../../styles/components/trainer/SleepGeneralView.css';
 
-// Tooltip flotante estilizado
 const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div style={{
-        background: 'rgba(15, 23, 42, 0.9)',
-        backdropFilter: 'blur(8px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        padding: '8px 12px',
-        borderRadius: '8px',
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)'
-      }}>
-        <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>
-          {label || 'Fecha'}
-        </p>
-        <p style={{ margin: '4px 0 0 0', fontWeight: 700, color: '#38bdf8', fontSize: '1rem' }}>
-          Calidad: {payload[0].value} <span style={{ fontSize: '0.75rem', color: 'var(--clr-gris-light)' }}>/ 10</span>
-        </p>
-      </div>
-    );
-  }
-  return null;
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="sl-tooltip">
+      <p className="sl-tooltip__label">{label || 'Fecha'}</p>
+      <p className="sl-tooltip__value">
+        Calidad: {payload[0].value}{' '}
+        <span className="sl-tooltip__unit">/ 10</span>
+      </p>
+    </div>
+  );
 };
 
 export default function SleepGeneralView({
   timeRange,
   setTimeRange,
   dashboardStats = {},
-  chartData = [] // Estructura recibida: [{ label: '03 Ago', quality: 8.5 }, ...]
+  chartData = [],
 }) {
   const timeOptions = [
     { key: 'day', label: 'Día' },
@@ -53,160 +42,181 @@ export default function SleepGeneralView({
     { key: 'year', label: 'Anual' },
   ];
 
-  // Datos para el Donut Chart de Estado de Registros
   const registeredPct = dashboardStats.registeredPct ?? 0;
   const pieData = [
-    { name: 'Completado', value: registeredPct, color: '#16a34a' },
-    { name: 'Pendiente', value: Math.max(0, 100 - registeredPct), color: 'rgba(226, 232, 240, 0.3)' }
+    { name: 'Completado', value: registeredPct, color: 'var(--clr-verde-500)' },
+    {
+      name: 'Pendiente',
+      value: Math.max(0, 100 - registeredPct),
+      color: 'var(--bg-surface)',
+    },
   ];
 
   return (
-    <div className="sl-scroll-area">
-      {/* Filtro Temporal */}
-      <div className="sl-time-filter-bar">
-        {timeOptions.map((opt) => (
-          <button
-            key={opt.key}
-            type="button"
-            className={`sl-time-btn ${timeRange === opt.key ? 'active' : ''}`}
-            onClick={() => setTimeRange && setTimeRange(opt.key)}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
-
-      {/* KPI Cards */}
-      <div className="sl-kpi-grid">
-        <div className="sl-card">
-          <div className="sl-kpi-title">
-            Universo Actual
-            <Icon>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </Icon>
-          </div>
-          <div className="sl-kpi-value">{dashboardStats.totalAthletes ?? 0}</div>
-          <div className="sl-kpi-subtext">Atletas en el grupo seleccionado</div>
-        </div>
-
-        <div className="sl-card">
-          <div className="sl-kpi-title">
-            Calidad Promedio
-            <Icon>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </Icon>
-          </div>
-          <div className="sl-kpi-value">
-            {dashboardStats.avgQualityToday ?? 0}{' '}
-            <span style={{ fontSize: '1rem', color: 'var(--sl-text-muted)' }}>/10</span>
-          </div>
-          <div className="sl-kpi-subtext">Promedio en el periodo seleccionado</div>
-        </div>
-
-        <div className="sl-card">
-          <div className="sl-kpi-title">
-            Cumplimiento Hoy
-            <Icon size={20}>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </Icon>
-          </div>
-          <div className="sl-kpi-value">
-            {dashboardStats.registeredToday ?? 0}{' '}
-            <span style={{ fontSize: '1rem', color: 'var(--sl-success)', fontWeight: 600 }}>
-              ({dashboardStats.registeredPct ?? 0}%)
-            </span>
-          </div>
-          <div className="sl-kpi-subtext">Atletas con registro para hoy</div>
-        </div>
-
-        <div className="sl-card" style={{ borderLeft: '4px solid var(--sl-danger)' }}>
-          <div className="sl-kpi-title" style={{ color: 'var(--sl-danger)' }}>
-            Faltan por registrar
-            <Icon size={20}>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </Icon>
-          </div>
-          <div className="sl-kpi-value" style={{ color: 'var(--sl-danger)' }}>
-            {dashboardStats.pendingToday ?? 0}
-          </div>
-          <div className="sl-kpi-subtext">Requieren seguimiento hoy</div>
-        </div>
-      </div>
-
-      {/* Gráficos Recharts */}
-      <div className="sl-charts-grid">
-        {/* Gráfico de Evolución Temporal */}
-        <div className="sl-card" style={{ padding: '1.25rem' }}>
-          <div className="sl-card-header" style={{ marginBottom: '1rem' }}>
-            <div className="sl-card-title">Evolución de la calidad del sueño</div>
-          </div>
-          <div style={{ width: '100%', height: 250 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="sleepQualityGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--clr-azul-base)" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="var(--clr-azul-base)" stopOpacity={0.0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(203, 213, 225, 0.4)" />
-                <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-                <YAxis domain={[0, 10]} ticks={[0, 2, 4, 6, 8, 10]} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-                <Tooltip content={<CustomTooltip />} />
-                <Area
-                  type="monotone"
-                  dataKey="quality"
-                  stroke="var(--clr-azul-base)"
-                  strokeWidth={3}
-                  fillOpacity={1}
-                  fill="url(#sleepQualityGradient)"
-                  activeDot={{ r: 6, fill: 'var(--clr-azul-base)', stroke: 'var(--clr-blanco-pura)', strokeWidth: 2 }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Donut Chart de Estado */}
-        <div className="sl-card" style={{ padding: '1.25rem' }}>
-          <div className="sl-card-header" style={{ marginBottom: '1rem' }}>
-            <div className="sl-card-title">Estado de Registros (Hoy)</div>
-          </div>
-          <div style={{ width: '100%', height: 250, position: 'relative' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={65}
-                  outerRadius={85}
-                  paddingAngle={3}
-                  dataKey="value"
-                  startAngle={90}
-                  endAngle={-270}
-                  stroke="none"
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-            <div
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                textAlign: 'center',
-                pointerEvents: 'none'
-              }}
+    <div className="sleep-general-view">
+      <div className="sl-scroll-area">
+        {/* Filtro temporal */}
+        <div className="sl-time-filter-bar">
+          {timeOptions.map((opt) => (
+            <button
+              key={opt.key}
+              type="button"
+              className={`sl-time-btn ${timeRange === opt.key ? 'active' : ''}`}
+              onClick={() => setTimeRange && setTimeRange(opt.key)}
             >
-              <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--sl-text-primary, var(--bg-main))' }}>
-                {registeredPct}%
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        {/* KPIs */}
+        <div className="sl-kpi-grid">
+          <div className="sl-card">
+            <div className="sl-kpi-title">
+              Universo Actual
+              <Users size={20} />
+            </div>
+            <div className="sl-kpi-value">{dashboardStats.totalAthletes ?? 0}</div>
+            <div className="sl-kpi-subtext">Atletas en el grupo seleccionado</div>
+          </div>
+
+          <div className="sl-card">
+            <div className="sl-kpi-title">
+              Calidad Promedio
+              <Zap size={20} />
+            </div>
+            <div className="sl-kpi-value">
+              {dashboardStats.avgQualityToday ?? 0}{' '}
+              <span className="sl-kpi-value__unit">/10</span>
+            </div>
+            <div className="sl-kpi-subtext">Promedio en el periodo seleccionado</div>
+          </div>
+
+          <div className="sl-card">
+            <div className="sl-kpi-title">
+              Cumplimiento Hoy
+              <CheckCircle2 size={20} />
+            </div>
+            <div className="sl-kpi-value">
+              {dashboardStats.registeredToday ?? 0}{' '}
+              <span className="sl-kpi-value__pct">
+                ({dashboardStats.registeredPct ?? 0}%)
+              </span>
+            </div>
+            <div className="sl-kpi-subtext">Atletas con registro para hoy</div>
+          </div>
+
+          <div className="sl-card sl-card--danger">
+            <div className="sl-kpi-title sl-kpi-title--danger">
+              Faltan por registrar
+              <AlertCircle size={20} />
+            </div>
+            <div className="sl-kpi-value sl-kpi-value--danger">
+              {dashboardStats.pendingToday ?? 0}
+            </div>
+            <div className="sl-kpi-subtext">Requieren seguimiento hoy</div>
+          </div>
+        </div>
+
+        {/* Gráficos */}
+        <div className="sl-charts-grid">
+          <div className="sl-card sl-card--padded">
+            <div className="sl-card-header">
+              <div className="sl-card-title">Evolución de la calidad del sueño</div>
+            </div>
+            <div className="sl-chart-container">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={chartData}
+                  margin={{ top: 10, right: 10, left: -25, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient
+                      id="sleepQualityGradient"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor="var(--clr-azul-base)"
+                        stopOpacity={0.4}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor="var(--clr-azul-base)"
+                        stopOpacity={0}
+                      />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="var(--border-main)"
+                  />
+                  <XAxis
+                    dataKey="label"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: 'var(--text-muted)' }}
+                  />
+                  <YAxis
+                    domain={[0, 10]}
+                    ticks={[0, 2, 4, 6, 8, 10]}
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: 'var(--text-muted)' }}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area
+                    type="monotone"
+                    dataKey="quality"
+                    stroke="var(--clr-azul-base)"
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#sleepQualityGradient)"
+                    activeDot={{
+                      r: 6,
+                      fill: 'var(--clr-azul-base)',
+                      stroke: 'var(--clr-blanco-pura)',
+                      strokeWidth: 2,
+                    }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="sl-card sl-card--padded">
+            <div className="sl-card-header">
+              <div className="sl-card-title">Estado de Registros (Hoy)</div>
+            </div>
+            <div className="sl-chart-container sl-chart-container--relative">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={65}
+                    outerRadius={85}
+                    paddingAngle={3}
+                    dataKey="value"
+                    startAngle={90}
+                    endAngle={-270}
+                    stroke="none"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="sl-donut-center">
+                <div className="sl-donut-center__value">{registeredPct}%</div>
+                <div className="sl-donut-center__label">Completado</div>
               </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>Completado</div>
             </div>
           </div>
         </div>

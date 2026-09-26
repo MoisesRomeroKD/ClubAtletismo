@@ -51,7 +51,16 @@ const AntropometriaAtletaView = ({ athleteId, athleteName }) => {
 
       {/* RESULTADOS / TABLA */}
       {antropometria.length > 0 ? (
-        <div style={{ overflowX: 'auto' }}>
+        <>
+        <style>{`
+          .antropometria-tabla-wrap { display: none; overflow-x: auto; }
+          .antropometria-cards-wrap { display: grid; gap: 1rem; }
+          .antropometria-card { background: var(--bg-card); border: 1px solid var(--border-main); border-radius: 8px; padding: 1rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+          .antropometria-card-label { color: var(--text-muted); font-size: .75rem; }
+          .antropometria-card-value { color: var(--text-main); font-weight: 600; }
+          @media (min-width: 870px) { .antropometria-tabla-wrap { display: block; } .antropometria-cards-wrap { display: none; } }
+        `}</style>
+        <div className="antropometria-tabla-wrap">
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
             <thead>
               <tr style={{ backgroundColor: 'var(--bg-main)', borderBottom: '1px solid var(--border-main)' }}>
@@ -77,6 +86,19 @@ const AntropometriaAtletaView = ({ athleteId, athleteName }) => {
             </tbody>
           </table>
         </div>
+        <div className="antropometria-cards-wrap">
+          {antropometria.map((item, idx) => (
+            <article className="antropometria-card" key={idx}>
+              <div><div className="antropometria-card-label">Fecha</div><div className="antropometria-card-value">{item.fecha || '-'}</div></div>
+              <div><div className="antropometria-card-label">Evaluador</div><div className="antropometria-card-value">{item.evaluador || 'Cuerpo Técnico'}</div></div>
+              <div><div className="antropometria-card-label">Peso</div><div className="antropometria-card-value">{item.peso || '-'} kg</div></div>
+              <div><div className="antropometria-card-label">Talla</div><div className="antropometria-card-value">{item.talla || '-'} cm</div></div>
+              <div><div className="antropometria-card-label">% Grasa</div><div className="antropometria-card-value">{item.porcentaje_grasa || '-'}%</div></div>
+              <div><div className="antropometria-card-label">% Músculo</div><div className="antropometria-card-value">{item.porcentaje_musculo || '-'}%</div></div>
+            </article>
+          ))}
+        </div>
+        </>
       ) : (
         <div style={{ padding: '3rem 1.5rem', textAlign: 'center', border: '1px dashed var(--border-main)', borderRadius: '12px' }}>
           <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📏</div>

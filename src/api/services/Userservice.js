@@ -81,9 +81,10 @@ const UserService = {
     return response.data;
   },
 
-  getTrainerDashboardSummary: async () => {
+  getTrainerDashboardSummary: async (params = {}) => {
     const response = await podApi.get(
-      '/v1/users/entrenador/dashboard/summary'
+      '/v1/users/entrenador/dashboard/summary',
+      { params }
     );
 
     return response.data;
@@ -94,6 +95,14 @@ const UserService = {
       atleta_id: athleteId,
       calidad: quality
     });
+    return response.data;
+  },
+
+  getTrainerSleepHistory: async (params = {}) => {
+    const response = await podApi.get(
+      '/v1/descanso/sueno/historial-entrenador',
+      { params }
+    );
     return response.data;
   },
 

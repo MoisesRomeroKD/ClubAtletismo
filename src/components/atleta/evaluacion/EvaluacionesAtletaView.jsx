@@ -49,7 +49,16 @@ const EvaluacionesAtletaView = ({ athleteId, athleteName }) => {
       </div>
 
       {evaluaciones.length > 0 ? (
-        <div style={{ overflowX: 'auto' }}>
+        <>
+        <style>{`
+          .evaluaciones-atleta-tabla-wrap { display: none; overflow-x: auto; }
+          .evaluaciones-atleta-cards-wrap { display: grid; gap: 1rem; }
+          .evaluaciones-atleta-card { background: var(--bg-card); border: 1px solid var(--border-main); border-radius: 8px; padding: 1rem; display: grid; gap: .65rem; }
+          .evaluaciones-atleta-card-label { color: var(--text-muted); font-size: .75rem; }
+          .evaluaciones-atleta-card-value { color: var(--text-main); font-weight: 600; }
+          @media (min-width: 870px) { .evaluaciones-atleta-tabla-wrap { display: block; } .evaluaciones-atleta-cards-wrap { display: none; } }
+        `}</style>
+        <div className="evaluaciones-atleta-tabla-wrap">
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
             <thead>
               <tr style={{ backgroundColor: 'var(--bg-main)', borderBottom: '1px solid var(--border-main)' }}>
@@ -71,6 +80,17 @@ const EvaluacionesAtletaView = ({ athleteId, athleteName }) => {
             </tbody>
           </table>
         </div>
+        <div className="evaluaciones-atleta-cards-wrap">
+          {evaluaciones.map((item, idx) => (
+            <article className="evaluaciones-atleta-card" key={idx}>
+              <div><div className="evaluaciones-atleta-card-label">Fecha</div><div className="evaluaciones-atleta-card-value">{item.fecha || '-'}</div></div>
+              <div><div className="evaluaciones-atleta-card-label">Prueba</div><div className="evaluaciones-atleta-card-value">{item.nombre_prueba || 'Test Físico'}</div></div>
+              <div><div className="evaluaciones-atleta-card-label">Resultado</div><div className="evaluaciones-atleta-card-value">{item.resultado || '-'}</div></div>
+              <div><div className="evaluaciones-atleta-card-label">Evaluador</div><div className="evaluaciones-atleta-card-value">{item.evaluador || 'Entrenador'}</div></div>
+            </article>
+          ))}
+        </div>
+        </>
       ) : (
         <div style={{ padding: '3rem 1.5rem', textAlign: 'center', border: '1px dashed var(--border-main)', borderRadius: '12px' }}>
           <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📋</div>

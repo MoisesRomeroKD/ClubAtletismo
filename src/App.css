@@ -1,27 +1,219 @@
-/* src/App.css */
+/* ============================================================================
+   APP.CSS - LAYOUT Y ESTRUCTURA GLOBAL
+   - Reset box-model
+   - Bloqueo total de overflow horizontal
+   - Blindaje de wrappers (min-width:0, max-width:100%)
+   - Padding lateral SOLO en .dashboard-grid / .main-grid-layout
+   - Clases globales reutilizables (animaciones, loading, placeholders)
+   - Patrón global de lista responsive (tabla ↔ cards) — container-based
+============================================================================ */
 
-/* Reseteo global para eliminar cualquier comportamiento extraño de la plantilla anterior */
-* {
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-#root {
+html, body {
   width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body, #root {
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
-/* Si mantienes el <div id="center"> en App.jsx, 
-  esta regla asegura que actúe como un contenedor fluido y completo 
-*/
-#center {
+/* Nivel 1: layout global con sidebar */
+.layout-wrapper {
+  display: flex;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   flex-grow: 1;
+  overflow-x: hidden;
+}
+
+aside.sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  background-color: var(--bg-sidebar);
+  color: var(--text-sidebar);
+  min-height: 100vh;
+  border-right: 1px solid var(--border-main);
+}
+
+/* Nivel 2: contenedor central (cualquiera de estos nombres) */
+.main-content-wrapper,
+#center,
+main.content {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
-  margin: 0;
-  padding: 0;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Nivel 3: wrapper que monta las vistas (TrainerDashboard.jsx, AdminDashboard, etc.) */
+.trainer-dashboard,
+.admin-dashboard {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  overflow-x: hidden;
+}
+
+/* ============================================================================
+   CLASES GLOBALES REUTILIZABLES
+============================================================================ */
+
+.view-fade-in {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; }
+  /* NOTA: sin transform en el estado final para no crear un containing block
+     que rompa los position:fixed de drawers/modales hijos. */
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  width: 100%;
+  padding: 2rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.no-data-cell {
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-main);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.skeleton-loading {
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface) 25%,
+    var(--bg-card) 50%,
+    var(--bg-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.4s ease-in-out infinite;
+  border-radius: var(--border-radius-md);
+}
+
+@keyframes skeletonPulse {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.glass-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+}
+
+/* ============================================================================
+   PATRÓN GLOBAL: LISTA RESPONSIVE (Tabla ↔ Cards) — CONTAINER QUERIES
+   ----------------------------------------------------------------------------
+   Comportamiento:
+     - Contenedor ≥ 870px  → se muestra la TABLA
+     - Contenedor ≤ 869px  → se muestra la versión CARDS (mobile-friendly)
+
+   ¿Por qué container queries y no media queries?
+     El sidebar (260px) y los drawers/modales (ej. 400px) reducen el ancho
+     útil del contenido. Con @media (viewport), 1366px de pantalla con sidebar
+     y drawer abiertos deja 706px reales para la tabla, pero el switch NO se
+     activa (el viewport sigue siendo 1366px). Con @container, el switch
+     depende del ancho REAL del contenedor y se activa correctamente.
+
+   ¿Por qué 869px?
+     Debajo de ese ancho útil, las tablas de 6+ columnas se distorsionan
+     (texto roto, columnas superpuestas, scroll horizontal incómodo).
+
+   USO EN JSX (sin cambios respecto a la versión anterior):
+     <div className="responsive-list">
+       <div className="responsive-list__table"> ... tabla ... </div>
+       <div className="responsive-list__cards"> ... cards ... </div>
+     </div>
+
+   El propio .responsive-list se declara como container, por lo que cualquier
+   componente que lo use obtiene el comportamiento automático. No es necesario
+   que el padre declare nada.
+
+   Soporte: Chrome 105+ / Firefox 110+ / Safari 16+ (~97% global).
+   Fallback con @supports para navegadores antiguos incluido abajo.
+============================================================================ */
+
+.responsive-list {
+  container-type: inline-size;
+  container-name: responsive-list;
+  width: 100%;
+  min-width: 0;
+}
+
+.responsive-list > .responsive-list__table {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.responsive-list > .responsive-list__cards {
+  display: none;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Switch basado en el ancho del contenedor (no del viewport) */
+@container responsive-list (max-width: 869px) {
+  .responsive-list > .responsive-list__table { display: none; }
+  .responsive-list > .responsive-list__cards { display: block; }
+}
+
+/* Fallback: navegadores sin soporte de container queries usan media query */
+@supports not (container-type: inline-size) {
+  @media (max-width: 869px) {
+    .responsive-list > .responsive-list__table { display: none; }
+    .responsive-list > .responsive-list__cards { display: block; }
+  }
 }

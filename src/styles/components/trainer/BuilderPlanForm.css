@@ -3,6 +3,13 @@
    ========================================================================== */
 
 /* Botones Base */
+.exercise-cards-wrap { display: none; }
+.exercise-card { display: grid; gap: .75rem; padding: 1rem; border: 1px solid var(--border-main); border-radius: var(--radius-md, 6px); background: var(--bg-card); color: var(--text-main); }
+.exercise-card-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; color: var(--text-muted); font-size: .8rem; }
+.exercise-card-stats b { display: block; color: var(--text-main); }
+.exercise-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+@media (max-width: 869px) { .table-wrapper > .table { display: none; } .exercise-cards-wrap { display: grid; gap: .75rem; } }
+
 .btn {
   display: inline-flex;
   align-items: center;

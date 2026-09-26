@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../styles/components/admin/Preregistro.css';
 
 const PrerregistrosPendientes = () => {
   return (
@@ -38,6 +39,9 @@ const PrerregistrosPendientes = () => {
           </tbody>
 
         </table>
+        <div className="preregistro-cards-wrap">
+          <div className="preregistro-empty">No hay prerregistros pendientes.</div>
+        </div>
 
       </div>
 

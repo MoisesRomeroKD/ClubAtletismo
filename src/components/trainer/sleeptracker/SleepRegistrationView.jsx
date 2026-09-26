@@ -9,84 +9,106 @@ export default function SleepRegistrationView({
   saveRegistration,
   qualityColor,
   athletes = [],
-  systemDate
+  systemDate,
 }) {
+  const currentQuality = selectedQuality ?? 5;
+
   return (
-    <div className="sl-card" style={{ maxWidth: '600px', margin: '0 auto' }}>
-      <div className="sl-card-header">
-        <h2 className="sl-card-title">Registrar Sueño Manualmente</h2>
-      </div>
+    <div className="sleep-registration-view">
+      <div className="sl-card sl-card--centered">
+        <div className="sl-card-header">
+          <h2 className="sl-card-title">Registrar Sueño Manualmente</h2>
+        </div>
 
-      <div className="sl-form-group" style={{ padding: '20px' }}>
-        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Seleccionar Atleta</label>
-        <select 
-          className="sl-select" 
-          style={{ width: '100%', marginBottom: '24px' }}
-          value={selectedAthleteForReg?.id || ''}
-          onChange={(e) => {
-            const athlete = athletes.find(a => a.id === parseInt(e.target.value));
-            setSelectedAthleteForReg(athlete || null);
-          }}
-        >
-          <option value="">-- Seleccione un atleta --</option>
-          {athletes.map(athlete => (
-            <option key={athlete.id} value={athlete.id}>{athlete.name} - {athlete.area}</option>
-          ))}
-        </select>
+        <div className="sl-form-group sl-form-group--padded">
+          <label className="sl-form-group__label">Seleccionar Atleta</label>
 
-        {selectedAthleteForReg && (
-          <>
-            <div style={{ marginBottom: 24, padding: 12, background: 'var(--func-primary-bg-soft)', borderRadius: 'var(--sl-radius-md)' }}>
-              <div style={{ fontSize: '.875rem', color: 'var(--sl-text-secondary)' }}>Atleta seleccionado:</div>
-              <div style={{ fontWeight: 600, fontSize: '1.125rem' }}>{selectedAthleteForReg.name}</div>
-              <div style={{ fontSize: '.875rem', color: 'var(--sl-text-muted)', marginTop: 4 }}>
-                Fecha asignada: {systemDate}
+          <select
+            className="sl-select sl-select--block"
+            value={selectedAthleteForReg?.id || ''}
+            onChange={(e) => {
+              const athlete = athletes.find(
+                (a) => a.id === parseInt(e.target.value, 10)
+              );
+              setSelectedAthleteForReg(athlete || null);
+            }}
+          >
+            <option value="">-- Seleccione un atleta --</option>
+            {athletes.map((athlete) => (
+              <option key={athlete.id} value={athlete.id}>
+                {athlete.name} - {athlete.area}
+              </option>
+            ))}
+          </select>
+
+          {selectedAthleteForReg && (
+            <>
+              <div className="sl-athlete-summary">
+                <div className="sl-athlete-summary__hint">Atleta seleccionado:</div>
+                <div className="sl-athlete-summary__name">
+                  {selectedAthleteForReg.name}
+                </div>
+                <div className="sl-athlete-summary__meta">
+                  Fecha asignada: {systemDate}
+                </div>
               </div>
-            </div>
 
-            <div className="sl-form-group">
-              <label>Calidad del Sueño (1 = Muy mal, 10 = Excelente)</label>
-              <div className="sl-quality-selector" style={{ marginTop: '12px' }}>
-                {Array.from({ length: 10 }, (_, index) => index + 1).map((quality) => (
-                  <button
-                    key={quality}
-                    type="button"
-                    className={`sl-q-btn ${selectedQuality === quality ? 'selected' : ''}`}
-                    onClick={() => setSelectedQuality(quality)}
-                    style={{
-                      color: selectedQuality === quality ? 'white' : qualityColor(quality),
-                      backgroundColor: selectedQuality === quality ? qualityColor(quality) : 'white',
-                      borderColor: selectedQuality === quality ? qualityColor(quality) : 'var(--sl-border)',
-                      padding: '10px 15px',
-                      margin: '5px',
-                      borderRadius: '4px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {quality}
-                  </button>
-                ))}
+              <div className="sl-form-group">
+                <label className="sl-form-group__label">
+                  Calidad del Sueño (1 = Muy mal, 10 = Excelente)
+                </label>
+
+                <div className="sl-quality-slider">
+                  <div className="sl-quality-slider__track-wrap">
+                    <input
+                      type="range"
+                      min={1}
+                      max={10}
+                      step={1}
+                      value={currentQuality}
+                      onChange={(e) => setSelectedQuality(Number(e.target.value))}
+                      className="sl-quality-slider__input"
+                      style={{ accentColor: qualityColor(currentQuality) }}
+                      aria-label="Calidad del sueño (1 a 10)"
+                    />
+                    <div className="sl-quality-slider__value" style={{ color: qualityColor(currentQuality) }}>
+                      {currentQuality}
+                    </div>
+                  </div>
+                  <div className="sl-quality-slider__labels">
+                    <span>1 · Muy mal</span>
+                    <span>Excelente · 10</span>
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 32 }}>
-              <button 
-                className="sl-btn" 
-                type="button" 
-                style={{ background: 'var(--clr-blanco-pura)', border: '1px solid var(--sl-border)' }} 
-                onClick={() => { setSelectedAthleteForReg(null); setSelectedQuality(null); }}
-              >
-                Limpiar Formulario
-              </button>
-              <button className="sl-btn sl-btn-primary" type="button" onClick={saveRegistration}>
-                Guardar Registro
-              </button>
-            </div>
-            <p style={{ fontSize: '.75rem', color: 'var(--sl-text-muted)', marginTop: 12, textAlign: 'right' }}>
-              El registro quedará marcado como realizado por: <span style={{ fontWeight: 600 }}>Entrenador</span>
-            </p>
-          </>
-        )}
+              <div className="sl-actions">
+                <button
+                  type="button"
+                  className="sl-btn"
+                  onClick={() => {
+                    setSelectedAthleteForReg(null);
+                    setSelectedQuality(null);
+                  }}
+                >
+                  Limpiar Formulario
+                </button>
+                <button
+                  type="button"
+                  className="sl-btn sl-btn-primary"
+                  onClick={saveRegistration}
+                >
+                  Guardar Registro
+                </button>
+              </div>
+
+              <p className="sl-attribution">
+                El registro quedará marcado como realizado por:{' '}
+                <strong>Entrenador</strong>
+              </p>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

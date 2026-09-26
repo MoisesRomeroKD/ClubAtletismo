@@ -1,3 +1,24 @@
+/* ============================================================================
+   AsistenciasTrainerView.css - Vista de Asistencias del Entrenador
+
+   Consume:
+     - Tokens globales de theme.css (--bg-*, --text-*, --func-*, --clr-*)
+     - Patrón .responsive-list de App.css (switch tabla ↔ cards en 869px)
+
+   Cambios v2:
+     - Eliminado el bloque .sidebar / .mobile-header / .top-bar (dead code,
+       no se usan en el JSX y colisionaban con SidebarPublic.css)
+     - Eliminadas las reglas display de .desktop-table-wrapper y
+       .mobile-cards-wrapper → ahora viven en App.css (.responsive-list)
+     - Breakpoints: 640px → 768px (sistema oficial)
+     - Añadido .chart-container-height (faltaba, la usaba el JSX)
+     - Añadido .text-slate (faltaba, la usaba el JSX)
+     - Reemplazado .no-data-cell local por el global de App.css (se eliminó)
+============================================================================ */
+
+/* ============================================================================
+   1. TOKENS DEL MÓDULO (scope: .attendance-view)
+============================================================================ */
 .attendance-view {
   --border-color: var(--border-main);
   --border-hover: var(--func-primary-bg-soft);
@@ -6,16 +27,16 @@
   --primary: var(--func-primary);
   --primary-light: var(--func-primary-bg-soft);
   --primary-dark: var(--func-primary-hover);
-  --emerald: #10b981;
+  --emerald: var(--clr-verde-500);
   --emerald-bg: var(--clr-verde-100);
   --emerald-text: var(--clr-verde-700);
-  --rose: #f43f5e;
-  --rose-bg: #ffe4e6;
-  --rose-text: #be123c;
-  --sky: #0ea5e9;
-  --sky-bg: #e0f2fe;
-  --sky-text: #0369a1;
-  --amber: #f59e0b;
+  --rose: var(--brand-accent);
+  --rose-bg: var(--bg-surface);
+  --rose-text: var(--brand-accent);
+  --sky: var(--func-primary);
+  --sky-bg: var(--func-primary-bg-soft);
+  --sky-text: var(--func-primary-hover);
+  --amber: var(--brand-tertiary);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, .1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, .1);
@@ -23,12 +44,16 @@
   --radius-md: var(--border-radius-md);
   --radius-lg: 12px;
   --radius-full: 9999px;
+
   min-width: 0;
   background: var(--bg-main);
   color: var(--text-main);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+/* ============================================================================
+   2. CONTENEDOR PRINCIPAL
+============================================================================ */
 .content-container {
   padding: 16px;
   max-width: 1280px;
@@ -43,7 +68,9 @@
   }
 }
 
-/* Reusable UI Components */
+/* ============================================================================
+   3. COMPONENTES REUTILIZABLES
+============================================================================ */
 .pod-card {
   background-color: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -62,30 +89,18 @@
   gap: 12px;
 }
 
-.text-muted {
-  color: var(--text-muted);
-}
-
-.text-indigo {
-  color: var(--primary);
-}
-
-.text-emerald {
-  color: var(--emerald-text);
-}
-
-.text-rose {
-  color: var(--rose-text);
-}
-
-.text-amber {
-  color: var(--amber);
-}
-
+.text-muted { color: var(--text-muted); }
+.text-indigo { color: var(--primary); }
+.text-emerald { color: var(--emerald-text); }
+.text-rose { color: var(--rose-text); }
+.text-amber { color: var(--amber); }
+.text-slate { color: var(--text-muted); }
 .text-center { text-align: center; }
 .text-right { text-align: right; }
 
-/* Icon Helpers */
+/* ============================================================================
+   4. ICONOS
+============================================================================ */
 .icon-xs { width: 14px; height: 14px; }
 .icon-sm { width: 16px; height: 16px; }
 .icon-md { width: 20px; height: 20px; }
@@ -104,7 +119,9 @@
   50% { opacity: .5; }
 }
 
-/* Status Badges */
+/* ============================================================================
+   5. STATUS BADGES
+============================================================================ */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -130,10 +147,10 @@
   color: var(--sky-text);
 }
 
-/* KPI Cards */
-.kpi-card {
-  padding: 20px;
-}
+/* ============================================================================
+   6. KPI CARDS
+============================================================================ */
+.kpi-card { padding: 20px; }
 
 .kpi-header {
   display: flex;
@@ -173,7 +190,7 @@
 .kpi-bg-emerald { background-color: var(--emerald-bg); color: var(--emerald-text); }
 .kpi-bg-rose { background-color: var(--rose-bg); color: var(--rose-text); }
 .kpi-bg-sky { background-color: var(--sky-bg); color: var(--sky-text); }
-.kpi-bg-slate { background-color: var(--bg-muted); color: var(--text-muted); }
+.kpi-bg-slate { background-color: var(--bg-surface); color: var(--text-muted); }
 
 .kpi-trend {
   margin-top: 16px;
@@ -200,292 +217,24 @@
   }
 }
 
-/* Header Móvil & Sidebar */
-.mobile-header {
-  background-color: var(--bg-card);
-  border-bottom: 1px solid var(--border-color);
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 30;
-}
-
-@media (min-width: 768px) {
-  .mobile-header { display: none; }
-}
-
-.mobile-logo-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.logo-box {
-  width: 32px;
-  height: 32px;
-  background-color: var(--primary);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  color: var(--clr-blanco-pura);
-  letter-spacing: -0.5px;
-}
-
-.logo-text {
-  font-weight: 700;
-  color: var(--text-main);
-}
-
-.mobile-toggle-btn {
-  background: none;
-  border: none;
-  padding: 8px;
-  color: var(--text-muted);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-}
-
-.sidebar {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 40;
-  width: 288px;
-  background-color: var(--bg-card);
-  border-right: 1px solid var(--border-color);
-  transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out;
-  display: flex;
-  flex-direction: column;
-}
-
-@media (min-width: 768px) {
-  .sidebar {
-    position: static;
-    transform: none;
-    flex-shrink: 0;
-  }
-}
-
-.sidebar-open {
-  transform: translateX(0);
-}
-
-.sidebar-brand-header {
-  height: 64px;
-  display: none;
-  align-items: center;
-  padding: 0 24px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-@media (min-width: 768px) {
-  .sidebar-brand-header { display: flex; }
-}
-
-.brand-logo-box {
-  width: 32px;
-  height: 32px;
-  background-color: var(--primary);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  color: var(--clr-blanco-pura);
-  margin-right: 12px;
-}
-
-.brand-title {
-  font-weight: 700;
-  color: var(--text-main);
-  line-height: 1.2;
-}
-
-.brand-subtitle {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-muted);
-  font-weight: 600;
-}
-
-.sidebar-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px 16px;
-}
-
-.sidebar-section-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-light);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 16px;
-  padding: 0 12px;
-}
-
-.sidebar-nav-group {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.sidebar-nav-item, .sidebar-area-button, .sidebar-subarea-button {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  border-radius: var(--radius-md);
-  transition: background-color 0.2s;
-  text-align: left;
-}
-
-.sidebar-nav-item {
-  padding: 10px 12px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-body);
-}
-
-.sidebar-nav-item:hover {
-  background-color: var(--bg-app);
-  color: var(--text-main);
-}
-
-.nav-item-active {
-  background-color: var(--primary-light) !important;
-  color: var(--primary-dark) !important;
-}
-
-.sidebar-area-block {
-  padding-top: 16px;
-}
-
-.sidebar-area-button {
-  padding: 8px 12px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-main);
-}
-
-.area-button-active {
-  color: var(--primary-dark);
-  background-color: rgba(224, 231, 255, 0.5);
-}
-
-.sidebar-subareas-list {
-  margin-top: 4px;
-  padding-left: 16px;
-  margin-left: 20px;
-  border-left: 2px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.sidebar-subarea-button {
-  padding: 8px 12px;
-  font-size: 14px;
-  color: var(--text-body);
-}
-
-.subarea-button-active {
-  background-color: var(--primary-light);
-  color: var(--primary-dark);
-  font-weight: 500;
-}
-
-.subarea-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--text-light);
-  margin-right: 8px;
-}
-
-.dot-active {
-  background-color: var(--primary);
-}
-
-.sidebar-footer {
-  padding: 16px;
-  border-top: 1px solid var(--border-color);
-  background-color: rgba(248, 250, 252, 0.5);
-}
-
-.user-profile-box {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: var(--border-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-body);
-  font-weight: 700;
-  border: 2px solid var(--clr-blanco-pura);
-  box-shadow: var(--shadow-sm);
-}
-
-.user-name {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-main);
-  margin: 0;
-}
-
-.user-role {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin: 0;
-}
-
-.mobile-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(15, 23, 42, 0.2);
-  z-index: 30;
-  backdrop-filter: blur(4px);
-}
-
-@media (min-width: 768px) {
-  .mobile-overlay { display: none; }
-}
-
-/* Top Navigation Bar */
-.top-bar {
-  background-color: var(--bg-card);
-  border-bottom: 1px solid var(--border-color);
+/* ============================================================================
+   7. TOOLBAR / BREADCRUMBS / FILTROS
+============================================================================ */
+.attendance-toolbar {
   padding: 16px 24px;
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-main);
   box-shadow: var(--shadow-sm);
 }
 
-.breadcrumbs {
+.attendance-breadcrumbs {
   display: flex;
   align-items: center;
-  font-size: 14px;
-  color: var(--text-muted);
-  font-weight: 500;
+  gap: 6px;
   margin-bottom: 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .breadcrumb-link {
@@ -502,42 +251,44 @@
   font-weight: 700;
 }
 
-.filters-row {
+.attendance-toolbar-row {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-@media (min-width: 1280px) {
-  .filters-row {
+.attendance-title {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.attendance-controls {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.attendance-area-selector select,
+.attendance-subarea-selector select {
+  min-height: 40px;
+  padding: 0 12px;
+  color: var(--text-main);
+  background: var(--bg-input);
+  border: 1px solid var(--border-main);
+}
+
+@media (min-width: 1024px) {
+  .attendance-toolbar-row {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
   }
 }
 
-.page-title {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--text-main);
-  text-transform: capitalize;
-  letter-spacing: -0.5px;
-  margin: 0;
-}
-
-.filters-controls {
-  flex-direction: column;
-  align-items: stretch;
-}
-
-@media (min-width: 640px) {
-  .filters-controls {
-    flex-direction: row;
-    align-items: center;
-  }
-}
-
-/* Buscador por Cédula */
+/* ============================================================================
+   8. BUSCADOR POR CÉDULA
+============================================================================ */
 .search-input-wrapper {
   position: relative;
 }
@@ -565,13 +316,14 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   font-size: 14px;
-  background-color: var(--bg-app);
+  background-color: var(--bg-main);
+  color: var(--text-main);
   font-weight: 500;
   box-sizing: border-box;
   transition: all 0.2s;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .search-input {
     width: 256px;
   }
@@ -579,9 +331,9 @@
 
 .search-input:focus {
   outline: none;
-  background-color: var(--clr-blanco-pura);
+  background-color: var(--bg-card);
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 0 0 3px var(--func-primary-bg-soft);
 }
 
 .search-tooltip {
@@ -625,18 +377,9 @@
   filter: brightness(0.95);
 }
 
-.vertical-divider {
-  height: 32px;
-  width: 1px;
-  background-color: var(--border-color);
-  display: none;
-}
-
-@media (min-width: 640px) {
-  .vertical-divider { display: block; }
-}
-
-/* Selector de Período */
+/* ============================================================================
+   9. SELECTOR DE PERÍODO
+============================================================================ */
 .select-wrapper {
   position: relative;
 }
@@ -656,20 +399,20 @@
   transition: background-color 0.2s;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .period-select {
     width: auto;
   }
 }
 
 .period-select:hover {
-  background-color: var(--bg-app);
+  background-color: var(--bg-main);
 }
 
 .period-select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 0 0 3px var(--func-primary-bg-soft);
 }
 
 .select-icons {
@@ -682,7 +425,9 @@
   color: var(--text-muted);
 }
 
-/* Dashboard Views Layout */
+/* ============================================================================
+   10. DASHBOARD LAYOUT
+============================================================================ */
 .dashboard-layout {
   display: flex;
   flex-direction: column;
@@ -696,12 +441,8 @@
 }
 
 @media (min-width: 1024px) {
-  .grid-cols-3-lg {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .grid-cols-2-lg {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .grid-cols-3-lg { grid-template-columns: repeat(3, 1fr); }
+  .grid-cols-2-lg { grid-template-columns: repeat(2, 1fr); }
 }
 
 .chart-card-title {
@@ -711,24 +452,24 @@
   margin: 0 0 16px 0;
 }
 
-.chart-box-height {
-  height: 208px;
-}
+.chart-box-height { height: 208px; }
 
 @media (min-width: 1024px) {
-  .hide-desktop-only {
-    display: block;
-  }
+  .hide-desktop-only { display: block; }
 }
 
-/* Directory & Table */
+/* ============================================================================
+   11. DIRECTORY (tabla + cards)
+   NOTA: la visibilidad de tabla↔cards la controla el patrón global
+   .responsive-list (App.css). Aquí solo van estilos internos.
+============================================================================ */
 .directory-card {
   overflow: hidden;
 }
 
 .directory-header {
   padding: 20px;
-  border-bottom: 1px solid var(--bg-muted);
+  border-bottom: 1px solid var(--bg-surface);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -747,15 +488,6 @@
   color: var(--text-muted);
 }
 
-.desktop-table-wrapper {
-  display: none;
-  overflow-x: auto;
-}
-
-@media (min-width: 768px) {
-  .desktop-table-wrapper { display: block; }
-}
-
 .athletes-table {
   width: 100%;
   font-size: 14px;
@@ -767,8 +499,8 @@
   font-size: 12px;
   color: var(--text-muted);
   text-transform: uppercase;
-  background-color: rgba(248, 250, 252, 0.8);
-  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-main);
 }
 
 .athletes-table th {
@@ -777,14 +509,14 @@
 }
 
 .athletes-table tbody tr {
-  border-bottom: 1px solid rgba(241, 245, 249, 1);
+  border-bottom: 1px solid var(--border-main);
   background-color: var(--bg-card);
   transition: background-color 0.2s;
   cursor: pointer;
 }
 
 .athletes-table tbody tr:hover {
-  background-color: rgba(248, 250, 252, 0.5);
+  background-color: var(--bg-surface);
 }
 
 .athletes-table td {
@@ -813,7 +545,7 @@
   background-color: var(--emerald-bg);
   border-top-left-radius: var(--radius-sm);
   border-bottom-left-radius: var(--radius-sm);
-  border: 1px solid rgba(167, 243, 208, 1);
+  border: 1px solid var(--clr-verde-300);
 }
 
 .pill-abs {
@@ -821,32 +553,22 @@
   background-color: var(--rose-bg);
   border-top-right-radius: var(--radius-sm);
   border-bottom-right-radius: var(--radius-sm);
-  border: 1px solid rgba(254, 205, 211, 1);
+  border: 1px solid var(--border-main);
   border-left: none;
 }
 
 .font-pct { font-weight: 700; }
-.no-data-cell { padding: 32px; text-align: center; color: var(--text-muted); }
 
-/* Mobile Cards Directory */
-.mobile-cards-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-@media (min-width: 768px) {
-  .mobile-cards-wrapper { display: none; }
-}
-
+/* Cards móviles */
 .athlete-mobile-card {
   padding: 16px;
   background-color: var(--bg-card);
-  border-bottom: 1px solid var(--bg-muted);
+  border-bottom: 1px solid var(--bg-surface);
   cursor: pointer;
 }
 
 .athlete-mobile-card:active {
-  background-color: var(--bg-app);
+  background-color: var(--bg-main);
 }
 
 .mobile-card-top {
@@ -896,14 +618,16 @@
   border: 1px solid var(--border-color);
 }
 
-.box-slate { background-color: var(--bg-app); }
-.box-emerald { background-color: var(--emerald-bg); border-color: rgba(167, 243, 208, 1); }
-.box-rose { background-color: var(--rose-bg); border-color: rgba(254, 205, 211, 1); }
+.box-slate { background-color: var(--bg-main); }
+.box-emerald { background-color: var(--emerald-bg); border-color: var(--clr-verde-300); }
+.box-rose { background-color: var(--rose-bg); border-color: var(--border-main); }
 
 .mobile-stat-label { font-size: 12px; margin-bottom: 2px; color: var(--text-muted); }
 .mobile-stat-val { font-weight: 600; }
 
-/* Athlete Detail View */
+/* ============================================================================
+   12. ATHLETE DETAIL VIEW
+============================================================================ */
 .detail-view-container {
   display: flex;
   flex-direction: column;
@@ -940,7 +664,7 @@
 }
 
 .btn-back:hover {
-  background-color: var(--bg-muted);
+  background-color: var(--bg-surface);
 }
 
 .athlete-detail-name {
@@ -957,7 +681,7 @@
   font-size: 12px;
   font-weight: 600;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(199, 210, 254, 1);
+  border: 1px solid var(--border-main);
 }
 
 .assignments-badges-list {
@@ -973,7 +697,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  background-color: var(--bg-app);
+  background-color: var(--bg-main);
   padding: 4px 8px;
   border-radius: var(--radius-sm);
 }
@@ -1029,6 +753,8 @@
   gap: 8px;
 }
 
+.chart-container-height { height: 208px; }
+
 .empty-chart-box {
   height: 256px;
   display: flex;
@@ -1036,11 +762,14 @@
   justify-content: center;
   font-size: 14px;
   color: var(--text-light);
-  background-color: var(--bg-app);
+  background-color: var(--bg-main);
   border-radius: var(--radius-md);
   border: 1px dashed var(--border-color);
 }
 
+/* ============================================================================
+   13. PERFORMANCE BARS
+============================================================================ */
 .performance-list {
   display: flex;
   flex-direction: column;
@@ -1062,7 +791,7 @@
 
 .performance-subarea-item {
   padding-left: 8px;
-  border-left: 2px solid var(--bg-muted);
+  border-left: 2px solid var(--bg-surface);
 }
 
 .performance-subarea-header {
@@ -1077,7 +806,7 @@
 
 .progress-bar-bg {
   width: 100%;
-  background-color: var(--bg-muted);
+  background-color: var(--bg-surface);
   border-radius: var(--radius-full);
   height: 6px;
   overflow: hidden;
@@ -1092,7 +821,9 @@
 .bar-amber { background-color: var(--amber); }
 .bar-rose { background-color: var(--rose); }
 
-/* Monthly Calendar */
+/* ============================================================================
+   14. CALENDARIO MENSUAL
+============================================================================ */
 .calendar-card-header {
   display: flex;
   align-items: center;
@@ -1104,7 +835,7 @@
   font-size: 14px;
   font-weight: 500;
   color: var(--text-body);
-  background-color: var(--bg-muted);
+  background-color: var(--bg-surface);
   padding: 4px 12px;
   border-radius: var(--radius-sm);
 }
@@ -1144,7 +875,7 @@
 
 .calendar-day-active {
   background-color: var(--bg-card);
-  border-color: rgba(241, 245, 249, 1);
+  border-color: var(--border-main);
   transition: border-color 0.2s;
 }
 
@@ -1182,7 +913,7 @@
 .dot-asistencia { background-color: var(--emerald); }
 .dot-inasistencia { background-color: var(--rose); }
 .dot-justificada { background-color: var(--sky); }
-.dot-empty { background-color: var(--bg-muted); border: 1px solid var(--border-color); }
+.dot-empty { background-color: var(--bg-surface); border: 1px solid var(--border-color); }
 
 .calendar-dot-more {
   font-size: 8px;
@@ -1190,7 +921,7 @@
   color: var(--text-light);
 }
 
-/* Tooltip de Calendario */
+/* Tooltip del calendario */
 .calendar-tooltip {
   display: none;
   position: absolute;
@@ -1252,56 +983,4 @@
   display: flex;
   align-items: center;
   gap: 4px;
-}
-
-.attendance-toolbar {
-  padding: 16px 24px;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border-main);
-  box-shadow: var(--shadow-sm);
-}
-
-.attendance-breadcrumbs {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 16px;
-  color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.attendance-toolbar-row {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.attendance-title {
-  margin: 0;
-  color: var(--text-main);
-  font-size: 24px;
-  font-weight: 800;
-}
-
-.attendance-controls {
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.attendance-area-selector select,
-.attendance-subarea-selector select {
-  min-height: 40px;
-  padding: 0 12px;
-  color: var(--text-main);
-  background: var(--bg-input);
-  border: 1px solid var(--border-main);
-}
-
-@media (min-width: 1280px) {
-  .attendance-toolbar-row {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
 }

@@ -1268,6 +1268,15 @@ const CineantropometriaTrainer = () => {
 
             </div>
 
+            <div className="pod-mobile-cards">
+              {filteredAthletes.map((athlete) => (
+                <article className="pod-mobile-card" key={athlete.user_id}>
+                  <strong>{athlete.name}</strong><span>{athlete.cedula || '--'} · {athlete.categoria || '--'}</span><span>{athlete.subareas_lista_texto || '--'}</span><span>Evaluaciones: {selectedAthlete?.user_id === athlete.user_id ? evaluations.length : '—'}</span>
+                  <div><button className="pod-btn-eval" onClick={() => handleSelectForEvaluation(athlete)}>Evaluar</button><button className="pod-btn-secondary" onClick={() => handleSelectForProfile(athlete)}>Ver perfil</button></div>
+                </article>
+              ))}
+            </div>
+
           </div>
 
         </div>

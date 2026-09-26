@@ -371,6 +371,11 @@ body {
   overflow-x: auto;
 }
 
+.pod-mobile-cards { display: none; }
+.pod-mobile-card { display: grid; gap: .6rem; padding: 1rem; border: 1px solid var(--pod-border); border-radius: 8px; background: var(--bg-card); color: var(--text-main); }
+.pod-mobile-card span { color: var(--pod-text-muted); font-size: .8rem; }
+@media (max-width: 869px) { .pod-table-responsive > .pod-table { display: none; } .pod-mobile-cards { display: grid; gap: .75rem; } }
+
 .pod-table {
   width: 100%;
   border-collapse: collapse;

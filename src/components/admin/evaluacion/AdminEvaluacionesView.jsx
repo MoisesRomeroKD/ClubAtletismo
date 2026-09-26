@@ -65,7 +65,19 @@ const AdminEvaluacionesView = () => {
       {isLoading ? (
         <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--clr-gris-base)' }}>Cargando expediente general de evaluaciones...</div>
       ) : evaluacionesFiltradas.length > 0 ? (
-        <div style={{ overflowX: 'auto', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '8px', border: '1px solid var(--border-main)' }}>
+        <>
+        <style>{`
+          .admin-evaluaciones-tabla-wrap { display: none; overflow-x: auto; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-main); }
+          .admin-evaluaciones-cards-wrap { display: grid; gap: 1rem; }
+          .admin-evaluaciones-card { background: var(--bg-card); border: 1px solid var(--border-main); border-radius: 8px; padding: 1rem; display: grid; gap: .65rem; }
+          .admin-evaluaciones-card-label { color: var(--text-muted); font-size: .75rem; }
+          .admin-evaluaciones-card-value { color: var(--text-main); font-weight: 600; }
+          @media (min-width: 870px) {
+            .admin-evaluaciones-tabla-wrap { display: block; }
+            .admin-evaluaciones-cards-wrap { display: none; }
+          }
+        `}</style>
+        <div className="admin-evaluaciones-tabla-wrap">
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
             <thead>
               <tr style={{ backgroundColor: 'var(--bg-main)', borderBottom: '1px solid var(--border-main)', color: 'var(--clr-gris-dark)' }}>
@@ -89,6 +101,18 @@ const AdminEvaluacionesView = () => {
             </tbody>
           </table>
         </div>
+        <div className="admin-evaluaciones-cards-wrap">
+          {evaluacionesFiltradas.map((item, idx) => (
+            <article className="admin-evaluaciones-card" key={idx}>
+              <div><div className="admin-evaluaciones-card-label">Atleta</div><div className="admin-evaluaciones-card-value">{item.atleta_nombre || item.atleta || 'Atleta'}</div></div>
+              <div><div className="admin-evaluaciones-card-label">Prueba / Test</div><div className="admin-evaluaciones-card-value">{item.nombre_prueba || item.prueba || 'Test Físico'}</div></div>
+              <div><div className="admin-evaluaciones-card-label">Fecha</div><div className="admin-evaluaciones-card-value">{item.fecha || item.date || '-'}</div></div>
+              <div><div className="admin-evaluaciones-card-label">Resultado</div><div className="admin-evaluaciones-card-value">{item.resultado || '-'}</div></div>
+              <div><div className="admin-evaluaciones-card-label">Evaluador</div><div className="admin-evaluaciones-card-value">{item.evaluador || 'Entrenador'}</div></div>
+            </article>
+          ))}
+        </div>
+        </>
       ) : (
         <div style={{ padding: '3rem 1.5rem', backgroundColor: 'var(--clr-blanco-pura)', borderRadius: '12px', textAlign: 'center', border: '1px dashed var(--border-main)' }}>
           <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📋</div>

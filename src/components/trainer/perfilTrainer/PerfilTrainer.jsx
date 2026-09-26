@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { ShieldCheck, Lock, X, CheckCircle2 } from 'lucide-react';
+
 import '../../../styles/components/trainer/PerfilTrainer.css';
 import PasswordToggleButton from '../../auth/PasswordToggleButton';
 import UserService from '../../../api/services/Userservice';
@@ -234,17 +236,9 @@ const PerfilTrainer = () => {
             {/* Subáreas */}
             <section className="mi-perfil-card">
 
-              <div className="mi-perfil-card-title-row">
-
-                <h4>
-                  Subáreas Asignadas
-                </h4>
-
-                <span className="material-symbols-outlined">
-                  info
-                </span>
-
-              </div>
+              <h4>
+                Subáreas Asignadas
+              </h4>
 
               <div className="mi-perfil-section-divider"></div>
 
@@ -288,9 +282,7 @@ const PerfilTrainer = () => {
                   Seguridad
                 </h4>
 
-                <span className="material-symbols-outlined">
-                  security
-                </span>
+                <ShieldCheck size={20} className="mi-perfil-title-icon" />
 
               </div>
 
@@ -305,9 +297,7 @@ const PerfilTrainer = () => {
                 className="mi-perfil-password-button"
                 onClick={handleIniciarCambioPassword}
               >
-                <span className="material-symbols-outlined">
-                  lock
-                </span>
+                <Lock size={20} />
                 <span>Cambiar contraseña</span>
               </button>
 
@@ -317,9 +307,7 @@ const PerfilTrainer = () => {
             {/* Read only message */}
             <div className="mi-perfil-readonly-message">
 
-              <span className="material-symbols-outlined">
-                lock
-              </span>
+              <Lock size={16} />
 
               <span>
                 Los datos del perfil son de solo lectura.
@@ -348,9 +336,7 @@ const PerfilTrainer = () => {
                 className="mi-perfil-modal-close"
                 onClick={handleCerrarModal}
               >
-                <span className="material-symbols-outlined">
-                  close
-                </span>
+                <X size={20} />
               </button>
             </div>
 
@@ -451,9 +437,7 @@ const PerfilTrainer = () => {
 
               {passwordStep === 4 && passwordSuccess && (
                 <div className="mi-perfil-password-step mi-perfil-success-step">
-                  <span className="material-symbols-outlined mi-perfil-success-icon">
-                    check_circle
-                  </span>
+                  <CheckCircle2 size={48} className="mi-perfil-success-icon" />
                   <p className="mi-perfil-modal-description">
                     Tu contraseña ha sido actualizada exitosamente.
                   </p>

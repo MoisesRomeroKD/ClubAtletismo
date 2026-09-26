@@ -132,6 +132,16 @@ const RolesPermisos = () => {
       {isLoading ? (
         <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Cargando permisos de personal...</div>
       ) : (
+        <>
+        <style>{`
+          .roles-permisos-tabla-wrap { display: none; overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-main); }
+          .roles-permisos-cards-wrap { display: grid; gap: 1rem; }
+          .roles-permisos-card { background: var(--bg-card); border: 1px solid var(--border-main); border-radius: 8px; padding: 1rem; display: grid; gap: .75rem; }
+          .roles-permisos-card-label { color: var(--text-muted); font-size: .75rem; }
+          .roles-permisos-card-value { color: var(--text-main); font-weight: 600; }
+          @media (min-width: 870px) { .roles-permisos-tabla-wrap { display: block; } .roles-permisos-cards-wrap { display: none; } }
+        `}</style>
+        <div className="roles-permisos-tabla-wrap">
         <div style={{ overflowX: 'auto', borderRadius: '8px', border: '1px solid var(--border-main)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
             <thead>
@@ -189,6 +199,25 @@ const RolesPermisos = () => {
             </tbody>
           </table>
         </div>
+        </div>
+        <div className="roles-permisos-cards-wrap">
+          {usuariosFiltrados.map((item) => (
+            <article className="roles-permisos-card" key={item.id}>
+              <div><div className="roles-permisos-card-label">Personal</div><div className="roles-permisos-card-value">{item.nombre}</div></div>
+              <div><div className="roles-permisos-card-label">Cédula / ID</div><div className="roles-permisos-card-value">{item.cedula}</div></div>
+              <div><div className="roles-permisos-card-label">Correo</div><div className="roles-permisos-card-value">{item.email}</div></div>
+              <div><div className="roles-permisos-card-label">Módulos habilitados</div><div className="roles-permisos-card-value">{(item.modulos || []).join(', ') || 'Sin módulos'}</div></div>
+              <label className="roles-permisos-card-label">Grupo
+                <select value={item.grupo} disabled={guardandoId === item.id} onChange={(e) => handleCambiarGrupo(item.id, e.target.value)}>
+                  <option value="Administrador">Administrador</option>
+                  <option value="Administración">Administración</option>
+                  <option value="Entrenador">Entrenador</option>
+                </select>
+              </label>
+            </article>
+          ))}
+        </div>
+        </>
       )}
 
     </div>

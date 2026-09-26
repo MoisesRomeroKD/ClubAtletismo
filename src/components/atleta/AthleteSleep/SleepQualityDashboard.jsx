@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import podApi from '../../../api/podApi';
-import '../../../styles/components/atleta/AthleteSleep/SleepQualityDashboard.css';
+import '../../../styles/components/atleta/AthleteSleep/SleepQualityDashboardAthlete.css';
 
 const SleepQualityDashboard = ({ athleteName, sleepData = [] }) => {
     const [selectedScore, setSelectedScore] = useState(null);

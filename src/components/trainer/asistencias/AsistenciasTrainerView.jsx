@@ -19,9 +19,9 @@ const STATUS = {
 };
 
 const COLORS = {
-  asistencia: '#10b981',
-  inasistencia: '#f43f5e',
-  justificada: '#0ea5e9'
+  asistencia: 'var(--clr-verde-500)',
+  inasistencia: 'var(--brand-accent)',
+  justificada: 'var(--func-primary)'
 };
 
 const EMPTY_ASSIGNMENTS = { areas: [], subareas: {}, categories: [] };
@@ -66,7 +66,7 @@ const filterSessionsByPeriod = (sessions, period) => {
     const sessionDate = new Date(s.date);
     const diffTime = Math.abs(today - sessionDate);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     switch (period) {
       case 'hoy': return diffDays === 0;
       case 'semana': return diffDays <= 7;
@@ -76,6 +76,81 @@ const filterSessionsByPeriod = (sessions, period) => {
       case 'ano': return sessionDate.getFullYear() === today.getFullYear();
       default: return true;
     }
+  });
+};
+
+const PERIOD_DAYS = {
+  hoy: 1,
+  semana: 7,
+  mes: 30,
+  '3meses': 90,
+  '6meses': 180,
+  ano: 365,
+};
+
+const getPeriodBounds = (period, referenceDate = new Date()) => {
+  const days = PERIOD_DAYS[period] || PERIOD_DAYS['6meses'];
+  const currentEnd = new Date(referenceDate);
+  currentEnd.setHours(23, 59, 59, 999);
+  const currentStart = new Date(currentEnd);
+  currentStart.setDate(currentStart.getDate() - days + 1);
+  currentStart.setHours(0, 0, 0, 0);
+
+  const previousEnd = new Date(currentStart.getTime() - 1);
+  const previousStart = new Date(previousEnd);
+  previousStart.setDate(previousStart.getDate() - days + 1);
+  previousStart.setHours(0, 0, 0, 0);
+
+  return { days, currentStart, currentEnd, previousStart, previousEnd };
+};
+
+const getAttendanceRate = (sessions) => {
+  if (!sessions.length) return 0;
+  const attendanceCount = sessions.filter((session) => session.status === STATUS.ATTENDANCE).length;
+  return (attendanceCount / sessions.length) * 100;
+};
+
+const getTrend = (sessions, period) => {
+  const { currentStart, currentEnd, previousStart, previousEnd } = getPeriodBounds(period);
+  const current = sessions.filter((session) => {
+    const date = new Date(session.date);
+    return date >= currentStart && date <= currentEnd;
+  });
+  const previous = sessions.filter((session) => {
+    const date = new Date(session.date);
+    return date >= previousStart && date <= previousEnd;
+  });
+
+  if (!current.length && !previous.length) return null;
+
+  const previousRate = getAttendanceRate(previous);
+  if (!previous.length || previousRate === 0) return null;
+
+  const change = ((getAttendanceRate(current) - previousRate) / previousRate) * 100;
+  return {
+    value: Number(change.toFixed(1)),
+    isPositive: change >= 0,
+  };
+};
+
+const getEvolutionData = (sessions, period) => {
+  const { days, currentStart, currentEnd } = getPeriodBounds(period);
+  const bucketDuration = (days * 24 * 60 * 60 * 1000) / 4;
+
+  return Array.from({ length: 4 }, (_, index) => {
+    const bucketStart = new Date(currentStart.getTime() + bucketDuration * index);
+    const bucketEnd = index === 3
+      ? currentEnd
+      : new Date(currentStart.getTime() + bucketDuration * (index + 1));
+    const bucketSessions = sessions.filter((session) => {
+      const date = new Date(session.date);
+      return date >= bucketStart && date < bucketEnd;
+    });
+
+    return {
+      name: bucketStart.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }),
+      asistencia: Number(getAttendanceRate(bucketSessions).toFixed(1)),
+    };
   });
 };
 
@@ -130,7 +205,7 @@ const KPICard = ({ title, value, subtext, icon: Icon, colorClass, trend }) => {
 const MonthlyCalendar = ({ sessions, month, year }) => {
   const getDaysInMonth = (m, y) => new Date(y, m + 1, 0).getDate();
   const getFirstDayOfMonth = (m, y) => new Date(y, m, 1).getDay();
-  
+
   const daysInMonth = getDaysInMonth(month, year);
   const firstDay = getFirstDayOfMonth(month, year);
   const offset = firstDay === 0 ? 6 : firstDay - 1;
@@ -158,7 +233,7 @@ const MonthlyCalendar = ({ sessions, month, year }) => {
         {days.map((day, idx) => {
           const daySessions = getSessionsForDay(day);
           const hasSessions = daySessions.length > 0;
-          
+
           return (
             <div key={idx} className={`calendar-day-cell ${day ? 'calendar-day-active' : 'calendar-day-empty'}`}>
               {day && (
@@ -170,7 +245,7 @@ const MonthlyCalendar = ({ sessions, month, year }) => {
                      ))}
                      {daySessions.length > 3 && <span className="calendar-dot-more">+{daySessions.length - 3}</span>}
                   </div>
-                  
+
                   {hasSessions && (
                     <div className="calendar-tooltip">
                        <p className="calendar-tooltip-header">Día {day}</p>
@@ -211,7 +286,7 @@ const AthleteDetailView = ({ athleteId, onBack, allSessions, period, athletes })
   ].filter(d => d.value > 0);
 
   const attendanceBreakdown = {};
-  athlete.assignments.forEach(assign => {
+  athlete?.assignments.forEach(assign => {
     if (!attendanceBreakdown[assign.area]) attendanceBreakdown[assign.area] = {};
     attendanceBreakdown[assign.area][assign.subarea] = { total: 0, att: 0 };
   });
@@ -268,9 +343,9 @@ const AthleteDetailView = ({ athleteId, onBack, allSessions, period, athletes })
                     <Pie data={pieData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
                       {pieData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                     </Pie>
-                    <Tooltip 
+                    <Tooltip
                       formatter={(value, name) => [`${value} sesiones`, name]}
-                      contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                      contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: 'var(--shadow-lg)' }}
                     />
                     <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '12px' }}/>
                   </PieChart>
@@ -330,7 +405,7 @@ const AthleteDetailView = ({ athleteId, onBack, allSessions, period, athletes })
                 {new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
               </div>
             </div>
-            
+
             <MonthlyCalendar sessions={sessions} month={new Date().getMonth()} year={new Date().getFullYear()} />
           </Card>
         </div>
@@ -339,10 +414,12 @@ const AthleteDetailView = ({ athleteId, onBack, allSessions, period, athletes })
   );
 };
 
-const DashboardView = ({ 
-  assignments, 
-  sessions, 
-  athletes, 
+const DashboardView = ({
+  assignments,
+  sessions,
+  allSessions,
+  period,
+  athletes,
   onSelectAthlete,
   navContext
 }) => {
@@ -374,27 +451,21 @@ const DashboardView = ({
     })).sort((a,b) => b.asistencia - a.asistencia);
   }, [sessions]);
 
-  const evolutionData = useMemo(() => {
-     return [
-       { name: 'Sem 1', asistencia: 82 },
-       { name: 'Sem 2', asistencia: 85 },
-       { name: 'Sem 3', asistencia: 81 },
-       { name: 'Sem 4', asistencia: kpis.attPercent || 0 },
-     ]
-  }, [kpis.attPercent]);
+  const evolutionData = useMemo(() => getEvolutionData(allSessions, period), [allSessions, period]);
+  const attendanceTrend = useMemo(() => getTrend(allSessions, period), [allSessions, period]);
 
   const athleteStats = useMemo(() => {
     const statsMap = {};
     sessions.forEach(s => {
       if (!statsMap[s.athleteId]) {
         const a = athletes.find(a => a.id === s.athleteId);
-        statsMap[s.athleteId] = { 
-          id: s.athleteId, 
+        statsMap[s.athleteId] = {
+          id: s.athleteId,
           name: a ? a.name : 'Desconocido',
           area: a ? a.assignments[0].area : s.area,
           subarea: a ? a.assignments[0].subarea : s.subarea,
           category: a ? a.assignments[0].category : s.category,
-          total: 0, att: 0, abs: 0, just: 0, lastAtt: null, lastAbs: null 
+          total: 0, att: 0, abs: 0, just: 0, lastAtt: null, lastAbs: null
         };
       }
       const st = statsMap[s.athleteId];
@@ -417,7 +488,7 @@ const DashboardView = ({
       {/* KPIs Principales */}
       <div className="kpis-grid-4">
         <KPICard title="Total Sesiones" value={kpis.total} icon={Database} colorClass="kpi-bg-indigo" />
-        <KPICard title="Asistencia Real" value={`${kpis.attPercent.toFixed(1)}%`} subtext={`${kpis.attendance} de ${kpis.total}`} icon={TrendingUp} colorClass="kpi-bg-emerald" trend={{value: 2.1, isPositive: true}} />
+        <KPICard title="Asistencia Real" value={`${kpis.attPercent.toFixed(1)}%`} subtext={`${kpis.attendance} de ${kpis.total}`} icon={TrendingUp} colorClass="kpi-bg-emerald" trend={attendanceTrend} />
         <KPICard title="Inasistencias" value={kpis.absence} subtext={`${kpis.absPercent.toFixed(1)}% del total`} icon={XCircle} colorClass="kpi-bg-rose" />
         <KPICard title="Justificadas" value={kpis.justificada} subtext="No cuentan como asistencia" icon={AlertCircle} colorClass="kpi-bg-sky" />
       </div>
@@ -433,14 +504,14 @@ const DashboardView = ({
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--clr-gris-light)" />
                   <XAxis type="number" domain={[0, 100]} hide />
                   <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 12}} width={80} />
-                  <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{borderRadius: '8px'}} formatter={(value) => [`${value}%`, 'Asistencia']}/>
-                  <Bar dataKey="asistencia" fill="#6366f1" radius={[0, 4, 4, 0]} barSize={20} />
+                  <Tooltip cursor={{fill: 'var(--bg-surface)'}} contentStyle={{borderRadius: '8px'}} formatter={(value) => [`${value}%`, 'Asistencia']}/>
+                  <Bar dataKey="asistencia" fill="var(--func-primary)" radius={[0, 4, 4, 0]} barSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </Card>
         )}
-        
+
         <Card className="card-padding">
           <h3 className="chart-card-title">Top Subáreas (Asistencia)</h3>
           <div className="chart-box-height">
@@ -449,8 +520,8 @@ const DashboardView = ({
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--clr-gris-light)" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 12}} />
                 <YAxis domain={[0, 100]} hide />
-                <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{borderRadius: '8px'}} formatter={(value) => [`${value}%`, 'Asistencia']}/>
-                <Bar dataKey="asistencia" fill="#10b981" radius={[4, 4, 0, 0]} barSize={32} />
+                <Tooltip cursor={{fill: 'var(--bg-surface)'}} contentStyle={{borderRadius: '8px'}} formatter={(value) => [`${value}%`, 'Asistencia']}/>
+                <Bar dataKey="asistencia" fill="var(--clr-verde-500)" radius={[4, 4, 0, 0]} barSize={32} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -465,94 +536,96 @@ const DashboardView = ({
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 12}} />
                 <YAxis domain={[0, 100]} axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 12}} width={30} />
                 <Tooltip contentStyle={{borderRadius: '8px'}} formatter={(value) => [`${value}%`, 'Asistencia']}/>
-                <Line type="monotone" dataKey="asistencia" stroke="#6366f1" strokeWidth={3} dot={{r: 4, fill: '#6366f1', strokeWidth: 2, stroke: 'var(--clr-blanco-pura)'}} activeDot={{r: 6}} />
+                <Line type="monotone" dataKey="asistencia" stroke="var(--func-primary)" strokeWidth={3} dot={{r: 4, fill: 'var(--func-primary)', strokeWidth: 2, stroke: 'var(--clr-blanco-pura)'}} activeDot={{r: 6}} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </Card>
       </div>
 
-      {/* Tabla de Atletas */}
+      {/* Tabla de Atletas — usa el patrón GLOBAL .responsive-list de App.css */}
       <Card className="directory-card">
         <div className="directory-header">
           <h3 className="directory-title">Directorio de Atletas ({athleteStats.length})</h3>
           <span className="directory-subtitle">Ordenado por Cédula</span>
         </div>
-        
-        {/* Vista Desktop */}
-        <div className="desktop-table-wrapper">
-          <table className="athletes-table">
-            <thead>
-              <tr>
-                <th>Cédula</th>
-                <th>Atleta</th>
-                <th>Área / Sub</th>
-                <th className="text-center">Sesiones</th>
-                <th className="text-center">Asist. / Inasist.</th>
-                <th className="text-right">% Asist.</th>
-              </tr>
-            </thead>
-            <tbody>
-              {athleteStats.length > 0 ? athleteStats.map((at) => (
-                <tr key={at.id} onClick={() => onSelectAthlete(at.id)}>
-                  <td className="font-id">{at.id}</td>
-                  <td className="font-name">{at.name}</td>
-                  <td>
-                    <div className="cell-subarea">{at.subarea}</div>
-                    <div className="cell-meta">{at.area} • {at.category}</div>
-                  </td>
-                  <td className="text-center font-sessions">{at.total}</td>
-                  <td className="text-center">
-                    <span className="pill-att">{at.att}</span>
-                    <span className="pill-abs">{at.abs}</span>
-                  </td>
-                  <td className="text-right">
-                    <span className={`font-pct ${at.attPct >= 80 ? 'text-emerald' : at.attPct >= 60 ? 'text-amber' : 'text-rose'}`}>
-                      {at.attPct.toFixed(1)}%
-                    </span>
-                  </td>
-                </tr>
-              )) : (
-                <tr><td colSpan="6" className="no-data-cell">No hay atletas registrados en este contexto temporal.</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
 
-        {/* Vista Móvil (Tarjetas) */}
-        <div className="mobile-cards-wrapper">
-          {athleteStats.length > 0 ? athleteStats.map((at) => (
-            <div key={at.id} className="athlete-mobile-card" onClick={() => onSelectAthlete(at.id)}>
-              <div className="mobile-card-top">
-                <div>
-                  <h4 className="mobile-card-name">{at.name}</h4>
-                  <span className="mobile-card-id">{at.id}</span>
+        <div className="responsive-list">
+          {/* Vista Desktop (tabla) */}
+          <div className="responsive-list__table">
+            <table className="athletes-table">
+              <thead>
+                <tr>
+                  <th>Cédula</th>
+                  <th>Atleta</th>
+                  <th>Área / Sub</th>
+                  <th className="text-center">Sesiones</th>
+                  <th className="text-center">Asist. / Inasist.</th>
+                  <th className="text-right">% Asist.</th>
+                </tr>
+              </thead>
+              <tbody>
+                {athleteStats.length > 0 ? athleteStats.map((at) => (
+                  <tr key={at.id} onClick={() => onSelectAthlete(at.id)}>
+                    <td className="font-id">{at.id}</td>
+                    <td className="font-name">{at.name}</td>
+                    <td>
+                      <div className="cell-subarea">{at.subarea}</div>
+                      <div className="cell-meta">{at.area} • {at.category}</div>
+                    </td>
+                    <td className="text-center font-sessions">{at.total}</td>
+                    <td className="text-center">
+                      <span className="pill-att">{at.att}</span>
+                      <span className="pill-abs">{at.abs}</span>
+                    </td>
+                    <td className="text-right">
+                      <span className={`font-pct ${at.attPct >= 80 ? 'text-emerald' : at.attPct >= 60 ? 'text-amber' : 'text-rose'}`}>
+                        {at.attPct.toFixed(1)}%
+                      </span>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr><td colSpan="6" className="no-data-cell">No hay atletas registrados en este contexto temporal.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Vista Móvil (Tarjetas) */}
+          <div className="responsive-list__cards">
+            {athleteStats.length > 0 ? athleteStats.map((at) => (
+              <div key={at.id} className="athlete-mobile-card" onClick={() => onSelectAthlete(at.id)}>
+                <div className="mobile-card-top">
+                  <div>
+                    <h4 className="mobile-card-name">{at.name}</h4>
+                    <span className="mobile-card-id">{at.id}</span>
+                  </div>
+                  <div className={`mobile-card-pct ${at.attPct >= 80 ? 'text-emerald' : at.attPct >= 60 ? 'text-amber' : 'text-rose'}`}>
+                    {at.attPct.toFixed(0)}%
+                  </div>
                 </div>
-                <div className={`mobile-card-pct ${at.attPct >= 80 ? 'text-emerald' : at.attPct >= 60 ? 'text-amber' : 'text-rose'}`}>
-                  {at.attPct.toFixed(0)}%
+                <div className="mobile-card-assignment">
+                  <Target className="icon-xs text-muted" /> {at.subarea} <span className="text-muted">({at.category})</span>
+                </div>
+                <div className="mobile-card-stats-grid">
+                   <div className="mobile-stat-box box-slate">
+                     <div className="mobile-stat-label">Sesiones</div>
+                     <div className="mobile-stat-val text-slate">{at.total}</div>
+                   </div>
+                   <div className="mobile-stat-box box-emerald">
+                     <div className="mobile-stat-label text-emerald">Asist.</div>
+                     <div className="mobile-stat-val text-emerald">{at.att}</div>
+                   </div>
+                   <div className="mobile-stat-box box-rose">
+                     <div className="mobile-stat-label text-rose">Faltas</div>
+                     <div className="mobile-stat-val text-rose">{at.abs}</div>
+                   </div>
                 </div>
               </div>
-              <div className="mobile-card-assignment">
-                <Target className="icon-xs text-muted" /> {at.subarea} <span className="text-muted">({at.category})</span>
-              </div>
-              <div className="mobile-card-stats-grid">
-                 <div className="mobile-stat-box box-slate">
-                   <div className="mobile-stat-label">Sesiones</div>
-                   <div className="mobile-stat-val text-slate">{at.total}</div>
-                 </div>
-                 <div className="mobile-stat-box box-emerald">
-                   <div className="mobile-stat-label text-emerald">Asist.</div>
-                   <div className="mobile-stat-val text-emerald">{at.att}</div>
-                 </div>
-                 <div className="mobile-stat-box box-rose">
-                   <div className="mobile-stat-label text-rose">Faltas</div>
-                   <div className="mobile-stat-val text-rose">{at.abs}</div>
-                 </div>
-              </div>
-            </div>
-          )) : (
-            <div className="no-data-cell">No hay atletas registrados.</div>
-          )}
+            )) : (
+              <div className="no-data-cell">No hay atletas registrados.</div>
+            )}
+          </div>
         </div>
       </Card>
     </div>
@@ -602,30 +675,35 @@ export default function AsistenciasTrainerView() {
   }), [dashboardData, realAthletes]);
   const [currentView, setCurrentView] = useState('dashboard');
   const [selectedAthlete, setSelectedAthlete] = useState(null);
-  
+
   const [navContext, setNavContext] = useState({ type: 'global', value: null });
   const [selectedPeriod, setSelectedPeriod] = useState('6meses');
-  
+
   const [searchQuery, setSearchQuery] = useState('');
   const [searchState, setSearchState] = useState('idle');
   const searchTimeout = useRef(null);
 
-  const filteredSessions = useMemo(() => {
-    let base = filterSessionsByPeriod(realSessions, selectedPeriod);
-    
+  const scopedSessions = useMemo(() => {
+    let base = realSessions;
+
     if (navContext.type === 'area') {
       base = base.filter(s => s.area === navContext.value);
     } else if (navContext.type === 'subarea') {
       base = base.filter(s => s.subarea === navContext.value);
     }
-    
+
     return base;
-  }, [navContext, selectedPeriod, realSessions]);
+  }, [navContext, realSessions]);
+
+  const filteredSessions = useMemo(
+    () => filterSessionsByPeriod(scopedSessions, selectedPeriod),
+    [scopedSessions, selectedPeriod]
+  );
 
   const handleSearchChange = (e) => {
     const val = e.target.value.replace(/\D/g, '');
     setSearchQuery(val);
-    
+
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
 
     if (val.length < 3) {
@@ -634,10 +712,10 @@ export default function AsistenciasTrainerView() {
     }
 
     setSearchState('searching_local');
-    
+
     searchTimeout.current = setTimeout(() => {
       const match = realAthletes.find(a => String(a.cedula || a.id).includes(val));
-      
+
       if (match) {
         setSearchState('found');
       } else {
@@ -674,12 +752,12 @@ export default function AsistenciasTrainerView() {
   return (
     <div className="attendance-view">
         <div className="attendance-toolbar">
-          
+
           {/* Breadcrumbs */}
           <div className="attendance-breadcrumbs">
             <span className="breadcrumb-link" onClick={() => {setNavContext({type:'global', value:null}); setCurrentView('dashboard');}}>Asistencias</span>
             <ChevronRight className="icon-xs text-muted" />
-            
+
             {navContext.type !== 'global' && (
               <>
                 <span className={`breadcrumb-link ${navContext.type === 'area' && !selectedAthlete ? 'breadcrumb-active' : ''}`}
@@ -765,8 +843,8 @@ export default function AsistenciasTrainerView() {
               {/* Buscador por Cédula */}
               <div className="attendance-search search-input-wrapper">
                 <div className="search-icon-left">
-                  {searchState === 'searching_local' || searchState === 'searching_server' ? 
-                    <RefreshCcw className="icon-sm text-indigo spin" /> : 
+                  {searchState === 'searching_local' || searchState === 'searching_server' ?
+                    <RefreshCcw className="icon-sm text-indigo spin" /> :
                     <Search className="icon-sm text-muted" />
                   }
                 </div>
@@ -781,7 +859,7 @@ export default function AsistenciasTrainerView() {
                 <div className="search-icon-right">
                    <Fingerprint className="icon-sm text-muted" />
                 </div>
-                
+
                 {/* Search Feedback Tooltip */}
                 {searchQuery.length > 0 && searchState !== 'idle' && (
                   <div className="search-tooltip">
@@ -796,7 +874,7 @@ export default function AsistenciasTrainerView() {
 
               {/* Selector de Período */}
               <div className="attendance-period select-wrapper">
-                <select 
+                <select
                   className="period-select"
                   value={selectedPeriod}
                   onChange={(e) => setSelectedPeriod(e.target.value)}
@@ -819,16 +897,18 @@ export default function AsistenciasTrainerView() {
 
         <div className="content-container">
           {currentView === 'dashboard' ? (
-            <DashboardView 
-              assignments={COACH_ASSIGNMENTS} 
-              sessions={filteredSessions} 
+            <DashboardView
+              assignments={COACH_ASSIGNMENTS}
+              sessions={filteredSessions}
+              allSessions={scopedSessions}
+              period={selectedPeriod}
               athletes={realAthletes}
               navContext={navContext}
               onSelectAthlete={handleSelectAthlete}
             />
           ) : (
-            <AthleteDetailView 
-              athleteId={selectedAthlete} 
+            <AthleteDetailView
+              athleteId={selectedAthlete}
               onBack={() => setCurrentView('dashboard')}
               allSessions={realSessions}
               athletes={realAthletes}

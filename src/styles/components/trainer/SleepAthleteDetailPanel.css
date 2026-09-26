@@ -1,46 +1,139 @@
-/* Overlay de fondo que oscurece el contenido al abrir el panel */
+/* ============================================================================
+   SleepAthleteDetailPanel.css - Panel lateral de detalle (drawer)
+
+   ARCHIVO AUTOCONTENIDO.
+   Solo da servicio a SleepAthleteDetailPanel.jsx (un JSX = un CSS).
+
+   Clases fantasma cubiertas:
+     sl-detail-panel-avatar, sl-detail-panel-identity,
+     sl-detail-panel-name, sl-detail-panel-role,
+     sl-btn, sl-btn-primary, sl-btn--block,
+     sl-detail-stat-value--primary, sl-detail-stat-value--danger,
+     sl-table (completa), sl-table__th--center,
+     sl-table__td--center-strong, sl-table__empty,
+     sl-badge, sl-detail-history-cards-wrap,
+     sl-sleep-card, sl-sleep-card-header, sl-sleep-card-meta,
+     sl-empty-card
+============================================================================ */
+
+.sleep-athlete-detail-panel {
+  --sl-panel-bg: var(--bg-surface);
+  --sl-panel-border: var(--border-main);
+  --sl-panel-radius: var(--border-radius-md);
+  --sl-panel-text-muted: var(--text-muted);
+
+  --sl-primary: var(--func-primary);
+  --sl-success: var(--clr-verde-500);
+  --sl-danger: var(--clr-rojo-500);
+  --sl-text-primary: var(--text-main);
+  --sl-surface: var(--bg-card);
+  --sl-surface-alt: var(--bg-surface);
+}
+
+body.dark-mode .sleep-athlete-detail-panel {
+  --sl-surface-alt: rgba(255, 255, 255, 0.04);
+}
+
+/* ============================================================================
+   OVERLAY
+============================================================================ */
 .sl-panel-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.35);
+  background: rgba(0, 0, 0, 0.35);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
   z-index: 60;
 }
+
 .sl-panel-overlay.is-open {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* Panel deslizante desde la derecha */
+/* ============================================================================
+   PANEL DESLIZANTE
+============================================================================ */
 .sl-detail-panel {
   position: fixed;
   top: 0;
   right: 0;
   height: 100%;
   width: min(420px, 100vw);
-  background: var(--sl-surface, var(--clr-blanco-pura));
-  border-left: 1px solid var(--sl-border, var(--clr-gris-light));
-  box-shadow: -12px 0 32px rgba(15, 23, 42, 0.18);
+  background: var(--sl-panel-bg);
+  border-left: 1px solid var(--sl-panel-border);
+  box-shadow: var(--shadow-hover);
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
   transition: transform 0.3s ease;
   z-index: 61;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  min-width: 0;
+  box-sizing: border-box;
 }
+
 .sl-detail-panel.is-open {
   transform: translateX(0);
 }
 
+@media (max-width: 768px) {
+  .sl-detail-panel {
+    width: 100vw;
+  }
+}
+
+/* ============================================================================
+   HEADER DEL PANEL
+============================================================================ */
 .sl-detail-panel-header {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 20px;
-  background: var(--sl-primary, var(--bg-card));
+  background: var(--func-primary);
   color: var(--clr-blanco-pura);
   flex-shrink: 0;
+  min-width: 0;
+}
+
+.sl-detail-panel-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--clr-blanco-pura);
+}
+
+.sl-detail-panel-identity {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sl-detail-panel-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.sl-detail-panel-role {
+  font-size: 0.8rem;
+  margin: 0;
+  opacity: 0.85;
+  overflow-wrap: anywhere;
 }
 
 .sl-panel-close-btn {
@@ -48,14 +141,20 @@
   border: none;
   color: var(--clr-blanco-pura);
   padding: 6px;
-  border-radius: var(--sl-radius-md, 8px);
+  border-radius: var(--sl-panel-radius);
   cursor: pointer;
   display: flex;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
 }
+
 .sl-panel-close-btn:hover {
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* ============================================================================
+   BODY DEL PANEL
+============================================================================ */
 .sl-detail-panel-body {
   flex: 1;
   overflow-y: auto;
@@ -63,14 +162,19 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  overscroll-behavior: contain;
+  min-width: 0;
 }
 
-/* Bloque de registro rápido */
+/* ============================================================================
+   REGISTRO RÁPIDO
+============================================================================ */
 .sl-quick-register {
-  background: rgba(37, 99, 235, 0.05);
-  border: 2px dashed var(--sl-primary, var(--clr-azul-base));
-  border-radius: var(--sl-radius-md, 8px);
+  background: var(--func-primary-bg-soft);
+  border: 2px dashed var(--func-primary);
+  border-radius: var(--sl-panel-radius);
   padding: 16px;
+  min-width: 0;
 }
 
 .sl-quick-register-title {
@@ -78,7 +182,7 @@
   align-items: center;
   gap: 8px;
   font-weight: 700;
-  color: var(--sl-primary, var(--clr-azul-dark));
+  color: var(--func-primary);
   margin-bottom: 12px;
   font-size: 0.95rem;
 }
@@ -87,15 +191,20 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 }
+
 .sl-quick-register-slider-row input[type='range'] {
   flex: 1;
+  min-width: 0;
   cursor: pointer;
 }
+
 .sl-quick-register-value {
   font-size: 1.5rem;
   font-weight: 800;
   min-width: 32px;
+  flex-shrink: 0;
   text-align: center;
 }
 
@@ -103,55 +212,231 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.7rem;
-  color: var(--sl-text-muted, var(--text-muted));
+  color: var(--sl-panel-text-muted);
   margin-top: 4px;
 }
 
-/* KPIs rápidos */
+/* ============================================================================
+   BOTONES
+============================================================================ */
+.sl-btn {
+  border: 1px solid var(--sl-panel-border);
+  background-color: var(--sl-surface);
+  color: var(--sl-text-primary);
+  font-weight: 600;
+  border-radius: var(--sl-panel-radius);
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: var(--transition-theme), transform 0.1s ease;
+  font-size: 0.9rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.sl-btn:hover {
+  background-color: var(--sl-surface-alt);
+}
+
+.sl-btn:active {
+  transform: scale(0.98);
+}
+
+.sl-btn-primary {
+  background-color: var(--sl-primary);
+  border-color: var(--sl-primary);
+  color: var(--clr-blanco-pura);
+}
+
+.sl-btn-primary:hover {
+  filter: brightness(1.1);
+  background-color: var(--sl-primary);
+}
+
+.sl-btn--block {
+  width: 100%;
+  margin-top: 12px;
+}
+
+/* ============================================================================
+   KPIs RÁPIDOS
+============================================================================ */
 .sl-detail-stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+  min-width: 0;
 }
+
 .sl-detail-stat-card {
-  background: var(--sl-surface-alt, #f1f5f9);
-  border-radius: var(--sl-radius-md, 8px);
+  background: var(--bg-surface);
+  border-radius: var(--sl-panel-radius);
   padding: 12px;
+  min-width: 0;
 }
+
 .sl-detail-stat-label {
   font-size: 0.7rem;
   text-transform: uppercase;
   font-weight: 700;
-  color: var(--sl-text-muted, var(--text-muted));
+  color: var(--sl-panel-text-muted);
   margin: 0 0 4px 0;
+  letter-spacing: 0.03em;
 }
+
 .sl-detail-stat-value {
   font-size: 1.3rem;
   font-weight: 700;
   margin: 0;
+  color: var(--sl-text-primary);
+  line-height: 1.2;
 }
+
+.sl-detail-stat-value--primary {
+  color: var(--sl-primary);
+}
+
+.sl-detail-stat-value--danger {
+  color: var(--sl-danger);
+}
+
 .sl-detail-stat-unit {
   font-size: 0.8rem;
   font-weight: 400;
-  color: var(--sl-text-muted, var(--text-muted));
+  color: var(--sl-panel-text-muted);
 }
 
+/* ============================================================================
+   TÍTULOS DE SECCIÓN
+============================================================================ */
 .sl-detail-section-title {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--sl-text-muted, var(--text-muted));
+  color: var(--sl-panel-text-muted);
   margin: 0 0 12px 0;
+  font-weight: 700;
 }
 
+/* ============================================================================
+   WRAP DE LA TABLA DE HISTORIAL
+============================================================================ */
 .sl-detail-history-table-wrap {
-  border: 1px solid var(--sl-border, var(--clr-gris-light));
-  border-radius: var(--sl-radius-md, 8px);
+  border: 1px solid var(--sl-panel-border);
+  border-radius: var(--sl-panel-radius);
   overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
 }
 
-@media (max-width: 640px) {
-  .sl-detail-panel {
-    width: 100vw;
-  }
+/* ============================================================================
+   TABLA
+============================================================================ */
+.sl-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sl-table th {
+  text-align: left;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sl-panel-text-muted);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--sl-panel-border);
+  font-weight: 700;
+}
+
+.sl-table td {
+  padding: 10px;
+  font-size: 0.85rem;
+  color: var(--sl-text-primary);
+  border-bottom: 1px solid var(--sl-panel-border);
+}
+
+.sl-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.sl-table tbody tr:hover {
+  background-color: var(--sl-surface-alt);
+}
+
+.sl-table__th--center {
+  text-align: center;
+}
+
+.sl-table__td--center-strong {
+  text-align: center;
+  font-weight: 700;
+}
+
+.sl-table__empty {
+  text-align: center;
+  color: var(--sl-panel-text-muted);
+  padding: 20px 10px;
+  font-size: 0.85rem;
+}
+
+/* ============================================================================
+   BADGE (registrar role)
+============================================================================ */
+.sl-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background-color: var(--sl-surface-alt);
+  color: var(--sl-text-primary);
+}
+
+/* ============================================================================
+   CARDS MOBILE (dentro de .responsive-list__cards)
+============================================================================ */
+.sl-detail-history-cards-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+
+.sl-sleep-card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--sl-panel-border);
+  background: var(--bg-card);
+  min-width: 0;
+}
+
+.sl-sleep-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--sl-text-primary);
+  align-items: center;
+}
+
+.sl-sleep-card-meta {
+  color: var(--sl-panel-text-muted);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+/* ============================================================================
+   ESTADO VACÍO
+============================================================================ */
+.sl-empty-card {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--sl-panel-text-muted);
+  font-size: 0.875rem;
 }

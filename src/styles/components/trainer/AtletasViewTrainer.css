@@ -1,0 +1,445 @@
+/* ============================================================================
+   AtletasViewTrainer.css - Lista de atletas del entrenador
+
+   FIX v6:
+     - El módulo YA NO setea display sobre .responsive-list__cards
+       (antes: display: grid → sobreescribía el display: none de App.css
+       y por eso tabla + cards se veían al mismo tiempo).
+     - El grid de cards vive ahora en un hijo interno (.atletas-cards-grid)
+       que App.css no toca.
+============================================================================ */
+
+/* ============================================================================
+   1. CONTENEDOR
+============================================================================ */
+.atletas-admin-container {
+  background: var(--bg-main);
+  color: var(--text-main);
+  padding: 1.5rem;
+  border-radius: 12px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-width: 0;
+  transition: padding-right .3s ease;
+}
+
+@media (min-width: 769px) {
+  .atletas-admin-container.drawer-open {
+    padding-right: calc(min(400px, 40vw) + 2rem);
+  }
+}
+
+/* ============================================================================
+   2. FILTROS
+============================================================================ */
+.atletas-filtros-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.atletas-search-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  padding: 9px 14px;
+  color: var(--text-main);
+  font-size: .9rem;
+  width: 260px;
+  max-width: 100%;
+}
+
+.atletas-search-input:focus {
+  outline: none;
+  border-color: var(--brand-secondary);
+  box-shadow: 0 0 0 1px var(--brand-secondary);
+}
+
+.atletas-counter {
+  font-family: ui-monospace, 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  color: var(--text-muted);
+}
+
+.atletas-loading {
+  padding: 2rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ============================================================================
+   3. TABLA
+============================================================================ */
+.atletas-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: .9rem;
+  background: var(--bg-card);
+}
+
+.atletas-tabla thead tr {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-main);
+  color: var(--text-muted);
+}
+
+.atletas-tabla th,
+.atletas-tabla td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.atletas-tabla-nombre {
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.atletas-tabla-cedula {
+  color: var(--text-muted);
+  font-family: ui-monospace, 'JetBrains Mono', monospace;
+  font-size: .75rem;
+}
+
+.atletas-tabla-subarea-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  color: var(--text-main);
+  background: var(--bg-surface);
+  border-radius: 6px;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.atletas-tabla-contacto {
+  color: var(--text-muted);
+}
+
+.atletas-btn-ver {
+  padding: 6px 12px;
+  color: var(--text-main);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.atletas-btn-ver:hover {
+  color: var(--clr-blanco-pura);
+  background: var(--brand-secondary);
+}
+
+/* ============================================================================
+   4. CARDS
+   ----------------------------------------------------------------------------
+   IMPORTANTE: el display del wrapper .responsive-list__cards lo controla
+   App.css (none por defecto / block en ≤869px). Aquí solo definimos el grid
+   de las cards en un hijo interno (.atletas-cards-grid) para no colisionar.
+============================================================================ */
+.atletas-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+.atletas-trainer-card {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  min-width: 0;
+}
+
+.atletas-trainer-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.atletas-trainer-card-heading h2,
+.atletas-trainer-card-heading small {
+  display: block;
+  margin: 0;
+}
+
+.atletas-trainer-card-heading h2 {
+  color: var(--text-main);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.atletas-trainer-card-heading small {
+  margin-top: 3px;
+  color: var(--text-muted);
+  font-family: ui-monospace, 'JetBrains Mono', monospace;
+  font-size: .7rem;
+}
+
+.atletas-trainer-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.atletas-data-point {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.atletas-data-point-label {
+  color: var(--text-muted);
+  font-family: ui-monospace, 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.atletas-data-point-value {
+  color: var(--text-main);
+  font-size: .9rem;
+  overflow-wrap: anywhere;
+}
+
+.atletas-perfil-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  color: var(--text-main);
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* ============================================================================
+   5. DRAWER
+============================================================================ */
+.atletas-perfil-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  width: min(400px, 100vw);
+  height: 100vh;
+  height: 100dvh;
+  color: var(--text-main);
+  background: var(--bg-surface);
+  border-left: 1px solid var(--border-main);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, .25);
+  transform: translateX(0);
+  animation: atletas-drawer-in .3s ease-out;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+@keyframes atletas-drawer-in {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+.atletas-perfil-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-main);
+  flex-shrink: 0;
+  gap: 1rem;
+}
+
+.atletas-perfil-header-left {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-width: 0;
+}
+
+.atletas-perfil-header-left > span:first-child {
+  color: var(--brand-secondary);
+  font-family: ui-monospace, 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  letter-spacing: .1em;
+}
+
+.atletas-perfil-counter {
+  font-family: ui-monospace, 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  color: var(--text-muted);
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+}
+
+.atletas-perfil-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: var(--text-muted);
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.atletas-perfil-close-btn:hover {
+  background: var(--bg-card);
+  color: var(--text-main);
+}
+
+.atletas-perfil-body {
+  flex: 1 1 auto;
+  padding: 1.5rem;
+  overflow-y: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
+.atletas-perfil-atleta-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.atletas-perfil-name {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.atletas-perfil-cedula {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: .8rem;
+}
+
+.atletas-perfil-section-title {
+  margin: 0 0 .75rem;
+  color: var(--text-muted);
+  font-family: ui-monospace, 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.atletas-perfil-section-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+}
+
+.atletas-perfil-footer {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border-main);
+  flex-shrink: 0;
+}
+
+.atletas-perfil-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.atletas-perfil-btn-ghost {
+  color: var(--text-main);
+  background: transparent;
+  border: 1px solid var(--border-main);
+}
+
+.atletas-perfil-btn-ghost:hover {
+  background: var(--bg-card);
+}
+
+.atletas-perfil-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  flex-shrink: 0;
+  color: var(--text-main);
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease, opacity .2s ease;
+}
+
+.atletas-perfil-nav-btn:hover:not(:disabled) {
+  background: var(--brand-secondary);
+  color: var(--clr-blanco-pura);
+  border-color: var(--brand-secondary);
+}
+
+.atletas-perfil-nav-btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+/* ============================================================================
+   6. RESPONSIVE
+============================================================================ */
+@media (max-width: 768px) {
+  .atletas-admin-container {
+    padding: 1rem;
+  }
+
+  .atletas-trainer-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .atletas-perfil-section-block {
+    grid-template-columns: 1fr;
+  }
+
+  .atletas-perfil-panel {
+    width: 100vw;
+  }
+}
+
+@media (max-width: 425px) {
+  .atletas-perfil-header,
+  .atletas-perfil-body,
+  .atletas-perfil-footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

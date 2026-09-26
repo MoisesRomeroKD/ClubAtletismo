@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import {
   Home,
@@ -169,6 +170,17 @@ export default function SidebarAdmin({
   onToggleTheme,
 }) {
   const [openGroups, setOpenGroups] = useState({});
+  const location = useLocation();
+  const navigate = useNavigate();
+  const routePaths = {
+    home: '/admin/dashboard',
+    asistencias: '/admin/asistencias',
+    evaluaciones: '/admin/evaluaciones',
+    athletes: '/admin/atletas',
+    antropometria: '/admin/cineantropometria',
+  };
+  const routeActiveTab = Object.entries(routePaths).find(([, path]) => path === location.pathname)?.[0];
+  const selectedTab = routeActiveTab || activeTab;
 
   const toggleGroup = (groupId) => {
     setOpenGroups((prev) => ({
@@ -178,8 +190,18 @@ export default function SidebarAdmin({
   };
 
   const handleNavigation = (tab) => {
+    if (routeActiveTab) {
+      navigate('/admin');
+    }
     onTabChange(tab);
 
+    if (isOpen) {
+      toggleSidebar();
+    }
+  };
+
+  const handleRouteNavigation = (path) => {
+    navigate(path);
     if (isOpen) {
       toggleSidebar();
     }
@@ -211,9 +233,11 @@ export default function SidebarAdmin({
       return (
         <div
           key={item.id}
-          onClick={() => handleNavigation(item.id)}
+          onClick={() => routePaths[item.id]
+            ? handleRouteNavigation(routePaths[item.id])
+            : handleNavigation(item.id)}
           className={`user-sidebar__nav-item ${
-            activeTab === item.id ? 'is-active' : ''
+            selectedTab === item.id ? 'is-active' : ''
           }`}
         >
           <Icon size={20} />
@@ -266,9 +290,11 @@ export default function SidebarAdmin({
                   type="button"
                   key={item.id}
                   className={`user-sidebar__sub-btn ${
-                    activeTab === item.id ? 'is-active' : ''
+                    selectedTab === item.id ? 'is-active' : ''
                   }`}
-                  onClick={() => handleNavigation(item.id)}
+                  onClick={() => routePaths[item.id]
+                    ? handleRouteNavigation(routePaths[item.id])
+                    : handleNavigation(item.id)}
                 >
                   <ItemIcon size={16} />
 

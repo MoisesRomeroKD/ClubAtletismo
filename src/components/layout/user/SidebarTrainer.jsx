@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Home,
   Zap,
@@ -33,8 +34,19 @@ export default function SidebarTrainer({
   isDarkMode,
   onToggleTheme,
 }) {
-  const [isRoutinesOpen, setIsRoutinesOpen] = useState(false);
+  const [isRoutinesOpen, setIsRoutinesOpen] = useState(
+    () => window.location.pathname === '/entrenador/entrenamientos'
+  );
   const [isSleepOpen, setIsSleepOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const routeActiveTab = {
+    '/entrenador/dashboard': 'home',
+    '/entrenador/asistencias': 'asistencias',
+    '/entrenador/entrenamientos': 'rutina',
+  }[location.pathname];
+  const selectedTab = routeActiveTab || activeTab;
 
   // Items principales de navegación
   const navItems = [
@@ -76,7 +88,17 @@ export default function SidebarTrainer({
   ];
 
   const handleNavigation = (tab) => {
+    if (routeActiveTab) {
+      navigate('/entrenador');
+    }
     onTabChange(tab);
+    if (isOpen) {
+      toggleSidebar();
+    }
+  };
+
+  const handleRouteNavigation = (path) => {
+    navigate(path);
     if (isOpen) {
       toggleSidebar();
     }
@@ -129,9 +151,13 @@ export default function SidebarTrainer({
             return (
               <div
                 key={item.id}
-                onClick={() => handleNavigation(item.id)}
+                onClick={() => item.id === 'home'
+                  ? handleRouteNavigation('/entrenador/dashboard')
+                  : item.id === 'asistencias'
+                    ? handleRouteNavigation('/entrenador/asistencias')
+                    : handleNavigation(item.id)}
                 className={`user-sidebar__nav-item ${
-                  activeTab === item.id ? 'is-active' : ''
+                  selectedTab === item.id ? 'is-active' : ''
                 }`}
               >
                 <Icon size={20} />
@@ -217,7 +243,7 @@ export default function SidebarTrainer({
                   onClick={() => handleNavigation('sueño_pendientes')}
                 >
                   <AlertCircle size={16} />
-                  <span>Pendientes de Hoy</span>
+                  <span>Pendientes</span>
                 </button>
 
                 <button
@@ -293,9 +319,9 @@ export default function SidebarTrainer({
                 <button
                   type="button"
                   className={`user-sidebar__sub-btn ${
-                    activeTab === 'rutina' ? 'is-active' : ''
+                    selectedTab === 'rutina' ? 'is-active' : ''
                   }`}
-                  onClick={() => handleNavigation('rutina')}
+                  onClick={() => handleRouteNavigation('/entrenador/entrenamientos')}
                 >
                   <Dumbbell size={16} />
                   <span>Crear Rutinas</span>
