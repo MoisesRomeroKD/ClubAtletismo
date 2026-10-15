@@ -1,0 +1,142 @@
+/* Gestión global de evaluaciones (admin) */
+.admin-evaluaciones {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.admin-evaluaciones-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--func-primary);
+}
+
+.admin-evaluaciones-titulo {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.admin-evaluaciones-subtitulo {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.admin-evaluaciones-buscar {
+  width: 260px;
+  max-width: 100%;
+  padding: 8px 14px;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.admin-evaluaciones-cargando {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* El cambio tabla/tarjetas lo hace .responsive-list (App.css) */
+.admin-evaluaciones-tabla-wrap {
+  overflow-x: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.admin-evaluaciones-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.admin-evaluaciones-tabla thead tr {
+  background-color: var(--bg-main);
+  border-bottom: 1px solid var(--border-main);
+  color: var(--brand-accent);
+}
+
+.admin-evaluaciones-tabla tbody tr {
+  border-bottom: 1px solid var(--bg-surface);
+}
+
+.admin-evaluaciones-tabla th,
+.admin-evaluaciones-tabla td {
+  padding: 12px 16px;
+}
+
+.admin-evaluaciones-atleta {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.admin-evaluaciones-prueba {
+  font-weight: 600;
+  color: var(--func-primary);
+}
+
+.admin-evaluaciones-resultado {
+  font-weight: 700;
+}
+
+.admin-evaluaciones-evaluador {
+  color: var(--text-muted);
+}
+
+.admin-evaluaciones-cards-wrap {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-evaluaciones-card {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.admin-evaluaciones-card-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.admin-evaluaciones-card-value {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.admin-evaluaciones-vacio {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  background-color: var(--bg-card);
+  border: 1px dashed var(--border-main);
+  border-radius: 12px;
+}
+
+.admin-evaluaciones-vacio-icono {
+  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
+}
+
+.admin-evaluaciones-vacio h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--brand-accent);
+}
+
+.admin-evaluaciones-vacio p {
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}

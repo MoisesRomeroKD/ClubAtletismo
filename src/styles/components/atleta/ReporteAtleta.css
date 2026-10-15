@@ -1,0 +1,190 @@
+/* ============================================================
+   Cineantropometría personal del atleta
+   ============================================================ */
+
+.reporte-atleta-cine {
+  margin-top: 1.5rem;
+}
+
+.reporte-atleta-cine-header {
+  margin-bottom: 1.25rem;
+}
+
+.reporte-atleta-cine-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.reporte-atleta-cine-title svg {
+  color: var(--brand-secondary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.reporte-atleta-cine-title h2 {
+  margin: 0 0 0.2rem 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.reporte-atleta-cine-title p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.reporte-atleta-cine-msg {
+  padding: 1rem 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.reporte-atleta-cine-error {
+  color: var(--state-danger, #e74c3c);
+}
+
+/* Tarjetas de resumen (última evaluación) */
+.reporte-atleta-cine-resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.reporte-atleta-cine-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.reporte-atleta-cine-card-wide {
+  grid-column: span 2;
+}
+
+.reporte-atleta-cine-card-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.reporte-atleta-cine-card-value {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* Puntuación por eje */
+.reporte-atleta-cine-ejes {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.reporte-atleta-cine-eje {
+  align-items: center;
+  display: grid;
+  font-size: 0.82rem;
+  gap: 0.75rem;
+  grid-template-columns: 100px minmax(0, 1fr) 48px;
+}
+
+.reporte-atleta-cine-eje strong {
+  text-align: right;
+}
+
+.reporte-atleta-cine-eje-track {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.reporte-atleta-cine-eje-track i {
+  background: var(--brand-secondary);
+  display: block;
+  height: 100%;
+}
+
+@media (max-width: 400px) {
+  .reporte-atleta-cine-eje {
+    grid-template-columns: 82px minmax(0, 1fr) 40px;
+  }
+}
+
+/* Tabla historial */
+.reporte-atleta-cine-tabla-wrap {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border-main);
+}
+
+.reporte-atleta-cine-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.reporte-atleta-cine-tabla th {
+  background: var(--bg-surface);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.reporte-atleta-cine-tabla td {
+  padding: 10px 14px;
+  border-top: 1px solid var(--border-main);
+  vertical-align: middle;
+}
+
+.reporte-atleta-cine-tabla tbody tr:hover {
+  background: var(--bg-surface);
+}
+
+/* Responsive: vista tarjeta en móvil */
+@media (max-width: 640px) {
+  .reporte-atleta-cine-tabla thead {
+    display: none;
+  }
+
+  .reporte-atleta-cine-tabla tbody tr {
+    display: block;
+    border: 1px solid var(--border-main);
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0;
+  }
+
+  .reporte-atleta-cine-tabla td {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 14px;
+    border-top: none;
+    font-size: 0.85rem;
+  }
+
+  .reporte-atleta-cine-tabla td::before {
+    content: attr(data-label);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+  }
+
+  .reporte-atleta-cine-card-wide {
+    grid-column: span 1;
+  }
+}

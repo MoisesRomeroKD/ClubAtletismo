@@ -1,0 +1,472 @@
+/* ============================================================================
+   EXERCISES ADMIN STYLES - Catálogo de Ejercicios
+   ============================================================================ */
+
+.exercises-admin {
+  color: var(--text-main);
+  min-width: 0;
+  padding: 2rem;
+}
+
+.exercises-admin-content {
+  margin: 0 auto;
+  max-width: 1000px;
+  width: 100%;
+}
+
+/* Header */
+.exercises-header {
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-main);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.25rem;
+}
+
+.exercises-header-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.exercises-header h1 {
+  color: var(--text-main);
+  font-size: 1.625rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 0.35rem 0;
+}
+
+.exercises-header p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.exercises-toolbar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.exercises-search-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 320px;
+  min-width: 200px;
+}
+
+.exercises-search-icon {
+  color: var(--text-muted);
+  left: 0.75rem;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.exercises-search-input {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 0.9rem;
+  min-height: 40px;
+  padding: 0.55rem 0.75rem 0.55rem 2.25rem;
+  width: 100%;
+}
+
+.exercises-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.exercises-search-input:focus {
+  border-color: var(--func-primary);
+  outline: 2px solid var(--func-primary-bg-soft, var(--bg-main));
+  outline-offset: -2px;
+}
+
+.exercises-btn-primary {
+  align-items: center;
+  background: var(--func-primary);
+  border: 1px solid var(--func-primary);
+  border-radius: 8px;
+  color: var(--clr-blanco-pura, #fff);
+  display: inline-flex;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0.55rem 1rem;
+  white-space: nowrap;
+}
+
+.exercises-btn-primary:not(:disabled):hover {
+  filter: brightness(0.94);
+}
+
+.exercises-btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* Error Banner */
+.exercises-error-banner {
+  background: color-mix(in srgb, var(--state-danger) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--state-danger) 30%, transparent);
+  border-radius: 8px;
+  color: var(--state-danger);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+}
+
+/* Table Container */
+.exercises-table-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgb(10 35 70 / 5%);
+  overflow: hidden;
+}
+
+.exercises-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.exercises-table thead {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-main);
+}
+
+.exercises-table th {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0.875rem 1rem;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.exercises-table tbody tr {
+  border-bottom: 1px solid var(--border-main);
+  transition: background-color 120ms ease;
+}
+
+.exercises-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.exercises-table tbody tr:hover {
+  background: var(--bg-main);
+}
+
+.exercises-table td {
+  color: var(--text-main);
+  font-size: 0.9rem;
+  padding: 0.875rem 1rem;
+}
+
+.exercises-table-name {
+  font-weight: 600;
+}
+
+.exercises-table-description {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  max-width: 400px;
+  overflow-wrap: anywhere;
+}
+
+.exercises-table-actions {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: flex-end;
+}
+
+.exercises-btn-icon {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  color: var(--text-muted);
+  display: inline-flex;
+  height: 32px;
+  justify-content: center;
+  transition: background-color 120ms ease, color 120ms ease;
+  width: 32px;
+}
+
+.exercises-btn-icon:hover {
+  background: var(--bg-surface);
+  color: var(--text-main);
+}
+
+.exercises-btn-icon.is-danger:hover {
+  background: color-mix(in srgb, var(--state-danger) 10%, transparent);
+  color: var(--state-danger);
+}
+
+/* Empty State */
+.exercises-empty {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 280px;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.exercises-empty-icon {
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 50%;
+  color: var(--text-muted);
+  display: flex;
+  height: 64px;
+  justify-content: center;
+  margin-bottom: 1rem;
+  width: 64px;
+}
+
+.exercises-empty h3 {
+  color: var(--text-main);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.exercises-empty p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 320px;
+}
+
+/* Loading State */
+.exercises-loading {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 200px;
+  padding: 2rem;
+}
+
+.exercises-loading-text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Modal */
+.exercises-modal-backdrop {
+  align-items: center;
+  background: rgb(8 20 38 / 48%);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 1rem;
+  position: fixed;
+  z-index: 1000;
+}
+
+.exercises-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+  box-shadow: 0 18px 50px rgb(8 20 38 / 24%);
+  color: var(--text-main);
+  max-width: 480px;
+  width: 100%;
+}
+
+.exercises-modal-header {
+  align-items: center;
+  border-bottom: 1px solid var(--border-main);
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+}
+
+.exercises-modal-header h2 {
+  color: var(--text-main);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.exercises-modal-close {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  height: 36px;
+  justify-content: center;
+  transition: background-color 120ms ease, color 120ms ease;
+  width: 36px;
+}
+
+.exercises-modal-close:hover:not(:disabled) {
+  background: var(--bg-surface);
+  color: var(--text-main);
+}
+
+.exercises-modal-body {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.exercises-field {
+  color: var(--text-main);
+  display: grid;
+  font-size: 0.85rem;
+  font-weight: 600;
+  gap: 0.45rem;
+}
+
+.exercises-field label {
+  display: block;
+}
+
+.exercises-field input,
+.exercises-field textarea {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 0.9rem;
+  min-height: 42px;
+  padding: 0.55rem 0.7rem;
+  width: 100%;
+}
+
+.exercises-field textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.exercises-field input:focus,
+.exercises-field textarea:focus {
+  border-color: var(--func-primary);
+  outline: 2px solid var(--func-primary-bg-soft, var(--bg-main));
+  outline-offset: -2px;
+}
+
+.exercises-field input::placeholder,
+.exercises-field textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.exercises-field-label-required {
+  color: var(--state-danger);
+}
+
+.exercises-form-error {
+  background: color-mix(in srgb, var(--state-danger) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--state-danger) 30%, transparent);
+  border-radius: 6px;
+  color: var(--state-danger);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  padding: 0.65rem 0.75rem;
+}
+
+.exercises-modal-footer {
+  border-top: 1px solid var(--border-main);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: flex-end;
+  padding: 1rem 1.25rem;
+}
+
+.exercises-btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  color: var(--text-main);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  min-height: 40px;
+  padding: 0.5rem 0.9rem;
+  transition: background-color 120ms ease;
+}
+
+.exercises-btn-secondary:hover:not(:disabled) {
+  background: var(--bg-surface);
+}
+
+.exercises-btn-secondary:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .exercises-admin {
+    padding: 1rem;
+  }
+
+  .exercises-header {
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .exercises-header h1 {
+    font-size: 1.375rem;
+  }
+
+  .exercises-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .exercises-search-wrapper {
+    max-width: 100%;
+  }
+
+  .exercises-btn-primary {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .exercises-table-description {
+    max-width: 200px;
+  }
+
+  .exercises-modal-footer > button {
+    flex: 1 1 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exercises-table tbody tr,
+  .exercises-btn-icon,
+  .exercises-modal-close,
+  .exercises-btn-secondary {
+    transition: none;
+  }
+}

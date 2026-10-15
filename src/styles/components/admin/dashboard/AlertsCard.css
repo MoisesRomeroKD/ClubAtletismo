@@ -1,0 +1,287 @@
+/* ============================================================
+   ESTILOS: AlertsCard (Componente Tarjeta de Alertas)
+   ============================================================ */
+
+.alerts-card-container {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  color: var(--text-main);
+}
+
+.alerts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.alerts-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.alerts-badge {
+  background-color: color-mix(in srgb, var(--state-danger) 8%, transparent);
+  color: var(--state-danger);
+  border: 1px solid color-mix(in srgb, var(--state-danger) 20%, transparent);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+}
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.alert-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: var(--bg-surface);
+  border-left: 4px solid transparent;
+  gap: 1rem;
+}
+
+/* Tipos de Alerta */
+.alert-item.alert-danger {
+  border-left-color: var(--state-danger);
+}
+
+.alert-item.alert-warning {
+  border-left-color: var(--state-warning);
+}
+
+.alert-content {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.alert-icon {
+  font-size: 1.25rem;
+}
+
+.alert-info h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.alert-info p {
+  margin: 0;
+  font-size: 0.825rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.btn-alert-details {
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-main);
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btn-alert-details:hover {
+  background-color: var(--bg-sidebar-hover);
+  border-color: var(--brand-accent);
+}
+
+
+/* ============================================================
+   ESTILOS: AlertDetailsModal (Componente Modal Superpuesto)
+   ============================================================ */
+
+/* Fondo oscuro translúcido con filtro de desenfoque */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: color-mix(in srgb, var(--clr-negro-soft) 75%, transparent);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Garantiza quedar por encima de cualquier otro componente */
+  padding: 1rem;
+}
+
+/* Modal Content Card */
+.modal-content {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+  color: var(--text-main);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  animation: modalFadeIn 0.2s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-main);
+  background-color: var(--bg-surface);
+}
+
+.title-container {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.modal-icon {
+  font-size: 1.2rem;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.btn-close:hover {
+  color: var(--text-main);
+}
+
+.modal-body {
+  padding: 1.25rem;
+}
+
+.modal-description {
+  margin: 0 0 1.25rem 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.list-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-main);
+}
+
+.athletes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.athlete-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.athlete-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.athlete-info strong {
+  font-size: 0.875rem;
+  color: var(--text-main);
+}
+
+.athlete-group {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+.athlete-detail {
+  font-size: 0.8rem;
+  color: var(--state-danger);
+  font-weight: 500;
+  background-color: color-mix(in srgb, var(--state-danger) 8%, transparent);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.no-athletes {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.modal-footer {
+  padding: 0.85rem 1.25rem;
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-main);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-secondary {
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-main);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-sidebar-hover);
+}

@@ -1,0 +1,568 @@
+/* ============================================================================
+   SubAreasTrainer.css - Vista de subáreas del entrenador
+
+   Cambios v3:
+     - Colores de acento de las cards ahora usan --accent-card* (theme.css)
+       que cambia automáticamente:
+         · Modo CLARO → verde institucional
+         · Modo OSCURO → azul funcional
+============================================================================ */
+
+/* ============================================================================
+   1. TOKENS LOCALES
+============================================================================ */
+.mis-subareas {
+  --color-primary: var(--accent-card);
+  --color-primary-container: var(--accent-card);
+  --color-primary-fixed: var(--accent-card-bg);
+
+  --color-secondary: var(--text-muted);
+  --color-secondary-fixed: var(--accent-card-bg);
+  --color-secondary-fixed-dim: var(--text-muted);
+
+  --color-tertiary: var(--accent-card-soft);
+  --color-tertiary-fixed: var(--accent-card-bg);
+  --color-tertiary-fixed-dim: var(--accent-card-bg);
+
+  --color-background: var(--bg-main);
+  --color-surface: var(--bg-surface);
+  --color-surface-container: var(--bg-surface);
+  --color-surface-container-low: var(--bg-surface);
+  --color-surface-container-high: var(--bg-surface);
+  --color-surface-container-highest: var(--bg-surface);
+  --color-surface-container-lowest: var(--bg-card);
+
+  --color-on-surface: var(--text-main);
+  --color-on-surface-variant: var(--text-muted);
+  --color-on-primary: var(--clr-blanco-pura);
+  --color-on-secondary: var(--clr-blanco-pura);
+
+  --color-outline: var(--brand-accent);
+  --color-outline-variant: var(--border-main);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.10);
+
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ============================================================================
+   2. RESET LOCAL
+============================================================================ */
+.mis-subareas,
+.mis-subareas *,
+.mis-subareas *::before,
+.mis-subareas *::after {
+  box-sizing: border-box;
+}
+
+.mis-subareas button,
+.mis-subareas a {
+  font-family: inherit;
+}
+
+.mis-subareas button {
+  border: 0;
+}
+
+.mis-subareas a {
+  text-decoration: none;
+}
+
+/* ============================================================================
+   3. LAYOUT GENERAL
+============================================================================ */
+.mis-subareas {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  background: var(--color-background);
+  color: var(--color-on-surface);
+}
+
+.mis-subareas__content {
+  padding: 24px;
+  overflow: visible;
+  margin-top: 0;
+}
+
+.mis-subareas__container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-width: 0;
+}
+
+/* ============================================================================
+   4. HEADING
+============================================================================ */
+.mis-subareas__heading {
+  margin-bottom: 24px;
+}
+
+.mis-subareas__heading h2 {
+  margin: 0;
+  color: var(--color-on-surface);
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* ============================================================================
+   5. GRID → FLEXBOX CENTRADO
+============================================================================ */
+.mis-subareas__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 24px;
+  min-width: 0;
+}
+
+/* ============================================================================
+   6. CARD
+============================================================================ */
+.subarea-card {
+  flex: 1 1 280px;
+  max-width: 400px;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-surface-container-highest);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.subarea-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.subarea-card__top {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+/* Icono del área — usa tokens que cambian con el modo */
+.subarea-card__icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.subarea-card__icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.subarea-card__icon--blue {
+  background: var(--accent-card-bg);
+  color: var(--accent-card);
+}
+
+.subarea-card__icon--purple {
+  background: var(--accent-card-bg);
+  color: var(--accent-card-soft);
+}
+
+.subarea-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.subarea-card__category {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--accent-card-bg);
+  color: var(--accent-card-text);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.subarea-card__body h3 {
+  margin: 0;
+  color: var(--color-on-surface);
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+  transition: color 0.2s ease;
+  overflow-wrap: anywhere;
+}
+
+.subarea-card:hover .subarea-card__body h3 {
+  color: var(--color-primary);
+}
+
+/* ============================================================================
+   7. FOOTER — CONTADOR A LA IZQUIERDA · BOTÓN A LA DERECHA
+============================================================================ */
+.subarea-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-surface-container);
+}
+
+.subarea-card__athletes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-on-surface-variant);
+  font-size: 13px;
+  line-height: 1;
+  min-width: 0;
+}
+
+.subarea-card__athletes svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--accent-card-soft);
+}
+
+.subarea-card__athletes-count {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-on-surface);
+  letter-spacing: -0.02em;
+}
+
+.subarea-card__athletes-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-on-surface-variant);
+}
+
+.subarea-card__details {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--accent-card);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, gap 0.2s ease;
+}
+
+.subarea-card__details:hover {
+  background: var(--accent-card-bg);
+  gap: 10px;
+}
+
+.subarea-card__details svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s ease;
+}
+
+/* ============================================================================
+   8. SCROLLBAR
+============================================================================ */
+.mis-subareas__content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mis-subareas__content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mis-subareas__content::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 999px;
+}
+
+/* ============================================================================
+   9. RESPONSIVE
+============================================================================ */
+@media (max-width: 1024px) {
+  .mis-subareas__content {
+    padding: 20px;
+  }
+
+  .mis-subareas__container {
+    max-width: 900px;
+  }
+
+  .subarea-card {
+    flex: 0 1 calc(50% - 12px);
+    max-width: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .mis-subareas__content {
+    padding: 16px;
+  }
+
+  .mis-subareas__heading {
+    margin-bottom: 20px;
+  }
+
+  .mis-subareas__heading h2 {
+    font-size: 22px;
+    line-height: 30px;
+  }
+
+  .subarea-card {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+}
+
+@media (max-width: 425px) {
+  .mis-subareas__content {
+    padding: 12px;
+  }
+
+  .subarea-card {
+    padding: 18px;
+  }
+
+  .subarea-card__footer {
+    flex-wrap: wrap;
+  }
+}
+
+.mis-subareas__workspace {
+  align-items: start;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  width: 100%;
+}
+
+.mis-subareas__workspace--details-open {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
+}
+
+.mis-subareas__content {
+  min-width: 0;
+}
+
+.mis-subareas__groups {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.mis-subareas__area-group {
+  min-width: 0;
+}
+
+.mis-subareas__area-title {
+  border-bottom: 1px solid var(--border-main);
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  margin: 0 0 0.85rem;
+  padding-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.subarea-detail-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.subarea-detail-panel--desktop {
+  align-self: start;
+  max-height: calc(100dvh - var(--topbar-height, 70px) - 2rem);
+  position: sticky;
+  top: 1rem;
+}
+
+.subarea-detail-panel__header {
+  align-items: flex-start;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-main);
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.subarea-detail-panel__eyebrow {
+  color: var(--accent-card-text);
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.subarea-detail-panel__header h2 {
+  color: var(--text-main);
+  font-size: 1.05rem;
+  line-height: 1.35;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.subarea-detail-panel__close {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--border-main) !important;
+  border-radius: 5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  flex: 0 0 34px;
+  height: 34px;
+  justify-content: center;
+  padding: 0;
+  width: 34px;
+}
+
+.subarea-detail-panel__close:hover {
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+.subarea-detail-panel__body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.75rem;
+}
+
+.subarea-athlete-list {
+  display: grid;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.subarea-athlete-list__item {
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+  justify-content: space-between;
+  padding: 0.7rem;
+}
+
+.subarea-athlete-list__name {
+  color: var(--text-main);
+  font-size: 0.84rem;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.subarea-athlete-list__category {
+  background: var(--accent-card-bg);
+  border-radius: 4px;
+  color: var(--accent-card-text);
+  flex: 0 0 auto;
+  font-size: 0.69rem;
+  font-weight: 650;
+  padding: 0.25rem 0.45rem;
+}
+
+.subarea-detail-panel__empty {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  margin: 0;
+  padding: 1rem 0.5rem;
+  text-align: center;
+}
+
+.subarea-card__details:focus-visible,
+.subarea-detail-panel__close:focus-visible {
+  outline: 2px solid var(--func-primary);
+  outline-offset: 3px;
+}
+
+.subarea-sheet-layer {
+  inset: var(--topbar-height, 70px) 0 0;
+  position: fixed;
+  z-index: 10000;
+}
+
+.subarea-sheet-backdrop {
+  background: rgb(0 0 0 / 52%);
+  border: 0 !important;
+  inset: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.subarea-sheet-backdrop:focus-visible {
+  outline: 0;
+}
+
+@media (max-width: 768px) {
+  .mis-subareas__workspace--details-open {
+    display: block;
+  }
+
+  .subarea-detail-panel--sheet {
+    animation: subarea-sheet-enter 220ms ease-out;
+    border-bottom: 0;
+    border-radius: 14px 14px 0 0;
+    bottom: 0;
+    left: 0;
+    max-height: 85dvh;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    position: absolute;
+    right: 0;
+    width: 100%;
+  }
+
+  .subarea-detail-panel--sheet .subarea-detail-panel__body {
+    max-height: calc(85dvh - 82px - env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@keyframes subarea-sheet-enter {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .subarea-detail-panel--sheet {
+    animation: none;
+  }
+}

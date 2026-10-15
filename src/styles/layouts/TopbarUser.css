@@ -1,0 +1,733 @@
+/* ============================================================================
+   HOJA DE ESTILOS: TOPBAR CENTRAL DE OPERACIONES (PANEL PRIVADO)
+   ENTIDAD: Elite Track Club / U.E.T.D. Club Atletismo
+   ============================================================================
+   Reescrito para consumir las variables reales de theme.css en vez de
+   fallbacks fijos (blanco / rosa neón #ff0055), que ignoraban el modo
+   claro/oscuro real de la app y causaban texto ilegible sobre fondo claro.
+   ============================================================================ */
+
+/* ============================================================================
+   LAYOUT BASE
+   ============================================================================ */
+
+.topbar-user,
+.elite-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--topbar-height);
+  z-index: 50;
+
+  background-color: var(--bg-topbar);
+
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+
+  border-bottom: 1px solid var(--border-main);
+
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  transition: var(--transition-theme);
+
+  box-sizing: border-box;
+}
+
+
+/* ============================================================================
+   CONTENEDOR PRINCIPAL
+   ============================================================================ */
+
+.topbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+  max-width: 100%;
+
+  height: 100%;
+
+  margin: 0 auto;
+  padding: 0 1.5rem;
+
+  box-sizing: border-box;
+}
+
+
+/* ============================================================================
+   SECCIÓN IZQUIERDA
+   ============================================================================ */
+
+.topbar-left-section {
+  display: flex;
+  align-items: center;
+
+  gap: 1rem;
+
+  min-width: 0;
+}
+
+
+/* ============================================================================
+   BOTÓN MENÚ
+   ============================================================================ */
+
+.topbar-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: auto;
+  height: auto;
+
+  padding: 0.5rem;
+
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+
+  color: var(--text-topbar);
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.topbar-menu-btn:hover {
+  background-color: var(--bg-sidebar-hover);
+
+  color: var(--text-sidebar-hover);
+}
+
+.topbar-menu-btn:active {
+  transform: scale(0.96);
+}
+
+
+/* ============================================================================
+   LOGO / IDENTIDAD
+   ============================================================================ */
+
+.topbar-logo {
+  display: flex;
+  align-items: center;
+
+  gap: 0.75rem;
+
+  min-width: 0;
+
+  color: var(--text-topbar);
+
+  font-family: inherit;
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-style: italic;
+
+  text-transform: uppercase;
+  text-decoration: none;
+
+  user-select: none;
+
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.topbar-logo:hover {
+  opacity: 0.95;
+}
+
+.logo-highlight {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: var(--brand-secondary);
+}
+
+.topbar-logo-img {
+  display: block;
+
+  width: auto;
+  height: 38px;
+  max-height: 100%;
+
+  object-fit: contain;
+}
+
+.topbar-title-group {
+  display: flex;
+  align-items: center;
+
+  min-width: 0;
+
+  text-align: left;
+}
+
+.topbar-main-title {
+  margin: 0;
+
+  color: var(--text-topbar);
+
+  font-size: 1.125rem;
+  font-weight: 700;
+
+  line-height: 1.25;
+
+  letter-spacing: 0.025em;
+
+  white-space: nowrap;
+}
+
+/* ============================================================================
+   SECCIÓN DERECHA
+   ============================================================================ */
+
+.topbar-right-section {
+  display: flex;
+  align-items: center;
+
+  gap: 1.5rem;
+
+  flex-shrink: 0;
+}
+
+
+/* ============================================================================
+   NOTIFICACIONES
+   ============================================================================ */
+
+.notification-btn {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px;
+
+  background: none;
+  border: none;
+  border-radius: 50%;
+
+  color: var(--text-topbar);
+
+  cursor: pointer;
+
+  transition:
+    color 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.notification-btn:hover {
+  color: var(--brand-secondary);
+
+  background-color: var(--bg-sidebar-hover);
+}
+
+.notification-badge {
+  position: absolute;
+
+  top: 2px;
+  right: 2px;
+
+  width: 8px;
+  height: 8px;
+
+  background-color: var(--brand-secondary);
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 8px rgba(0, 128, 0, 0.6);
+}
+
+
+/* ============================================================================
+   CONMUTADOR DE ROLES
+   ============================================================================ */
+
+.role-switcher-container {
+  display: flex;
+  align-items: center;
+
+  margin-left: 0.5rem;
+  padding-left: 0.75rem;
+
+  border-left: 1px solid var(--border-main);
+}
+
+.minimal-role-select {
+  min-width: 110px;
+
+  padding: 0.35rem 0.75rem;
+
+  background-color: var(--bg-input);
+
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+
+  color: var(--text-topbar);
+
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  outline: none;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.minimal-role-select:hover {
+  background-color: var(--bg-sidebar-hover);
+
+  color: var(--text-topbar);
+
+  border-color: var(--brand-tertiary);
+}
+
+.minimal-role-select:focus {
+  border-color: var(--func-primary);
+
+  box-shadow:
+    0 0 0 1px var(--func-primary);
+}
+
+.minimal-role-select option {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+}
+
+.switcher-spin-icon {
+  margin: 0 0.5rem;
+
+  color: var(--brand-secondary);
+
+  animation: spin-switcher 1s linear infinite;
+}
+
+@keyframes spin-switcher {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ============================================================================
+   SWITCHER BINARIO MULTI-ROL
+   ============================================================================ */
+
+.binary-toggle-wrapper {
+  display: flex;
+  align-items: center;
+
+  gap: 0.75rem;
+
+  user-select: none;
+}
+
+.toggle-label {
+  color: var(--text-muted);
+
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.05em;
+
+  transition:
+    color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-label.active {
+  color: var(--text-topbar);
+}
+
+.switch-control {
+  position: relative;
+
+  display: inline-block;
+
+  width: 36px;
+  height: 20px;
+
+  cursor: pointer;
+}
+
+.switch-control input {
+  width: 0;
+  height: 0;
+
+  opacity: 0;
+}
+
+.switch-slider {
+  position: absolute;
+
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  background-color: var(--bg-sidebar-hover);
+
+  border: 1px solid var(--border-main);
+  border-radius: 20px;
+
+  transition:
+    all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.switch-slider::before {
+  position: absolute;
+
+  content: "";
+
+  width: 12px;
+  height: 12px;
+
+  left: 3px;
+  bottom: 3px;
+
+  background-color: var(--text-muted);
+
+  border-radius: 50%;
+
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.25s ease;
+}
+
+.switch-control:hover .switch-slider {
+  border-color: var(--brand-tertiary);
+}
+
+.switch-control:hover .switch-slider::before {
+  background-color: var(--text-topbar);
+}
+
+.switch-control input:checked + .switch-slider {
+  background-color: rgba(0, 128, 0, 0.12);
+
+  border-color: var(--brand-secondary);
+}
+
+.switch-control input:checked + .switch-slider::before {
+  transform: translateX(16px);
+
+  background-color: var(--brand-secondary);
+
+  box-shadow:
+    0 0 8px rgba(0, 128, 0, 0.6);
+}
+
+.switch-control input:disabled + .switch-slider {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+
+/* ============================================================================
+   ESTADO / BASE DE DATOS
+   ============================================================================ */
+
+.db-status-badge {
+  display: flex;
+  align-items: center;
+
+  gap: 0.5rem;
+
+  padding: 0.375rem 0.75rem;
+
+  background-color: var(--bg-sidebar-hover);
+
+  border: 1px solid var(--border-main);
+  border-radius: 9999px;
+
+  color: var(--text-topbar);
+
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+
+  flex-shrink: 0;
+
+  background-color: var(--brand-secondary);
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 8px rgba(0, 128, 0, 0.6);
+}
+
+.topbar-divider {
+  width: 1px;
+  height: 2rem;
+
+  background-color: var(--border-main);
+}
+
+
+/* ============================================================================
+   PERFIL DE USUARIO
+   ============================================================================ */
+
+.user-profile-group {
+  display: flex;
+  align-items: center;
+
+  gap: 0.75rem;
+}
+
+.user-text-info {
+  min-width: 0;
+
+  text-align: right;
+}
+
+.user-fullname {
+  margin: 0;
+
+  color: var(--text-topbar);
+
+  font-size: 0.875rem;
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  white-space: nowrap;
+}
+
+.user-role-label {
+  margin: 0.25rem 0 0;
+
+  color: var(--text-muted);
+
+  font-size: 0.75rem;
+
+  line-height: 1.2;
+
+  white-space: nowrap;
+}
+
+.user-avatar-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 2.25rem;
+  height: 2.25rem;
+
+  flex-shrink: 0;
+
+  background-color: var(--brand-secondary);
+
+  border: 2px solid var(--brand-tertiary);
+  border-radius: 50%;
+
+  color: var(--clr-blanco-pura);
+
+  font-size: 0.875rem;
+  font-weight: 700;
+
+  user-select: none;
+}
+
+
+/* ============================================================================
+   LOGO INTERACTIVO EN MÓVIL
+   ============================================================================ */
+
+.interactive-mobile-logo {
+  cursor: pointer;
+
+  user-select: none;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.interactive-mobile-logo:active {
+  transform: scale(0.93);
+
+  opacity: 0.85;
+}
+
+
+/* ============================================================================
+   TABLET / MÓVIL
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+  .topbar-container {
+    padding: 0 1rem;
+  }
+
+  .topbar-left-section {
+    gap: 0.75rem;
+  }
+
+  .topbar-right-section {
+    gap: 1rem;
+  }
+}
+
+
+/* ============================================================================
+   TABLET
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .binary-toggle-wrapper {
+    gap: 0.5rem;
+  }
+
+  .toggle-label {
+    font-size: 0.65rem;
+  }
+
+  .db-status-badge,
+  .topbar-divider {
+    display: none;
+  }
+
+  .topbar-container {
+    padding: 0 0.75rem;
+  }
+
+  .topbar-right-section {
+    gap: 0.75rem;
+  }
+}
+
+
+/* ============================================================================
+   MÓVIL
+   ============================================================================ */
+
+@media (max-width: 600px) {
+  .topbar-title-group {
+    display: none;
+  }
+
+  .role-switcher-container {
+    margin-left: 0;
+    padding-left: 0;
+
+    border-left: none;
+  }
+
+  .minimal-role-select {
+    min-width: auto;
+
+    padding: 0.3rem 0.5rem;
+
+    font-size: 0.75rem;
+  }
+
+  .user-text-info {
+    display: none;
+  }
+
+  .user-avatar-circle {
+    width: 2.15rem;
+    height: 2.15rem;
+  }
+}
+
+
+/* ============================================================================
+   MÓVIL PEQUEÑO
+   ============================================================================ */
+
+@media (max-width: 425px) {
+  .topbar-container {
+    padding: 0 0.5rem;
+  }
+
+  .topbar-left-section {
+    gap: 0.5rem;
+  }
+
+  .topbar-logo {
+    gap: 0.5rem;
+  }
+
+  .topbar-logo-img {
+    height: 34px;
+  }
+
+  .topbar-right-section {
+    gap: 0.5rem;
+  }
+
+  .role-switcher-container {
+    display: none;
+  }
+}
+
+
+/* ============================================================================
+   MÓVIL MUY PEQUEÑO
+   ============================================================================ */
+
+@media (max-width: 375px) {
+  .topbar-menu-btn {
+    padding: 0.4rem;
+  }
+
+  .topbar-logo-img {
+    height: 32px;
+  }
+
+  .user-avatar-circle {
+    width: 2rem;
+    height: 2rem;
+
+    font-size: 0.75rem;
+  }
+}
+
+
+/* ============================================================================
+   ULTRA-WIDE — 2000px+
+   ============================================================================ */
+
+@media (min-width: 2000px) {
+  .topbar-container {
+    padding: 0 3rem;
+  }
+
+  .topbar-logo {
+    font-size: 1.4rem;
+  }
+
+  .topbar-logo-img {
+    height: 44px;
+  }
+}

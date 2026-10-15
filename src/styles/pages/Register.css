@@ -1,0 +1,581 @@
+/* ==========================================================================
+   ENTIDAD: Elite Track Club - Arquitectura de Estilos Puros
+   DISEÑO: Responsivo por Bloques de Dispositivos (Mobile-First)
+   SECCIÓN: Register (misma estructura HUD reutilizable que Login)
+   ========================================================================== */
+
+/* src/styles/pages/Register.css */
+
+/* 1. MAPEO REACTIVO DE VARIABLES AL TEMA GLOBAL */
+:root,
+body.light-mode {
+  --auth-primary: var(--bg-main);
+  --auth-surface: var(--bg-surface);
+  --auth-secondary: var(--brand-secondary);
+  --auth-slate: var(--text-muted);
+}
+
+body.dark-mode {
+  --auth-primary: var(--bg-main);
+  --auth-surface: var(--bg-surface);
+  --auth-secondary: var(--brand-secondary);
+  --auth-slate: var(--clr-gris-light);
+}
+
+.auth-fullscreen-container {
+  display: flex;
+  flex-direction: column; /* mobile-first: apiladas por defecto */
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--auth-primary);
+  color: var(--text-main);
+  font-family: 'Lexend', sans-serif;
+  overflow: hidden;
+  position: relative;
+  transition: var(--transition-theme);
+}
+
+/* ==========================================================================
+   COLUMNA IZQUIERDA: La Pista de Hype
+   ========================================================================== */
+.auth-hype-column {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  background: linear-gradient(135deg, var(--auth-surface) 0%, var(--auth-primary) 100%);
+  overflow: hidden;
+  transition: var(--transition-theme);
+
+  /* Mobile-first: va DESPUÉS del formulario, compacta, sin borde lateral */
+  order: 2;
+  min-height: auto;
+  padding: 2rem 1.5rem;
+  border-right: none;
+  border-top: 1px solid var(--border-main);
+}
+
+/* Animación de líneas de velocidad en la pista (oculta en móvil) */
+.auth-hype-column::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    color-mix(in srgb, var(--auth-secondary) 5%, transparent) 10px,
+    color-mix(in srgb, var(--auth-secondary) 5%, transparent) 20px
+  );
+  pointer-events: none;
+  z-index: 1;
+  display: none;
+}
+
+/* Elementos decorativos estilo cronómetro HUD (Ajuste de Alto Contraste en Claro/Oscuro) */
+.hud-grid-decor {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  width: 220px;
+  height: 220px;
+  margin-left: -110px; /* centra horizontalmente sin romper la animación */
+  border: 1px dashed color-mix(in srgb, var(--auth-slate) 50%, transparent);
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  animation: spinHUD 20s linear infinite;
+  z-index: 0;
+  display: none;
+}
+
+.hud-grid-decor::after {
+  content: '';
+  width: 80%;
+  height: 80%;
+  border: 2px solid color-mix(in srgb, var(--auth-secondary) 60%, transparent);
+  border-radius: 50%;
+  border-top-color: transparent;
+}
+
+@keyframes spinHUD {
+  100% { transform: rotate(360deg); }
+}
+
+.hype-header {
+  z-index: 10;
+  display: none; /* oculto en móvil */
+}
+
+.hype-logo {
+  font-family: 'Anton', sans-serif;
+  font-size: 2.25rem;
+  font-style: italic;
+  letter-spacing: 1px;
+  color: var(--text-main);
+}
+
+.hype-logo-red {
+  color: var(--auth-secondary);
+}
+
+.hype-portal-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--auth-slate);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.hype-center-block {
+  z-index: 10;
+  max-width: 100%;
+}
+
+.hype-metric-badge {
+  display: none; /* oculto en móvil */
+  background-color: color-mix(in srgb, var(--auth-secondary) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--auth-secondary) 40%, transparent);
+  color: var(--text-main);
+  padding: 0.5rem 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  transform: skewX(-6deg);
+  margin-bottom: 2rem;
+}
+
+.hype-metric-badge span {
+  display: inline-block;
+  transform: skewX(6deg);
+}
+
+.hype-title {
+  font-family: 'Anton', sans-serif;
+  font-size: 3.5rem;
+  text-transform: uppercase;
+  color: var(--text-main);
+  line-height: 1.05;
+  margin-bottom: 1.5rem;
+  display: none; /* oculto en móvil */
+}
+
+.hype-title em {
+  color: var(--auth-secondary);
+  font-style: italic;
+}
+
+/* Cita visible en móvil bajo el formulario */
+.hype-quote-box {
+  min-height: auto;
+  transition: all 0.5s ease;
+}
+
+.hype-quote {
+  font-size: 1rem;
+  color: var(--auth-slate);
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.hype-author {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--auth-secondary);
+  text-transform: uppercase;
+}
+
+.hype-footer {
+  z-index: 10;
+  display: none; /* oculto en móvil */
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-main);
+  padding-top: 2rem;
+}
+
+.hype-inst {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--auth-slate);
+}
+
+.hype-telemetry {
+  display: flex;
+  gap: 2rem;
+}
+
+.telemetry-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.telemetry-val {
+  font-family: 'Anton', sans-serif;
+  color: var(--text-main);
+  font-size: 1.5rem;
+}
+
+.telemetry-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: var(--auth-slate);
+}
+
+/* ==========================================================================
+   COLUMNA DERECHA: El Panel de Control del Formulario
+   ========================================================================== */
+.auth-form-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--auth-surface);
+  position: relative;
+  transition: var(--transition-theme);
+
+  order: 1;
+  padding: 3rem 1.5rem;
+  min-height: 100vh;
+  justify-content: center;
+}
+
+.back-to-landing-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--auth-slate);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.3s ease;
+
+  position: static;
+  margin-bottom: 2.5rem;
+}
+
+.back-to-landing-btn:hover {
+  color: var(--text-main);
+}
+
+.form-card-wrapper {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.auth-switcher {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-main);
+  padding-bottom: 1rem;
+}
+
+.switch-tab {
+  font-family: 'Anton', sans-serif;
+  font-size: 1.35rem;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  color: color-mix(in srgb, var(--text-main) 40%, transparent);
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.switch-tab.active {
+  color: var(--text-main);
+}
+
+.switch-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -17px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background-color: var(--auth-secondary);
+}
+
+.link-tab {
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.3s ease;
+}
+
+.link-tab:hover {
+  opacity: 0.6;
+}
+
+/* Campos estilo HUD / Underline Minimal */
+.auth-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.auth-form-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--auth-slate);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.auth-input-line {
+  width: 100%;
+  padding: 0.75rem 0.25rem;
+  border: none;
+  border-bottom: 2px solid var(--border-main);
+  background-color: transparent;
+  color: var(--text-main);
+  font-family: 'Lexend', sans-serif;
+  font-size: 15px;
+  transition: border-bottom-color 0.3s ease, color 0.3s ease;
+}
+
+.auth-input-line:focus {
+  outline: none;
+  border-bottom-color: var(--auth-secondary);
+}
+
+/* Select personalizado estilo deportivo */
+.auth-select {
+  cursor: pointer;
+}
+
+.auth-select option {
+  background-color: var(--auth-surface);
+  color: var(--text-main);
+}
+
+/* Botones de acción inclinados */
+.auth-btn-skew {
+  width: 100%;
+  background-color: var(--auth-secondary);
+  color: var(--clr-blanco-pura);
+  border: none;
+  padding: 1.125rem;
+  font-family: 'Anton', sans-serif;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  transform: skewX(-6deg);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.auth-btn-skew:hover {
+  background-color: var(--clr-verde-700);
+  transform: skewX(-6deg) scale(1.02);
+}
+
+.auth-btn-skew:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: skewX(-6deg);
+}
+
+.auth-btn-text {
+  display: inline-block;
+  transform: skewX(6deg);
+}
+
+/* Botón secundario para multi-pasos */
+.auth-btn-secondary {
+  background-color: transparent;
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+}
+
+.auth-btn-secondary:hover {
+  background-color: color-mix(in srgb, var(--text-main) 5%, transparent);
+}
+
+.register-step-indicator {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--auth-secondary);
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+}
+
+/* Notificación HUD emergente */
+.hud-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background-color: var(--auth-primary);
+  border-left: 4px solid var(--auth-secondary);
+  border-radius: 4px;
+  padding: 1.25rem 2rem;
+  color: var(--text-main);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 100;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  animation: slideInToast 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: calc(100vw - 4rem);
+}
+
+@keyframes slideInToast {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ==========================================================================
+   RESPONSIVE MOBILE-FIRST — un @media por breakpoint (min-width)
+   Escala: 320 / 375 / 425 / 768 / 1024 / 1440 / 2560
+   ========================================================================== */
+
+/* 320px — móvil pequeño */
+@media (min-width: 320px) {
+  .auth-form-column {
+    padding: 2.5rem 1.25rem;
+  }
+  .hype-quote {
+    font-size: 0.95rem;
+  }
+}
+
+/* 375px — móvil estándar */
+@media (min-width: 375px) {
+  .auth-form-column {
+    padding: 3rem 1.5rem;
+  }
+  .hype-quote {
+    font-size: 1rem;
+  }
+}
+
+/* 425px — móvil grande */
+@media (min-width: 425px) {
+  .auth-form-column {
+    padding: 3rem 1.75rem;
+  }
+  .hype-quote {
+    font-size: 1.05rem;
+  }
+}
+
+/* 768px — tablet */
+@media (min-width: 768px) {
+  .auth-hype-column {
+    padding: 2.5rem 3rem;
+  }
+  .hype-quote {
+    font-size: 1.1rem;
+  }
+
+  .auth-form-column {
+    padding: 3rem 4rem;
+  }
+  .form-card-wrapper {
+    max-width: 460px;
+  }
+}
+
+/* 1024px — laptop: activa panel hype y layout lado a lado */
+@media (min-width: 1024px) {
+  .auth-fullscreen-container {
+    flex-direction: row;
+  }
+
+  .auth-hype-column {
+    order: 0;
+    flex: 1.2;
+    min-height: 100vh;
+    padding: 3rem;
+    padding-top: 7.5rem;
+    border-top: none;
+    border-bottom: none;
+    border-right: 1px solid var(--border-main);
+  }
+
+  .auth-hype-column::before {
+    display: block;
+  }
+  .hud-grid-decor {
+    display: flex;
+    margin-top: 3rem;
+  }
+  .hype-header {
+    display: block;
+  }
+  .hype-metric-badge {
+    display: inline-block;
+  }
+  .hype-title {
+    display: block;
+    font-size: 3rem;
+  }
+  .hype-footer {
+    display: flex;
+  }
+  .hype-center-block {
+    max-width: 500px;
+  }
+  .hype-quote-box {
+    min-height: 100px;
+    margin-top: 260px;
+  }
+
+  .auth-form-column {
+    order: 1;
+    flex: 1.1;
+    padding: 3.5rem;
+    min-height: auto;
+  }
+  .form-card-wrapper {
+    max-width: 440px;
+  }
+
+  .back-to-landing-btn {
+    position: absolute;
+    top: 3rem;
+    right: 4rem;
+    margin-bottom: 0;
+  }
+
+  .auth-switcher {
+    margin-bottom: 2.5rem;
+  }
+  .switch-tab {
+    font-size: 1.75rem;
+  }
+}
+
+/* 1440px — desktop */
+@media (min-width: 1440px) {
+  .auth-hype-column {
+    flex: 1.2;
+    padding: 4rem;
+  }
+  .hype-title {
+    font-size: 3.5rem;
+  }
+  .auth-form-column {
+    flex: 1;
+    padding: 4rem;
+  }
+}
+
+/* 2560px — pantallas grandes */
+@media (min-width: 2560px) {
+  .hype-center-block {
+    max-width: 640px;
+  }
+  .form-card-wrapper {
+    max-width: 520px;
+  }
+  .hype-title {
+    font-size: 4rem;
+  }
+}

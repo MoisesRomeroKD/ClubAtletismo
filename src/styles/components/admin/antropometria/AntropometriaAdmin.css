@@ -1,0 +1,526 @@
+/* Antropometría (administrador): programar medición y datos registrados */
+.antro-adm {
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+  min-width: 0;
+  padding: 1.5rem;
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border-radius: 12px;
+}
+
+.antro-adm-header {
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--func-primary);
+}
+
+.antro-adm-header h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.antro-adm-header p {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Barra de filtros */
+.antro-adm-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+
+.antro-adm-toolbar select,
+.antro-adm-buscar {
+  min-width: 170px;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+.antro-adm-buscar {
+  flex: 1 1 240px;
+}
+
+.antro-adm-fecha {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.antro-adm-fecha span {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.antro-adm-fecha input {
+  padding: 0.45rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+.antro-adm-toolbar-derecha {
+  margin-left: auto;
+}
+
+/* Botones */
+.antro-adm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.55rem 1rem;
+  background: var(--func-primary);
+  border: 1px solid var(--func-primary);
+  border-radius: 6px;
+  color: var(--clr-blanco-pura);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.antro-adm-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.antro-adm-btn--ghost {
+  background: var(--bg-surface);
+  border-color: var(--border-main);
+  color: var(--text-main);
+}
+
+.antro-adm-btn--peligro {
+  background: transparent;
+  border-color: var(--state-danger);
+  color: var(--state-danger);
+}
+
+.antro-adm-btn--chico {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.78rem;
+}
+
+.antro-adm-fila-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.antro-adm-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+/* Paneles y formularios */
+.antro-adm-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+}
+
+.antro-adm-panel h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.antro-adm-volver {
+  justify-self: start;
+}
+
+.antro-adm-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 0.75rem;
+}
+
+.antro-adm-form-grid label,
+.antro-adm-form-ejes label {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.antro-adm-form-grid label > span,
+.antro-adm-form-ejes label > span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.antro-adm-form-grid input,
+.antro-adm-form-grid select,
+.antro-adm-form-grid textarea,
+.antro-adm-form-ejes input {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+.antro-adm-form-ancho {
+  grid-column: 1 / -1;
+}
+
+.antro-adm-detalle-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.antro-adm-detalle-head p {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.antro-adm-observaciones {
+  font-style: italic;
+}
+
+/* Convocados de una medición */
+.antro-adm-convocados {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.antro-adm-convocado {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.8rem 0.9rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.antro-adm-convocado-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.antro-adm-convocado h4 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.antro-adm-registrado {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--state-success);
+}
+
+.antro-adm-form-medicion {
+  display: grid;
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--border-main);
+}
+
+.antro-adm-form-ejes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 0.6rem;
+}
+
+.antro-adm-form-ejes fieldset {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.5rem 0.7rem 0.7rem;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.antro-adm-form-ejes legend {
+  padding: 0 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* Estados */
+.antro-adm-estado {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.antro-adm-estado--programada {
+  background: color-mix(in srgb, var(--func-primary) 15%, transparent);
+  color: var(--func-primary);
+}
+
+.antro-adm-estado--realizada {
+  background: color-mix(in srgb, var(--state-success) 15%, transparent);
+  color: var(--state-success);
+}
+
+.antro-adm-estado--cancelada {
+  background: color-mix(in srgb, var(--state-danger) 12%, transparent);
+  color: var(--state-danger);
+}
+
+/* Historial del atleta */
+.antro-adm-resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.6rem;
+}
+
+.antro-adm-resumen div {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.antro-adm-resumen strong {
+  font-size: 1.05rem;
+}
+
+.antro-adm-resumen span,
+.antro-adm-muted {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.antro-adm-muted {
+  margin: 0;
+}
+
+.antro-adm-ejes {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.antro-adm-eje {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.82rem;
+}
+
+.antro-adm-eje strong {
+  text-align: right;
+}
+
+.antro-adm-eje-barra {
+  height: 10px;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 999px;
+}
+
+.antro-adm-eje-barra i {
+  display: block;
+  height: 100%;
+  background: var(--accent-card);
+}
+
+.antro-adm-mediciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 0.5rem;
+}
+
+.antro-adm-mediciones article {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.antro-adm-mediciones header,
+.antro-adm-mediciones p {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.antro-adm-mediciones header span {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--func-primary);
+}
+
+.antro-adm-mediciones p span {
+  color: var(--text-muted);
+}
+
+.antro-adm-subtitulo {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Tabla y tarjetas (el cambio lo hace .responsive-list de App.css) */
+.antro-adm-tabla-wrap {
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.antro-adm-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  text-align: left;
+}
+
+.antro-adm-tabla thead tr {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+}
+
+.antro-adm-tabla th,
+.antro-adm-tabla td {
+  padding: 10px 14px;
+  vertical-align: middle;
+}
+
+.antro-adm-fuerte {
+  font-weight: 700;
+}
+
+.antro-adm-cards {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.antro-adm-card {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.9rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.antro-adm-card h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+.antro-adm-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.antro-adm-card dl {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.antro-adm-card dt {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.antro-adm-card dd {
+  margin: 0.1rem 0 0;
+  font-size: 0.88rem;
+}
+
+/* Mensajes */
+.antro-adm-vacio {
+  margin: 0;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.antro-adm-error {
+  margin: 0;
+  color: var(--state-danger);
+}
+
+.antro-adm-ok {
+  margin: 0;
+  color: var(--state-success);
+}
+
+/* Paginación */
+.antro-adm-paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.antro-adm-paginacion button {
+  padding: 0.45rem 0.9rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.antro-adm-paginacion button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.antro-adm-paginacion span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .antro-adm {
+    padding: 1rem;
+  }
+
+  .antro-adm-toolbar select,
+  .antro-adm-buscar,
+  .antro-adm-fecha {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .antro-adm-toolbar-derecha {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .antro-adm-toolbar-derecha .antro-adm-btn,
+  .antro-adm-acciones .antro-adm-btn {
+    flex: 1;
+  }
+
+  .antro-adm-eje {
+    grid-template-columns: 82px minmax(0, 1fr) 42px;
+  }
+}

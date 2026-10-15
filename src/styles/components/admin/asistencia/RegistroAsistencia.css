@@ -1,0 +1,470 @@
+.registro-asistencia {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: min(100%, 72rem);
+  min-width: 0;
+  margin: 0 auto;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  color: var(--text-main);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.registro-asistencia__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.registro-asistencia__eyebrow {
+  display: inline-block;
+  margin-bottom: 0.45rem;
+  color: var(--brand-secondary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.registro-asistencia__header h1 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: clamp(1.45rem, 3vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.registro-asistencia__header p,
+.registro-asistencia__section-heading p {
+  margin: 0.45rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+.registro-asistencia__search,
+.registro-asistencia__results,
+.registro-asistencia__empty {
+  padding: clamp(1rem, 2vw, 1.5rem);
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.registro-asistencia__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.registro-asistencia__filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.registro-asistencia__field label {
+  color: var(--text-main);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.registro-asistencia__filters input,
+.registro-asistencia__filters select,
+.registro-asistencia__field--status select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.875rem;
+  padding: 0.7rem 0.85rem;
+  color: var(--text-main);
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: var(--border-radius-md);
+  font: inherit;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.registro-asistencia__field--status textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 5rem;
+  padding: 0.7rem 0.85rem;
+  color: var(--text-main);
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: var(--border-radius-md);
+  font: inherit;
+  resize: vertical;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.registro-asistencia__filters input:focus,
+.registro-asistencia__filters select:focus,
+.registro-asistencia__field--status select:focus,
+.registro-asistencia__field--status textarea:focus {
+  border-color: var(--border-input-focus);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--func-primary-bg-soft);
+}
+
+.registro-asistencia__filter-actions {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.registro-asistencia__category-note {
+  margin: 0.75rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.registro-asistencia__search-control {
+  display: flex;
+  align-items: stretch;
+  gap: 0.75rem;
+}
+
+.registro-asistencia__search-control input,
+.registro-asistencia__field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.875rem;
+  padding: 0.7rem 0.85rem;
+  color: var(--text-main);
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: var(--border-radius-md);
+  font: inherit;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.registro-asistencia__search-control input:hover,
+.registro-asistencia__field select:hover {
+  border-color: var(--border-input-hover);
+}
+
+.registro-asistencia__search-control input:focus,
+.registro-asistencia__field select:focus {
+  border-color: var(--border-input-focus);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--func-primary-bg-soft);
+}
+
+.registro-asistencia__search-control input::placeholder {
+  color: var(--text-muted);
+}
+
+.registro-asistencia__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.875rem;
+  padding: 0.7rem 1.1rem;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-md);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 650;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.registro-asistencia__button:focus-visible {
+  outline: 3px solid var(--func-primary-bg-soft);
+  outline-offset: 2px;
+}
+
+.registro-asistencia__button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.registro-asistencia__button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.registro-asistencia__button--primary,
+.registro-asistencia__button--save {
+  color: var(--clr-blanco-pura);
+  background: var(--func-primary);
+}
+
+.registro-asistencia__button--secondary {
+  color: var(--text-main);
+  background: var(--bg-card);
+  border-color: var(--border-main);
+}
+
+.registro-asistencia__button--secondary:hover:not(:disabled) {
+  background: var(--bg-surface);
+  border-color: var(--border-input-hover);
+}
+
+.registro-asistencia__button--primary:hover:not(:disabled),
+.registro-asistencia__button--save:hover:not(:disabled) {
+  background: var(--func-primary-hover);
+}
+
+.registro-asistencia__notice {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.registro-asistencia__notice--error {
+  color: var(--state-danger);
+  background: color-mix(in srgb, var(--state-danger) 9%, var(--bg-card));
+  border-color: color-mix(in srgb, var(--state-danger) 35%, var(--border-main));
+}
+
+.registro-asistencia__notice--success {
+  color: var(--accent-card-text);
+  background: var(--accent-card-bg);
+  border-color: color-mix(in srgb, var(--accent-card) 35%, var(--border-main));
+}
+
+.registro-asistencia__section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.registro-asistencia__section-heading h2 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.registro-asistencia__athlete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1rem;
+  background: var(--bg-main);
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+}
+
+.registro-asistencia__athlete-list {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.registro-asistencia__athlete.is-pending {
+  border-left: 4px solid var(--state-warning);
+}
+
+.registro-asistencia__athlete.is-registered {
+  border-left: 4px solid var(--state-success);
+}
+
+.registro-asistencia__athlete-info {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.registro-asistencia__avatar {
+  display: grid;
+  flex: 0 0 2.875rem;
+  width: 2.875rem;
+  height: 2.875rem;
+  place-items: center;
+  color: var(--accent-card-text);
+  background: var(--accent-card-bg);
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.registro-asistencia__athlete-details {
+  min-width: 0;
+}
+
+.registro-asistencia__athlete-details h3 {
+  overflow-wrap: anywhere;
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.registro-asistencia__athlete-details p {
+  margin: 0.3rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.registro-asistencia__athlete-details strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.registro-asistencia__actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.registro-asistencia__status {
+  align-self: center;
+  padding: 0.4rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.registro-asistencia__status.is-pending {
+  color: var(--state-warning);
+  background: color-mix(in srgb, var(--state-warning) 12%, var(--bg-card));
+}
+
+.registro-asistencia__status.is-registered {
+  color: var(--accent-card-text);
+  background: var(--accent-card-bg);
+}
+
+.registro-asistencia__field--status {
+  min-width: 10rem;
+}
+
+.registro-asistencia__field--status.has-justification {
+  min-width: 15rem;
+}
+
+.registro-asistencia__justification {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.registro-asistencia__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.registro-asistencia__pagination span {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.registro-asistencia__pagination--bottom {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-main);
+}
+
+.registro-asistencia__empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  padding: 2rem 1rem;
+  text-align: center;
+  box-shadow: none;
+}
+
+.registro-asistencia__empty-mark {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border-radius: 50%;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.registro-asistencia__empty strong {
+  color: var(--text-main);
+  font-size: 0.95rem;
+}
+
+.registro-asistencia__empty p {
+  max-width: 30rem;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .registro-asistencia {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .registro-asistencia__search-control,
+  .registro-asistencia__athlete,
+  .registro-asistencia__actions,
+  .registro-asistencia__filters {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .registro-asistencia__filters {
+    display: flex;
+  }
+
+  .registro-asistencia__search-control {
+    gap: 0.65rem;
+  }
+
+  .registro-asistencia__actions {
+    width: 100%;
+  }
+
+  .registro-asistencia__filter-actions {
+    flex-direction: column;
+  }
+
+  .registro-asistencia__section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .registro-asistencia__pagination {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .registro-asistencia__field--status {
+    min-width: 0;
+  }
+
+  .registro-asistencia__field--status.has-justification {
+    min-width: 0;
+  }
+
+  .registro-asistencia__button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .registro-asistencia__search-control input,
+  .registro-asistencia__field select,
+  .registro-asistencia__button {
+    transition: none;
+  }
+}

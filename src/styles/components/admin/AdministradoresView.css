@@ -1,0 +1,115 @@
+/* Listado de administradores */
+.administradores-estado {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.administradores-estado--error {
+  color: var(--state-danger);
+}
+
+.administradores-wrap {
+  overflow-x: auto;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.administradores-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.administradores-tabla thead tr {
+  background-color: var(--bg-main);
+  border-bottom: 1px solid var(--border-main);
+  color: var(--brand-accent);
+}
+
+.administradores-tabla tbody tr {
+  border-bottom: 1px solid var(--bg-surface);
+}
+
+.administradores-tabla th,
+.administradores-tabla td {
+  padding: 12px 16px;
+}
+
+.administradores-nombre {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.administradores-email {
+  color: var(--text-muted);
+}
+
+.administradores-rol {
+  background-color: var(--func-primary-bg-soft);
+  color: var(--func-primary);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.administradores-activo {
+  font-weight: 600;
+  color: var(--state-success);
+}
+
+.administradores-activo--no {
+  color: var(--state-danger);
+}
+
+/* Tarjetas en pantallas angostas (el cambio lo hace .responsive-list de App.css) */
+.administradores-cards {
+  display: grid;
+  gap: 1rem;
+}
+
+.administradores-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.administradores-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.administradores-card dl {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.administradores-card dt {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.administradores-card dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  overflow-wrap: anywhere;
+}
+
+.administradores-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}

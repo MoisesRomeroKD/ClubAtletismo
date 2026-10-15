@@ -1,0 +1,90 @@
+/* Listado de entrenadores (admin) */
+.entrenadores-admin-estado {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.entrenadores-admin-estado--error {
+  color: var(--state-danger);
+}
+
+.entrenadores-admin-wrap {
+  overflow-x: auto;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.entrenadores-admin-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.entrenadores-admin-tabla thead tr {
+  background-color: var(--bg-main);
+  color: var(--brand-accent);
+}
+
+.entrenadores-admin-tabla th,
+.entrenadores-admin-tabla td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--bg-surface);
+}
+
+.entrenadores-admin-cedula {
+  font-weight: 600;
+  color: var(--brand-accent);
+}
+
+.entrenadores-admin-nombre {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.entrenadores-admin-dato {
+  color: var(--text-muted);
+}
+
+/* Tarjetas en pantallas angostas (el cambio lo hace .responsive-list de App.css) */
+.entrenadores-admin-cards {
+  display: grid;
+  gap: 1rem;
+}
+
+.entrenadores-admin-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.entrenadores-admin-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.entrenadores-admin-card dl {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.entrenadores-admin-card dt {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.entrenadores-admin-card dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  overflow-wrap: anywhere;
+}

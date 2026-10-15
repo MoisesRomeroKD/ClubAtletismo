@@ -1,0 +1,237 @@
+/* ============================================================================
+   THEME.CSS - ELITE SPORT SYNC (Paleta Institucional + Sistema de Tokens)
+   ============================================================================ */
+
+:root {
+    /* 1. GAMA DE BLANCOS (3 tonos) */
+    --clr-blanco-pura: #ffffff;
+    --clr-blanco-soft: #fafafa;
+    --clr-blanco-muted: #f2f2f0;
+
+    /* 2. GAMA DE NEGROS (3 tonos) */
+    --clr-negro-pura: #000000;
+    --clr-negro-soft: #0a0a0a;
+    --clr-negro-muted: #171717;
+
+    /* 3. GAMA DE GRISES (3 tonos) */
+    --clr-gris-light: #e2e8f0;
+    --clr-gris-base: #6b7280;
+    --clr-gris-dark: #374151;
+
+    /* 4. GAMA DE VERDES (5 tonos) — Institucional */
+    --clr-verde-100: #e6f4ea;
+    --clr-verde-300: #4b8a6f;
+    --clr-verde-500: #008000;
+    --clr-verde-700: #046307;
+    --clr-verde-900: #0d3b1e;
+
+    /* 5. GAMA DE AZULES (3 tonos) — Funcional */
+    --clr-azul-light: #60a5fa;
+    --clr-azul-base: #2563eb;
+    --clr-azul-dark: #1d4ed8;
+
+    /* 6. GAMA DE ROJOS (3 tonos) — Estados */
+    --clr-rojo-100: #fee2e2;
+    --clr-rojo-500: #dc2626;
+    --clr-rojo-700: #b91c1c;
+
+    /* 7. GAMA DORADA (2 tonos) — Premium/Warning */
+    --clr-dorado-100: #fef3c7;
+    --clr-dorado-500: #eab308;
+
+    /* 8. ALIAS SEMÁNTICOS REUTILIZABLES */
+    --state-success: var(--clr-verde-500);
+    --state-warning: var(--clr-dorado-500);
+    --state-danger:  var(--clr-rojo-500);
+    --accent-cyan:   var(--clr-azul-light);
+
+    /* 9. ESTRUCTURA Y ESPACIADO */
+    --sidebar-width: 260px;
+    --topbar-height: 70px;
+    --spacing-margin-mobile: 16px;
+    --spacing-margin-tablet: 24px;
+    --spacing-margin-desktop: 48px;
+    --spacing-margin: var(--spacing-margin-mobile);
+    --spacing-gutter: 24px;
+    --border-radius-md: 8px;
+    --transition-theme: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
+    /* 10. SOMBRAS REUTILIZABLES */
+    --shadow-card:  0 8px 24px -6px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 12px 32px -8px rgba(0, 0, 0, 0.12);
+}
+
+/* ============================================================================
+   11. MODO CLARO (default)
+============================================================================ */
+:root, body.light-mode {
+    /* Controles nativos (calendario de fechas, selects, barras de scroll) siguen el tema de la app, no el del sistema */
+    color-scheme: light;
+
+    --bg-main: var(--clr-blanco-soft);
+    --bg-surface: var(--clr-blanco-muted);
+    --bg-card: var(--clr-blanco-pura);
+    --bg-input: var(--clr-blanco-pura);
+    --text-main: var(--clr-negro-soft);
+    --text-muted: var(--clr-gris-base);
+
+    /* Branding institucional */
+    --brand-primary: var(--clr-negro-soft);
+    --brand-secondary: var(--clr-verde-500);
+    --brand-tertiary: var(--clr-verde-300);
+    --brand-accent: var(--clr-gris-dark);
+
+    /* Funcional */
+    --func-primary: var(--clr-azul-base);
+    --func-primary-hover: var(--clr-azul-dark);
+    --func-primary-bg-soft: var(--clr-azul-light);
+
+    /* Mapeo UI */
+    --bg-sidebar: var(--clr-blanco-muted);
+    --bg-sidebar-hover: rgba(10, 10, 10, 0.04);
+    --text-sidebar: var(--clr-negro-soft);
+    --text-sidebar-hover: var(--clr-negro-pura);
+
+    --bg-topbar: var(--clr-blanco-muted);
+    --text-topbar: var(--clr-negro-soft);
+    --border-main: var(--clr-gris-light);
+
+    /* Estados de input */
+    --border-input: var(--clr-gris-light);
+    --border-input-hover: var(--clr-gris-base);
+    --border-input-focus: var(--func-primary);
+
+    /* ⭐ ACCENT DE CARDS — en claro: VERDE institucional */
+    --accent-card: var(--clr-verde-500);          /* iconos, texto destacado, borde activo */
+    --accent-card-soft: var(--clr-verde-300);     /* variante secundaria */
+    --accent-card-bg: var(--clr-verde-100);       /* fondo suave (chips, cajas de icono) */
+    --accent-card-text: var(--clr-verde-700);     /* texto sobre el fondo suave */
+}
+
+/* ============================================================================
+   12. MODO OSCURO
+============================================================================ */
+body.dark-mode {
+    color-scheme: dark;
+
+    --bg-main: var(--clr-negro-soft);
+    --bg-surface: var(--clr-negro-muted);
+    --bg-card: var(--clr-negro-muted);
+    --bg-input: var(--clr-negro-muted);
+    --text-main: var(--clr-blanco-pura);
+    --text-muted: var(--clr-gris-light);
+
+    --brand-primary: var(--clr-blanco-pura);
+    --brand-secondary: var(--clr-verde-500);
+    --brand-tertiary: var(--clr-verde-300);
+    --brand-accent: var(--clr-gris-light);
+
+    --func-primary: var(--clr-azul-base);
+    --func-primary-hover: var(--clr-azul-light);
+    --func-primary-bg-soft: rgba(37, 99, 235, 0.15);
+
+    --bg-sidebar: var(--clr-negro-muted);
+    --bg-sidebar-hover: rgba(255, 255, 255, 0.05);
+    --text-sidebar: var(--clr-blanco-pura);
+    --text-sidebar-hover: var(--clr-blanco-pura);
+
+    --bg-topbar: var(--clr-negro-muted);
+    --text-topbar: var(--clr-blanco-pura);
+    --border-main: var(--clr-gris-dark);
+
+    --border-input: var(--clr-gris-dark);
+    --border-input-hover: var(--clr-gris-light);
+    --border-input-focus: var(--func-primary);
+
+    /* ⭐ ACCENT DE CARDS — en oscuro: AZUL funcional (contrasta mejor) */
+    --accent-card: var(--clr-azul-light);
+    --accent-card-soft: var(--clr-azul-base);
+    --accent-card-bg: rgba(37, 99, 235, 0.15);
+    --accent-card-text: var(--clr-azul-light);
+}
+
+/* ============================================================================
+   13. ESTILOS DE ELEMENTOS Y COMPONENTES BASE
+============================================================================ */
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: var(--transition-theme);
+}
+
+/* Tarjetas y contenedores con aislamiento de overflow */
+.card, .box, .container-surface, .modal-content {
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    border: 1px solid var(--border-main);
+    transition: var(--transition-theme);
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* Inputs */
+input, select, textarea {
+    background-color: var(--bg-input);
+    color: var(--text-main);
+    border: 1px solid var(--border-main);
+    border-radius: var(--border-radius-md);
+    transition: var(--transition-theme);
+    max-width: 100%;
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--text-muted);
+}
+
+/* Tablas */
+table {
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border-bottom: 1px solid var(--border-main);
+}
+
+/* Botones institucionales y funcionales */
+.btn-accent, .badge-active, .highlight-musgo {
+    background-color: var(--clr-verde-300);
+    color: var(--clr-blanco-pura);
+}
+
+.btn-primary, .badge-primary {
+    background-color: var(--clr-verde-500);
+    color: var(--clr-blanco-pura);
+}
+.btn-primary:hover {
+    background-color: var(--clr-verde-700);
+}
+
+.btn-secondary, a.link {
+    background-color: transparent;
+    color: var(--func-primary);
+}
+.btn-secondary {
+    background-color: var(--func-primary);
+    color: var(--clr-blanco-pura);
+}
+.btn-secondary:hover, a.link:hover {
+    color: var(--func-primary-hover);
+}
+
+/* ============================================================================
+   14. BREAKPOINTS — Actualización de Tokens de Espaciado
+============================================================================ */
+@media (min-width: 320px) {
+    :root { --spacing-margin: var(--spacing-margin-mobile); }
+}
+
+@media (min-width: 768px) {
+    :root { --spacing-margin: var(--spacing-margin-tablet); }
+}
+
+@media (min-width: 1024px) {
+    :root { --spacing-margin: var(--spacing-margin-desktop); }
+}

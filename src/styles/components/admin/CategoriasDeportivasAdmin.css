@@ -1,0 +1,305 @@
+.sport-category-admin {
+  color: var(--text-main);
+  display: grid;
+  gap: 1.25rem;
+  min-width: 0;
+  padding: 1.5rem;
+}
+
+.sport-category-header,
+.sport-category-editor-heading,
+.sport-category-section-heading,
+.sport-category-form-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.sport-category-header {
+  border-bottom: 1px solid var(--border-main);
+  padding-bottom: 1rem;
+}
+
+.sport-category-heading h1,
+.sport-category-editor h2,
+.sport-category-section-heading h2 {
+  color: var(--text-main);
+  margin: 0;
+}
+
+.sport-category-heading h1 {
+  font-size: 1.5rem;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.sport-category-eyebrow {
+  color: var(--func-primary);
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.sport-category-heading p,
+.sport-category-editor-heading p {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0.35rem 0 0;
+}
+
+.sport-category-primary,
+.sport-category-secondary {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 650;
+  gap: 0.5rem;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0.55rem 0.9rem;
+}
+
+.sport-category-primary {
+  background: var(--func-primary);
+  color: var(--clr-blanco-pura, #fff);
+}
+
+.sport-category-primary:hover:not(:disabled) {
+  filter: brightness(0.94);
+}
+
+.sport-category-secondary {
+  background: var(--bg-surface);
+  border-color: var(--border-main);
+  color: var(--text-main);
+}
+
+.sport-category-primary:disabled,
+.sport-category-secondary:disabled,
+.sport-category-icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.sport-category-notice,
+.sport-category-error {
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+
+.sport-category-notice {
+  background: var(--func-primary-bg-soft, var(--bg-main));
+  color: var(--text-main);
+}
+
+.sport-category-error {
+  background: var(--bg-card);
+  border-color: var(--state-danger);
+  color: var(--state-danger);
+}
+
+.sport-category-editor,
+.sport-category-table-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  min-width: 0;
+}
+
+.sport-category-editor {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.25rem;
+}
+
+.sport-category-editor h2,
+.sport-category-section-heading h2 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.sport-category-form-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.sport-category-field {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.sport-category-field-name {
+  grid-column: span 2;
+}
+
+.sport-category-field span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.sport-category-field input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-main);
+  border-radius: 5px;
+  color: var(--text-main);
+  font: inherit;
+  min-height: 40px;
+  min-width: 0;
+  padding: 0.55rem 0.65rem;
+  width: 100%;
+}
+
+.sport-category-field input:focus-visible,
+.sport-category-icon-button:focus-visible,
+.sport-category-primary:focus-visible,
+.sport-category-secondary:focus-visible {
+  outline: 2px solid var(--func-primary);
+  outline-offset: 2px;
+}
+
+.sport-category-form-actions {
+  border-top: 1px solid var(--border-main);
+  justify-content: flex-end;
+  padding-top: 1rem;
+}
+
+.sport-category-section-heading {
+  justify-content: flex-start;
+  padding: 1rem 1.25rem;
+}
+
+.sport-category-section-icon {
+  align-items: center;
+  background: var(--func-primary-bg-soft, var(--bg-main));
+  border-radius: 6px;
+  color: var(--func-primary);
+  display: flex;
+  flex: 0 0 38px;
+  height: 38px;
+  justify-content: center;
+}
+
+.sport-category-section-heading span {
+  color: var(--text-muted);
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 0.2rem;
+}
+
+.sport-category-table-wrap {
+  border-top: 1px solid var(--border-main);
+  overflow-x: auto;
+}
+
+.sport-category-table {
+  border-collapse: collapse;
+  min-width: 520px;
+  text-align: left;
+  width: 100%;
+}
+
+.sport-category-table thead {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.sport-category-table th,
+.sport-category-table td {
+  border-bottom: 1px solid var(--border-main);
+  padding: 0.85rem 1rem;
+}
+
+.sport-category-table tbody th {
+  color: var(--text-main);
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+
+.sport-category-table tbody td {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.sport-category-row-actions {
+  text-align: right;
+  white-space: nowrap;
+  width: 1%;
+}
+
+.sport-category-row-actions .sport-category-icon-button + .sport-category-icon-button {
+  margin-left: 0.35rem;
+}
+
+.sport-category-icon-button {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--border-main);
+  border-radius: 5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  height: 34px;
+  justify-content: center;
+  padding: 0;
+  width: 34px;
+}
+
+.sport-category-icon-button:hover:not(:disabled) {
+  background: var(--bg-surface);
+  color: var(--text-main);
+}
+
+.sport-category-icon-button.sport-category-delete:hover:not(:disabled) {
+  border-color: var(--state-danger);
+  color: var(--state-danger);
+}
+
+.sport-category-state {
+  border-top: 1px solid var(--border-main);
+  color: var(--text-muted);
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .sport-category-admin {
+    padding: 1rem;
+  }
+
+  .sport-category-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sport-category-field-name {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 420px) {
+  .sport-category-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sport-category-field-name {
+    grid-column: auto;
+  }
+
+  .sport-category-form-actions > button {
+    flex: 1 1 auto;
+  }
+}

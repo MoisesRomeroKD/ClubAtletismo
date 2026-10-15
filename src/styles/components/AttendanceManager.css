@@ -1,0 +1,189 @@
+/* ============================================================================
+   HOJA DE ESTILOS INSTITUCIONAL: CONTROL DE ASISTENCIAS (SPORT SYNC)
+   Adaptado estrictamente al sistema de diseño dual de Víctor Campos.
+   Cero grises, cero colores secundarios, cero opacidades destructivas.
+   ============================================================================ */
+
+.attendance-app {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  color: var(--text-light);
+  background-color: var(--bg-light);
+  transition: var(--transition-theme);
+}
+
+/* --- Encabezados y Controles --- */
+.header {
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border-main);
+  padding-bottom: 16px;
+}
+
+.header h1 {
+  margin: 0 0 16px 0;
+  font-size: 24px;
+  color: var(--text-light);
+}
+
+.controls { 
+  display: flex; 
+  gap: 16px; 
+  flex-wrap: wrap; 
+}
+
+.control-group { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 4px; 
+}
+
+.control-group label { 
+  font-size: 14px; 
+  font-weight: 600; 
+  color: var(--text-light); 
+}
+
+.control-group input, 
+.control-group select { 
+  padding: 8px 12px; 
+  border: 1px solid var(--border-main); 
+  border-radius: 6px; 
+  background: var(--bg-light); /* Cambiado de var(--bg-panel) a fondo limpio */
+  color: var(--text-light);
+  outline: none;
+}
+
+/* --- Alertas de Mensajería --- */
+.message { 
+  padding: 12px 16px; 
+  border-radius: 6px; 
+  margin-bottom: 20px; 
+  font-weight: 500; 
+  background: var(--bg-light); /* Eliminado el fondo gris o traslúcido */
+  border: 1px solid var(--border-main);
+  color: var(--text-light);
+}
+
+/* --- Lista de Atletas (Tarjetas) --- */
+.athlete-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.athlete-card {
+  background: var(--bg-light); /* Eliminado var(--bg-panel) para cumplir la regla estricta */
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.athlete-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar { 
+  width: 40px; 
+  height: 40px; 
+  border-radius: 50%; 
+  border: 1px solid var(--border-main);
+  background-color: var(--bg-light); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  color: var(--text-light);
+  font-weight: bold;
+}
+
+.athlete-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.athlete-name {
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.athlete-time {
+  font-size: 12px;
+  color: var(--text-light); /* Removida opacidad para mantener color nativo puro */
+}
+
+/* --- Estados Operativos y Botones --- */
+.actions-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.status-group { 
+  display: flex; 
+  gap: 8px; 
+}
+
+.btn-status {
+  padding: 8px 16px; 
+  border: 1px solid var(--border-main); 
+  border-radius: 20px;
+  background: var(--bg-light); 
+  color: var(--text-light);
+  cursor: pointer; 
+  font-weight: 500;
+  transition: var(--transition-theme);
+}
+
+/* Interacción: Al activarse adopta el color verde del club con contraste absoluto */
+.btn-status.active { 
+  background-color: var(--brand-green); 
+  border-color: var(--border-main); 
+  color: var(--bg-light) !important; /* Mapeado al color opuesto del tema (Blanco en oscuro / Negro en claro) */
+}
+
+/* --- Cuadro de Novedades (Justificación) --- */
+.observation-input {
+  width: 100%;
+  min-width: 250px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  background: var(--bg-light);
+  color: var(--text-light);
+  font-size: 14px;
+  outline: none;
+  resize: none;
+}
+
+/* --- Botón de Registro de Turno --- */
+.btn-save {
+  width: 100%; 
+  padding: 16px; 
+  background-color: var(--brand-green);
+  color: var(--text-light); /* Sigue la misma regla de contraste limpio */
+  border: 1px solid var(--border-light); 
+  border-radius: 8px; 
+  font-weight: bold; 
+  cursor: pointer;
+  transition: var(--transition-theme);
+}
+
+.btn-save:hover { 
+  filter: brightness(1.2); 
+}
+
+.btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.no-data-text{
+     color: var(--text-light); /* Sigue la misma regla de contraste limpio */
+}

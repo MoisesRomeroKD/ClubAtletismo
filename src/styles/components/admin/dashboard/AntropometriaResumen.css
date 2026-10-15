@@ -1,0 +1,171 @@
+/* Resumen de antropometría en el dashboard principal */
+.antro-resumen {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  color: var(--text-main);
+}
+
+.antro-resumen-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.antro-resumen-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.antro-resumen-header p {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.antro-resumen-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.antro-resumen-links button {
+  padding: 0.45rem 0.9rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.antro-resumen-links button:hover {
+  border-color: var(--func-primary);
+  color: var(--func-primary);
+}
+
+.antro-resumen-metricas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 0.75rem;
+}
+
+.antro-resumen-metricas article {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.8rem 0.9rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.antro-resumen-metricas span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.antro-resumen-metricas strong {
+  font-size: 1.45rem;
+}
+
+.antro-resumen-metricas small {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.antro-resumen-alerta {
+  color: var(--state-warning);
+}
+
+.antro-resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 0.75rem;
+}
+
+.antro-resumen-panel {
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  padding: 0.9rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.antro-resumen-panel h3 {
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+}
+
+.antro-resumen-eje {
+  display: grid;
+  grid-template-columns: 95px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+}
+
+.antro-resumen-eje strong {
+  text-align: right;
+}
+
+.antro-resumen-barra {
+  height: 9px;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 999px;
+}
+
+.antro-resumen-barra i {
+  display: block;
+  height: 100%;
+  background: var(--accent-card);
+}
+
+.antro-resumen-proximas {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.antro-resumen-proximas li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.45rem 0.6rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  font-size: 0.82rem;
+}
+
+.antro-resumen-proximas span {
+  color: var(--text-muted);
+}
+
+.antro-resumen-vacio,
+.antro-resumen-error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.antro-resumen-error {
+  color: var(--state-danger);
+}

@@ -1,0 +1,422 @@
+/* Módulo de Tests (administrador) */
+.tests-adm {
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+  min-width: 0;
+  padding: 1.5rem;
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border-radius: 12px;
+}
+
+.tests-adm-header {
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--func-primary);
+}
+
+.tests-adm-header h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.tests-adm-header p {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Barra de filtros */
+.tests-adm-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.tests-adm-toolbar select {
+  min-width: 170px;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+.tests-adm-toolbar-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+/* Botones */
+.tests-adm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.55rem 1rem;
+  background: var(--func-primary);
+  border: 1px solid var(--func-primary);
+  border-radius: 6px;
+  color: var(--clr-blanco-pura);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tests-adm-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.tests-adm-btn--ghost {
+  background: var(--bg-surface);
+  border-color: var(--border-main);
+  color: var(--text-main);
+}
+
+.tests-adm-btn--peligro {
+  background: transparent;
+  border-color: var(--state-danger);
+  color: var(--state-danger);
+}
+
+.tests-adm-btn--chico {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.78rem;
+}
+
+.tests-adm-fila-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* Paneles y formularios */
+.tests-adm-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+}
+
+.tests-adm-panel > .tests-adm-btn--ghost {
+  justify-self: start;
+}
+
+.tests-adm-form h3,
+.tests-adm-detalle-head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.tests-adm-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 0.75rem;
+}
+
+.tests-adm-form-grid label {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.tests-adm-form-grid label > span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.tests-adm-form-grid input,
+.tests-adm-form-grid select,
+.tests-adm-form-grid textarea {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+.tests-adm-form-ancho {
+  grid-column: 1 / -1;
+}
+
+.tests-adm-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.tests-adm-aplicaciones {
+  padding: 0.65rem 0.8rem;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-main);
+  border-radius: 8px;
+  font-size: 0.82rem;
+}
+
+.tests-adm-aplicaciones ul {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.tests-adm-aplicaciones p {
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+}
+
+.tests-adm-detalle-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.tests-adm-detalle-head p {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.tests-adm-observaciones {
+  font-style: italic;
+}
+
+/* Estados */
+.tests-adm-estado {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tests-adm-estado--programado {
+  background: color-mix(in srgb, var(--func-primary) 15%, transparent);
+  color: var(--func-primary);
+}
+
+.tests-adm-estado--realizado {
+  background: color-mix(in srgb, var(--state-success) 15%, transparent);
+  color: var(--state-success);
+}
+
+.tests-adm-estado--cancelado {
+  background: color-mix(in srgb, var(--state-danger) 12%, transparent);
+  color: var(--state-danger);
+}
+
+/* Tabla y tarjetas (el cambio lo hace .responsive-list de App.css) */
+.tests-adm-tabla-wrap {
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.tests-adm-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  text-align: left;
+}
+
+.tests-adm-tabla thead tr {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+}
+
+.tests-adm-tabla th,
+.tests-adm-tabla td {
+  padding: 10px 14px;
+  vertical-align: middle;
+}
+
+.tests-adm-fuerte {
+  font-weight: 700;
+}
+
+.tests-adm-muted {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.tests-adm-posicion {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  color: var(--func-primary);
+}
+
+.tests-adm-input-valor {
+  width: 110px;
+  padding: 0.35rem 0.5rem;
+}
+
+.tests-adm-input-obs {
+  width: 100%;
+  min-width: 140px;
+  padding: 0.35rem 0.5rem;
+}
+
+.tests-adm-cards {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.tests-adm-card {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.9rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.tests-adm-card h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+.tests-adm-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.tests-adm-card-sub {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.tests-adm-card dl {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.tests-adm-card dt {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.tests-adm-card dd {
+  margin: 0.1rem 0 0;
+  font-size: 0.88rem;
+}
+
+.tests-adm-card-campos {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.tests-adm-card-campos label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.tests-adm-card-campos input[type="number"],
+.tests-adm-card-campos input[type="text"] {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+}
+
+.tests-adm-check {
+  display: flex !important;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.tests-adm-card--ranking {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.tests-adm-card--ranking .tests-adm-posicion {
+  font-size: 1.25rem;
+  min-width: 2rem;
+  text-align: center;
+}
+
+/* Mensajes */
+.tests-adm-vacio {
+  margin: 0;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.tests-adm-error {
+  margin: 0;
+  color: var(--state-danger);
+}
+
+.tests-adm-ok {
+  margin: 0;
+  color: var(--state-success);
+}
+
+/* Paginación */
+.tests-adm-paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.tests-adm-paginacion button {
+  padding: 0.45rem 0.9rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tests-adm-paginacion button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.tests-adm-paginacion span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .tests-adm {
+    padding: 1rem;
+  }
+
+  .tests-adm-toolbar select {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .tests-adm-toolbar-acciones {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .tests-adm-toolbar-acciones .tests-adm-btn,
+  .tests-adm-acciones .tests-adm-btn {
+    flex: 1;
+  }
+}

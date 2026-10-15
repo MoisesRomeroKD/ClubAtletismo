@@ -1,0 +1,42 @@
+/* Dashboard parent layout */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-gutter);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
+
+.dashboard-grid-main {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-gutter);
+  margin-bottom: var(--spacing-gutter);
+}
+
+.dashboard-grid-secondary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-gutter);
+  margin-bottom: var(--spacing-gutter);
+}
+
+@media (max-width: 1024px) {
+  .dashboard-grid-main {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-grid-secondary {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid-secondary {
+    grid-template-columns: 1fr;
+  }
+
+  .content-area {
+    padding: var(--spacing-margin-mobile);
+  }
+}

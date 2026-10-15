@@ -1,0 +1,55 @@
+/* Paginación del grupo en el reporte del entrenador */
+.reporte-entrenador-paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.reporte-entrenador-paginacion-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.reporte-entrenador-paginacion-btn:hover:not(:disabled) {
+  background: var(--brand-secondary);
+  border-color: var(--brand-secondary);
+  color: var(--clr-blanco-pura, #fff);
+}
+
+.reporte-entrenador-paginacion-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.reporte-entrenador-paginacion-info {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  text-align: center;
+}
+
+@media (max-width: 400px) {
+  .reporte-entrenador-paginacion {
+    gap: 0.5rem;
+  }
+
+  .reporte-entrenador-paginacion-btn {
+    flex: 1;
+    padding: 8px 10px;
+  }
+
+  .reporte-entrenador-paginacion-info {
+    order: -1;
+    width: 100%;
+  }
+}
