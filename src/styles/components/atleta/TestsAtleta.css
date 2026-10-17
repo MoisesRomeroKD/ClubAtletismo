@@ -1,0 +1,145 @@
+/* Módulo de Tests (atleta, solo consulta) */
+.tests-atl {
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+  min-width: 0;
+  padding: 1.5rem;
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border-radius: 12px;
+}
+
+.tests-atl-header {
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--func-primary);
+}
+
+.tests-atl-header h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.tests-atl-header p {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Estados */
+.tests-atl-estado {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tests-atl-estado--programado {
+  background: color-mix(in srgb, var(--func-primary) 15%, transparent);
+  color: var(--func-primary);
+}
+
+.tests-atl-estado--realizado {
+  background: color-mix(in srgb, var(--state-success) 15%, transparent);
+  color: var(--state-success);
+}
+
+.tests-atl-estado--cancelado {
+  background: color-mix(in srgb, var(--state-danger) 12%, transparent);
+  color: var(--state-danger);
+}
+
+/* Tabla y tarjetas (el cambio lo hace .responsive-list de App.css) */
+.tests-atl-tabla-wrap {
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.tests-atl-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  text-align: left;
+}
+
+.tests-atl-tabla thead tr {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+}
+
+.tests-atl-tabla th,
+.tests-atl-tabla td {
+  padding: 10px 14px;
+  vertical-align: middle;
+}
+
+.tests-atl-fuerte {
+  font-weight: 700;
+}
+
+.tests-atl-cards {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.tests-atl-card {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.9rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.tests-atl-card h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+.tests-atl-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.tests-atl-card dl {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.tests-atl-card dt {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.tests-atl-card dd {
+  margin: 0.1rem 0 0;
+  font-size: 0.88rem;
+}
+
+/* Mensajes */
+.tests-atl-vacio {
+  margin: 0;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.tests-atl-error {
+  color: var(--state-danger);
+}
+
+@media (max-width: 640px) {
+  .tests-atl {
+    padding: 1rem;
+  }
+}

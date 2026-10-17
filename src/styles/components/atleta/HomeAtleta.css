@@ -1,0 +1,233 @@
+/* Home del atleta (datos reales, colores del theme) */
+.home-atl {
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+  min-width: 0;
+  color: var(--text-main);
+}
+
+.home-atl-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border-left: 6px solid var(--func-primary);
+  border-radius: 12px;
+}
+
+.home-atl-banner h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.home-atl-banner p {
+  margin: 0.3rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.home-atl-badge {
+  padding: 0.35rem 0.85rem;
+  background: var(--func-primary-bg-soft);
+  color: var(--func-primary);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.home-atl-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 1rem;
+}
+
+.home-atl-kpi,
+.home-atl-card {
+  display: grid;
+  align-content: start;
+  gap: 0.4rem;
+  padding: 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  min-width: 0;
+}
+
+.home-atl-kpi-titulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.home-atl-kpi-valor {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.home-atl-kpi small,
+.home-atl-nota {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.home-atl-kpi-significado {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.home-atl-barra {
+  height: 8px;
+  overflow: hidden;
+  background: var(--bg-surface);
+  border-radius: 999px;
+}
+
+.home-atl-barra span {
+  display: block;
+  height: 100%;
+  background: var(--state-success);
+  border-radius: inherit;
+}
+
+.home-atl-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+
+.home-atl-resumen {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.home-atl-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.home-atl-leyenda li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.home-atl-leyenda span {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.home-atl-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  justify-self: start;
+  margin-top: 0.3rem;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--func-primary);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.home-atl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 1rem;
+}
+
+.home-atl-card h3 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.home-atl-grafico {
+  width: 100%;
+  height: 180px;
+}
+
+.home-atl-tooltip {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.home-atl-datos {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.home-atl-datos > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  background: var(--bg-surface);
+  border-radius: 6px;
+}
+
+.home-atl-datos dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.home-atl-datos dd {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.home-atl-vacio {
+  margin: 0;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.home-atl-error {
+  color: var(--state-danger);
+}
+
+@media (max-width: 640px) {
+  .home-atl-banner {
+    padding: 1.1rem;
+  }
+
+  .home-atl-banner h1 {
+    font-size: 1.3rem;
+  }
+}

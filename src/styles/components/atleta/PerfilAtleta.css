@@ -1,0 +1,265 @@
+/* ============================================================
+   MI PERFIL DEL ATLETA (solo lectura): datos, entrenadores y representante
+   Colores y espacios del theme.
+   ============================================================ */
+.perfil-atleta {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  color: var(--text-main);
+}
+
+.perfil-atleta__aviso {
+  padding: 0.75rem 1rem;
+  border: 1px dashed var(--border-main);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* Encabezado */
+.perfil-atleta__encabezado {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.perfil-atleta__avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 6rem;
+  height: 6rem;
+  border: 3px solid var(--bg-card);
+  border-radius: 50%;
+  background: var(--accent-card-bg);
+  color: var(--accent-card-text);
+  font-size: 2rem;
+  font-weight: 800;
+  box-shadow: var(--shadow-card);
+}
+
+.perfil-atleta__avatar--chico {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-width: 2px;
+  font-size: 1.15rem;
+  box-shadow: none;
+}
+
+.perfil-atleta__titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.perfil-atleta__titulo h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.perfil-atleta__encabezado p {
+  margin-top: 0.25rem;
+  color: var(--text-muted);
+}
+
+.perfil-atleta__estado {
+  padding: 3px 12px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.perfil-atleta__estado--activo { color: var(--state-success); }
+.perfil-atleta__estado--justificado { color: var(--state-warning); }
+.perfil-atleta__estado--inactivo { color: var(--state-danger); }
+
+/* Tarjetas */
+.perfil-atleta__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+.perfil-atleta__tarjeta {
+  padding: 1.5rem;
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+}
+
+.perfil-atleta__tarjeta h3,
+.perfil-atleta__seccion > h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.perfil-atleta__tarjeta h3 svg,
+.perfil-atleta__seccion > h3 svg {
+  color: var(--accent-card);
+}
+
+.perfil-atleta__ficha h3 {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.perfil-atleta__datos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.perfil-atleta__dato {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.perfil-atleta__dato-etiqueta {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.perfil-atleta__dato-valor {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-surface);
+  font-size: 0.9rem;
+}
+
+.perfil-atleta__dato-valor span {
+  overflow-wrap: anywhere;
+}
+
+.perfil-atleta__dato-valor svg {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+/* Columna lateral: subáreas */
+.perfil-atleta__lateral {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.perfil-atleta__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.perfil-atleta__chips li {
+  display: grid;
+  gap: 2px;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-surface);
+}
+
+.perfil-atleta__chips span {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* Entrenadores y representante */
+.perfil-atleta__personas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 1.5rem;
+}
+
+.perfil-atleta__persona {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.perfil-atleta__persona--representante {
+  border-top: 4px solid var(--brand-secondary);
+}
+
+.perfil-atleta__persona-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.perfil-atleta__persona h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.perfil-atleta__etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.perfil-atleta__etiquetas span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--accent-card-bg);
+  color: var(--accent-card-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.perfil-atleta__vacio {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .perfil-atleta__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .perfil-atleta__encabezado {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .perfil-atleta__titulo {
+    justify-content: center;
+  }
+
+  .perfil-atleta__datos {
+    grid-template-columns: 1fr;
+  }
+
+  .perfil-atleta__tarjeta {
+    padding: 1.1rem;
+  }
+}

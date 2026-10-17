@@ -1,0 +1,388 @@
+/* ============================================================================
+   APP.CSS - LAYOUT Y ESTRUCTURA GLOBAL
+   - Reset box-model
+   - Bloqueo total de overflow horizontal
+   - Blindaje de wrappers (min-width:0, max-width:100%)
+   - Padding lateral SOLO en .dashboard-grid / .main-grid-layout
+   - Clases globales reutilizables (animaciones, loading, placeholders)
+   - Patrón global de lista responsive (tabla ↔ cards) — container-based
+   - Espaciado global entre campos de formulario
+============================================================================ */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Los controles de formulario no heredan la fuente por defecto: se les pasa la de la página */
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body, #root {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+/* Nivel 1: layout global con sidebar */
+.layout-wrapper {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  flex-grow: 1;
+  overflow-x: hidden;
+}
+
+aside.sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  background-color: var(--bg-sidebar);
+  color: var(--text-sidebar);
+  min-height: 100vh;
+  border-right: 1px solid var(--border-main);
+}
+
+/* Nivel 2: contenedor central (cualquiera de estos nombres) */
+.main-content-wrapper,
+#center,
+main.content {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Drawer abierto: solo se desplaza el drawer. El componente pone la clase en <html> al abrirlo.
+   !important porque el contenedor central trae overflow-y en línea (MainNav). */
+html.scroll-bloqueado,
+html.scroll-bloqueado body,
+html.scroll-bloqueado .main-content-wrapper,
+html.scroll-bloqueado .content-area {
+  overflow: hidden !important;
+}
+
+/* Nivel 3: wrapper que monta las vistas (TrainerDashboard.jsx, AdminDashboard, etc.) */
+.trainer-dashboard,
+.admin-dashboard {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  overflow-x: hidden;
+}
+
+/* ============================================================================
+   CLASES GLOBALES REUTILIZABLES
+============================================================================ */
+
+.view-fade-in {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; }
+  /* NOTA: sin "forwards". Una animación que sigue aplicada (forwards) sobre transform hace que el
+     contenedor se comporte como si tuviera transform: los position:fixed de adentro (botón Filtros,
+     drawers, modales) quedan pegados a la vista y no a la pantalla. Al terminar, el estado normal ya
+     es opacidad 1 y sin transform, así que no hace falta conservar el último cuadro. */
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  width: 100%;
+  padding: 2rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.no-data-cell {
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-main);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.skeleton-loading {
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface) 25%,
+    var(--bg-card) 50%,
+    var(--bg-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.4s ease-in-out infinite;
+  border-radius: var(--border-radius-md);
+}
+
+@keyframes skeletonPulse {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.glass-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+}
+
+/* ============================================================================
+   PATRÓN GLOBAL: LISTA RESPONSIVE (Tabla ↔ Cards) — CONTAINER QUERIES
+   ----------------------------------------------------------------------------
+   Comportamiento:
+     - Contenedor ≥ 870px  → se muestra la TABLA
+     - Contenedor ≤ 869px  → se muestra la versión CARDS (mobile-friendly)
+
+   ¿Por qué container queries y no media queries?
+     El sidebar (260px) y los drawers/modales (ej. 400px) reducen el ancho
+     útil del contenido. Con @media (viewport), 1366px de pantalla con sidebar
+     y drawer abiertos deja 706px reales para la tabla, pero el switch NO se
+     activa (el viewport sigue siendo 1366px). Con @container, el switch
+     depende del ancho REAL del contenedor y se activa correctamente.
+
+   ¿Por qué 869px?
+     Debajo de ese ancho útil, las tablas de 6+ columnas se distorsionan
+     (texto roto, columnas superpuestas, scroll horizontal incómodo).
+
+   USO EN JSX (sin cambios respecto a la versión anterior):
+     <div className="responsive-list">
+       <div className="responsive-list__table"> ... tabla ... </div>
+       <div className="responsive-list__cards"> ... cards ... </div>
+     </div>
+
+   El propio .responsive-list se declara como container, por lo que cualquier
+   componente que lo use obtiene el comportamiento automático. No es necesario
+   que el padre declare nada.
+
+   Soporte: Chrome 105+ / Firefox 110+ / Safari 16+ (~97% global).
+   Fallback con @supports para navegadores antiguos incluido abajo.
+============================================================================ */
+
+.responsive-list {
+  container-type: inline-size;
+  container-name: responsive-list;
+  width: 100%;
+  min-width: 0;
+}
+
+.responsive-list > .responsive-list__table {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.responsive-list > .responsive-list__cards {
+  display: none;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Switch basado en el ancho del contenedor (no del viewport) */
+@container responsive-list (max-width: 869px) {
+  .responsive-list > .responsive-list__table { display: none; }
+  .responsive-list > .responsive-list__cards { display: block; }
+}
+
+/* Fallback: navegadores sin soporte de container queries usan media query */
+@supports not (container-type: inline-size) {
+  @media (max-width: 869px) {
+    .responsive-list > .responsive-list__table { display: none; }
+    .responsive-list > .responsive-list__cards { display: block; }
+  }
+}
+
+/* ============================================================================
+   PATRÓN GLOBAL: ESPACIADO ENTRE CAMPOS DE FORMULARIO
+   ----------------------------------------------------------------------------
+   El reseteo de arriba deja todos los márgenes en 0. Cada grupo de campo
+   (.form-group: etiqueta + campo) se separa del siguiente para que la
+   información no quede pegada. El valor vive en theme.css.
+============================================================================ */
+.form-group + .form-group {
+  margin-top: var(--spacing-form-group);
+}
+
+/* Dentro de una cuadrícula de campos, la separación la da el gap de la cuadrícula. */
+.form-grid > .form-group + .form-group {
+  margin-top: 0;
+}
+
+/* ============================================================================
+   PATRÓN GLOBAL: FILTROS EN CELULAR (botón flotante + panel a pantalla completa)
+   ----------------------------------------------------------------------------
+   Mismo diseño que los filtros de Reportes. En monitores los filtros se ven en su
+   barra (.filtros-escritorio) y el botón flotante no aparece. En 768px o menos la
+   barra se oculta y aparece el botón redondo "Filtros" abajo a la derecha; al
+   tocarlo se abre el panel con los mismos filtros, "Cerrar" y "Aplicar filtros".
+
+   USO EN JSX (los mismos controles se pintan en la barra y en el panel):
+     <div className="filtros-escritorio">{controles}</div>
+     <button className="filtros-fab" onClick={abrir}><SlidersHorizontal /> Filtros</button>
+     {abierto && createPortal(
+       <div className="filtros-sheet" role="dialog" aria-modal="true" aria-label="Filtros">
+         <header className="filtros-sheet__header"><h2>Filtros</h2><button className="filtros-sheet__cerrar">X</button></header>
+         <div className="filtros-sheet__body">{controles}</div>
+         <footer className="filtros-sheet__footer">
+           <button className="filtros-sheet__btn">Cerrar</button>
+           <button className="filtros-sheet__btn filtros-sheet__btn--primario">Aplicar filtros</button>
+         </footer>
+       </div>, document.body)}
+============================================================================ */
+.filtros-escritorio {
+  display: contents;
+}
+
+.filtros-fab {
+  display: none;
+}
+
+.filtros-sheet {
+  position: fixed;
+  inset: var(--topbar-height, 64px) 0 0 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+.filtros-sheet__header,
+.filtros-sheet__footer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+}
+
+.filtros-sheet__header {
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.filtros-sheet__header h2 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+.filtros-sheet__cerrar {
+  display: inline-flex;
+  padding: 6px;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.filtros-sheet__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Dentro del panel cada filtro ocupa todo el ancho. */
+.filtros-sheet__body > *,
+.filtros-sheet__body select,
+.filtros-sheet__body input {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
+
+.filtros-sheet__footer {
+  border-top: 1px solid var(--border-main);
+}
+
+.filtros-sheet__btn {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filtros-sheet__btn--primario {
+  border-color: var(--brand-secondary);
+  background: var(--brand-secondary);
+  color: var(--clr-blanco-pura);
+}
+
+@media (max-width: 768px) {
+  .filtros-escritorio {
+    display: none;
+  }
+
+  .filtros-fab {
+    position: fixed;
+    right: 1rem;
+    bottom: 1.25rem;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.8rem 1.15rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--brand-secondary);
+    color: var(--clr-blanco-pura);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+  }
+}

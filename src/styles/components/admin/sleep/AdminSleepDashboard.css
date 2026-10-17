@@ -1,0 +1,79 @@
+.admin-sleep-dashboard {
+  width: 100%;
+  min-width: 0;
+  padding: 1.5rem;
+  color: var(--text-main);
+  background: var(--bg-main);
+}
+
+.admin-sleep-dashboard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.admin-sleep-dashboard__header h1 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 700;
+}
+
+.admin-sleep-dashboard__seccion {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 600;
+}
+
+.admin-sleep-dashboard__header p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.admin-sleep-dashboard__eyebrow {
+  color: var(--func-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.admin-sleep-dashboard__error,
+.admin-sleep-dashboard__saving {
+  margin-bottom: 1rem;
+  padding: 0.875rem 1rem;
+  border-radius: var(--border-radius-md);
+}
+
+.admin-sleep-dashboard__error {
+  border: 1px solid var(--clr-rojo-500, #dc2626);
+  color: var(--clr-rojo-700, #b91c1c);
+  background: color-mix(in srgb, var(--state-danger) 10%, transparent);
+}
+
+.admin-sleep-dashboard__saving {
+  color: var(--text-muted);
+  background: var(--bg-surface);
+}
+
+@media (max-width: 640px) {
+  .admin-sleep-dashboard {
+    padding: 1rem;
+  }
+
+  .admin-sleep-dashboard__header {
+    flex-wrap: wrap;
+  }
+}
+
+/* Las vistas de sueño (compartidas con el entrenador) traen su propio margen lateral.
+   Dentro del panel del administrador ese margen ya lo pone .admin-sleep-dashboard:
+   se quita para que el contenido quede alineado con el título "Sueño y Descanso". */
+.admin-sleep-dashboard .sleep-general-view,
+.admin-sleep-dashboard .sleep-individual-view {
+  padding: 0;
+}

@@ -1,0 +1,436 @@
+/* ============================================================================
+   SleepRegistrationView.css - Formulario Reutilizable de Registro de Sueño
+   Módulo de Sueño y Descanso - Lic. Caracas
+   ============================================================================ */
+
+.sleep-registration-view {
+  --sl-primary: var(--func-primary);
+  --sl-success: var(--clr-verde-500);
+  --sl-danger: var(--clr-rojo-500);
+  --sl-warning: var(--clr-dorado-500);
+  --sl-border: var(--border-main);
+  --sl-text-primary: var(--text-main);
+  --sl-text-secondary: var(--text-muted);
+  --sl-text-muted: var(--text-muted);
+  --sl-radius-md: var(--border-radius-md);
+  --sl-surface: var(--bg-card);
+  --sl-surface-alt: var(--bg-surface);
+
+  padding: var(--spacing-margin);
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+body.dark-mode .sleep-registration-view {
+  --sl-surface-alt: rgba(255, 255, 255, 0.04);
+}
+
+/* ============================================================================
+   CARD CONTENEDOR
+   ============================================================================ */
+.sl-card {
+  background-color: var(--sl-surface);
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  box-shadow: var(--shadow-card);
+  margin: 0 auto;
+  transition: var(--transition-theme);
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.sl-card--centered {
+  max-width: 680px;
+}
+
+/* Header */
+.sl-reg-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px;
+  border-bottom: 1px solid var(--sl-border);
+}
+
+.sl-reg-header .sl-card-title {
+  font-size: 1.25rem;
+  font-weight: 750;
+  color: var(--sl-text-primary);
+  margin: 2px 0 4px 0;
+}
+
+.sl-reg-subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--sl-text-secondary);
+}
+
+.sl-btn-back {
+  background: var(--sl-surface-alt);
+  color: var(--sl-text-primary);
+  border: 1px solid var(--sl-border);
+  flex-shrink: 0;
+}
+
+.sl-btn-back:hover {
+  background: var(--sl-border);
+}
+
+/* Form Container */
+.sl-reg-form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+/* Alerta */
+.sl-reg-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--sl-radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.sl-reg-alert--error {
+  background-color: color-mix(in srgb, var(--sl-danger) 12%, var(--sl-surface));
+  border: 1px solid var(--sl-danger);
+  color: var(--sl-danger);
+}
+
+/* ============================================================================
+   SECCIÓN SOLO LECTURA (DATOS DEL ATLETA)
+   ============================================================================ */
+.sl-readonly-section {
+  background-color: var(--sl-surface-alt);
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sl-readonly-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--sl-border) 60%, transparent);
+  padding-bottom: 10px;
+}
+
+.sl-readonly-section__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--sl-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sl-readonly-badge {
+  font-size: 0.75rem;
+  font-weight: 650;
+  background-color: color-mix(in srgb, var(--sl-primary) 14%, var(--sl-surface));
+  color: var(--sl-primary);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--sl-primary) 28%, transparent);
+}
+
+.sl-readonly-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 16px;
+}
+
+.sl-form-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sl-form-col--full {
+  grid-column: 1 / -1;
+}
+
+.sl-form-label {
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--sl-text-secondary);
+}
+
+.sl-form-label--prominent {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--sl-text-primary);
+}
+
+.sl-input--readonly {
+  background-color: var(--sl-surface);
+  border: 1px solid var(--sl-border);
+  color: var(--sl-text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: calc(var(--sl-radius-md) - 2px);
+  cursor: default;
+  user-select: all;
+  opacity: 0.95;
+}
+
+.sl-input--readonly:focus {
+  outline: none;
+  border-color: var(--sl-border);
+}
+
+/* ============================================================================
+   SECCIÓN ENTRADA DE SUEÑO
+   ============================================================================ */
+.sl-sleep-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--sl-border);
+  border-radius: var(--sl-radius-md);
+  background-color: var(--sl-surface);
+}
+
+.sl-sleep-input-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sl-quality-display-badge {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid;
+  font-weight: 800;
+  transition: all 0.2s ease;
+}
+
+.sl-quality-display-badge__num {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.sl-quality-display-badge__max {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.sl-quality-description-text {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 650;
+  transition: color 0.15s ease;
+}
+
+/* Slider */
+.sl-quality-slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.sl-quality-slider__input {
+  width: 100%;
+  height: 36px;
+  cursor: pointer;
+  background: transparent;
+}
+
+.sl-quality-slider__input::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--clr-rojo-500) 0%,
+    var(--clr-dorado-500) 50%,
+    var(--clr-verde-500) 100%
+  );
+}
+
+.sl-quality-slider__input::-moz-range-track {
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--clr-rojo-500) 0%,
+    var(--clr-dorado-500) 50%,
+    var(--clr-verde-500) 100%
+  );
+}
+
+.sl-quality-slider__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--sl-surface);
+  border: 3px solid var(--sl-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: grab;
+  margin-top: -8px;
+  transition: transform 0.15s ease;
+}
+
+.sl-quality-slider__input::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.15);
+}
+
+.sl-quality-slider__labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--sl-text-muted);
+  padding: 0 2px;
+}
+
+/* Botones Rápidos 1-10 */
+.sl-quick-quality-buttons {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.sl-quick-btn {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 750;
+  font-size: 0.875rem;
+  background-color: var(--sl-surface-alt);
+  color: var(--sl-text-primary);
+  border: 1px solid var(--sl-border);
+  border-radius: calc(var(--sl-radius-md) - 2px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sl-quick-btn:hover:not(:disabled) {
+  border-color: var(--sl-primary);
+  background-color: color-mix(in srgb, var(--sl-primary) 10%, var(--sl-surface));
+}
+
+.sl-quick-btn.is-selected {
+  font-size: 0.95rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Metadata Bar */
+.sl-reg-meta-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: var(--sl-text-muted);
+  padding: 8px 12px;
+  background-color: var(--sl-surface-alt);
+  border-radius: calc(var(--sl-radius-md) - 2px);
+}
+
+/* Acciones */
+.sl-reg-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.sl-btn {
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 650;
+  border-radius: var(--sl-radius-md);
+  border: 1px solid var(--sl-border);
+  background-color: var(--sl-surface);
+  color: var(--sl-text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.sl-btn:hover:not(:disabled) {
+  background-color: var(--sl-surface-alt);
+}
+
+.sl-btn-secondary {
+  background-color: var(--sl-surface-alt);
+  color: var(--sl-text-primary);
+}
+
+.sl-btn-primary {
+  background-color: var(--sl-primary);
+  border-color: var(--sl-primary);
+  color: var(--clr-blanco-pura);
+}
+
+.sl-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+  background-color: var(--sl-primary);
+}
+
+.sl-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Spinner */
+.sl-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: slSpin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes slSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .sl-readonly-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sl-quick-quality-buttons {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .sl-reg-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

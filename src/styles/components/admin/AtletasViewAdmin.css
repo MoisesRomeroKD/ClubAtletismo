@@ -1,0 +1,1159 @@
+/* ============================================================================
+   ATLETAS VIEW ADMIN STYLES - Theme CSS Variables
+   ============================================================================ */
+
+.atletas-admin-container {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  padding: 1.5rem;
+  border-radius: 12px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Estado Pill */
+.atletas-estado-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.atletas-estado-pill.activo {
+  background-color: var(--clr-verde-500);
+  color: var(--clr-blanco-pura);
+}
+
+.atletas-estado-pill.inactivo {
+  background-color: var(--state-danger);
+  color: var(--clr-blanco-pura);
+}
+
+/* Data Point */
+.atletas-data-point {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.atletas-data-point-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.atletas-data-point-value {
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+
+/* Perfil Drawer Overlay */
+.atletas-perfil-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 40;
+}
+
+.atletas-perfil-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Perfil Drawer Panel */
+.atletas-perfil-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(400px, 100%);
+  background-color: var(--bg-surface);
+  border-left: 1px solid var(--border-main);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.4);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.atletas-perfil-panel.open {
+  transform: translateX(0);
+}
+
+/* Perfil Header */
+.atletas-perfil-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.atletas-perfil-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--brand-secondary);
+}
+
+.atletas-perfil-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 4px;
+}
+
+.atletas-perfil-close-btn:hover {
+  color: var(--text-main);
+}
+
+/* Perfil Body */
+.atletas-perfil-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Perfil Atleta Header */
+.atletas-perfil-atleta-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.atletas-perfil-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.atletas-perfil-name {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.atletas-perfil-cedula {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Perfil Section */
+.atletas-perfil-section-title {
+  margin: 0 0 0.75rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.atletas-perfil-section-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.atletas-perfil-section-block.single {
+  grid-template-columns: 1fr;
+}
+
+/* Perfil Footer */
+.atletas-perfil-footer {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border-main);
+}
+
+.atletas-perfil-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.atletas-perfil-btn-ghost {
+  background-color: transparent;
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+}
+
+.atletas-perfil-btn-ghost:hover {
+  background-color: var(--bg-surface);
+}
+
+.atletas-perfil-btn-primary {
+  background-color: var(--brand-secondary);
+  border: none;
+  color: var(--clr-blanco-pura);
+}
+
+.atletas-perfil-btn-primary:hover {
+  background-color: var(--clr-verde-700);
+}
+
+/* Filtros y Acciones */
+.atletas-filtros-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.atletas-search-input {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  padding: 9px 14px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  width: 260px;
+  max-width: 100%;
+}
+
+.atletas-search-input:focus {
+  outline: none;
+  border-color: var(--brand-secondary);
+  box-shadow: 0 0 0 1px var(--brand-secondary);
+}
+
+.atletas-category-select {
+  background: var(--bg-input);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  color: var(--text-main);
+  font: inherit;
+  min-height: 40px;
+  max-width: 100%;
+  padding: 0.55rem 0.75rem;
+}
+
+.atletas-category-select:focus-visible {
+  border-color: var(--func-primary);
+  outline: 2px solid var(--func-primary);
+  outline-offset: 2px;
+}
+
+.atletas-counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.atletas-btn-nuevo {
+  margin-left: auto;
+  background-color: var(--brand-secondary);
+  color: var(--clr-blanco-pura);
+  border: none;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.atletas-btn-nuevo:hover {
+  background-color: var(--clr-verde-700);
+}
+
+/* Tabla */
+.atletas-tabla-wrap {
+  display: none;
+}
+
+.atletas-tabla-wrap.visible {
+  display: block;
+}
+
+.atletas-tabla-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border-main);
+}
+
+.atletas-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.atletas-tabla thead tr {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-main);
+  color: var(--text-muted);
+}
+
+.atletas-tabla th {
+  padding: 12px 16px;
+}
+
+.atletas-tabla tbody tr {
+  border-bottom: 1px solid var(--border-main);
+}
+
+.atletas-tabla td {
+  padding: 12px 16px;
+}
+
+.atletas-tabla-nombre {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.atletas-tabla-cedula {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.atletas-tabla-subarea-badge {
+  background-color: var(--bg-surface);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.atletas-tabla-contacto {
+  color: var(--text-muted);
+}
+
+.atletas-tabla-contacto-sm {
+  font-size: 0.75rem;
+}
+
+.atletas-btn-ver {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.atletas-btn-ver:hover {
+  background-color: var(--brand-secondary);
+  color: var(--clr-blanco-pura);
+}
+
+/* Cards (responsive) */
+.atletas-cards-wrap {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 870px) {
+  .atletas-tabla-wrap {
+    display: block;
+  }
+  .atletas-cards-wrap {
+    display: none;
+  }
+}
+
+/* Loading */
+.atletas-loading {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.atletas-estado-cell {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.atletas-estado-badge {
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+  white-space: nowrap;
+}
+
+.atletas-estado-activo { color: var(--state-success); }
+.atletas-estado-inactivo { color: var(--state-danger); }
+.atletas-estado-justificado { color: var(--state-warning); }
+
+.atletas-estado-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  color: var(--text-main);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+}
+
+.atletas-estado-btn:hover {
+  border-color: var(--brand-secondary);
+  color: var(--brand-secondary);
+}
+
+.atletas-estado-overlay {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 16px;
+  position: fixed;
+  z-index: 60;
+}
+
+.atletas-estado-modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  color: var(--text-main);
+  display: grid;
+  gap: 0.85rem;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  padding: 1.25rem;
+  width: min(420px, 100%);
+}
+
+.atletas-estado-modal h3 {
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.atletas-estado-name {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: -0.5rem 0 0;
+}
+
+.atletas-estado-options {
+  border: 0;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+}
+
+.atletas-estado-options legend {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.atletas-estado-options label {
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  font-size: 0.82rem;
+  font-weight: 600;
+  gap: 0.4rem;
+  justify-content: center;
+  padding: 0.55rem 0.4rem;
+}
+
+.atletas-estado-options label.is-selected {
+  border-color: var(--brand-secondary);
+  color: var(--brand-secondary);
+}
+
+.atletas-estado-options input {
+  accent-color: var(--brand-secondary);
+  margin: 0;
+}
+
+.atletas-estado-hint {
+  color: var(--state-warning);
+  font-size: 0.78rem;
+  margin: 0;
+}
+
+.atletas-estado-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.atletas-estado-field span {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.atletas-estado-field textarea {
+  background: var(--bg-input);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.55rem 0.7rem;
+  resize: vertical;
+}
+
+.atletas-estado-error {
+  color: var(--state-danger);
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.atletas-estado-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.atletas-estado-actions button {
+  border-radius: 8px;
+  cursor: pointer;
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 10px;
+}
+
+.atletas-estado-cancel {
+  background: transparent;
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+}
+
+.atletas-estado-save {
+  background: var(--brand-secondary);
+  border: none;
+  color: var(--clr-blanco-pura);
+}
+
+.atletas-estado-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+@media (max-width: 380px) {
+  .atletas-estado-options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ============================================================
+   Paginación
+   ============================================================ */
+
+.atletas-paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.atletas-paginacion-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.atletas-paginacion-btn:hover:not(:disabled) {
+  background: var(--brand-secondary);
+  color: var(--clr-blanco-pura, #fff);
+  border-color: var(--brand-secondary);
+}
+
+.atletas-paginacion-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.atletas-paginacion-info {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   Vista de atletas (antes en estilos en línea y <style> incrustado)
+   ============================================================ */
+.atletas-adm {
+  padding: 1.5rem;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  border-radius: 12px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.atletas-adm-estado-lista {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* Barra de filtros */
+.atletas-adm-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+}
+
+.atletas-adm-buscar {
+  width: 260px;
+  max-width: 100%;
+  padding: 9px 14px;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.atletas-adm-buscar:focus {
+  outline: none;
+  border-color: var(--brand-secondary);
+  box-shadow: 0 0 0 1px var(--brand-secondary);
+}
+
+.atletas-adm-total {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* El cambio tabla/tarjetas lo hace .responsive-list (App.css) */
+.atletas-adm-tabla-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.atletas-adm-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+.atletas-adm-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.atletas-adm-tabla thead tr {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-main);
+  color: var(--text-muted);
+}
+
+.atletas-adm-tabla tbody tr {
+  border-bottom: 1px solid var(--border-main);
+}
+
+.atletas-adm-tabla th,
+.atletas-adm-tabla td {
+  padding: 12px 16px;
+}
+
+.atletas-adm-tabla .atletas-adm-centro {
+  text-align: center;
+}
+
+.atletas-adm-tabla .atletas-adm-familiar {
+  color: var(--text-muted);
+}
+
+.atletas-adm-nombre {
+  font-weight: 700;
+}
+
+.atletas-adm-cedula {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.atletas-adm-badge {
+  padding: 4px 10px;
+  background-color: var(--bg-surface);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.atletas-adm-texto-chico {
+  font-size: 0.75rem;
+}
+
+.atletas-adm-ver {
+  padding: 6px 12px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  color: var(--text-main);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.atletas-adm-ver:hover {
+  background-color: var(--brand-secondary);
+  color: var(--clr-blanco-pura);
+}
+
+.atletas-adm-ver--card {
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.atletas-adm-card {
+  padding: 1.5rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+}
+
+.atletas-adm-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.atletas-adm-card-identidad {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.atletas-adm-avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 50%;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.atletas-adm-card-nombre {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.atletas-adm-card-cedula {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.atletas-adm-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.atletas-adm-card-label {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.atletas-adm-card-label--espaciado {
+  margin-bottom: 4px;
+}
+
+.atletas-adm-card-valor {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.atletas-adm-card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-main);
+}
+
+.atletas-adm-card-familiar {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.atletas-adm-card-telefono {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Drawer de perfil */
+.atletas-adm-drawer-overlay {
+  position: fixed;
+  inset: var(--topbar-height, 70px) 0 0;
+  z-index: 40;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.atletas-adm-drawer-overlay--abierto {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.atletas-adm-drawer {
+  position: fixed;
+  top: var(--topbar-height, 70px);
+  right: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  width: min(400px, 100%);
+  bottom: 0;
+  background-color: var(--bg-surface);
+  border-left: 1px solid var(--border-main);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.4);
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.atletas-adm-drawer--abierto {
+  transform: translateX(0);
+}
+
+.atletas-adm-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.atletas-adm-drawer-kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--brand-secondary);
+}
+
+.atletas-adm-drawer-cerrar {
+  padding: 4px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.atletas-adm-drawer-body {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.atletas-adm-drawer-identidad {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.atletas-adm-drawer-avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.atletas-adm-drawer-nombre {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.atletas-adm-drawer-cedula {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.atletas-adm-drawer-seccion {
+  margin: 0 0 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.atletas-adm-drawer-bloque {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+}
+
+.atletas-adm-drawer-bloque--grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.atletas-adm-drawer-bloque--ultimo {
+  margin-bottom: 0;
+}
+
+.atletas-adm-drawer-footer {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border-main);
+}
+
+.atletas-adm-drawer-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.atletas-adm-drawer-btn--ghost {
+  background-color: transparent;
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.atletas-adm-drawer-btn--primario {
+  background-color: var(--brand-secondary);
+  border: none;
+  color: var(--clr-blanco-pura);
+  font-weight: 700;
+}
+
+/* ============================================================
+   EDITAR ATLETA (dentro del drawer de perfil)
+   ============================================================ */
+.atletas-editar-form {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.atletas-editar-bloque {
+  display: grid;
+  gap: var(--spacing-form-group);
+}
+
+.atletas-editar-campo {
+  display: grid;
+  gap: 6px;
+}
+
+.atletas-editar-campo label,
+.atletas-editar-etiqueta {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.atletas-editar-campo input,
+.atletas-editar-campo select {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.atletas-editar-campo input:focus,
+.atletas-editar-campo select:focus {
+  outline: none;
+  border-color: var(--func-primary);
+}
+
+.atletas-editar-campo input.atletas-editar-input--error,
+.atletas-editar-campo input.atletas-editar-input--error:focus {
+  border-color: var(--state-danger);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--state-danger) 15%, transparent);
+}
+
+.atletas-editar-aviso,
+.atletas-editar-error {
+  color: var(--state-danger);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.atletas-editar-fijo {
+  padding: 9px 12px;
+  border: 1px dashed var(--border-main);
+  border-radius: var(--border-radius-md);
+}
+
+.atletas-editar-fijo small,
+.atletas-editar-nota {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.atletas-editar-pie {
+  flex-direction: column;
+}
+
+.atletas-editar-botones {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.atletas-adm-drawer-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Asignar subáreas: casillas agrupadas por área */
+.atletas-subareas-grupo {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+}
+
+.atletas-subareas-grupo legend {
+  padding: 0 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.atletas-subareas-opcion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.atletas-subareas-lista {
+  margin: -0.75rem 0 0.75rem;
+}
+
+/* Subárea elegida + su turno en la misma fila */
+.atletas-subareas-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.atletas-subareas-detalle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.atletas-subareas-entrenador {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.atletas-subareas-turno {
+  min-height: 34px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 0.85rem;
+}
+

@@ -1,0 +1,444 @@
+/* Pendientes de sueño del administrador: mismo diseño que Registro de asistencia */
+.pend-sueno {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: min(100%, 72rem);
+  min-width: 0;
+  margin: 0 auto;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  color: var(--text-main);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Encabezado: título, "Pendientes (N)" y buscador por cédula en una franja */
+.pend-sueno__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.pend-sueno__header h1 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: clamp(1.45rem, 3vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.pend-sueno__header-derecha {
+  display: flex;
+  flex: 1 1 30rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 0.75rem 1.25rem;
+  min-width: 0;
+}
+
+.pend-sueno__contador {
+  align-self: center;
+  padding: 0.4rem 0.8rem;
+  color: var(--state-warning);
+  background: color-mix(in srgb, var(--state-warning) 12%, var(--bg-card));
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pend-sueno__busqueda {
+  display: flex;
+  flex: 1 1 22rem;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.pend-sueno__busqueda label,
+.pend-sueno__field label {
+  color: var(--text-main);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.pend-sueno__search-control {
+  display: flex;
+  align-items: stretch;
+  gap: 0.75rem;
+}
+
+.pend-sueno__input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.pend-sueno__input-wrap svg {
+  position: absolute;
+  top: 50%;
+  left: 0.8rem;
+  color: var(--text-muted);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.pend-sueno__search-control input,
+.pend-sueno__field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.875rem;
+  padding: 0.7rem 0.85rem;
+  color: var(--text-main);
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: var(--border-radius-md);
+  font: inherit;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.pend-sueno__search-control input {
+  padding-right: 2.4rem;
+  padding-left: 2.4rem;
+}
+
+.pend-sueno__search-control input:hover,
+.pend-sueno__field select:hover:not(:disabled) {
+  border-color: var(--border-input-hover);
+}
+
+.pend-sueno__search-control input:focus,
+.pend-sueno__field select:focus {
+  border-color: var(--border-input-focus);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--func-primary-bg-soft);
+}
+
+.pend-sueno__search-control input::placeholder {
+  color: var(--text-muted);
+}
+
+.pend-sueno__field select:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pend-sueno__limpiar {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  display: grid;
+  place-items: center;
+  padding: 0.25rem;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.pend-sueno__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.875rem;
+  padding: 0.7rem 1.1rem;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-md);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 650;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.pend-sueno__button:focus-visible {
+  outline: 3px solid var(--func-primary-bg-soft);
+  outline-offset: 2px;
+}
+
+.pend-sueno__button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.pend-sueno__button:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.pend-sueno__button--primary {
+  color: var(--clr-blanco-pura);
+  background: var(--func-primary);
+}
+
+.pend-sueno__button--primary:hover:not(:disabled) {
+  background: var(--func-primary-hover);
+}
+
+.pend-sueno__button--secondary {
+  color: var(--text-main);
+  background: var(--bg-card);
+  border-color: var(--border-main);
+}
+
+.pend-sueno__button--secondary:hover:not(:disabled) {
+  background: var(--bg-surface);
+  border-color: var(--border-input-hover);
+}
+
+/* Avisos */
+.pend-sueno__notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.pend-sueno__notice--success {
+  color: var(--accent-card-text);
+  background: var(--accent-card-bg);
+  border-color: color-mix(in srgb, var(--accent-card) 35%, var(--border-main));
+}
+
+.pend-sueno__notice--info {
+  color: var(--text-main);
+  background: var(--bg-surface);
+}
+
+.pend-sueno__notice--error {
+  color: var(--state-danger);
+  background: color-mix(in srgb, var(--state-danger) 9%, var(--bg-card));
+  border-color: color-mix(in srgb, var(--state-danger) 35%, var(--border-main));
+}
+
+.pend-sueno__notice button {
+  display: grid;
+  place-items: center;
+  padding: 0.2rem;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Tarjeta de resultados */
+.pend-sueno__results {
+  padding: clamp(1rem, 2vw, 1.5rem);
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.pend-sueno__section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pend-sueno__section-heading h2 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.pend-sueno__section-heading p {
+  margin: 0.45rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.94rem;
+}
+
+.pend-sueno__filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pend-sueno__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.pend-sueno__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.pend-sueno__pagination span {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.pend-sueno__pagination--bottom {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-main);
+}
+
+/* Lista de atletas */
+.pend-sueno__athlete-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pend-sueno__athlete-list.is-loading {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.pend-sueno__athlete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1rem;
+  background: var(--bg-main);
+  border: 1px solid var(--border-main);
+  border-left: 4px solid var(--state-warning);
+  border-radius: var(--border-radius-md);
+}
+
+.pend-sueno__athlete-info {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.pend-sueno__avatar {
+  display: grid;
+  flex: 0 0 2.875rem;
+  width: 2.875rem;
+  height: 2.875rem;
+  place-items: center;
+  color: var(--accent-card-text);
+  background: var(--accent-card-bg);
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.pend-sueno__athlete-details {
+  min-width: 0;
+}
+
+.pend-sueno__athlete-details h3 {
+  overflow-wrap: anywhere;
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.pend-sueno__athlete-details p {
+  margin: 0.3rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.pend-sueno__athlete-details strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.pend-sueno__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pend-sueno__status {
+  padding: 0.4rem 0.65rem;
+  color: var(--state-warning);
+  background: color-mix(in srgb, var(--state-warning) 12%, var(--bg-card));
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pend-sueno__empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  padding: 2rem 1rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .pend-sueno {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .pend-sueno__header-derecha {
+    justify-content: flex-start;
+  }
+
+  .pend-sueno__search-control,
+  .pend-sueno__athlete,
+  .pend-sueno__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pend-sueno__filters {
+    grid-template-columns: 1fr;
+  }
+
+  .pend-sueno__actions {
+    width: 100%;
+  }
+
+  .pend-sueno__status {
+    align-self: flex-start;
+  }
+
+  .pend-sueno__section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pend-sueno__pagination {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .pend-sueno__button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pend-sueno__search-control input,
+  .pend-sueno__field select,
+  .pend-sueno__button {
+    transition: none;
+  }
+}

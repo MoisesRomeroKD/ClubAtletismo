@@ -1,0 +1,408 @@
+/* Listado de representantes (admin) */
+.representantes-admin-estado {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.representantes-admin-estado--error {
+  color: var(--state-danger);
+}
+
+.representantes-admin-wrap {
+  overflow-x: auto;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.representantes-admin-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.representantes-admin-tabla thead tr {
+  background-color: var(--bg-main);
+  color: var(--brand-accent);
+}
+
+.representantes-admin-tabla th,
+.representantes-admin-tabla td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--bg-surface);
+}
+
+.representantes-admin-cedula {
+  font-weight: 600;
+  color: var(--brand-accent);
+}
+
+.representantes-admin-nombre {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.representantes-admin-dato {
+  color: var(--text-muted);
+}
+
+/* Tarjetas en pantallas angostas (el cambio lo hace .responsive-list de App.css) */
+.representantes-admin-cards {
+  display: grid;
+  gap: 1rem;
+}
+
+.representantes-admin-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.representantes-admin-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.representantes-admin-card dl {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.representantes-admin-card dt {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.representantes-admin-card dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  overflow-wrap: anywhere;
+}
+
+/* ============================================================
+   BOTÓN VER DETALLE, AVISO Y DRAWER (detalle y edición del representante)
+   ============================================================ */
+.representantes-admin-accion {
+  text-align: right;
+}
+
+.representantes-admin-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.representantes-admin-ver {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.representantes-admin-ver:hover {
+  border-color: var(--func-primary);
+  color: var(--func-primary);
+}
+
+.representantes-admin-ok {
+  margin-bottom: 12px;
+  color: var(--state-success);
+  font-weight: 600;
+}
+
+
+
+
+
+
+/* ============================================================
+   DRAWER (panel lateral): DETALLE Y EDICIÓN DEL REPRESENTANTE
+   Mismo patrón que el sidebar: panel fijo que se desliza + fondo oscuro detrás.
+   ============================================================ */
+.representantes-drawer-fondo {
+  position: fixed;
+  inset: var(--topbar-height, 70px) 0 0;
+  z-index: 1100;
+  background: color-mix(in srgb, var(--clr-negro-pura) 55%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: representantes-drawer-aparecer 0.2s ease;
+}
+
+.representantes-drawer {
+  position: fixed;
+  top: var(--topbar-height, 70px);
+  right: 0;
+  bottom: 0;
+  z-index: 1101;
+  display: flex;
+  flex-direction: column;
+  width: min(460px, 100vw);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border-left: 1px solid var(--border-main);
+  box-shadow: var(--shadow-hover);
+  animation: representantes-drawer-entrar 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.representantes-drawer-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.representantes-drawer-kicker {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--brand-secondary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.representantes-drawer-cabecera h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.representantes-drawer-cabecera p {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.representantes-drawer-cerrar {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 6px;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.representantes-drawer-form {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.representantes-drawer-cuerpo {
+  display: grid;
+  flex: 1;
+  align-content: start;
+  gap: var(--spacing-form-group);
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.representantes-drawer-seccion {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.representantes-drawer-bloque {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-surface);
+}
+
+.representantes-drawer-dato {
+  display: grid;
+  gap: 2px;
+}
+
+.representantes-drawer-dato span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.representantes-drawer-dato strong {
+  overflow-wrap: anywhere;
+}
+
+.representantes-drawer-subareas {
+  display: grid;
+  gap: 6px;
+  padding-left: 1.1rem;
+}
+
+.representantes-drawer-vacio,
+.representantes-drawer-fijo small,
+.representantes-drawer-estado small {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.representantes-drawer-campo {
+  display: grid;
+  gap: 6px;
+}
+
+.representantes-drawer-campo label,
+.representantes-drawer-etiqueta {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.representantes-drawer-campo input {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.representantes-drawer-campo input:focus {
+  outline: none;
+  border-color: var(--func-primary);
+}
+
+.representantes-drawer-campo input.representantes-input--error,
+.representantes-drawer-campo input.representantes-input--error:focus {
+  border-color: var(--state-danger);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--state-danger) 15%, transparent);
+}
+
+.representantes-aviso {
+  color: var(--state-danger);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.representantes-drawer-fijo {
+  padding: 9px 12px;
+  border: 1px dashed var(--border-main);
+  border-radius: var(--border-radius-md);
+}
+
+.representantes-drawer-estado {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+}
+
+.representantes-drawer-estado input {
+  margin-top: 3px;
+}
+
+.representantes-drawer-estado span {
+  display: grid;
+  gap: 2px;
+}
+
+.representantes-drawer-pie {
+  display: grid;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border-main);
+}
+
+.representantes-drawer-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.representantes-drawer-secundario,
+.representantes-drawer-primario {
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.representantes-drawer-secundario {
+  border: 1px solid var(--border-main);
+  background: transparent;
+  color: var(--text-main);
+}
+
+.representantes-drawer-primario {
+  border: 0;
+  background: var(--func-primary);
+  color: var(--clr-blanco-pura);
+}
+
+.representantes-drawer-primario:hover:not(:disabled) {
+  background: var(--func-primary-hover);
+}
+
+.representantes-drawer-primario:disabled,
+.representantes-drawer-secundario:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@keyframes representantes-drawer-entrar {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes representantes-drawer-aparecer {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .representantes-drawer-botones > button {
+    flex: 1;
+  }
+}
+
+.representantes-drawer-atletas {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+}
+
+.representantes-drawer-atletas li {
+  display: grid;
+  gap: 2px;
+}
+
+.representantes-drawer-atletas small,
+.representantes-drawer-nota {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}

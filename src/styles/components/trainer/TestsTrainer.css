@@ -1,0 +1,515 @@
+/* Módulo de Tests (entrenador) */
+.tests-ent {
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+  min-width: 0;
+  padding: 1.5rem;
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border-radius: 12px;
+}
+
+.tests-ent-header {
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--func-primary);
+}
+
+.tests-ent-header h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.tests-ent-header p {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Barra de filtros */
+.tests-ent-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.tests-ent-toolbar select {
+  min-width: 170px;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+.tests-ent-toolbar-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+/* Botones */
+.tests-ent-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.55rem 1rem;
+  background: var(--func-primary);
+  border: 1px solid var(--func-primary);
+  border-radius: 6px;
+  color: var(--clr-blanco-pura);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tests-ent-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.tests-ent-btn--ghost {
+  background: var(--bg-surface);
+  border-color: var(--border-main);
+  color: var(--text-main);
+}
+
+.tests-ent-btn--peligro {
+  background: transparent;
+  border-color: var(--state-danger);
+  color: var(--state-danger);
+}
+
+.tests-ent-btn--chico {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.78rem;
+}
+
+.tests-ent-fila-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* Paneles y formularios */
+.tests-ent-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+}
+
+.tests-ent-panel > .tests-ent-btn--ghost {
+  justify-self: start;
+}
+
+.tests-ent-form h3,
+.tests-ent-detalle-head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.tests-ent-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 0.75rem;
+}
+
+.tests-ent-form-grid label {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.tests-ent-form-grid label > span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.tests-ent-form-grid input,
+.tests-ent-form-grid select,
+.tests-ent-form-grid textarea {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+.tests-ent-form-ancho {
+  grid-column: 1 / -1;
+}
+
+.tests-ent-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.tests-ent-aplicaciones {
+  padding: 0.65rem 0.8rem;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-main);
+  border-radius: 8px;
+  font-size: 0.82rem;
+}
+
+.tests-ent-aplicaciones ul {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.tests-ent-aplicaciones p {
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+}
+
+.tests-ent-detalle-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.tests-ent-detalle-head p {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.tests-ent-observaciones {
+  font-style: italic;
+}
+
+/* Estados */
+.tests-ent-estado {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tests-ent-estado--programado {
+  background: color-mix(in srgb, var(--func-primary) 15%, transparent);
+  color: var(--func-primary);
+}
+
+.tests-ent-estado--realizado {
+  background: color-mix(in srgb, var(--state-success) 15%, transparent);
+  color: var(--state-success);
+}
+
+.tests-ent-estado--cancelado {
+  background: color-mix(in srgb, var(--state-danger) 12%, transparent);
+  color: var(--state-danger);
+}
+
+/* Tabla y tarjetas (el cambio lo hace .responsive-list de App.css) */
+.tests-ent-tabla-wrap {
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.tests-ent-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  text-align: left;
+}
+
+.tests-ent-tabla thead tr {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+}
+
+.tests-ent-tabla th,
+.tests-ent-tabla td {
+  padding: 10px 14px;
+  vertical-align: middle;
+}
+
+.tests-ent-fuerte {
+  font-weight: 700;
+}
+
+.tests-ent-muted {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.tests-ent-posicion {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  color: var(--func-primary);
+}
+
+.tests-ent-input-valor {
+  width: 110px;
+  padding: 0.35rem 0.5rem;
+}
+
+.tests-ent-input-obs {
+  width: 100%;
+  min-width: 140px;
+  padding: 0.35rem 0.5rem;
+}
+
+.tests-ent-cards {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.tests-ent-card {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.9rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.tests-ent-card h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+.tests-ent-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.tests-ent-card-sub {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.tests-ent-card dl {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.tests-ent-card dt {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.tests-ent-card dd {
+  margin: 0.1rem 0 0;
+  font-size: 0.88rem;
+}
+
+.tests-ent-card-campos {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.tests-ent-card-campos label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.tests-ent-card-campos input[type="number"],
+.tests-ent-card-campos input[type="text"] {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+}
+
+.tests-ent-check {
+  display: flex !important;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.tests-ent-card--ranking {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.tests-ent-card--ranking .tests-ent-posicion {
+  font-size: 1.25rem;
+  min-width: 2rem;
+  text-align: center;
+}
+
+/* Mensajes */
+.tests-ent-vacio {
+  margin: 0;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.tests-ent-error {
+  margin: 0;
+  color: var(--state-danger);
+}
+
+.tests-ent-ok {
+  margin: 0;
+  color: var(--state-success);
+}
+
+/* Paginación */
+.tests-ent-paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.tests-ent-paginacion button {
+  padding: 0.45rem 0.9rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tests-ent-paginacion button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.tests-ent-paginacion span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .tests-ent {
+    padding: 1rem;
+  }
+
+  .tests-ent-toolbar select {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .tests-ent-toolbar-acciones {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .tests-ent-toolbar-acciones .tests-ent-btn,
+  .tests-ent-acciones .tests-ent-btn {
+    flex: 1;
+  }
+}
+
+/* Lista de atletas con casillas en "Crear test" */
+.tests-ent-atletas {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.tests-ent-atletas-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.tests-ent-atletas-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  gap: 0.5rem;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 0.25rem;
+}
+
+.tests-ent-atleta {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.7rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.tests-ent-atleta input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.tests-ent-atleta--bloqueado {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.tests-ent-atleta-info {
+  display: grid;
+  min-width: 0;
+}
+
+.tests-ent-atleta-info strong {
+  overflow-wrap: anywhere;
+}
+
+.tests-ent-atleta-info small {
+  color: var(--text-muted);
+}
+
+.tests-ent-aviso {
+  color: var(--state-warning, var(--state-danger));
+  font-weight: 600;
+}
+
+/* Estado de guardado de cada fila de la planilla */
+.tests-ent-fila-estado {
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+
+.tests-ent-fila-estado--ok {
+  color: var(--state-success);
+}
+
+.tests-ent-fila-estado--error {
+  color: var(--state-danger);
+}
+
+.tests-ent-progreso {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .tests-ent-atletas-lista {
+    max-height: none;
+  }
+}

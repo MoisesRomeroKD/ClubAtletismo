@@ -1,0 +1,250 @@
+/* Gestión global de evaluaciones (admin) */
+.admin-evaluaciones {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: clamp(1rem, 2vw, 1.5rem);
+}
+
+.admin-evaluaciones-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--func-primary);
+}
+
+.admin-evaluaciones-titulo {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.admin-evaluaciones-subtitulo {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.admin-evaluaciones-buscar {
+  width: 260px;
+  max-width: 100%;
+  padding: 8px 14px;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.admin-evaluaciones-cargando {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* El cambio tabla/tarjetas lo hace .responsive-list (App.css) */
+.admin-evaluaciones-tabla-wrap {
+  overflow-x: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.admin-evaluaciones-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.admin-evaluaciones-tabla thead tr {
+  background-color: var(--bg-main);
+  border-bottom: 1px solid var(--border-main);
+  color: var(--brand-accent);
+}
+
+.admin-evaluaciones-tabla tbody tr {
+  border-bottom: 1px solid var(--bg-surface);
+}
+
+.admin-evaluaciones-tabla th,
+.admin-evaluaciones-tabla td {
+  padding: 12px 16px;
+}
+
+.admin-evaluaciones-atleta {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.admin-evaluaciones-prueba {
+  font-weight: 600;
+  color: var(--func-primary);
+}
+
+.admin-evaluaciones-resultado {
+  font-weight: 700;
+}
+
+.admin-evaluaciones-evaluador {
+  color: var(--text-muted);
+}
+
+.admin-evaluaciones-cards-wrap {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-evaluaciones-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+/* Arriba: atleta y su resultado. Abajo: los demás datos en 2 columnas. */
+.admin-evaluaciones-card-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.admin-evaluaciones-card-resultado {
+  flex-shrink: 0;
+  padding: 2px 10px;
+  border: 1px solid var(--func-primary);
+  border-radius: 999px;
+  color: var(--func-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.admin-evaluaciones-card-datos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem 1rem;
+  margin: 0;
+}
+
+.admin-evaluaciones-card-datos dt {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.admin-evaluaciones-card-datos dd {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+  overflow-wrap: anywhere;
+}
+
+.admin-evaluaciones-card-datos small {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.admin-evaluaciones-vacio {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  background-color: var(--bg-card);
+  border: 1px dashed var(--border-main);
+  border-radius: 12px;
+}
+
+
+.admin-evaluaciones-vacio h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--brand-accent);
+}
+
+.admin-evaluaciones-vacio p {
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Barra de filtros (en celular va en el panel del botón flotante "Filtros") */
+.admin-evaluaciones-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+}
+
+.admin-evaluaciones-select {
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.admin-evaluaciones-fecha {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.admin-evaluaciones-fecha input {
+  min-height: 38px;
+  padding: 6px 10px;
+}
+
+.admin-evaluaciones-total {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.admin-evaluaciones-atleta small,
+.admin-evaluaciones-prueba small {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
+.admin-evaluaciones-paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.admin-evaluaciones-paginacion button {
+  padding: 8px 16px;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-evaluaciones-paginacion button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

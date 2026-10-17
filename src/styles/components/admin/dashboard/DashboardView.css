@@ -1,0 +1,43 @@
+/* Dashboard parent layout */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-gutter);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
+
+.dashboard-grid-secondary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-gutter);
+  margin-bottom: var(--spacing-gutter);
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid-secondary {
+    grid-template-columns: 1fr;
+  }
+
+  .content-area {
+    padding: var(--spacing-margin-mobile);
+  }
+}
+
+/* Estados de carga y error de los datos reales */
+.dashboard-estado {
+  margin: 0;
+  padding: 1.25rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.dashboard-estado--error {
+  color: var(--state-danger);
+}
+
+.dashboard-cargando {
+  opacity: 0.55;
+  pointer-events: none;
+}
