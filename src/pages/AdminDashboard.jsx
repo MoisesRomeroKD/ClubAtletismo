@@ -28,6 +28,8 @@ const AuditoriaAdmin = lazy(() => import('../components/admin/AuditoriaAdmin'));
 // COMPONENTE DE ANTROPOMETRÍA
 const AntropometriaAdmin = lazy(() => import('../components/admin/antropometria/AntropometriaAdmin'));
 const ParametrosAntropometria = lazy(() => import('../components/admin/antropometria/ParametrosAntropometria'));
+const AnalisisCineAdmin = lazy(() => import('../components/admin/antropometria/AnalisisCineAdmin'));
+const AnalisisTestsAdmin = lazy(() => import('../components/admin/tests/AnalisisTestsAdmin'));
 
 import '../styles/pages/AdminDashboard.css';
 import { useApplicationPermissions } from '../context/ApplicationPermissionsContext';
@@ -55,9 +57,11 @@ export default function AdminDashboard({
     '/admin/evaluaciones': 'tests-programados',
     '/admin/tests/programados': 'tests-programados',
     '/admin/tests/resultados': 'tests-resultados',
+    '/admin/tests/analisis': 'tests-analisis',
     '/admin/atletas': 'athletes',
     '/admin/antropometria/programar': 'antropometria-programar',
     '/admin/antropometria/datos': 'antropometria-datos',
+    '/admin/antropometria/analisis': 'antropometria-analisis',
     '/admin/configuracion/antropometria': 'parametros-antropometria',
     '/admin/sueno/general': 'sueño_general',
     '/admin/sueno/individual': 'sueño_individual',
@@ -107,6 +111,18 @@ export default function AdminDashboard({
         {/* DASHBOARD HOME */}
         {effectiveTab === 'home' && (
           <DashboardView />
+        )}
+
+        {/* ANÁLISIS (dashboards de tests y de cineantropometría) */}
+        {effectiveTab === 'tests-analisis' && (
+          <section className="dashboard-section">
+            <AnalisisTestsAdmin />
+          </section>
+        )}
+        {effectiveTab === 'antropometria-analisis' && (
+          <section className="dashboard-section">
+            <AnalisisCineAdmin />
+          </section>
         )}
 
         {/* RESULTADOS DE TESTS: rendimiento de cada atleta */}
@@ -231,15 +247,6 @@ export default function AdminDashboard({
                 <p className="admin-gestion-subtitulo">Directorio de padres, tutores legales y vinculación con atletas menores de edad</p>
               </div>
 
-              <div className="admin-gestion-acciones">
-                <button
-                  type="button"
-                  className="admin-gestion-btn"
-                  onClick={() => alert("Formulario para registrar nuevo representante")}
-                >
-                  <span>+</span> Registrar Representante
-                </button>
-              </div>
             </div>
 
             <RepresentantesViewAdmin />

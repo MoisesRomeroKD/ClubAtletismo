@@ -442,3 +442,53 @@
     transition: none;
   }
 }
+
+/* Drawer "Registrar sueño": se abre a la derecha, debajo del topbar, sin borrar la lista */
+.pend-sueno-drawer__fondo {
+  position: fixed;
+  inset: var(--topbar-height, 70px) 0 0;
+  z-index: 1100;
+  background: color-mix(in srgb, var(--clr-negro-pura) 55%, transparent);
+  animation: pend-sueno-drawer-aparecer 0.2s ease;
+}
+
+.pend-sueno-drawer {
+  position: fixed;
+  top: var(--topbar-height, 70px);
+  right: 0;
+  bottom: 0;
+  z-index: 1101;
+  width: min(640px, 100vw);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-left: 1px solid var(--border-main);
+  background: var(--bg-main);
+  box-shadow: var(--shadow-card);
+  animation: pend-sueno-drawer-entrar 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dentro del drawer el formulario ocupa todo el ancho, sin márgenes extra */
+.pend-sueno-drawer .sleep-registration-view {
+  padding: 16px;
+}
+
+.pend-sueno-drawer .sl-card--centered {
+  max-width: none;
+}
+
+@keyframes pend-sueno-drawer-aparecer {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pend-sueno-drawer-entrar {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pend-sueno-drawer,
+  .pend-sueno-drawer__fondo {
+    animation: none;
+  }
+}

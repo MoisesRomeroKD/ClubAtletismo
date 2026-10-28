@@ -7,6 +7,7 @@ import ProtectedRoute from '../components/auth/ProtectedRoute';
 const Home             = lazy(() => import('../pages/Home'));
 const Login            = lazy(() => import('../pages/Login'));
 const Register         = lazy(() => import('../pages/Register'));
+const RecuperarPassword = lazy(() => import('../pages/RecuperarPassword'));
 const AdminDashboard   = lazy(() => import('../pages/AdminDashboard'));
 const TrainerDashboard = lazy(() => import('../pages/TrainerDashboard'));
 const AthleteDashboard = lazy(() => import('../pages/AthleteDashboard'));
@@ -95,6 +96,12 @@ export default function AppRoutes({
             }
           />
 
+          {/* Olvidé mi contraseña (también desbloquea la cuenta) */}
+          <Route
+            path="/recuperar-contrasena"
+            element={normalizedRole ? <Navigate to={getRoleRedirect()} replace /> : <RecuperarPassword />}
+          />
+
           <Route
             path="/register"
             element={
@@ -120,11 +127,13 @@ export default function AppRoutes({
           <Route path="/admin/tests" element={<Navigate to="/admin/tests/programados" replace />} />
           <Route path="/admin/tests/programados" element={adminDashboardElement} />
           <Route path="/admin/tests/resultados" element={adminDashboardElement} />
+          <Route path="/admin/tests/analisis" element={adminDashboardElement} />
           <Route path="/admin/atletas" element={adminDashboardElement} />
           <Route path="/admin/cineantropometria" element={<Navigate to="/admin/antropometria/programar" replace />} />
           <Route path="/admin/antropometria" element={<Navigate to="/admin/antropometria/programar" replace />} />
           <Route path="/admin/antropometria/programar" element={adminDashboardElement} />
           <Route path="/admin/antropometria/datos" element={adminDashboardElement} />
+          <Route path="/admin/antropometria/analisis" element={adminDashboardElement} />
           <Route path="/admin/configuracion/antropometria" element={adminDashboardElement} />
           <Route path="/admin/prerregistro" element={adminDashboardElement} />
           <Route path="/admin/prerregistros-pendientes" element={adminDashboardElement} />
@@ -139,9 +148,11 @@ export default function AppRoutes({
           <Route path="/entrenador/perfil" element={trainerDashboardElement} />
           <Route path="/entrenador/mis-atletas" element={trainerDashboardElement} />
           <Route path="/entrenador/asistencias" element={trainerDashboardElement} />
+          <Route path="/entrenador/asistencias/registro" element={trainerDashboardElement} />
           <Route path="/entrenador/mis-tests" element={trainerDashboardElement} />
           <Route path="/entrenador/crear-test" element={trainerDashboardElement} />
           <Route path="/entrenador/tests-resultados" element={trainerDashboardElement} />
+          <Route path="/entrenador/tests-analisis" element={trainerDashboardElement} />
           <Route path="/entrenador/asignar-test" element={<Navigate to="/entrenador/mis-tests" replace />} />
           <Route path="/entrenador/cineantropometria" element={trainerDashboardElement} />
           <Route path="/entrenador/cineantropometria/programar" element={trainerDashboardElement} />

@@ -6,7 +6,8 @@ import '../../styles/components/admin/AdministradoresView.css';
 // Reglas de formato (las mismas que valida el backend).
 const SOLO_LETRAS = /[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]/g;
 const NOMBRE_COMPLETO = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]{2,60}$/;
-const CEDULA_COMPLETA = /^\d{7,8}$/;
+// Cédula: de 1.000.000 a 49.999.999.
+const CEDULA_COMPLETA = /^(?:[1-9]\d{6}|[1-4]\d{7})$/;
 const GMAIL = /^[a-z0-9](?:\.?[a-z0-9])*@gmail\.com$/;
 
 const etiquetaRol = (rol) => (String(rol || '').toLowerCase() === 'administrador' ? 'Administrador' : rol || 'Administrador');
@@ -61,7 +62,7 @@ function EditarAdministradorDrawer({ admin, onClose, onGuardado }) {
     apellidos: NOMBRE_COMPLETO.test(form.apellidos.trim()) ? '' : 'Escribe al menos 2 letras.',
     // Si no se cambió, no se revisa: así se pueden guardar otros datos aunque la cédula guardada tenga otro formato.
     cedula: (!sinPerfil && form.cedula === cedulaActual) || CEDULA_COMPLETA.test(form.cedula)
-      ? '' : 'La cédula debe tener 7 u 8 números (ej. 12345678).',
+      ? '' : 'La cédula debe ser un número entre 1.000.000 y 49.999.999 (ej. 12345678).',
     correo: form.correo === (admin.email || '').toLowerCase() || GMAIL.test(form.correo)
       ? '' : 'Solo se aceptan correos de Gmail (ej. nombre@gmail.com).',
   };
@@ -229,6 +230,7 @@ const AdministradoresView = () => {
       <table className="administradores-tabla">
         <thead>
           <tr>
+            <th>Ref.</th>
             <th>Nombre</th>
             <th>Correo Electrónico</th>
             <th>Rol</th>
@@ -239,6 +241,7 @@ const AdministradoresView = () => {
         <tbody>
           {administradores.map((admin) => (
             <tr key={admin.id}>
+              <td className="ref-usuario">{admin.id}</td>
               <td className="administradores-nombre">{admin.nombre_completo}</td>
               <td className="administradores-email">{admin.email}</td>
               <td>
@@ -267,6 +270,7 @@ const AdministradoresView = () => {
               </span>
             </div>
             <dl>
+              <div><dt>Ref.</dt><dd className="ref-usuario">{admin.id}</dd></div>
               <div><dt>Correo</dt><dd>{admin.email}</dd></div>
               <div><dt>Rol</dt><dd><span className="administradores-rol">{admin.rol || 'Administrador'}</span></dd></div>
             </dl>

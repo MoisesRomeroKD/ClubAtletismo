@@ -81,10 +81,10 @@ export const authService = {
             {
                 cedula,
                 codigo,
-                username,
                 password,
                 confirm_password
             }
+            El backend devuelve también la sesión abierta (igual que el login): se guarda igual.
         */
 
         const response = await podApi.post(
@@ -92,6 +92,47 @@ export const authService = {
             payload
         );
 
+        const data = response.data;
+        if (data.access) {
+            localStorage.setItem('token', data.access);
+        }
+        if (data.refresh) {
+            localStorage.setItem('refresh_token', data.refresh);
+        }
+        if (data.id !== undefined && data.id !== null) {
+            localStorage.setItem('user_id', String(data.id));
+        }
+        if (data.name) {
+            localStorage.setItem('user_name', data.name);
+        }
+        if (data.role) {
+            localStorage.setItem('user_role', data.role);
+        }
+
+        return data;
+    },
+
+    // ============================================================
+    // OLVIDÉ MI CONTRASEÑA (desde el login): correo o cédula → código → contraseña nueva.
+    // Al cambiarla también se desbloquea la cuenta.
+    // ============================================================
+    solicitarRecuperacion: async (identificador) => {
+        const response = await podApi.post('/v1/auth/olvido-password/solicitar/', { identificador });
+        return response.data;
+    },
+
+    verificarRecuperacion: async (identificador, codigo) => {
+        const response = await podApi.post('/v1/auth/olvido-password/verificar/', { identificador, codigo });
+        return response.data;
+    },
+
+    confirmarRecuperacion: async ({ identificador, codigo, password, confirmPassword }) => {
+        const response = await podApi.post('/v1/auth/olvido-password/confirmar/', {
+            identificador,
+            codigo,
+            password,
+            confirm_password: confirmPassword,
+        });
         return response.data;
     }
 };

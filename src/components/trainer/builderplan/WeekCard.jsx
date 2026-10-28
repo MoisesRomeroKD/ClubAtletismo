@@ -9,6 +9,9 @@ import React, { useState, useCallback } from 'react';
 import { SessionAccordion } from './SessionAccordion';
 import { ExerciseModal } from './ExerciseModal';
 
+// Hoy en hora de Caracas: las fechas que se programan son desde hoy en adelante.
+const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' });
+
 /**
  * Componente WeekCard
  * Representa una tarjeta modular para la gestión de un microciclo (semana de entrenamiento).
@@ -112,6 +115,7 @@ export const WeekCard = React.memo(({ week, onWeekUpdate, exercises, catalogStat
             className="form-control" 
             style={{padding: '4px 8px', fontSize: '0.8rem', width: '130px'}} 
             value={week.startDate}
+            min={week.startDate && week.startDate < hoyCaracas() ? week.startDate : hoyCaracas()}
             onChange={(e) => onWeekUpdate({ ...week, startDate: e.target.value })}
             onClick={e => e.stopPropagation()} 
             aria-label={`Fecha de inicio de la semana ${week.weekNumber}`}

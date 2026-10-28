@@ -334,7 +334,7 @@ function BuscadorUsuario({ roles, filtros, usuario, onSelect }) {
               <button type="button" role="option" aria-selected="false" onClick={() => { onSelect(item); setTexto(''); }}>
                 <span className={`report-user-role report-user-role-${item.rol}`}>{item.rol === 'atleta' ? 'Atleta' : 'Entrenador'}</span>
                 <span className="report-user-result-name">{item.nombre}</span>
-                <small>C.I. {item.cedula || '—'}</small>
+                <small>Cédula {item.cedula || '—'}</small>
               </button>
             </li>
           ))}
@@ -745,7 +745,7 @@ function DetalleAtleta({ atletaId, params, rangoTexto, onClose }) {
           <div>
             <span className="report-detail-kicker">Detalle del atleta</span>
             <h2>{nombreCompleto || 'Cargando...'}</h2>
-            {atleta && <p>C.I. {atleta.cedula} · {rangoTexto || 'Últimos 30 días'}</p>}
+            {atleta && <p>Cédula {atleta.cedula} · {rangoTexto || 'Últimos 30 días'}</p>}
           </div>
           <button type="button" className="report-detail-close" onClick={onClose} aria-label="Cerrar detalle"><X size={18} /></button>
         </header>

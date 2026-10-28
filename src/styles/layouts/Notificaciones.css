@@ -1,0 +1,99 @@
+/* ============================================================
+   NOTIFICACIONES (reemplazan a alert). Solo variables del theme.
+   ============================================================ */
+.notificaciones {
+  position: fixed;
+  top: calc(var(--topbar-height, 70px) + 12px);
+  right: 16px;
+  z-index: 10001;
+  display: grid;
+  gap: 10px;
+  width: min(380px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.notificacion {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  overflow: hidden;
+  padding: 12px 12px 14px 14px;
+  border: 1px solid var(--border-main);
+  border-left: 4px solid var(--func-primary);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  box-shadow: var(--shadow-card);
+  pointer-events: auto;
+  animation: notificacion-entrar 0.25s ease-out;
+}
+
+.notificacion--exito { border-left-color: var(--state-success); }
+.notificacion--error { border-left-color: var(--state-danger); }
+.notificacion--aviso { border-left-color: var(--state-warning); }
+
+.notificacion__icono {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--func-primary);
+}
+
+.notificacion--exito .notificacion__icono { color: var(--state-success); }
+.notificacion--error .notificacion__icono { color: var(--state-danger); }
+.notificacion--aviso .notificacion__icono { color: var(--state-warning); }
+
+.notificacion__texto {
+  flex: 1;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.notificacion__cerrar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.notificacion__cerrar:hover {
+  background: var(--bg-surface);
+  color: var(--text-main);
+}
+
+/* Barra que se vacía en 5 segundos: muestra cuánto falta para que se cierre sola. */
+.notificacion__tiempo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--border-main);
+  transform-origin: left;
+  animation-name: notificacion-tiempo;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes notificacion-entrar {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes notificacion-tiempo {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notificacion { animation: none; }
+}

@@ -44,11 +44,7 @@ const SleepPendingView = ({
   pendingAthletes = [],
   allAthletes = [],
   onSaveSleep,
-  systemDate = new Date().toISOString().split('T')[0],
-  registrarRole = 'Administrador',
-  sleepPeriod = 'hoy',
-  setSleepPeriod,
-  showPeriodFilter = false,
+  systemDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' }),
   openRegistrationModal, // Prop de compatibilidad retroactiva si algún padre la envía
 }) => {
   // Sin una forma de guardar (admin sin permiso registrar_descanso) no se ofrece registrar.
@@ -173,7 +169,6 @@ const SleepPendingView = ({
         onCancel={() => setSelectedAthleteForReg(null)}
         isSaving={isSaving}
         systemDate={systemDate}
-        registrarRole={registrarRole}
       />
     );
   }
@@ -397,7 +392,7 @@ const SleepPendingView = ({
             <ul className="sl-pending-list" aria-label="Lista de atletas pendientes">
               {filteredPending.length > 0 ? (
                 filteredPending.map((athlete) => {
-                  const { fullName, cedula, area, subarea } = getAthleteInfo(athlete);
+                  const { fullName, cedula, subarea } = getAthleteInfo(athlete);
                   return (
                     <li className="sl-pending-item" key={athlete.id}>
                       <span className="sl-avatar sl-avatar--alert">
@@ -406,12 +401,9 @@ const SleepPendingView = ({
                       <div className="sl-pending-item__text">
                         <div className="sl-pending-item__header-row">
                           <span className="sl-pending-item__name">{fullName}</span>
-                          <span className="sl-pending-item__cedula">Cédula: {cedula}</span>
+                          <span className="sl-pending-item__cedula">Cédula: {cedula} · <span className="ref-usuario">Ref. {athlete.id}</span></span>
                         </div>
                         <div className="sl-pending-item__badges">
-                          <span className="sl-badge-area">
-                            <strong>Área:</strong> {area}
-                          </span>
                           <span className="sl-badge-subarea">
                             <strong>Sub área:</strong> {subarea}
                           </span>

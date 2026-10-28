@@ -7,7 +7,8 @@ import '../../styles/components/admin/RepresentantesViewAdmin.css';
 // Reglas de formato al editar (las mismas que valida el backend).
 const SOLO_LETRAS = /[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]/g;
 const NOMBRE_COMPLETO = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]{2,60}$/;
-const CEDULA_COMPLETA = /^\d{7,8}$/;
+// Cédula: de 1.000.000 a 49.999.999.
+const CEDULA_COMPLETA = /^(?:[1-9]\d{6}|[1-4]\d{7})$/;
 const TELEFONO_COMPLETO = /^0\d{10}$/;
 
 const nombreDe = (representante) => representante.nombre_completo || `${representante.nombre} ${representante.apellido}`.trim();
@@ -57,7 +58,7 @@ function EditarRepresentanteForm({ representante, onCancel, onGuardado }) {
     nombres: NOMBRE_COMPLETO.test(form.nombres.trim()) ? '' : 'Escribe al menos 2 letras.',
     apellidos: NOMBRE_COMPLETO.test(form.apellidos.trim()) ? '' : 'Escribe al menos 2 letras.',
     cedula: form.cedula === (representante.cedula || '') || CEDULA_COMPLETA.test(form.cedula)
-      ? '' : 'La cédula debe tener 7 u 8 números (ej. 12345678).',
+      ? '' : 'La cédula debe ser un número entre 1.000.000 y 49.999.999 (ej. 12345678).',
     telefono: form.telefono === (representante.tlf || '') || TELEFONO_COMPLETO.test(form.telefono)
       ? '' : 'El teléfono debe tener 11 números y empezar por 0 (ej. 04141234567).',
   };
@@ -157,7 +158,7 @@ function RepresentanteDrawer({ representante, puedeEditar, onClose, onGuardado }
           <div>
             <span className="representantes-drawer-kicker">{editando ? 'EDITAR REPRESENTANTE' : 'DETALLE DEL REPRESENTANTE'}</span>
             <h3 id="representantes-drawer-titulo">{nombreDe(representante)}</h3>
-            <p>C.I. {representante.cedula || '—'}</p>
+            <p>Cédula {representante.cedula || '—'}</p>
           </div>
           <button type="button" className="representantes-drawer-cerrar" onClick={onClose} aria-label="Cerrar">
             <X size={20} />
@@ -189,7 +190,7 @@ function RepresentanteDrawer({ representante, puedeEditar, onClose, onGuardado }
                     {atletas.map((atleta) => (
                       <li key={atleta.id}>
                         <strong>{atleta.nombre}</strong>
-                        <small>C.I. {atleta.cedula || '—'}{atleta.relacion ? ` · ${atleta.relacion}` : ''}</small>
+                        <small>Cédula {atleta.cedula || '—'}{atleta.relacion ? ` · ${atleta.relacion}` : ''}</small>
                       </li>
                     ))}
                   </ul>
@@ -278,7 +279,7 @@ const RepresentantesViewAdmin = () => {
       <table className="representantes-admin-tabla">
         <thead>
           <tr>
-            <th>Cédula / DNI</th>
+            <th>Cédula</th>
             <th>Nombre del Representante</th>
             <th>Teléfono</th>
             <th>Atleta(s) a cargo</th>
@@ -305,7 +306,7 @@ const RepresentantesViewAdmin = () => {
           <article className="representantes-admin-card" key={representante.id}>
             <h3 className="representantes-admin-nombre">{nombreDe(representante)}</h3>
             <dl>
-              <div><dt>Cédula / DNI</dt><dd className="representantes-admin-cedula">{representante.cedula || '—'}</dd></div>
+              <div><dt>Cédula</dt><dd className="representantes-admin-cedula">{representante.cedula || '—'}</dd></div>
               <div><dt>Teléfono</dt><dd>{representante.tlf || '—'}</dd></div>
               <div>
                 <dt>Atleta(s) a cargo</dt>

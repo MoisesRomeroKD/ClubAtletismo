@@ -167,7 +167,7 @@ const AdminEvaluacionesView = () => {
                   <tr key={fila.id}>
                     <td className="admin-evaluaciones-atleta">
                       {fila.nombre} {fila.apellido}
-                      <small>C.I. {fila.cedula}</small>
+                      <small>Cédula {fila.cedula}</small>
                     </td>
                     <td className="admin-evaluaciones-prueba">
                       {fila.prueba}
@@ -175,7 +175,7 @@ const AdminEvaluacionesView = () => {
                     </td>
                     <td className="admin-evaluaciones-resultado">{marca(fila)}</td>
                     <td>{formatFecha(fila.fecha)}</td>
-                    <td>{fila.area ? `${fila.area} · ` : ''}{fila.subarea}</td>
+                    <td>{fila.subarea}</td>
                     <td className="admin-evaluaciones-evaluador">{fila.entrenador || '—'}</td>
                   </tr>
                 ))}
@@ -189,14 +189,14 @@ const AdminEvaluacionesView = () => {
                   <header className="admin-evaluaciones-card-cabecera">
                     <div className="admin-evaluaciones-atleta">
                       {fila.nombre} {fila.apellido}
-                      <small>C.I. {fila.cedula}</small>
+                      <small>Cédula {fila.cedula}</small>
                     </div>
                     <span className="admin-evaluaciones-card-resultado">{marca(fila)}</span>
                   </header>
                   <dl className="admin-evaluaciones-card-datos">
                     <div><dt>Prueba</dt><dd>{fila.prueba}<small>{fila.criterio}</small></dd></div>
                     <div><dt>Fecha</dt><dd>{formatFecha(fila.fecha)}</dd></div>
-                    <div><dt>Subárea</dt><dd>{fila.area ? `${fila.area} · ` : ''}{fila.subarea}</dd></div>
+                    <div><dt>Subárea</dt><dd>{fila.subarea}</dd></div>
                     <div><dt>Entrenador</dt><dd>{fila.entrenador || '—'}</dd></div>
                   </dl>
                 </article>

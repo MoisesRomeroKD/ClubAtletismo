@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { pedirRevisionServidor } from './servidorEstado.js';
 
 const podApi = axios.create({
     baseURL: 'http://127.0.0.1:8000/api', 
@@ -102,6 +103,38 @@ podApi.interceptors.response.use(
             expireSession();
             return Promise.reject(refreshError);
         });
+    }
+);
+
+// Servidor encendiéndose: si una petición tarda mucho, no recibe respuesta o el servidor responde
+// 502/503/504, se pide revisar el estado. La pantalla "Iniciando servidor" solo aparece si /salud/
+// tampoco responde (así una petición lenta normal, como una carga masiva, no la muestra).
+const ESPERA_LENTA_MS = 6000;
+const terminarEspera = (config) => {
+    if (config?._esperaLenta) {
+        clearTimeout(config._esperaLenta);
+        config._esperaLenta = null;
+    }
+};
+
+podApi.interceptors.request.use((config) => {
+    terminarEspera(config);
+    config._esperaLenta = setTimeout(pedirRevisionServidor, ESPERA_LENTA_MS);
+    return config;
+});
+
+podApi.interceptors.response.use(
+    (response) => {
+        terminarEspera(response.config);
+        return response;
+    },
+    (error) => {
+        terminarEspera(error.config);
+        const sinRespuesta = !error.response && error.code !== 'ERR_CANCELED';
+        if (sinRespuesta || [502, 503, 504].includes(error.response?.status)) {
+            pedirRevisionServidor();
+        }
+        return Promise.reject(error);
     }
 );
 

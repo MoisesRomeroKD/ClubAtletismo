@@ -138,7 +138,8 @@ function DataPoint({ label, value }) {
 // Reglas de formato al editar (las mismas que valida el backend).
 const SOLO_LETRAS = /[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]/g;
 const NOMBRE_COMPLETO = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]{2,60}$/;
-const CEDULA_COMPLETA = /^\d{7,8}$/;
+// Cédula: de 1.000.000 a 49.999.999.
+const CEDULA_COMPLETA = /^(?:[1-9]\d{6}|[1-4]\d{7})$/;
 const TELEFONO_COMPLETO = /^0\d{10}$/;
 const GMAIL = /^[a-z0-9](?:\.?[a-z0-9])*@gmail\.com$/;
 const RELACIONES = [
@@ -151,11 +152,11 @@ const TIPO_CAMPO = {
 };
 
 // Último día permitido como fecha de nacimiento: ayer, en hora local (AAAA-MM-DD).
-const ayerLocal = () => {
-  const fecha = new Date();
-  fecha.setDate(fecha.getDate() - 1);
-  return fecha.toLocaleDateString('en-CA');
-};
+// Edad mínima del atleta: 9 años. Se acepta hasta el 31/12 de (año actual - 9).
+// Ej.: en 2026 se puede elegir 2017 o antes; 2020 no.
+const EDAD_MINIMA_ATLETA = 9;
+const anioMaximoNacimiento = () => Number(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' }).slice(0, 4)) - EDAD_MINIMA_ATLETA;
+const maxNacimiento = () => `${anioMaximoNacimiento()}-12-31`;
 
 // Mientras se escribe, cada campo descarta lo que no le corresponde y devuelve el aviso.
 const limpiarCampo = (campo, valor) => {
@@ -230,8 +231,13 @@ function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
     setSubareasTocadas(true);
     setElegidas((actuales) => {
       const nuevas = { ...actuales };
-      if (id in nuevas) delete nuevas[id];
-      else nuevas[id] = { turno: 'manana', entrenador: '' };
+      if (id in nuevas) {
+        delete nuevas[id];
+      } else {
+        // Si la subárea tiene un solo entrenador queda preseleccionado.
+        const entrenadores = subareaPorId[id]?.entrenadores || [];
+        nuevas[id] = { turno: 'manana', entrenador: entrenadores.length === 1 ? String(entrenadores[0].id) : '' };
+      }
       return nuevas;
     });
   };
@@ -242,10 +248,8 @@ function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
     setElegidas((actuales) => ({ ...actuales, [id]: { ...actuales[id], [campo]: valor } }));
   };
 
-  // Con más de un entrenador en la subárea hay que elegir uno.
-  const faltaEntrenador = subareasTocadas && Object.entries(elegidas).some(([id, fila]) => (
-    (subareaPorId[id]?.entrenadores?.length || 0) > 1 && !fila.entrenador
-  ));
+  // Cada subárea necesita su entrenador (sin entrenador asignado el atleta no le aparece a nadie).
+  const faltaEntrenador = subareasTocadas && Object.values(elegidas).some((fila) => !fila.entrenador);
 
   const cambiar = (campo, valor) => {
     const [limpio, rechazo] = limpiarCampo(campo, valor);
@@ -260,16 +264,16 @@ function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
     apellidos: NOMBRE_COMPLETO.test(form.apellidos.trim()) ? '' : 'Escribe al menos 2 letras.',
     // Si no se cambió, no se revisa: así se pueden guardar otros datos aunque la cédula guardada tenga otro formato.
     cedula: form.cedula === (atleta.cedula || '') || CEDULA_COMPLETA.test(form.cedula)
-      ? '' : 'La cédula debe tener 7 u 8 números (ej. 12345678).',
+      ? '' : 'La cédula debe ser un número entre 1.000.000 y 49.999.999 (ej. 12345678).',
     correo: form.correo === (atleta.email || '').toLowerCase() || GMAIL.test(form.correo)
       ? '' : 'Solo se aceptan correos de Gmail (ej. nombre@gmail.com).',
-    fecha_nacimiento: form.fecha_nacimiento && form.fecha_nacimiento <= ayerLocal()
-      ? '' : 'Indica una fecha de nacimiento anterior a hoy.',
+    fecha_nacimiento: form.fecha_nacimiento && form.fecha_nacimiento <= maxNacimiento()
+      ? '' : `El atleta debe tener al menos ${EDAD_MINIMA_ATLETA} años: nacido en ${anioMaximoNacimiento()} o antes.`,
     rep_nombres: !conRep || NOMBRE_COMPLETO.test(form.rep_nombres.trim()) ? '' : 'Escribe al menos 2 letras.',
     rep_apellidos: !conRep || NOMBRE_COMPLETO.test(form.rep_apellidos.trim()) ? '' : 'Escribe al menos 2 letras.',
     rep_telefono: !conRep || TELEFONO_COMPLETO.test(form.rep_telefono)
       ? '' : 'El teléfono debe tener 11 números y empezar por 0 (ej. 04141234567).',
-    rep_cedula: !agregarRep || CEDULA_COMPLETA.test(form.rep_cedula) ? '' : 'La cédula debe tener 7 u 8 números (ej. 12345678).',
+    rep_cedula: !agregarRep || CEDULA_COMPLETA.test(form.rep_cedula) ? '' : 'La cédula debe ser un número entre 1.000.000 y 49.999.999 (ej. 12345678).',
   };
   const aviso = (campo) => rechazos[campo] || erroresServidor[campo] || errorFormato[campo] || '';
   const hayErrores = Object.values(errorFormato).some(Boolean) || faltaEntrenador;
@@ -342,7 +346,7 @@ function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
           {campo('nombres', 'Nombres', { type: 'text', maxLength: 60 })}
           {campo('apellidos', 'Apellidos', { type: 'text', maxLength: 60 })}
           {campo('cedula', 'Cédula', { type: 'text', inputMode: 'numeric', placeholder: 'Ej. 12345678' })}
-          {campo('fecha_nacimiento', 'Fecha de nacimiento', { type: 'date', max: ayerLocal() })}
+          {campo('fecha_nacimiento', 'Fecha de nacimiento', { type: 'date', max: maxNacimiento() })}
           <div className="atletas-editar-campo">
             <label htmlFor="atleta-editar-sexo">Sexo</label>
             <select id="atleta-editar-sexo" value={form.sexo} onChange={(event) => setForm((previo) => ({ ...previo, sexo: event.target.value }))}>
@@ -386,7 +390,7 @@ function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
                           <option value="tarde">Tarde</option>
                           <option value="noche">Noche</option>
                         </select>
-                        {entrenadores.length > 1 ? (
+                        {entrenadores.length ? (
                           <select
                             className={`atletas-subareas-turno${fila.entrenador ? '' : ' atletas-editar-input--error'}`}
                             aria-label={`Entrenador en ${subarea.nombre}`}
@@ -399,8 +403,8 @@ function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
                             ))}
                           </select>
                         ) : (
-                          <span className="atletas-subareas-entrenador">
-                            {entrenadores.length ? `Entrenador: ${entrenadores[0].nombre}` : 'Sin entrenador en esta subárea'}
+                          <span className="atletas-subareas-entrenador atletas-editar-aviso">
+                            Sin entrenadores habilitados: asígnale uno en Entrenadores.
                           </span>
                         )}
                       </div>
@@ -411,7 +415,7 @@ function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
             </fieldset>
           ))}
           {faltaEntrenador && (
-            <small className="atletas-editar-aviso" role="alert">Elige el entrenador en las subáreas que tienen más de uno.</small>
+            <small className="atletas-editar-aviso" role="alert">Cada subárea marcada necesita su entrenador.</small>
           )}
         </div>
 
@@ -508,7 +512,7 @@ function PerfilDrawer({ atleta, onClose, puedeEditar, onGuardado }) {
                 <div className="atletas-adm-drawer-avatar">{iniciales(atleta.name)}</div>
                 <div>
                   <h2 className="atletas-adm-drawer-nombre">{atleta.name || '-'}</h2>
-                  <p className="atletas-adm-drawer-cedula">C.I. {atleta.cedula || '-'}</p>
+                  <p className="atletas-adm-drawer-cedula">Cédula {atleta.cedula || '-'}</p>
                 </div>
               </div>
 
@@ -757,8 +761,8 @@ const AtletasViewAdmin = () => {
             <table className="atletas-adm-tabla">
               <thead>
                 <tr>
+                  <th>Ref.</th>
                   <th>Nombre</th>
-                  <th>Área</th>
                   <th>Subárea</th>
                   <th>Entrenador</th>
                   <th>Familiar / Contacto</th>
@@ -769,12 +773,10 @@ const AtletasViewAdmin = () => {
               <tbody>
                 {atletas.map((item, idx) => (
                   <tr key={item.user_id ?? idx}>
+                    <td className="ref-usuario">{item.user_id}</td>
                     <td>
                       <div className="atletas-adm-nombre">{item.name || '-'}</div>
-                      <div className="atletas-adm-cedula">C.I. {item.cedula || '-'}</div>
-                    </td>
-                    <td>
-                      <span className="atletas-adm-badge">{item.area || '—'}</span>
+                      <div className="atletas-adm-cedula">Cédula {item.cedula || '-'}</div>
                     </td>
                     <td>
                       <span className="atletas-adm-badge">{item.subarea_nombre_principal || '—'}</span>
@@ -805,16 +807,12 @@ const AtletasViewAdmin = () => {
                     <div className="atletas-adm-avatar">{iniciales(item.name)}</div>
                     <div>
                       <h3 className="atletas-adm-card-nombre">{item.name || '-'}</h3>
-                      <p className="atletas-adm-card-cedula">C.I. {item.cedula || '-'}</p>
+                      <p className="atletas-adm-card-cedula">Cédula {item.cedula || '-'} · <span className="ref-usuario">Ref. {item.user_id}</span></p>
                     </div>
                   </div>
                 </div>
 
                 <div className="atletas-adm-card-grid">
-                  <div>
-                    <p className="atletas-adm-card-label">ÁREA</p>
-                    <p className="atletas-adm-card-valor">{item.area || '—'}</p>
-                  </div>
                   <div>
                     <p className="atletas-adm-card-label">SUBÁREA</p>
                     <p className="atletas-adm-card-valor">{item.subarea_nombre_principal || '—'}</p>

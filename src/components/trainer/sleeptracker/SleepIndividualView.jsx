@@ -12,7 +12,7 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { Search, Zap, CheckCircle2, TrendingUp, AlertCircle, CalendarDays, SlidersHorizontal, X } from 'lucide-react';
+import { Search, Zap, CheckCircle2, TrendingUp, AlertCircle, CalendarDays, SlidersHorizontal, X, ChevronLeft, ChevronRight, ArrowLeft, Eye } from 'lucide-react';
 import UserService from '../../../api/services/Userservice';
 import '../../../styles/components/trainer/SleepModuleTheme.css';
 import '../../../styles/components/trainer/SleepIndividualView.css';
@@ -28,6 +28,9 @@ const coincidePersona = (texto, nombre, cedula) => {
   const nombreNormalizado = normalizarTexto(nombre);
   return normalizarTexto(buscado).split(/\s+/).every((palabra) => nombreNormalizado.includes(palabra));
 };
+
+// Lista de atletas del administrador: 15 por página.
+const ATLETAS_POR_PAGINA = 15;
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
@@ -59,6 +62,7 @@ const SleepIndividualView = ({
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
   const [adminCedula, setAdminCedula] = useState('');
   const [adminAthlete, setAdminAthlete] = useState(null);
+  const [paginaLista, setPaginaLista] = useState(1);
   const [athleteSearchMessage, setAthleteSearchMessage] = useState('');
   const [dateRangeMessage, setDateRangeMessage] = useState('');
   const [rangeRecords, setRangeRecords] = useState([]);
@@ -193,6 +197,27 @@ const SleepIndividualView = ({
   ];
 
   if (adminMode) {
+    // Al elegir un atleta (por búsqueda o desde la lista) se abre su detalle.
+    const abrirAtleta = (athlete) => {
+      setAdminAthlete(athlete);
+      setAthleteSearchMessage('');
+      setDateRangeMessage('');
+      setAppliedDateRange({ start: rangeStart, end: rangeEnd });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // La lista se filtra mientras se escribe en el buscador (cédula o nombre).
+    const atletasLista = athletes
+      .filter((candidate) => coincidePersona(adminCedula, candidate.name, candidate.cedula))
+      .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'es'));
+    const totalPaginasLista = Math.max(1, Math.ceil(atletasLista.length / ATLETAS_POR_PAGINA));
+    const paginaActual = Math.min(paginaLista, totalPaginasLista);
+    const atletasPagina = atletasLista.slice((paginaActual - 1) * ATLETAS_POR_PAGINA, paginaActual * ATLETAS_POR_PAGINA);
+    const registroDeHoy = new Set(
+      sleepRecords.filter((record) => record.date === systemDate).map((record) => record.athleteId)
+    );
+    const subareasTexto = (athlete) => (athlete.subareas?.length ? athlete.subareas.join(', ') : '—');
+
     const searchAdminAthlete = (event) => {
       event.preventDefault();
       const texto = adminCedula.trim();
@@ -218,12 +243,7 @@ const SleepIndividualView = ({
         setAthleteSearchMessage(`Hay ${coincidencias.length} atletas que coinciden: escriba el nombre completo o la cédula.`);
         return;
       }
-      const athlete = coincidencias[0];
-
-      setAdminAthlete(athlete);
-      setAthleteSearchMessage('');
-      setDateRangeMessage('');
-      setAppliedDateRange({ start: rangeStart, end: rangeEnd });
+      abrirAtleta(coincidencias[0]);
     };
 
     const consultDateRange = (event) => {
@@ -289,18 +309,12 @@ const SleepIndividualView = ({
     return (
       <div className="sleep-individual-view sleep-individual-view--admin">
         <div className="sl-scroll-area">
-          <header className="sl-individual-admin__heading">
-            <span className="admin-sleep-dashboard__eyebrow">CONSULTA INDIVIDUAL</span>
-            <h2>Detalle de sueño del atleta</h2>
-            <p>Consulta los registros reales de descanso y su evolución en el tiempo.</p>
-          </header>
-
           <section className="sl-card sl-individual-admin__search-card" aria-labelledby="admin-sleep-athlete-search">
             <div className="sl-individual-admin__section-heading">
               <div className="sl-individual-admin__section-icon"><Search size={18} /></div>
               <div>
                 <h3 id="admin-sleep-athlete-search">Buscar atleta</h3>
-                <p>Escribe o pega la cédula para consultar su información.</p>
+                <p>Escribe la cédula o el nombre para filtrar la lista, o elige un atleta de la lista.</p>
               </div>
             </div>
             <form className="sl-individual-admin__search-form" onSubmit={searchAdminAthlete}>
@@ -312,6 +326,7 @@ const SleepIndividualView = ({
                   onChange={(event) => {
                     setAdminCedula(event.target.value);
                     setAthleteSearchMessage('');
+                    setPaginaLista(1);
                   }}
                   placeholder="Ej.: 12345678 o Ana Pérez"
                   autoComplete="off"
@@ -329,8 +344,90 @@ const SleepIndividualView = ({
             )}
           </section>
 
+          {!adminAthlete && (
+            <section className="sl-card sl-individual-lista" aria-label="Atletas">
+              <div className="sl-individual-lista__barra">
+                <span className="sl-individual-lista__total">
+                  {atletasLista.length} atleta{atletasLista.length === 1 ? '' : 's'} · {ATLETAS_POR_PAGINA} por página
+                </span>
+                <div className="sl-individual-lista__paginacion">
+                  <button type="button" className="sl-btn sl-btn-secondary sl-btn-sm" onClick={() => setPaginaLista(paginaActual - 1)} disabled={paginaActual <= 1}>
+                    <ChevronLeft size={16} aria-hidden="true" />Anterior
+                  </button>
+                  <span>Página {paginaActual} de {totalPaginasLista}</span>
+                  <button type="button" className="sl-btn sl-btn-secondary sl-btn-sm" onClick={() => setPaginaLista(paginaActual + 1)} disabled={paginaActual >= totalPaginasLista}>
+                    Siguiente<ChevronRight size={16} aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+
+              {!atletasPagina.length ? (
+                <p className="sl-individual-lista__vacio">No hay atletas que coincidan con la búsqueda.</p>
+              ) : (
+                <div className="responsive-list">
+                  <div className="responsive-list__table">
+                    <table className="sl-individual-lista__tabla">
+                      <thead>
+                        <tr>
+                          <th>Ref.</th>
+                          <th>Nombre</th>
+                          <th>Cédula</th>
+                          <th>Subárea</th>
+                          <th>Categoría</th>
+                          <th>Hoy</th>
+                          <th><span className="sl-individual-lista__oculto">Detalle</span></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {atletasPagina.map((athlete) => (
+                          <tr key={athlete.id}>
+                            <td className="ref-usuario">{athlete.id}</td>
+                            <td className="sl-individual-lista__nombre">{athlete.name || '—'}</td>
+                            <td>{athlete.cedula || '—'}</td>
+                            <td>{subareasTexto(athlete)}</td>
+                            <td>{athlete.category || '—'}</td>
+                            <td>
+                              <span className={`sl-individual-lista__estado${registroDeHoy.has(athlete.id) ? ' is-ok' : ''}`}>
+                                {registroDeHoy.has(athlete.id) ? 'Registrado' : 'Pendiente'}
+                              </span>
+                            </td>
+                            <td>
+                              <button type="button" className="sl-btn sl-btn-secondary sl-btn-sm" onClick={() => abrirAtleta(athlete)}>
+                                <Eye size={15} aria-hidden="true" />Ver detalle
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <ul className="responsive-list__cards sl-individual-lista__cards">
+                    {atletasPagina.map((athlete) => (
+                      <li key={athlete.id} className="sl-individual-lista__card">
+                        <div className="sl-individual-lista__card-cabecera">
+                          <strong>{athlete.name || '—'}</strong>
+                          <span className={`sl-individual-lista__estado${registroDeHoy.has(athlete.id) ? ' is-ok' : ''}`}>
+                            {registroDeHoy.has(athlete.id) ? 'Registrado' : 'Pendiente'}
+                          </span>
+                        </div>
+                        <span>Cédula {athlete.cedula || '—'} · <span className="ref-usuario">Ref. {athlete.id}</span></span>
+                        <span>Subárea: {subareasTexto(athlete)} · Categoría: {athlete.category || '—'}</span>
+                        <button type="button" className="sl-btn sl-btn-secondary sl-btn-sm" onClick={() => abrirAtleta(athlete)}>
+                          <Eye size={15} aria-hidden="true" />Ver detalle
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </section>
+          )}
+
           {adminAthlete && (
             <>
+              <button type="button" className="sl-btn sl-btn-secondary sl-individual-lista__volver" onClick={() => setAdminAthlete(null)}>
+                <ArrowLeft size={16} aria-hidden="true" />Volver a la lista
+              </button>
               <section className="sl-card sl-individual-admin__profile" aria-labelledby="admin-sleep-athlete-name">
                 <div className="sl-individual-admin__profile-main">
                   <div className="sl-individual-admin__avatar">

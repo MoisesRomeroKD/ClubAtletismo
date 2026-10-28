@@ -155,6 +155,7 @@ export default function AthleteDashboard({ onActionChange, onLogout, isDarkMode,
           {/* VISTA SUEÑO */}
           {effectiveAction === 'sueno' && (
             <SleepQualityDashboard
+              historial={sleepData}
               onRegistrado={() => {
                 UserService.getSleepHistoryByAthlete(userData.id)
                   .then((res) => {

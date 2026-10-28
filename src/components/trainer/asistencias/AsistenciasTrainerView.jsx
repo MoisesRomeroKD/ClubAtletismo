@@ -564,9 +564,9 @@ const DashboardView = ({
             <table className="athletes-table">
               <thead>
                 <tr>
-                  <th>Cédula</th>
+                  <th>Ref.</th>
                   <th>Atleta</th>
-                  <th>Área / Sub</th>
+                  <th>Subárea</th>
                   <th className="text-center">Sesiones</th>
                   <th className="text-center">Asist. / Inasist.</th>
                   <th className="text-right">% Asist.</th>
@@ -575,11 +575,11 @@ const DashboardView = ({
               <tbody>
                 {athleteStats.length > 0 ? athleteStats.map((at) => (
                   <tr key={at.id} onClick={() => onSelectAthlete(at.id)}>
-                    <td className="font-id">{at.id}</td>
+                    <td className="font-id ref-usuario">{at.id}</td>
                     <td className="font-name">{at.name}</td>
                     <td>
                       <div className="cell-subarea">{at.subarea}</div>
-                      <div className="cell-meta">{at.area} • {at.category}</div>
+                      <div className="cell-meta">{at.category}</div>
                     </td>
                     <td className="text-center font-sessions">{at.total}</td>
                     <td className="text-center">
@@ -606,7 +606,7 @@ const DashboardView = ({
                 <div className="mobile-card-top">
                   <div>
                     <h4 className="mobile-card-name">{at.name}</h4>
-                    <span className="mobile-card-id">{at.id}</span>
+                    <span className="mobile-card-id ref-usuario">Ref. {at.id}</span>
                   </div>
                   <div className={`mobile-card-pct ${at.attPct >= 80 ? 'text-emerald' : at.attPct >= 60 ? 'text-amber' : 'text-rose'}`}>
                     {at.attPct.toFixed(0)}%

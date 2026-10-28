@@ -82,7 +82,7 @@ const ProfileDrawer = ({ athlete, onClose, onPrev, onNext, hasPrev, hasNext, ind
           <div className="atletas-perfil-avatar">{initials(`${athlete.nombres} ${athlete.apellidos}`)}</div>
           <div>
             <h2 className="atletas-perfil-name">{`${athlete.nombres} ${athlete.apellidos}`.trim() || 'Atleta'}</h2>
-            <p className="atletas-perfil-cedula">C.I. {athlete.cedula || '-'}</p>
+            <p className="atletas-perfil-cedula">Cédula {athlete.cedula || '-'}</p>
           </div>
         </div>
 
@@ -100,6 +100,7 @@ const ProfileDrawer = ({ athlete, onClose, onPrev, onNext, hasPrev, hasNext, ind
             <span className="atletas-data-point-value"><EstadoBadge estado={athlete.estado} /></span>
           </div>
           <DataPoint label="Categoría" value={athlete.categoria} />
+          <DataPoint label="Área" value={athlete.area} />
           <DataPoint label="Subárea" value={athlete.subarea} />
           <DataPoint label="Especialidad" value={athlete.especialidad} />
         </div>
@@ -385,14 +386,15 @@ export default function AtletasViewTrainer() {
             >
               <table className="atletas-tabla">
                 <thead>
-                  <tr><th>Nombre</th><th>Subárea</th><th>Categoría</th><th>Estado</th><th>Contacto</th><th>Acción</th></tr>
+                  <tr><th>Ref.</th><th>Nombre</th><th>Subárea</th><th>Categoría</th><th>Estado</th><th>Contacto</th><th>Acción</th></tr>
                 </thead>
                 <tbody>
                   {athletes.map((athlete) => (
                     <tr key={athlete.id}>
+                      <td className="ref-usuario">{athlete.id}</td>
                       <td>
                         <div className="atletas-tabla-nombre">{`${athlete.nombres} ${athlete.apellidos}`.trim() || '-'}</div>
-                        <div className="atletas-tabla-cedula">C.I. {athlete.cedula || '-'}</div>
+                        <div className="atletas-tabla-cedula">Cédula {athlete.cedula || '-'}</div>
                       </td>
                       <td><span className="atletas-tabla-subarea-badge">{athlete.subarea || '—'}</span></td>
                       <td>{athlete.categoria || '—'}</td>
@@ -425,7 +427,7 @@ export default function AtletasViewTrainer() {
                       <div className="atletas-perfil-avatar">{initials(`${athlete.nombres} ${athlete.apellidos}`)}</div>
                       <div>
                         <h2>{`${athlete.nombres} ${athlete.apellidos}`.trim() || '-'}</h2>
-                        <small>C.I. {athlete.cedula || '-'}</small>
+                        <small>Cédula {athlete.cedula || '-'} · <span className="ref-usuario">Ref. {athlete.id}</span></small>
                       </div>
                     </div>
                     <div className="atletas-trainer-card-grid">

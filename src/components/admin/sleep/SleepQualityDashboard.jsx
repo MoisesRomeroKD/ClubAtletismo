@@ -6,8 +6,6 @@ import CargaCircular from '../../layout/CargaCircular';
 
 const SleepGeneralView = lazy(() => import('../../trainer/sleeptracker/SleepGeneralView'));
 const SleepIndividualView = lazy(() => import('../../trainer/sleeptracker/SleepIndividualView'));
-const SleepPendingView = lazy(() => import('../../trainer/sleeptracker/SleepPendingView'));
-const SleepAuditView = lazy(() => import('../../trainer/sleeptracker/SleepAuditView'));
 const SleepAthleteDetailPanel = lazy(() => import('../../trainer/sleeptracker/SleepAthleteDetailPanel'));
 const SleepRegistrationView = lazy(() => import('../../trainer/sleeptracker/SleepRegistrationView'));
 
@@ -19,15 +17,6 @@ const PERIOD_DAYS = {
   quarter: 90,
   semester: 180,
   year: 365,
-};
-const SLEEP_PERIOD_DAYS = {
-  hoy: 0,
-  ayer: 1,
-  semana: 7,
-  mes: 30,
-  '3meses': 90,
-  '6meses': 180,
-  anio: 365,
 };
 
 function getCaracasDate() {
@@ -115,7 +104,6 @@ export default function SleepQualityDashboard({
   const [loadError, setLoadError] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
   const [timeRange, setTimeRange] = useState('week');
-  const [sleepPeriod, setSleepPeriod] = useState('hoy');
   const [filters, setFilters] = useState({ search: '', area: 'all', status: 'all' });
   const [selectedIndividualId, setSelectedIndividualId] = useState(null);
   const [selectedAthleteForReg, setSelectedAthleteForReg] = useState(null);
@@ -179,31 +167,6 @@ export default function SleepQualityDashboard({
     }),
     [athletes, filters, sleepRecords, systemDate]
   );
-
-  const pendingAthletes = useMemo(() => {
-    const rangeStart = sleepPeriod === 'historico'
-      ? null
-      : addDays(systemDate, -(SLEEP_PERIOD_DAYS[sleepPeriod] || 0));
-    const registeredIds = new Set(
-      sleepRecords
-        .filter((record) => (
-          (!rangeStart || record.date >= rangeStart)
-          && (sleepPeriod !== 'ayer' || record.date === rangeStart)
-          && record.date <= systemDate
-        ))
-        .map((record) => record.athleteId)
-    );
-    return athletes.filter((athlete) => !registeredIds.has(athlete.id));
-  }, [athletes, sleepPeriod, sleepRecords, systemDate]);
-
-  const pendingTodayAthletes = useMemo(() => {
-    const registeredTodayIds = new Set(
-      sleepRecords
-        .filter((record) => record.date === systemDate)
-        .map((record) => record.athleteId)
-    );
-    return athletes.filter((athlete) => !registeredTodayIds.has(athlete.id));
-  }, [athletes, sleepRecords, systemDate]);
 
   const dashboardStats = useMemo(() => {
     const todayRecords = sleepRecords.filter((record) => record.date === systemDate);
@@ -311,7 +274,6 @@ export default function SleepQualityDashboard({
             }}
             onCancel={() => setSelectedAthleteForReg(null)}
             systemDate={systemDate}
-            registrarRole="Administrador"
             qualityColor={qualityColor}
           />
         )}
@@ -351,36 +313,12 @@ export default function SleepQualityDashboard({
             filters={filters}
             setFilters={setFilters}
             filteredAthletes={filteredAthletes}
-            pendingAthletes={pendingAthletes}
             getAthleteStats={getAthleteStats}
             openRegistrationModal={openRegistration}
             onOpenPanel={setSelectedAthleteForPanel}
           />
         )}
 
-        {!registrando && selectedSection === 'sueño_pendientes' && (
-          <SleepPendingView
-            pendingAthletes={pendingTodayAthletes}
-            allAthletes={athletes}
-            onSaveSleep={puedeRegistrarSueno ? handleSaveSleep : undefined}
-            systemDate={systemDate}
-            registrarRole="Administrador"
-            sleepPeriod={sleepPeriod}
-            setSleepPeriod={setSleepPeriod}
-            showPeriodFilter={false}
-          />
-        )}
-
-        {!registrando && selectedSection === 'sueño_auditoria' && (
-          <SleepAuditView
-            recordsData={sleepRecords}
-            pendingAthletes={pendingAthletes}
-            athletes={athletes}
-            systemDate={systemDate}
-            openRegistrationModal={openRegistration}
-            onOpenPanel={setSelectedAthleteForPanel}
-          />
-        )}
       </Suspense>
 
       <Suspense fallback={null}>

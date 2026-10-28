@@ -1,7 +1,7 @@
 .prerregistros-pendientes__search {
   position: relative;
-  width: min(100%, 640px);
-  margin: 0.5rem 0 0.75rem;
+  flex: 0 1 420px;
+  min-width: min(100%, 260px);
 }
 
 .prerregistros-pendientes__search-icon {
@@ -16,7 +16,7 @@
 .prerregistros-pendientes__search-input {
   box-sizing: border-box;
   width: 100%;
-  min-height: 50px;
+  min-height: 44px;
   padding: 0.75rem 1rem 0.75rem 2.9rem;
   border: 1px solid var(--border-main);
   border-radius: 8px;
@@ -86,4 +86,95 @@
     gap: 0.5rem;
     padding: 0.75rem 0.25rem;
   }
+}
+
+
+/* Título a la izquierda y buscador a la derecha */
+.prerregistros-pendientes__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin-bottom: 16px;
+}
+
+.prerregistros-pendientes__cabecera h2 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.prerregistros-pendientes__pagination {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 0.75rem 0;
+}
+
+.prerregistros-pendientes__pagination-botones {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.prerregistros-pendientes__total {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.prerregistros-pendientes__vacio {
+  margin: 0;
+  padding: 1.5rem 1rem;
+  border: 1px dashed var(--border-main);
+  border-radius: 10px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Celular: tarjetas compactas */
+.prerregistros-pendientes__cards {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.prerregistros-pendientes__card {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-size: 13px;
+}
+
+.prerregistros-pendientes__card > span {
+  color: var(--text-muted);
+}
+
+.prerregistros-pendientes__card-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  .prerregistros-pendientes__search {
+    flex-basis: 100%;
+  }
+
+  .prerregistros-pendientes__pagination-botones {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.prerregistros-pendientes__card + .prerregistros-pendientes__card {
+  margin-top: 10px;
 }

@@ -27,8 +27,7 @@ export default function SleepRegistrationView({
   onSave,
   onCancel,
   isSaving = false,
-  systemDate = new Date().toISOString().split('T')[0],
-  registrarRole = 'Administrador',
+  systemDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' }),
   qualityColor = defaultQualityColor,
   // Modo atleta: registra su propio sueño, así que no se muestran sus datos de solo lectura.
   modoAtleta = false,
@@ -96,13 +95,7 @@ export default function SleepRegistrationView({
         {/* Cabecera del Formulario */}
         <div className="sl-card-header sl-reg-header">
           <div>
-            <span className="sl-module-heading__eyebrow">MÓDULO DE SUEÑO Y DESCANSO</span>
             <h2 className="sl-card-title">Registrar Sueño</h2>
-            <p className="sl-reg-subtitle">
-              {modoAtleta
-                ? 'Indica cómo dormiste anoche.'
-                : 'Complete la métrica diaria de fatiga percibida para el atleta seleccionado.'}
-            </p>
           </div>
           {onCancel && (
             <button
@@ -247,43 +240,12 @@ export default function SleepRegistrationView({
                 <span>10 · Óptimo</span>
               </div>
             </div>
-
-            {/* Botones de Selección Rápida 1 a 10 */}
-            <div className="sl-quick-quality-buttons" role="group" aria-label="Selección rápida de nivel de sueño">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
-                const isSelected = selectedQuality === num;
-                const numColor = qualityColor(num);
-                return (
-                  <button
-                    key={num}
-                    type="button"
-                    className={`sl-quick-btn ${isSelected ? 'is-selected' : ''}`}
-                    onClick={() => setSelectedQuality(num)}
-                    disabled={busy}
-                    style={
-                      isSelected
-                        ? {
-                            backgroundColor: numColor,
-                            borderColor: numColor,
-                            color: '#ffffff',
-                          }
-                        : {}
-                    }
-                  >
-                    {num}
-                  </button>
-                );
-              })}
-            </div>
           </div>
 
           {/* Metadata y Nota de Auditoría */}
           <div className="sl-reg-meta-bar">
             <span className="sl-reg-meta-item">
-              Fecha asignada: <strong>{systemDate}</strong>
-            </span>
-            <span className="sl-reg-meta-item">
-              Registrado por: <strong>{registrarRole}</strong>
+              Fecha: <strong>{systemDate}</strong>
             </span>
           </div>
 

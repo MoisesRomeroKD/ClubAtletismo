@@ -640,3 +640,147 @@ body.dark-mode .sleep-individual-view {
     flex-basis: 100%;
   }
 }
+
+/* Lista de atletas del administrador (15 por página) */
+.sl-individual-lista {
+  display: grid;
+  gap: 12px;
+}
+
+.sl-individual-lista__barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.sl-individual-lista__total {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.sl-individual-lista__paginacion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.sl-individual-lista__paginacion button,
+.sl-individual-lista__card button,
+.sl-individual-lista__tabla button,
+.sl-individual-lista__volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sl-individual-lista__paginacion button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sl-individual-lista__tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.sl-individual-lista__tabla th {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-main);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.sl-individual-lista__tabla td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-main);
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.sl-individual-lista__nombre {
+  font-weight: 600;
+}
+
+.sl-individual-lista__oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.sl-individual-lista__estado {
+  display: inline-block;
+  padding: 2px 10px;
+  border: 1px solid var(--border-main);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sl-individual-lista__estado.is-ok {
+  border-color: var(--func-primary);
+  color: var(--text-main);
+}
+
+.sl-individual-lista__cards {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sl-individual-lista__card {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.sl-individual-lista__card-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.sl-individual-lista__card button {
+  justify-self: start;
+}
+
+.sl-individual-lista__vacio {
+  margin: 0;
+  padding: 1.25rem;
+  border: 1px dashed var(--border-main);
+  border-radius: 10px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.sl-individual-lista__volver {
+  width: fit-content;
+}
+
+@media (max-width: 640px) {
+  .sl-individual-lista__paginacion {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

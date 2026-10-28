@@ -294,6 +294,31 @@ const RolesPermisos = () => {
         <h2 className="roles-gestion-titulo">
           Roles y Permisos
         </h2>
+        {/* Filtros y buscador a la derecha del título */}
+        <div className="roles-gestion-controles">
+          <button type="button" className="filtros-fab" onClick={() => setFiltrosAbiertos(true)}>
+            <SlidersHorizontal size={18} aria-hidden="true" />Filtros
+          </button>
+          {filtrosAbiertos && createPortal(
+            <div className="filtros-sheet" role="dialog" aria-modal="true" aria-label="Filtros">
+              <header className="filtros-sheet__header">
+                <h2>Filtros</h2>
+                <button type="button" className="filtros-sheet__cerrar" onClick={() => setFiltrosAbiertos(false)} aria-label="Cerrar filtros">
+                  <X size={18} />
+                </button>
+              </header>
+              <div className="filtros-sheet__body">
+                {controlesFiltro1}
+              </div>
+              <footer className="filtros-sheet__footer">
+                <button type="button" className="filtros-sheet__btn" onClick={() => setFiltrosAbiertos(false)}>Cerrar</button>
+                <button type="button" className="filtros-sheet__btn filtros-sheet__btn--primario" onClick={() => setFiltrosAbiertos(false)}>Aplicar filtros</button>
+              </footer>
+            </div>,
+            document.body,
+          )}
+          <div className="filtros-escritorio">{controlesFiltro1}</div>
+        </div>
       </div>
 
       {isLoading ? (
@@ -302,31 +327,6 @@ const RolesPermisos = () => {
         </div>
       ) : (
         <>
-          <div className="roles-gestion-controles">
-            <button type="button" className="filtros-fab" onClick={() => setFiltrosAbiertos(true)}>
-              <SlidersHorizontal size={18} aria-hidden="true" />Filtros
-            </button>
-            {filtrosAbiertos && createPortal(
-              <div className="filtros-sheet" role="dialog" aria-modal="true" aria-label="Filtros">
-                <header className="filtros-sheet__header">
-                  <h2>Filtros</h2>
-                  <button type="button" className="filtros-sheet__cerrar" onClick={() => setFiltrosAbiertos(false)} aria-label="Cerrar filtros">
-                    <X size={18} />
-                  </button>
-                </header>
-                <div className="filtros-sheet__body">
-                  {controlesFiltro1}
-                </div>
-                <footer className="filtros-sheet__footer">
-                  <button type="button" className="filtros-sheet__btn" onClick={() => setFiltrosAbiertos(false)}>Cerrar</button>
-                  <button type="button" className="filtros-sheet__btn filtros-sheet__btn--primario" onClick={() => setFiltrosAbiertos(false)}>Aplicar filtros</button>
-                </footer>
-              </div>,
-              document.body,
-            )}
-            <div className="filtros-escritorio">{controlesFiltro1}</div>
-          </div>
-
           {errorMessage && <div role="alert" className="roles-gestion-error">{errorMessage}</div>}
 
           {!errorMessage && (

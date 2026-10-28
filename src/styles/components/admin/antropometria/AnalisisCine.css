@@ -1,0 +1,277 @@
+/* ============================================================
+   ANÁLISIS DE CINEANTROPOMETRÍA (admin). Solo variables del theme.
+   ============================================================ */
+.analisis-cine {
+  display: grid;
+  gap: 1.25rem;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--text-main);
+}
+
+.analisis-cine__encabezado h2 {
+  margin: 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--func-primary);
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.analisis-cine__filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+
+.analisis-cine__filtros select {
+  min-width: 170px;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+.analisis-cine__fecha {
+  display: grid;
+  gap: 0.2rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.analisis-cine__fecha input {
+  padding: 0.45rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+.analisis-cine__vacio {
+  margin: 0;
+  padding: 1.25rem 1rem;
+  border: 1px dashed var(--border-main);
+  border-radius: 10px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.analisis-cine__error {
+  color: var(--state-danger);
+}
+
+/* KPIs */
+.analisis-cine__kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.analisis-cine__kpi {
+  display: grid;
+  align-content: start;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-main);
+  border-left: 4px solid var(--func-primary);
+  border-radius: 10px;
+  background: var(--bg-surface);
+}
+
+.analisis-cine__kpi span {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.analisis-cine__kpi strong {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.analisis-cine__kpi small {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* Paneles y gráficos */
+.analisis-cine__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 1rem;
+}
+
+.analisis-cine__panel {
+  display: grid;
+  align-content: start;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  background: var(--bg-surface);
+}
+
+.analisis-cine__panel--ancho {
+  grid-column: 1 / -1;
+}
+
+.analisis-cine__panel h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.analisis-cine__grafico {
+  width: 100%;
+  height: 240px;
+}
+
+.analisis-cine__nota {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.analisis-cine__tooltip {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.8rem;
+}
+
+/* Ranking de mejores marcas (numerado) */
+.analisis-cine__ranking {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: puesto;
+}
+
+.analisis-cine__ranking li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border-main);
+  font-size: 0.88rem;
+  counter-increment: puesto;
+}
+
+.analisis-cine__ranking li::before {
+  content: counter(puesto);
+  min-width: 1.6rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-align: center;
+}
+
+.analisis-cine__ranking li span {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.analisis-cine__ranking small,
+.analisis-cine__tabla small {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+/* Resumen por prueba */
+.analisis-cine__tabla-wrap {
+  overflow-x: auto;
+}
+
+.analisis-cine__tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.analisis-cine__tabla th,
+.analisis-cine__tabla td {
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid var(--border-main);
+  text-align: left;
+  vertical-align: top;
+}
+
+.analisis-cine__tabla th {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .analisis-cine__kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+.analisis-cine__encabezado p {
+  margin: 0.5rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.analisis-cine__encabezado h2 {
+  margin-bottom: 0;
+}
+
+.analisis-cine__radar {
+  width: 100%;
+  height: 280px;
+}
+
+/* Destacados por eje */
+.analisis-cine__destacados {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 0.75rem;
+}
+
+.analisis-cine__destacado {
+  padding: 0.75rem;
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+
+.analisis-cine__destacado h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.analisis-cine__destacado ol {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.analisis-cine__destacado li {
+  font-size: 0.85rem;
+}
+
+.analisis-cine__destacado li span {
+  display: inline-grid;
+}
+
+.analisis-cine__destacado li strong {
+  float: right;
+}
+
+.analisis-cine__destacado small {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}

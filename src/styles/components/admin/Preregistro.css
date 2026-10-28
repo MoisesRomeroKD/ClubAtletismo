@@ -884,3 +884,173 @@ body.dark-mode .preregistro-metrica--valida .preregistro-metrica-label {
   font-weight: 600;
   line-height: 1.3;
 }
+
+
+/* Buscar un representante ya registrado (paso 1 del preregistro de atleta) */
+.preregistro-field--ancho {
+  grid-column: 1 / -1;
+}
+
+.preregistro-rep-buscar {
+  position: relative;
+}
+
+.preregistro-rep-ayuda {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.preregistro-rep-resultados {
+  display: grid;
+  max-height: 240px;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-card);
+  list-style: none;
+}
+
+.preregistro-rep-resultados button {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.preregistro-rep-resultados button:hover,
+.preregistro-rep-resultados button:focus-visible {
+  background: var(--bg-surface);
+}
+
+.preregistro-rep-resultados span,
+.preregistro-rep-vacio {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.preregistro-rep-vacio {
+  padding: 8px 10px;
+}
+
+.preregistro-rep-elegido {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--func-primary);
+  border-radius: var(--border-radius-md);
+  background: var(--func-primary-bg-soft);
+}
+
+.preregistro-rep-elegido div {
+  display: grid;
+  gap: 2px;
+}
+
+.preregistro-rep-elegido span,
+.preregistro-rep-elegido small {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.preregistro-rep-cambiar {
+  padding: 6px 14px;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-card);
+  color: var(--text-main);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.preregistro-rep-resultados .preregistro-rep-ninguno {
+  color: var(--func-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+/* Subáreas al preregistrar */
+.preregistro-nota-subarea {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.preregistro-subareas {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+}
+
+.preregistro-subareas legend {
+  padding: 0 6px;
+  color: var(--text-main);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Una columna por área: 4 en monitor, 2 en tablet, 1 en celular. Las subáreas van en lista vertical. */
+.preregistro-subareas-areas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.preregistro-subareas-grupo {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-surface);
+}
+
+.preregistro-subareas-grupo strong {
+  color: var(--text-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.preregistro-subareas-opciones {
+  display: grid;
+  gap: 8px;
+}
+
+.preregistro-subareas-opcion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-main);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Los checkboxes no usan el estilo de los campos de texto (.preregistro-field input). */
+.preregistro-subareas-opcion input[type="checkbox"] {
+  flex: none;
+  width: 16px;
+  min-height: 0;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--func-primary);
+  cursor: pointer;
+}

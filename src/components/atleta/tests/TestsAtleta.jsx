@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import TestService from '../../../api/services/Testservice';
+import ResumenTestsAtleta from './ResumenTestsAtleta';
 import '../../../styles/components/atleta/TestsAtleta.css';
 
 const formatFecha = (iso) => {
@@ -35,7 +36,7 @@ export default function TestsAtleta() {
     <div className="tests-atl">
       <header className="tests-atl-header">
         <h2>Mis tests</h2>
-        <p>Tests que te asignó tu entrenador y tu resultado en cada uno.</p>
+        <p>Tu evolución en cada prueba y el historial de tests que te asignó tu entrenador.</p>
       </header>
 
       {estado.cargando ? (
@@ -45,6 +46,9 @@ export default function TestsAtleta() {
       ) : !estado.filas.length ? (
         <p className="tests-atl-vacio">Todavía no tienes tests asignados.</p>
       ) : (
+        <>
+        <ResumenTestsAtleta filas={estado.filas} />
+        <h3 className="tests-atl-subtitulo">Historial</h3>
         <div className="responsive-list">
           <div className="responsive-list__table tests-atl-tabla-wrap">
             <table className="tests-atl-tabla">
@@ -84,6 +88,7 @@ export default function TestsAtleta() {
             </div>
           </div>
         </div>
+        </>
       )}
     </div>
   );

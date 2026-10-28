@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { CheckCircle2 } from 'lucide-react';
 import { authService } from '../api/services/authService'; // Importación del servicio
 import PasswordToggleButton from '../components/auth/PasswordToggleButton';
+import CargaCircular from '../components/layout/CargaCircular';
 import '../styles/pages/Register.css';
 
 // ==========================================================================
@@ -53,7 +56,8 @@ const doorVariantsRight = {
 // ==========================================================================
 
 // Cédula: únicamente números, entre 7 y 8 dígitos.
-const CEDULA_REGEX = /^[0-9]{7,8}$/;
+// Cédula: de 1.000.000 a 49.999.999.
+const CEDULA_REGEX = /^(?:[1-9]\d{6}|[1-4]\d{7})$/;
 
 // OTP: exactamente 6 caracteres alfanuméricos.
 const OTP_REGEX = /^[A-Za-z0-9]{6}$/;
@@ -65,7 +69,15 @@ const OTP_REGEX = /^[A-Za-z0-9]{6}$/;
 const REGISTER_STORAGE_KEY = 'elite_track_register_state';
 const REGISTER_ATTEMPTS_KEY = 'elite_track_register_attempts';
 
-export default function Register() {
+// Al terminar el registro: 2 s "Usuario registrado" y 2 s "Abriendo tu cuenta"; luego entra a su panel.
+const MENSAJE_REGISTRADO_MS = 2000;
+const MENSAJE_ABRIENDO_MS = 2000;
+const ROLES_CON_PANEL = ['admin', 'entrenador', 'atleta'];
+
+export default function Register({ setRole }) {
+  const navigate = useNavigate();
+  // null | 'registrado' | 'abriendo'
+  const [faseFinal, setFaseFinal] = useState(null);
   const [registerStep, setRegisterStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false); // Estado de carga para la API
   const [showPassword, setShowPassword] = useState(false);
@@ -82,7 +94,6 @@ export default function Register() {
   // Datos del formulario
   const [registerData, setRegisterData] = useState({
     cedula: '',
-    username: '',
     password: '',
     confirmPassword: ''
   });
@@ -157,8 +168,7 @@ export default function Register() {
 
         setRegisterData(prev => ({
           ...prev,
-          cedula: typeof parsedRegister.cedula === 'string' ? parsedRegister.cedula : '',
-          username: typeof parsedRegister.username === 'string' ? parsedRegister.username : ''
+          cedula: typeof parsedRegister.cedula === 'string' ? parsedRegister.cedula : ''
         }));
       }
     } catch (error) {
@@ -177,14 +187,13 @@ export default function Register() {
         REGISTER_STORAGE_KEY,
         JSON.stringify({
           registerStep,
-          cedula: registerData.cedula,
-          username: registerData.username
+          cedula: registerData.cedula
         })
       );
     } catch (error) {
       console.error("No se pudo guardar el progreso del registro:", error);
     }
-  }, [registerStep, registerData.cedula, registerData.username]);
+  }, [registerStep, registerData.cedula]);
 
   // ==========================================================================
   // CAMBIO DE FRASES
@@ -219,7 +228,7 @@ export default function Register() {
     try {
       const attempts = Number(localStorage.getItem(REGISTER_ATTEMPTS_KEY) || '0');
       return Number.isFinite(attempts) && attempts >= 0 ? attempts : 0;
-    } catch (error) {
+    } catch {
       return 0;
     }
   };
@@ -327,11 +336,6 @@ export default function Register() {
     e.preventDefault();
     if (registerStep !== 3) return;
 
-    if (!registerData.username.trim() || registerData.username.trim().length < 3) {
-      triggerNotification("⚠️ El nombre de usuario debe tener al menos 3 caracteres.");
-      return;
-    }
-
     if (!registerData.password || !registerData.confirmPassword) {
       triggerNotification("⚠️ Por favor complete ambos campos de contraseña.");
       return;
@@ -352,17 +356,25 @@ export default function Register() {
       const payload = {
         cedula: registerData.cedula,
         codigo: enteredOtp,
-        username: registerData.username,
         password: registerData.password,
         confirm_password: registerData.confirmPassword
       };
 
       const response = await authService.completeRegistration(payload);
-      
-      triggerNotification(response.message || "🏆 ¡Inscripción exitosa! Registro completado.");
-      
+
       localStorage.removeItem(REGISTER_STORAGE_KEY);
       localStorage.removeItem(REGISTER_ATTEMPTS_KEY);
+
+      if (response.access && ROLES_CON_PANEL.includes(response.role)) {
+        setFaseFinal('registrado');
+        setTimeout(() => setFaseFinal('abriendo'), MENSAJE_REGISTRADO_MS);
+        // Con el rol, las rutas llevan solas a /admin/home, /entrenador/home o /atleta/home.
+        setTimeout(() => setRole(response.role), MENSAJE_REGISTRADO_MS + MENSAJE_ABRIENDO_MS);
+      } else {
+        // Sin sesión (caso raro): el registro sí quedó; entra desde el login con su correo.
+        triggerNotification(response.message || "🏆 ¡Inscripción exitosa! Registro completado.");
+        setTimeout(() => navigate('/login'), MENSAJE_REGISTRADO_MS);
+      }
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || "Error al completar el registro.";
@@ -475,7 +487,7 @@ export default function Register() {
                 }}
               >
                 <div className="register-step-indicator">
-                  PASO 1 DE 3 // IDENTIFICACIÓN INSTITUCIONAL
+                  PASO 1 DE 3 // CÉDULA
                 </div>
 
                 <div className="auth-form-group">
@@ -488,7 +500,7 @@ export default function Register() {
                     name="cedula"
                     required
                     inputMode="numeric"
-                    pattern="[0-9]{7,8}"
+                    pattern="[1-9][0-9]{6}|[1-4][0-9]{7}"
                     maxLength={8}
                     value={registerData.cedula}
                     onChange={handleRegisterChange}
@@ -658,24 +670,10 @@ export default function Register() {
                   PASO 3 DE 3 // CREDENCIALES DE ACCESO
                 </div>
 
-                {/* NOMBRE DE USUARIO */}
-                <div className="auth-form-group">
-                  <label className="auth-form-label">
-                    Nombre de usuario
-                  </label>
-
-                  <input
-                    type="text"
-                    name="username"
-                    required
-                    value={registerData.username}
-                    onChange={handleRegisterChange}
-                    className="auth-input-line"
-                    placeholder="Cree su nombre de usuario"
-                    autoComplete="username"
-                    disabled={isLoading}
-                  />
-                </div>
+                {/* El usuario para entrar es el correo donde llegó el código: no se elige. */}
+                <p className="register-nota-usuario">
+                  Para entrar usarás el correo donde recibiste el código y la contraseña que crees aquí.
+                </p>
 
                 {/* CONTRASEÑA */}
                 <div className="auth-form-group">
@@ -795,6 +793,17 @@ export default function Register() {
             {notificationMsg}
           </span>
         </div>
+      )}
+
+      {faseFinal === 'registrado' && (
+        <div className="register-fin" role="status" aria-live="polite">
+          <CheckCircle2 className="register-fin__icono" aria-hidden="true" />
+          <h2 className="register-fin__titulo">¡Usuario registrado!</h2>
+          <p className="register-fin__texto">Tu registro se completó correctamente.</p>
+        </div>
+      )}
+      {faseFinal === 'abriendo' && (
+        <CargaCircular duracion={MENSAJE_ABRIENDO_MS} meta={50} texto="Abriendo tu cuenta" pantallaCompleta />
       )}
 
     </div>

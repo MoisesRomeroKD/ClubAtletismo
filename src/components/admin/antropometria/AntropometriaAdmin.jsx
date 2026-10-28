@@ -6,6 +6,9 @@ import CineantropometriaService from '../../../api/services/Cineantropometriaser
 import UserService from '../../../api/services/Userservice';
 import '../../../styles/components/admin/antropometria/AntropometriaAdmin.css';
 
+// Hoy en hora de Caracas: las fechas que se programan son desde hoy en adelante.
+const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' });
+
 const PAGE_SIZE = 15;
 
 const EJES = [
@@ -202,7 +205,7 @@ function DetalleMedicion({ medicionId, puedeRegistrar, onVolver }) {
               <div className="antro-adm-convocado-head">
                 <div>
                   <h4>{fila.nombre} {fila.apellido}</h4>
-                  <p className="antro-adm-muted">C.I. {fila.cedula} · {fila.categoria || 'Sin categoría'}</p>
+                  <p className="antro-adm-muted">Cédula {fila.cedula} · {fila.categoria || 'Sin categoría'}</p>
                 </div>
                 {fila.evaluacion ? (
                   <span className="antro-adm-registrado">
@@ -374,7 +377,7 @@ function ProgramarMedicion({ subareas, puedeEditar, puedeRegistrar }) {
             </label>
             <label>
               <span>Fecha</span>
-              <input type="date" value={form.fecha} onChange={(event) => setForm({ ...form, fecha: event.target.value })} required />
+              <input type="date" value={form.fecha} min={hoyCaracas()} onChange={(event) => setForm({ ...form, fecha: event.target.value })} required />
             </label>
             <label className="antro-adm-form-ancho">
               <span>Observaciones (opcional)</span>
@@ -402,13 +405,13 @@ function ProgramarMedicion({ subareas, puedeEditar, puedeRegistrar }) {
           <div className="responsive-list__table antro-adm-tabla-wrap">
             <table className="antro-adm-tabla">
               <thead>
-                <tr><th>Fecha</th><th>Área · Subárea</th><th>Estado</th><th>Registrados</th><th>Acciones</th></tr>
+                <tr><th>Fecha</th><th>Subárea</th><th>Estado</th><th>Registrados</th><th>Acciones</th></tr>
               </thead>
               <tbody>
                 {lista.filas.map((medicion) => (
                   <tr key={medicion.id}>
                     <td className="antro-adm-fuerte">{formatFecha(medicion.fecha)}</td>
-                    <td>{medicion.area_nombre} · {medicion.subarea_nombre}</td>
+                    <td>{medicion.subarea_nombre}</td>
                     <td><EstadoBadge estado={medicion.estado} label={medicion.estado_label} /></td>
                     <td>{medicion.evaluados}</td>
                     <td>{acciones(medicion)}</td>
@@ -422,7 +425,7 @@ function ProgramarMedicion({ subareas, puedeEditar, puedeRegistrar }) {
               {lista.filas.map((medicion) => (
                 <article className="antro-adm-card" key={medicion.id}>
                   <div className="antro-adm-card-head">
-                    <h4>{medicion.area_nombre} · {medicion.subarea_nombre}</h4>
+                    <h4>{medicion.subarea_nombre}</h4>
                     <EstadoBadge estado={medicion.estado} label={medicion.estado_label} />
                   </div>
                   <dl>
@@ -467,7 +470,7 @@ function HistorialAtleta({ atletaId, onVolver }) {
       <div className="antro-adm-detalle-head">
         <div>
           <h3>{atleta.nombre} {atleta.apellido}</h3>
-          <p>C.I. {atleta.cedula} · {atleta.edad} años · {atleta.categoria || 'Sin categoría'} · {evaluaciones.length} evaluaciones</p>
+          <p>Cédula {atleta.cedula} · {atleta.edad} años · {atleta.categoria || 'Sin categoría'} · {evaluaciones.length} evaluaciones</p>
         </div>
       </div>
 

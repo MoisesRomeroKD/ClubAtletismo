@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { authService } from '../api/services/authService';
 import PasswordToggleButton from '../components/auth/PasswordToggleButton';
@@ -417,19 +417,19 @@ export default function Login({ setRole }) {
             <div className="auth-form-group">
 
               <label className="auth-form-label">
-                Nombre de Usuario
+                Correo electrónico
               </label>
 
               <input
-                type="text"
+                type="email"
                 name="username"
                 required
                 disabled={isLoading}
                 value={loginData.username}
                 onChange={handleLoginChange}
                 className="auth-input-line"
-                placeholder="Ingrese su usuario de control"
-                autoComplete="username"
+                placeholder="Ingrese su correo"
+                autoComplete="email"
               />
 
             </div>
@@ -480,8 +480,8 @@ export default function Login({ setRole }) {
               }}
             >
 
-              <a
-                href="#recuperar"
+              <Link
+                to="/recuperar-contrasena"
                 style={{
                   color: 'var(--auth-slate)',
                   fontSize: '11px',
@@ -490,7 +490,7 @@ export default function Login({ setRole }) {
                 }}
               >
                 ¿OLVIDASTE TU CONTRASEÑA?
-              </a>
+              </Link>
 
             </div>
 

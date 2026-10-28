@@ -36,6 +36,19 @@ export default function PendientesSuenoAdmin() {
   // En celular el buscador y los filtros van detrás del botón "Filtros" (en monitores siempre se ven).
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
 
+  // Con el drawer de registro abierto: solo se desplaza el drawer y Escape lo cierra.
+  const drawerAbierto = Boolean(atletaARegistrar);
+  useEffect(() => {
+    if (!drawerAbierto) return undefined;
+    document.documentElement.classList.add('scroll-bloqueado');
+    const alPresionar = (evento) => { if (evento.key === 'Escape' && !guardando) setAtletaARegistrar(null); };
+    window.addEventListener('keydown', alPresionar);
+    return () => {
+      document.documentElement.classList.remove('scroll-bloqueado');
+      window.removeEventListener('keydown', alPresionar);
+    };
+  }, [drawerAbierto, guardando]);
+
   const cambiarFiltro = (cambios) => {
     setFiltros((prev) => ({ ...prev, ...cambios }));
     setCursor(null);
@@ -131,20 +144,30 @@ export default function PendientesSuenoAdmin() {
     }
   };
 
-  if (atletaARegistrar) {
-    return (
-      <section className="pend-sueno">
+  // "Registrar" abre el formulario en un drawer encima de la lista (la lista no se borra).
+  // Se le pasan el área y las subáreas reales del atleta (vienen en sus asignaciones).
+  const atletaDelDrawer = atletaARegistrar && {
+    ...atletaARegistrar,
+    area: [...new Set((atletaARegistrar.asignaciones || []).map((asignacion) => asignacion.area).filter(Boolean))].join(', ') || 'Sin área asignada',
+    subarea: (atletaARegistrar.asignaciones || []).map((asignacion) => asignacion.subarea).filter(Boolean).join(', ') || 'Sin subárea asignada',
+  };
+  const cerrarDrawer = () => { if (!guardando) setAtletaARegistrar(null); };
+
+  const drawerRegistro = atletaDelDrawer && createPortal(
+    <>
+      <div className="pend-sueno-drawer__fondo" onClick={cerrarDrawer} aria-hidden="true" />
+      <aside className="pend-sueno-drawer" role="dialog" aria-modal="true" aria-label={`Registrar sueño de ${atletaDelDrawer.name}`}>
         <SleepRegistrationView
-          athlete={atletaARegistrar}
+          athlete={atletaDelDrawer}
           onSave={guardarSueno}
-          onCancel={() => setAtletaARegistrar(null)}
+          onCancel={cerrarDrawer}
           isSaving={guardando}
           systemDate={data?.fecha}
-          registrarRole="Administrador"
         />
-      </section>
-    );
-  }
+      </aside>
+    </>,
+    document.body,
+  );
 
   const paginacion = (abajo) => (
     <div className={`pend-sueno__pagination${abajo ? ' pend-sueno__pagination--bottom' : ''}`} aria-label="Paginación">
@@ -270,7 +293,7 @@ export default function PendientesSuenoAdmin() {
         <div className="pend-sueno__notice pend-sueno__notice--info">
           <span>
             Ya registraron su sueño hoy:{' '}
-            {data.registrados_coinciden.map((atleta) => `${atleta.name} (C.I. ${atleta.cedula})`).join(', ')}
+            {data.registrados_coinciden.map((atleta) => `${atleta.name} (Cédula ${atleta.cedula})`).join(', ')}
             {data.total_registrados_coinciden > data.registrados_coinciden.length
               ? ` y ${data.total_registrados_coinciden - data.registrados_coinciden.length} más`
               : ''}
@@ -309,12 +332,8 @@ export default function PendientesSuenoAdmin() {
                   <span className="pend-sueno__avatar" aria-hidden="true">{iniciales(atleta.name)}</span>
                   <div className="pend-sueno__athlete-details">
                     <h3>{atleta.name}</h3>
-                    <p>Cédula <strong>{atleta.cedula}</strong></p>
+                    <p>Cédula <strong>{atleta.cedula}</strong> · <span className="ref-usuario">Ref. {atleta.id}</span></p>
                     <p>
-                      Área: {atleta.asignaciones.length
-                        ? [...new Set(atleta.asignaciones.map((asignacion) => asignacion.area))].join(', ')
-                        : 'Sin área asignada'}
-                      {' · '}
                       Subáreas: {atleta.asignaciones.length
                         ? atleta.asignaciones.map((asignacion) => asignacion.subarea).join(', ')
                         : 'Sin subárea asignada'}
@@ -342,6 +361,7 @@ export default function PendientesSuenoAdmin() {
 
         {data?.total > PAGE_SIZE && paginacion(true)}
       </section>
+      {drawerRegistro}
     </section>
   );
 }

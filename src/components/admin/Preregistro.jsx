@@ -1,11 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import podApi from '../../api/podApi';
+import { notificar } from '../../utils/notificar';
+import UserService from '../../api/services/Userservice';
 import '../../styles/components/admin/Preregistro.css';
 
 // Reglas de formato (las mismas que valida el backend en apps/users/services.py).
-// Cédula: solo números, 7 u 8 dígitos (igual que en el registro de usuarios).
-const PATRON_CEDULA = '[0-9]{7,8}';
-const AYUDA_CEDULA = 'Solo números, 7 u 8 dígitos (ej. 12345678).';
+// Cédula: solo números, de 1.000.000 a 49.999.999.
+const PATRON_CEDULA = '[1-9][0-9]{6}|[1-4][0-9]{7}';
+const AYUDA_CEDULA = 'Solo números, entre 1.000.000 y 49.999.999 (ej. 12345678).';
 // Teléfono venezolano: 11 dígitos que empiezan por 0.
 const PATRON_TELEFONO = '0[0-9]{10}';
 const AYUDA_TELEFONO = '11 dígitos que empiezan por 0 (ej. 04141234567).';
@@ -21,9 +24,9 @@ const AYUDA_GMAIL = 'Solo se aceptan correos de Gmail (ej. nombre@gmail.com).';
 const REGLAS = {
   cedula: {
     limpiar: (valor) => valor.replace(/\D/g, '').slice(0, 8),
-    completo: /^\d{7,8}$/,
+    completo: /^(?:[1-9]\d{6}|[1-4]\d{7})$/,
     rechazo: 'Aquí solo se escriben números.',
-    formato: 'La cédula debe tener 7 u 8 números (ej. 12345678).',
+    formato: 'La cédula debe ser un número entre 1.000.000 y 49.999.999 (ej. 12345678).',
   },
   telefono: {
     limpiar: (valor) => valor.replace(/\D/g, '').slice(0, 11),
@@ -69,34 +72,34 @@ const ROL_SISTEMA = {
 const MASIVO_POR_ROL = {
   Atleta: {
     plural: 'Atletas',
-    descripcion: 'Cada fila representa un atleta y su representante:',
+    descripcion: 'Cada fila representa un atleta y su representante. "subarea" es el nombre exacto de su subárea y "turno" es mañana, tarde o noche (el entrenador se asigna después con "Editar"):',
     columnas: [
       ['representante_nombres', 22], ['representante_apellidos', 24], ['representante_cedula', 20],
       ['representante_telefono', 22], ['representante_relacion', 22], ['cedula', 12], ['nombres', 18],
-      ['apellidos', 20], ['fecha_nacimiento', 17], ['correo', 26], ['telefono', 14], ['categoria', 12],
+      ['apellidos', 20], ['fecha_nacimiento', 17], ['correo', 26], ['telefono', 14], ['subarea', 18], ['turno', 10],
     ],
     ejemplos: [
       {
         representante_nombres: 'Ana Maria', representante_apellidos: 'Perez Lopez', representante_cedula: '1234567',
         representante_telefono: '04141234567', representante_relacion: 'Madre',
         cedula: '12345678', nombres: 'Juan Jose', apellidos: 'Perez Rodriguez', fecha_nacimiento: '2005-05-15',
-        correo: 'juan.perez@gmail.com', telefono: '', categoria: '',
+        correo: 'juan.perez@gmail.com', telefono: '', subarea: '100m', turno: 'mañana',
       },
       {
         representante_nombres: 'Ana Maria', representante_apellidos: 'Perez Lopez', representante_cedula: '1234567',
         representante_telefono: '04141234567', representante_relacion: 'Madre',
         cedula: '87654321', nombres: 'Maria Fernanda', apellidos: 'Gomez Silva', fecha_nacimiento: '2008-08-20',
-        correo: 'maria.gomez@gmail.com', telefono: '', categoria: '',
+        correo: 'maria.gomez@gmail.com', telefono: '', subarea: 'Salto Alto', turno: 'tarde',
       },
     ],
   },
   Entrenador: {
     plural: 'Entrenadores',
-    descripcion: 'Cada fila representa un entrenador (sin representante ni fecha de nacimiento):',
-    columnas: [['cedula', 12], ['nombres', 18], ['apellidos', 20], ['correo', 26], ['telefono', 14]],
+    descripcion: 'Cada fila representa un entrenador (sin representante ni fecha de nacimiento). En "subareas" van los nombres exactos de sus subáreas, separados por coma:',
+    columnas: [['cedula', 12], ['nombres', 18], ['apellidos', 20], ['correo', 26], ['telefono', 14], ['subareas', 28]],
     ejemplos: [
-      { cedula: '15678901', nombres: 'Carlos Luis', apellidos: 'Mendez Rojas', correo: 'carlos.mendez@gmail.com', telefono: '04121234567' },
-      { cedula: '16789012', nombres: 'Rosa Elena', apellidos: 'Diaz Torres', correo: 'rosa.diaz@gmail.com', telefono: '' },
+      { cedula: '15678901', nombres: 'Carlos Luis', apellidos: 'Mendez Rojas', correo: 'carlos.mendez@gmail.com', telefono: '04121234567', subareas: '100m, 200m' },
+      { cedula: '16789012', nombres: 'Rosa Elena', apellidos: 'Diaz Torres', correo: 'rosa.diaz@gmail.com', telefono: '', subareas: 'Salto Alto' },
     ],
   },
   Administrador: {
@@ -120,15 +123,18 @@ const FORMULARIO_VACIO = {
   representante_apellidos: '',
   representante_cedula: '',
   representante_telefono: '',
-  representante_relacion: 'Madre'
+  representante_relacion: 'Madre',
+  // Atleta: una subárea y su turno. Entrenador: una o varias subáreas.
+  subarea_id: '',
+  turno: 'manana',
+  subareas_ids: [],
 };
 
-// Último día permitido como fecha de nacimiento: ayer, en hora local (AAAA-MM-DD).
-const ayerLocal = () => {
-  const fecha = new Date();
-  fecha.setDate(fecha.getDate() - 1);
-  return fecha.toLocaleDateString('en-CA');
-};
+// Edad mínima del atleta: 9 años. Se acepta hasta el 31/12 de (año actual - 9).
+// Ej.: en 2026 se puede elegir 2017 o antes; 2020 no.
+const EDAD_MINIMA_ATLETA = 9;
+const anioMaximoNacimiento = () => Number(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' }).slice(0, 4)) - EDAD_MINIMA_ATLETA;
+const maxNacimiento = () => `${anioMaximoNacimiento()}-12-31`;
 
 // El backend puede devolver un texto o una lista de errores por campo/fila: se arma un solo mensaje legible.
 const mensajeError = (error, porDefecto) => {
@@ -146,6 +152,9 @@ const mensajeError = (error, porDefecto) => {
 };
 
 const Preregistro = () => {
+  const navigate = useNavigate();
+  // Al cerrarse el aviso de éxito se vuelve a la pantalla inicial del preregistro.
+  const volverAlPreregistro = () => navigate('/admin/prerregistro');
   // Estado para el rol seleccionado (null = mostrar selector de rol)
   const [selectedRole, setSelectedRole] = useState(null);
 
@@ -163,14 +172,68 @@ const Preregistro = () => {
 
   const fileInputRef = useRef(null);
 
+  // Subáreas (con su área) para elegir en el preregistro.
+  const [catalogoSubareas, setCatalogoSubareas] = useState([]);
+  useEffect(() => {
+    let activo = true;
+    UserService.getSubareas()
+      .then((data) => { if (activo) setCatalogoSubareas(Array.isArray(data) ? data : []); })
+      .catch(() => { if (activo) setCatalogoSubareas([]); });
+    return () => { activo = false; };
+  }, []);
+  const subareasPorArea = catalogoSubareas.reduce((grupos, subarea) => {
+    const area = subarea.area?.nombre || 'Sin área';
+    (grupos[area] = grupos[area] || []).push(subarea);
+    return grupos;
+  }, {});
+  const areasOrdenadas = Object.keys(subareasPorArea).sort((a, b) => a.localeCompare(b, 'es'));
+  const alternarSubareaEntrenador = (id) => setFormData((actual) => ({
+    ...actual,
+    subareas_ids: actual.subareas_ids.includes(id)
+      ? actual.subareas_ids.filter((item) => item !== id)
+      : [...actual.subareas_ids, id],
+  }));
+
   // rechazados: campos donde se acaba de escribir algo no permitido. tocados: campos que ya se dejaron.
   const [rechazados, setRechazados] = useState({});
   const [tocados, setTocados] = useState({});
+
+  // Representante ya registrado: al escribir su cédula (4 dígitos o más) se sugieren los que coinciden;
+  // si se elige uno, no se vuelven a cargar sus datos.
+  const [busquedaRep, setBusquedaRep] = useState({ texto: '', resultados: [], error: '' });
+  const [representanteElegido, setRepresentanteElegido] = useState(null);
+  const [sugerenciasCerradas, setSugerenciasCerradas] = useState(false);
+  const textoRep = formData.representante_cedula;
+  const MIN_DIGITOS = 4;
+
+  useEffect(() => {
+    if (representanteElegido || textoRep.length < MIN_DIGITOS) return undefined;
+    let activo = true;
+    const espera = setTimeout(() => {
+      UserService.getRepresentatives({ buscar: textoRep })
+        .then((data) => { if (activo) setBusquedaRep({ texto: textoRep, resultados: Array.isArray(data) ? data : [], error: '' }); })
+        .catch(() => { if (activo) setBusquedaRep({ texto: textoRep, resultados: [], error: 'No se pudo buscar.' }); });
+    }, 350);
+    return () => { activo = false; clearTimeout(espera); };
+  }, [textoRep, representanteElegido]);
+
+  const elegirRepresentante = (representante) => {
+    setRepresentanteElegido(representante);
+  };
+
+  // "Cambiar": vuelve a la cédula vacía para escribir otra.
+  const quitarRepresentante = () => {
+    setRepresentanteElegido(null);
+    setSugerenciasCerradas(false);
+    setFormData((actual) => ({ ...actual, representante_cedula: '' }));
+  };
 
   const reiniciarFormulario = () => {
     setFormData(FORMULARIO_VACIO);
     setRechazados({});
     setTocados({});
+    setRepresentanteElegido(null);
+    setSugerenciasCerradas(false);
   };
 
   const handleInputChange = (e) => {
@@ -233,7 +296,7 @@ const Preregistro = () => {
       XLSX.writeFile(workbook, `Plantilla_Preregistro_${plantilla.plural}.xlsx`);
     } catch (error) {
       console.error("Error al generar Excel:", error);
-      alert("Error al descargar la plantilla.");
+      notificar('Error al descargar la plantilla.', { tipo: 'error' });
     }
   };
 
@@ -243,25 +306,43 @@ const Preregistro = () => {
     try {
       const rol = ROL_SISTEMA[selectedRole] || 'Atleta';
       // Solo el atleta tiene representante (y fecha de nacimiento); a los demás roles no se les envía.
+      // Con un representante ya registrado solo se envía su id y la relación (no se cargan de nuevo sus datos).
+      const datosAtleta = representanteElegido
+        ? {
+          ...Object.fromEntries(Object.entries(formData).filter(([campo]) => !campo.startsWith('representante_'))),
+          representante_id: representanteElegido.id,
+          representante_relacion: formData.representante_relacion,
+        }
+        : formData;
+      if (rol === 'Entrenador' && !formData.subareas_ids.length) {
+        notificar('Marca al menos una subárea del entrenador.', { tipo: 'aviso' });
+        return;
+      }
+      const sinSubareas = (datosRol) => Object.fromEntries(Object.entries(datosRol).filter(([campo]) => (
+        !['subarea_id', 'turno', 'subareas_ids'].includes(campo)
+      )));
       const datos = rol === 'Atleta'
-        ? formData
-        : Object.fromEntries(Object.entries(formData).filter(([campo]) => (
-          !campo.startsWith('representante_') && campo !== 'fechaNacimiento'
-        )));
+        ? { ...sinSubareas(datosAtleta), subarea_id: formData.subarea_id, turno: formData.turno }
+        : {
+          ...sinSubareas(Object.fromEntries(Object.entries(formData).filter(([campo]) => (
+            !campo.startsWith('representante_') && campo !== 'fechaNacimiento'
+          )))),
+          ...(rol === 'Entrenador' && { subareas_ids: formData.subareas_ids }),
+        };
       const response = await podApi.post('/v1/users/preregistro/crear/', {
         ...datos,
         rol,
         ...(rol === 'Atleta' && { fecha_nacimiento: formData.fechaNacimiento }),
       });
       if (response.data?.status === 'success') {
-        alert("¡Preregistro individual creado exitosamente!");
+        notificar('¡Preregistro individual creado exitosamente!', { tipo: 'exito', alCerrar: volverAlPreregistro });
         reiniciarFormulario();
         setIndividualStep(1);
         setSelectedRole(null);
       }
     } catch (error) {
       console.error("Error en preregistro:", error);
-      alert(mensajeError(error, "Ocurrió un error al guardar el preregistro."));
+      notificar(mensajeError(error, 'Ocurrió un error al guardar el preregistro.'), { tipo: 'error' });
     }
   };
 
@@ -290,7 +371,7 @@ const Preregistro = () => {
   // PASO 1: Validar/Auditar el archivo Excel en el Backend sin guardar
   const handleValidateExcel = async () => {
     if (!file) {
-      alert("Por favor selecciona un archivo Excel (.xlsx, .xls o .csv) primero.");
+      notificar('Selecciona un archivo Excel (.xlsx, .xls o .csv) primero.', { tipo: 'aviso' });
       return;
     }
 
@@ -309,7 +390,7 @@ const Preregistro = () => {
       }
     } catch (error) {
       console.error("Error al validar el archivo:", error);
-      alert(mensajeError(error, "Error al auditar el archivo Excel."));
+      notificar(mensajeError(error, 'Error al auditar el archivo Excel.'), { tipo: 'error' });
     } finally {
       setIsValidating(false);
     }
@@ -318,7 +399,7 @@ const Preregistro = () => {
   // PASO 2: Confirmar y realizar la Carga Masiva en la BD
   const handleConfirmCargaMasiva = async () => {
     if (!validationResult || !validationResult.registros_validos || validationResult.registros_validos.length === 0) {
-      alert("No hay registros válidos para importar.");
+      notificar('No hay registros válidos para importar.', { tipo: 'aviso' });
       return;
     }
 
@@ -329,14 +410,14 @@ const Preregistro = () => {
       });
 
       if (response.data?.status === 'success') {
-        alert(`¡Carga masiva completada exitosamente! Se procesaron ${response.data.procesados} usuarios.`);
+        notificar(`¡Carga masiva completada! Se procesaron ${response.data.procesados} usuarios.`, { tipo: 'exito', alCerrar: volverAlPreregistro });
         setFile(null);
         setValidationResult(null);
         if (fileInputRef.current) fileInputRef.current.value = '';
       }
     } catch (error) {
       console.error("Error al ejecutar carga masiva:", error);
-      alert(mensajeError(error, "Error al realizar la carga masiva en el servidor."));
+      notificar(mensajeError(error, 'Error al realizar la carga masiva en el servidor.'), { tipo: 'error' });
     } finally {
       setIsUploading(false);
     }
@@ -451,6 +532,63 @@ const Preregistro = () => {
 
         <form onSubmit={handleSubmitIndividual} className="preregistro-form">
           {individualStep === 1 && <>
+          {/* Cédula del representante: también busca a los ya registrados */}
+          <div className="preregistro-field preregistro-rep-buscar">
+            <label htmlFor="representante_cedula">Cédula del representante</label>
+            {representanteElegido ? (
+              <div className="preregistro-rep-elegido">
+                <div>
+                  <strong>{representanteElegido.nombre_completo}</strong>
+                  <span>Cédula {representanteElegido.cedula || '—'} · Tlf. {representanteElegido.tlf || '—'}</span>
+                  <small>Ya registrado · {representanteElegido.atletas_total} atleta{representanteElegido.atletas_total === 1 ? '' : 's'} a cargo</small>
+                </div>
+                <button type="button" className="preregistro-rep-cambiar" onClick={quitarRepresentante}>Cambiar</button>
+              </div>
+            ) : (
+              <>
+                <input
+                  id="representante_cedula"
+                  type="text"
+                  inputMode="numeric"
+                  name="representante_cedula"
+                  value={formData.representante_cedula}
+                  onChange={(event) => { setSugerenciasCerradas(false); handleInputChange(event); }}
+                  required
+                  pattern={PATRON_CEDULA}
+                  maxLength={8}
+                  title={AYUDA_CEDULA}
+                  placeholder="Ej. 12345678"
+                  autoComplete="off"
+                  {...validacion('representante_cedula')}
+                />
+                {renderAviso('representante_cedula')}
+                {textoRep.length >= MIN_DIGITOS && !sugerenciasCerradas && busquedaRep.texto === textoRep && busquedaRep.resultados.length > 0 && (
+                  <ul className="preregistro-rep-resultados" role="listbox" aria-label="Representantes ya registrados">
+                    <li className="preregistro-rep-vacio">
+                      {busquedaRep.resultados.find((representante) => representante.cedula === textoRep) ? 'Esta cédula ya está registrada:' : '¿Es alguno de estos representantes?'}
+                    </li>
+                    {busquedaRep.resultados.map((representante) => (
+                      <li key={representante.id}>
+                        <button type="button" role="option" aria-selected="false" onClick={() => elegirRepresentante(representante)}>
+                          <strong>{representante.nombre_completo}</strong>
+                          <span>Cédula {representante.cedula || '—'} · {representante.atletas_total} atleta{representante.atletas_total === 1 ? '' : 's'}</span>
+                        </button>
+                      </li>
+                    ))}
+                    {!busquedaRep.resultados.find((representante) => representante.cedula === textoRep) && (
+                      <li>
+                        <button type="button" className="preregistro-rep-ninguno" onClick={() => setSugerenciasCerradas(true)}>
+                          Ninguno: es un representante nuevo
+                        </button>
+                      </li>
+                    )}
+                  </ul>
+                )}
+              </>
+            )}
+          </div>
+
+          {!representanteElegido && <>
           <div className="preregistro-field">
             <label htmlFor="representante_nombres">Nombres del representante</label>
             <input id="representante_nombres" type="text" name="representante_nombres" value={formData.representante_nombres} onChange={handleInputChange} required pattern={PATRON_NOMBRE} maxLength={60} title={AYUDA_NOMBRE} {...validacion('representante_nombres')} />
@@ -462,15 +600,11 @@ const Preregistro = () => {
             {renderAviso('representante_apellidos')}
           </div>
           <div className="preregistro-field">
-            <label htmlFor="representante_cedula">Cédula del representante</label>
-            <input id="representante_cedula" type="text" inputMode="numeric" name="representante_cedula" value={formData.representante_cedula} onChange={handleInputChange} required pattern={PATRON_CEDULA} maxLength={8} title={AYUDA_CEDULA} placeholder="Ej. 12345678" {...validacion('representante_cedula')} />
-            {renderAviso('representante_cedula')}
-          </div>
-          <div className="preregistro-field">
             <label htmlFor="representante_telefono">Teléfono del representante</label>
             <input id="representante_telefono" type="tel" inputMode="numeric" name="representante_telefono" value={formData.representante_telefono} onChange={handleInputChange} required pattern={PATRON_TELEFONO} maxLength={11} title={AYUDA_TELEFONO} placeholder="Ej. 04141234567" {...validacion('representante_telefono')} />
             {renderAviso('representante_telefono')}
           </div>
+          </>}
           <div className="preregistro-field">
             <label htmlFor="representante_relacion">Relación con el atleta</label>
             <select id="representante_relacion" name="representante_relacion" value={formData.representante_relacion} onChange={handleInputChange} required>
@@ -552,7 +686,8 @@ const Preregistro = () => {
               value={formData.fechaNacimiento}
               onChange={handleInputChange}
               required
-              max={ayerLocal()}
+              max={maxNacimiento()}
+              title={`El atleta debe haber nacido en ${anioMaximoNacimiento()} o antes (mínimo 9 años).`}
             />
           </div>
 
@@ -572,6 +707,30 @@ const Preregistro = () => {
             />
             {renderAviso('correo')}
           </div>
+
+          <div className="preregistro-campo">
+            <label htmlFor="atleta_subarea">Subárea</label>
+            <select id="atleta_subarea" name="subarea_id" value={formData.subarea_id} onChange={handleInputChange} required>
+              <option value="">Elige la subárea</option>
+              {areasOrdenadas.map((area) => (
+                <optgroup key={area} label={area}>
+                  {subareasPorArea[area].map((subarea) => <option key={subarea.id} value={String(subarea.id)}>{subarea.nombre}</option>)}
+                </optgroup>
+              ))}
+            </select>
+          </div>
+
+          <div className="preregistro-campo">
+            <label htmlFor="atleta_turno">Turno</label>
+            <select id="atleta_turno" name="turno" value={formData.turno} onChange={handleInputChange} required>
+              <option value="manana">Mañana (8:00 a 11:30)</option>
+              <option value="tarde">Tarde (13:00 a 17:30)</option>
+              <option value="noche">Noche (18:00 a 21:00)</option>
+            </select>
+          </div>
+          <p className="preregistro-nota-subarea">
+            El entrenador del atleta se asigna después, en Atletas → Editar. Las subáreas se pueden cambiar ahí.
+          </p>
 
           <div className="preregistro-campo-acciones">
             <button type="button" className="preregistro-back-button" onClick={() => setIndividualStep(1)}>Atrás</button>
@@ -722,6 +881,30 @@ const Preregistro = () => {
               <input id="telefono" type="tel" inputMode="numeric" name="telefono" value={formData.telefono} onChange={handleInputChange} pattern={PATRON_TELEFONO} maxLength={11} title={AYUDA_TELEFONO} placeholder="Ej. 04141234567" {...validacion('telefono')} />
             {renderAviso('telefono')}
             </div>
+            <fieldset className="preregistro-field preregistro-field--ancho preregistro-subareas">
+              <legend>Subáreas donde va a entrenar</legend>
+              {!catalogoSubareas.length && <p className="preregistro-nota-subarea">No hay subáreas creadas. Créalas en Áreas y Subáreas.</p>}
+              <div className="preregistro-subareas-areas">
+              {areasOrdenadas.map((area) => (
+                <div key={area} className="preregistro-subareas-grupo">
+                  <strong>{area}</strong>
+                  <div className="preregistro-subareas-opciones">
+                    {subareasPorArea[area].map((subarea) => (
+                      <label key={subarea.id} className="preregistro-subareas-opcion">
+                        <input
+                          type="checkbox"
+                          checked={formData.subareas_ids.includes(subarea.id)}
+                          onChange={() => alternarSubareaEntrenador(subarea.id)}
+                        />
+                        {subarea.nombre}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              </div>
+              <small className="preregistro-nota-subarea">Marca al menos una. Se pueden cambiar después.</small>
+            </fieldset>
             <div className="preregistro-form-actions">
               <button type="submit" className="preregistro-submit-button">
                 Guardar Preregistro

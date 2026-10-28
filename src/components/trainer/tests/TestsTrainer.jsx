@@ -5,6 +5,9 @@ import TestService from '../../../api/services/Testservice';
 import UserService from '../../../api/services/Userservice';
 import '../../../styles/components/trainer/TestsTrainer.css';
 
+// Hoy en hora de Caracas: las fechas que se programan son desde hoy en adelante.
+const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' });
+
 const PAGE_SIZE = 15;
 
 const UNIDADES = [
@@ -261,7 +264,7 @@ function PlanillaTest({ testId, onVolver }) {
                       <h4>{fila.nombre} {fila.apellido}</h4>
                       {editable && estadoDe(fila.atleta_id)}
                     </div>
-                    <p className="tests-ent-card-sub">C.I. {fila.cedula} · {fila.categoria || 'Sin categoría'}</p>
+                    <p className="tests-ent-card-sub">Cédula {fila.cedula} · {fila.categoria || 'Sin categoría'}</p>
                     {editable ? (
                       <div className="tests-ent-card-campos">
                         <label>
@@ -337,6 +340,23 @@ function CrearTest({ pruebas, subareas, onCreado, onCancelar }) {
     return () => { activo = false; };
   }, [clave, form.subarea, form.prueba]);
 
+  // Cada prueba es de un área: solo se ofrecen las del área de la subárea elegida.
+  const areaElegida = subareas.find((subarea) => String(subarea.id) === form.subarea)?.areaId ?? null;
+  const pruebasDelArea = pruebas.filter((prueba) => prueba.activa && areaElegida !== null && prueba.area === areaElegida);
+  const nombreAreaElegida = subareas.find((subarea) => String(subarea.id) === form.subarea)?.areaNombre || 'esta área';
+  // Sin pruebas guardadas no se puede asignar un test: se avisa por qué y dónde crearlas.
+  const hayPruebasActivas = pruebas.some((prueba) => prueba.activa);
+  const avisoSinPruebas = !hayPruebasActivas
+    ? 'No se puede asignar un test porque no hay pruebas registradas. Créalas primero en "Crear test".'
+    : form.subarea && !pruebasDelArea.length
+      ? `No se puede asignar un test en esta subárea porque no hay pruebas registradas de ${nombreAreaElegida}. Créala primero en "Crear test".`
+      : '';
+  const cambiarSubarea = (valor) => {
+    const area = subareas.find((subarea) => String(subarea.id) === valor)?.areaId ?? null;
+    const sigueValida = pruebas.some((prueba) => String(prueba.id) === form.prueba && prueba.area === area);
+    setForm({ ...form, subarea: valor, prueba: sigueValida ? form.prueba : '' });
+  };
+
   const cargandoAtletas = Boolean(clave) && disponibles.clave !== clave;
   const atletas = disponibles.clave === clave ? disponibles.filas : [];
   const elegibles = atletas.filter((atleta) => !atleta.pendiente);
@@ -373,19 +393,11 @@ function CrearTest({ pruebas, subareas, onCreado, onCancelar }) {
   return (
     <form className="tests-ent-panel tests-ent-form" onSubmit={enviar}>
       <h3>Asignar test</h3>
+      {avisoSinPruebas && <p className="tests-ent-error" role="alert">{avisoSinPruebas}</p>}
       <div className="tests-ent-form-grid">
         <label>
-          <span>Prueba</span>
-          <select value={form.prueba} onChange={(event) => setForm({ ...form, prueba: event.target.value })} required>
-            <option value="">Selecciona una prueba</option>
-            {pruebas.filter((prueba) => prueba.activa).map((prueba) => (
-              <option key={prueba.id} value={String(prueba.id)}>{prueba.nombre} ({prueba.unidad})</option>
-            ))}
-          </select>
-        </label>
-        <label>
           <span>Subárea</span>
-          <select value={form.subarea} onChange={(event) => setForm({ ...form, subarea: event.target.value })} required>
+          <select value={form.subarea} onChange={(event) => cambiarSubarea(event.target.value)} required>
             <option value="">Selecciona una subárea</option>
             {subareas.map((subarea) => (
               <option key={subarea.id} value={String(subarea.id)}>
@@ -395,8 +407,19 @@ function CrearTest({ pruebas, subareas, onCreado, onCancelar }) {
           </select>
         </label>
         <label>
+          <span>Prueba</span>
+          <select value={form.prueba} onChange={(event) => setForm({ ...form, prueba: event.target.value })} required disabled={!form.subarea}>
+            <option value="">
+              {!form.subarea ? 'Primero elige la subárea' : pruebasDelArea.length ? 'Selecciona una prueba' : 'No hay pruebas de esta área'}
+            </option>
+            {pruebasDelArea.map((prueba) => (
+              <option key={prueba.id} value={String(prueba.id)}>{prueba.nombre} ({prueba.unidad})</option>
+            ))}
+          </select>
+        </label>
+        <label>
           <span>Fecha</span>
-          <input type="date" value={form.fecha} onChange={(event) => setForm({ ...form, fecha: event.target.value })} required />
+          <input type="date" value={form.fecha} min={hoyCaracas()} onChange={(event) => setForm({ ...form, fecha: event.target.value })} required />
         </label>
       </div>
 
@@ -430,7 +453,7 @@ function CrearTest({ pruebas, subareas, onCreado, onCancelar }) {
                 />
                 <span className="tests-ent-atleta-info">
                   <strong>{atleta.nombre} {atleta.apellido}</strong>
-                  <small>C.I. {atleta.cedula}{atleta.categoria ? ` · ${atleta.categoria}` : ''}</small>
+                  <small>Cédula {atleta.cedula}{atleta.categoria ? ` · ${atleta.categoria}` : ''}</small>
                   {atleta.pendiente && <small className="tests-ent-aviso">Ya tiene esta prueba pendiente</small>}
                 </span>
               </label>
@@ -443,7 +466,7 @@ function CrearTest({ pruebas, subareas, onCreado, onCancelar }) {
 
       <div className="tests-ent-acciones">
         <button type="button" className="tests-ent-btn tests-ent-btn--ghost" onClick={onCancelar}>Cancelar</button>
-        <button type="submit" className="tests-ent-btn" disabled={guardando || !elegidos.length}>Asignar test</button>
+        <button type="submit" className="tests-ent-btn" disabled={guardando || !elegidos.length || Boolean(avisoSinPruebas)}>Asignar test</button>
       </div>
     </form>
   );
@@ -568,14 +591,14 @@ function MisTests({ pruebas, subareas }) {
           <div className="responsive-list__table tests-ent-tabla-wrap">
             <table className="tests-ent-tabla">
               <thead>
-                <tr><th>Fecha</th><th>Prueba</th><th>Área · Subárea</th><th>Estado</th><th>Resultados</th><th>Acciones</th></tr>
+                <tr><th>Fecha</th><th>Prueba</th><th>Subárea</th><th>Estado</th><th>Resultados</th><th>Acciones</th></tr>
               </thead>
               <tbody>
                 {lista.filas.map((test) => (
                   <tr key={test.id}>
                     <td>{formatFecha(test.fecha)}</td>
                     <td className="tests-ent-fuerte">{test.prueba_nombre}</td>
-                    <td>{test.area_nombre} · {test.subarea_nombre}</td>
+                    <td>{test.subarea_nombre}</td>
                     <td><EstadoBadge estado={test.estado} label={test.estado_label} /></td>
                     <td>{test.resultados_registrados} de {test.convocados_total}</td>
                     <td>{accionesDe(test)}</td>
@@ -594,7 +617,7 @@ function MisTests({ pruebas, subareas }) {
                   </div>
                   <dl>
                     <div><dt>Fecha</dt><dd>{formatFecha(test.fecha)}</dd></div>
-                    <div><dt>Subárea</dt><dd>{test.area_nombre} · {test.subarea_nombre}</dd></div>
+                    <div><dt>Subárea</dt><dd>{test.subarea_nombre}</dd></div>
                     <div><dt>Resultados</dt><dd>{test.resultados_registrados} de {test.convocados_total}</dd></div>
                   </dl>
                   {accionesDe(test)}
@@ -610,9 +633,13 @@ function MisTests({ pruebas, subareas }) {
 }
 
 /* ---------------- Pestaña: catálogo de pruebas (cualquier entrenador crea y edita) ---------------- */
-const PRUEBA_VACIA = { nombre: '', unidad: 's', criterio: 'menor', descripcion: '' };
+const PRUEBA_VACIA = { nombre: '', area: '', unidad: 's', criterio: 'menor', descripcion: '' };
 
-function CatalogoPruebas({ pruebas, onCambio }) {
+function CatalogoPruebas({ pruebas, subareas, onCambio }) {
+  // Áreas donde el entrenador tiene subáreas: ahí puede crear pruebas.
+  const misAreas = [...new Map(
+    subareas.filter((subarea) => subarea.areaId !== null).map((subarea) => [subarea.areaId, subarea.areaNombre])
+  ).entries()].sort((a, b) => a[1].localeCompare(b[1], 'es'));
   const [form, setForm] = useState(PRUEBA_VACIA);
   const [editandoId, setEditandoId] = useState(null);
   const [mensaje, setMensaje] = useState({ tipo: '', texto: '' });
@@ -647,7 +674,7 @@ function CatalogoPruebas({ pruebas, onCambio }) {
 
   const editar = (prueba) => {
     setEditandoId(prueba.id);
-    setForm({ nombre: prueba.nombre, unidad: prueba.unidad, criterio: prueba.criterio, descripcion: prueba.descripcion || '' });
+    setForm({ nombre: prueba.nombre, area: String(prueba.area ?? ''), unidad: prueba.unidad, criterio: prueba.criterio, descripcion: prueba.descripcion || '' });
     setMensaje({ tipo: '', texto: '' });
   };
 
@@ -668,6 +695,13 @@ function CatalogoPruebas({ pruebas, onCambio }) {
           <label>
             <span>Nombre</span>
             <input type="text" value={form.nombre} onChange={(event) => setForm({ ...form, nombre: event.target.value })} placeholder="Ej. Sprint 50 m" required maxLength={80} />
+          </label>
+          <label>
+            <span>Área</span>
+            <select value={form.area} onChange={(event) => setForm({ ...form, area: event.target.value })} required>
+              <option value="">Selecciona el área</option>
+              {misAreas.map(([id, nombre]) => <option key={id} value={String(id)}>{nombre}</option>)}
+            </select>
           </label>
           <label>
             <span>Unidad</span>
@@ -705,7 +739,7 @@ function CatalogoPruebas({ pruebas, onCambio }) {
           <div className="responsive-list__table tests-ent-tabla-wrap">
             <table className="tests-ent-tabla">
               <thead>
-                <tr><th>Prueba</th><th>Unidad</th><th>Criterio</th><th>Estado</th><th>Acciones</th></tr>
+                <tr><th>Prueba</th><th>Área</th><th>Unidad</th><th>Criterio</th><th>Estado</th><th>Acciones</th></tr>
               </thead>
               <tbody>
                 {pruebas.map((prueba) => (
@@ -714,6 +748,7 @@ function CatalogoPruebas({ pruebas, onCambio }) {
                       <div className="tests-ent-fuerte">{prueba.nombre}</div>
                       {prueba.descripcion && <small className="tests-ent-muted">{prueba.descripcion}</small>}
                     </td>
+                    <td>{prueba.area_nombre || '—'}</td>
                     <td>{prueba.unidad_label}</td>
                     <td>{prueba.criterio_label}</td>
                     <td>{prueba.activa ? 'Activa' : 'Desactivada'}</td>
@@ -732,6 +767,7 @@ function CatalogoPruebas({ pruebas, onCambio }) {
                     <span className="tests-ent-muted">{prueba.activa ? 'Activa' : 'Desactivada'}</span>
                   </div>
                   <dl>
+                    <div><dt>Área</dt><dd>{prueba.area_nombre || '—'}</dd></div>
                     <div><dt>Unidad</dt><dd>{prueba.unidad_label}</dd></div>
                     <div><dt>Criterio</dt><dd>{prueba.criterio_label}</dd></div>
                     {prueba.descripcion && <div><dt>Descripción</dt><dd>{prueba.descripcion}</dd></div>}
@@ -761,7 +797,7 @@ const normalizarSubareas = (relaciones) => {
     const id = detalle?.id ?? relacion.subarea;
     if (id == null || vistos.has(id)) return lista;
     vistos.add(id);
-    lista.push({ id, nombre: detalle?.nombre || 'Subárea', areaNombre: detalle?.area?.nombre || '' });
+    lista.push({ id, nombre: detalle?.nombre || 'Subárea', areaId: detalle?.area?.id ?? null, areaNombre: detalle?.area?.nombre || '' });
     return lista;
   }, []);
 };
@@ -795,7 +831,7 @@ export default function TestsTrainer({ seccion = 'tests' }) {
       {catalogos.error && <p className="tests-ent-error" role="alert">{catalogos.error}</p>}
 
       {seccion !== 'catalogo' && <MisTests pruebas={catalogos.pruebas} subareas={catalogos.subareas} />}
-      {seccion === 'catalogo' && <CatalogoPruebas pruebas={catalogos.pruebas} onCambio={() => setRecargaPruebas((n) => n + 1)} />}
+      {seccion === 'catalogo' && <CatalogoPruebas pruebas={catalogos.pruebas} subareas={catalogos.subareas} onCambio={() => setRecargaPruebas((n) => n + 1)} />}
     </div>
   );
 }

@@ -4,9 +4,11 @@ import {
   Home,
   UserCheck,
   ClipboardList,
+  ClipboardCheck,
   ListChecks,
   PlusCircle,
   Award,
+  ChartColumn,
   Dumbbell,
   FolderOpen,
   ChevronDown,
@@ -30,9 +32,11 @@ const trainerRoutePaths = {
   perfil: '/entrenador/perfil',
   mis_atletas: '/entrenador/mis-atletas',
   asistencias: '/entrenador/asistencias',
+  registro_asistencia: '/entrenador/asistencias/registro',
   mis_tests: '/entrenador/mis-tests',
   crear_test: '/entrenador/crear-test',
   tests_resultados: '/entrenador/tests-resultados',
+  tests_analisis: '/entrenador/tests-analisis',
   cineantropometria: '/entrenador/cineantropometria',
   cine_programar: '/entrenador/cineantropometria/programar',
   cine_datos: '/entrenador/cineantropometria/datos',
@@ -48,13 +52,21 @@ const navItems = [
   { id: 'home', label: 'Home', icon: Home },
   { id: 'perfil', label: 'Perfil', icon: User },
   { id: 'mis_atletas', label: 'Mis Atletas', icon: Users },
-  { id: 'asistencias', label: 'Análisis de asistencia', icon: UserCheck },
+  {
+    id: 'asistencia', label: 'Asistencia', icon: UserCheck,
+    grupo: [
+      { id: 'asistencias', label: 'Análisis de asistencia', icon: UserCheck },
+      // Solo lo ve quien tiene el permiso de registrar asistencia.
+      { id: 'registro_asistencia', label: 'Registro de asistencia', icon: ClipboardCheck, permission: 'registrar_asistencia' },
+    ],
+  },
   {
     id: 'tests', label: 'Tests', icon: ClipboardList,
     grupo: [
       { id: 'mis_tests', label: 'Mis tests', icon: ListChecks },
       { id: 'crear_test', label: 'Crear test', icon: PlusCircle },
       { id: 'tests_resultados', label: 'Resultados', icon: Award },
+      { id: 'tests_analisis', label: 'Análisis', icon: ChartColumn },
     ],
   },
   {
@@ -79,7 +91,8 @@ export default function SidebarTrainer({
     return path.includes('/entrenador/rutina') || path.includes('/entrenador/gestion-rutinas');
   });
   const [gruposAbiertos, setGruposAbiertos] = useState(() => ({
-    tests: ['/entrenador/mis-tests', '/entrenador/crear-test', '/entrenador/tests-resultados'].includes(window.location.pathname),
+    asistencia: window.location.pathname.startsWith('/entrenador/asistencias'),
+    tests: ['/entrenador/mis-tests', '/entrenador/crear-test', '/entrenador/tests-resultados', '/entrenador/tests-analisis'].includes(window.location.pathname),
     cine: window.location.pathname.startsWith('/entrenador/cineantropometria'),
   }));
   const [isSleepOpen, setIsSleepOpen] = useState(
@@ -88,7 +101,12 @@ export default function SidebarTrainer({
   const location = useLocation();
   const navigate = useNavigate();
   const { hasPermission } = useApplicationPermissions();
-  const visibleNavItems = navItems.filter((item) => !item.permission || hasPermission(item.permission));
+  // Se ocultan las opciones sin permiso (también dentro de los grupos) y los grupos que quedan vacíos.
+  const conPermiso = (item) => !item.permission || hasPermission(item.permission);
+  const visibleNavItems = navItems
+    .filter(conPermiso)
+    .map((item) => (item.grupo ? { ...item, grupo: item.grupo.filter(conPermiso) } : item))
+    .filter((item) => !item.grupo || item.grupo.length > 0);
   const routeActiveTab = Object.entries(trainerRoutePaths)
     .find(([, path]) => path === location.pathname)?.[0];
   const selectedTab = routeActiveTab || activeTab;
@@ -118,7 +136,7 @@ export default function SidebarTrainer({
           <div className="user-sidebar__group-title">Principal</div>
           {visibleNavItems.map((navItem) => {
             const NavIcon = navItem.icon;
-            // Tests y Cineantropometría son grupos desplegables con sus opciones.
+            // Asistencia, Tests y Cineantropometría son grupos desplegables con sus opciones.
             if (navItem.grupo) {
               const isGroupOpen = Boolean(gruposAbiertos[navItem.id]);
               return (

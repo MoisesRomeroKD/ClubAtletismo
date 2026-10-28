@@ -63,12 +63,6 @@ body.dark-mode .sleep-registration-view {
   margin: 2px 0 4px 0;
 }
 
-.sl-reg-subtitle {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--sl-text-secondary);
-}
-
 .sl-btn-back {
   background: var(--sl-surface-alt);
   color: var(--sl-text-primary);
@@ -307,46 +301,12 @@ body.dark-mode .sleep-registration-view {
   padding: 0 2px;
 }
 
-/* Botones Rápidos 1-10 */
-.sl-quick-quality-buttons {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.sl-quick-btn {
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 750;
-  font-size: 0.875rem;
-  background-color: var(--sl-surface-alt);
-  color: var(--sl-text-primary);
-  border: 1px solid var(--sl-border);
-  border-radius: calc(var(--sl-radius-md) - 2px);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.sl-quick-btn:hover:not(:disabled) {
-  border-color: var(--sl-primary);
-  background-color: color-mix(in srgb, var(--sl-primary) 10%, var(--sl-surface));
-}
-
-.sl-quick-btn.is-selected {
-  font-size: 0.95rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  transform: translateY(-1px);
-}
-
 /* Metadata Bar */
 .sl-reg-meta-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 12px;
   font-size: 0.8rem;
   color: var(--sl-text-muted);
@@ -423,10 +383,6 @@ body.dark-mode .sleep-registration-view {
 @media (max-width: 600px) {
   .sl-readonly-grid {
     grid-template-columns: 1fr;
-  }
-
-  .sl-quick-quality-buttons {
-    grid-template-columns: repeat(5, 1fr);
   }
 
   .sl-reg-header {

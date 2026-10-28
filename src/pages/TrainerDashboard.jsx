@@ -8,17 +8,23 @@ import MainNav from '../components/layout/user/MainNav';
 import '../styles/pages/TrainerDashboard.css';
 import UserService from '../api/services/Userservice';
 import CargaCircular from '../components/layout/CargaCircular';
+import { useApplicationPermissions } from '../context/ApplicationPermissionsContext';
 
 // 💤 Datos y contexto del módulo de Sueño y Descanso (sin coachContext)
-const SYSTEM_DATE = new Date().toISOString().split('T')[0];
+// Los pendientes de sueño son siempre los de hoy.
+const SLEEP_PERIOD = 'hoy';
+// "Hoy" en hora de Caracas (no UTC: después de las 8 p. m. UTC ya sería el día siguiente).
+const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' });
 const TRAINER_ROUTE_PATHS = {
   home: '/entrenador/home',
   perfil: '/entrenador/perfil',
   mis_atletas: '/entrenador/mis-atletas',
   asistencias: '/entrenador/asistencias',
+  registro_asistencia: '/entrenador/asistencias/registro',
   mis_tests: '/entrenador/mis-tests',
   crear_test: '/entrenador/crear-test',
   tests_resultados: '/entrenador/tests-resultados',
+  tests_analisis: '/entrenador/tests-analisis',
   cineantropometria: '/entrenador/cineantropometria',
   cine_programar: '/entrenador/cineantropometria/programar',
   cine_datos: '/entrenador/cineantropometria/datos',
@@ -53,12 +59,12 @@ const MedicionesTrainer = lazyWithDelay(() => import('../components/trainer/cine
 const SleepGeneralView = lazyWithDelay(() => import('../components/trainer/sleeptracker/SleepGeneralView'));
 const SleepIndividualView = lazyWithDelay(() => import('../components/trainer/sleeptracker/SleepIndividualView'));
 const SleepPendingView = lazyWithDelay(() => import('../components/trainer/sleeptracker/SleepPendingView'));
-const SleepAuditView = lazyWithDelay(() => import('../components/trainer/sleeptracker/SleepAuditView'));
 const SleepAthleteDetailPanel = lazyWithDelay(() => import('../components/trainer/sleeptracker/SleepAthleteDetailPanel'));
 const SleepRegistrationView = lazyWithDelay(() => import('../components/trainer/sleeptracker/SleepRegistrationView'));
 
 // 📋 Importación perezosa del Módulo de Asistencias
 const AsistenciasTrainerView = lazyWithDelay(() => import('../components/trainer/asistencias/AsistenciasTrainerView'));
+const RegistroAsistencia = lazyWithDelay(() => import('../components/RegistroAsistencia'));
 
 // 👥 Importación perezosa del componente Atletas Trainer
 const AtletasTrainer = lazyWithDelay(() => import('../components/trainer/AtletasViewTrainer/AtletasViewTrainer'));
@@ -69,6 +75,7 @@ const PerfilTrainer = lazyWithDelay(() => import('../components/trainer/perfilTr
 const ReporteEntrenador = lazyWithDelay(() => import('../components/trainer/reportes/ReporteEntrenador'));
 const TestsTrainer = lazyWithDelay(() => import('../components/trainer/tests/TestsTrainer'));
 const ResultadosTestsTrainer = lazyWithDelay(() => import('../components/trainer/tests/ResultadosTestsTrainer'));
+const AnalisisTestsTrainer = lazyWithDelay(() => import('../components/trainer/tests/AnalisisTestsTrainer'));
 
 // 🎨 Color asociado a cada nivel de calidad de sueño (1-10)
 function qualityColor(quality) {
@@ -92,6 +99,9 @@ export default function TrainerDashboard({
 }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { hasPermission, isLoading: permisosCargando } = useApplicationPermissions();
+  // Se calcula en cada render: si la página queda abierta pasada la medianoche, cambia de día.
+  const SYSTEM_DATE = hoyCaracas();
   const legacyRouteAction = {
     '/entrenador/dashboard': 'home',
     '/entrenador/asignar-test': 'mis_tests',
@@ -117,7 +127,6 @@ export default function TrainerDashboard({
   const [filters, setFilters] = useState({ search: '', area: 'all', status: 'all' });
   const [timeRange, setTimeRange] = useState('week');
   const [selectedAthleteForReg, setSelectedAthleteForReg] = useState(null);
-  const [sleepPeriod, setSleepPeriod] = useState('hoy'); // Nuevo filtro de período para pendientes
 
   // Atleta actualmente abierto en el panel lateral de detalle (null = panel cerrado)
   const [selectedAthleteForPanel, setSelectedAthleteForPanel] = useState(null);
@@ -127,7 +136,7 @@ export default function TrainerDashboard({
 
   useEffect(() => {
     let active = true;
-    UserService.getTrainerDashboardSummary({ sleep_period: sleepPeriod })
+    UserService.getTrainerDashboardSummary({ sleep_period: SLEEP_PERIOD })
       .then((data) => {
         if (!active) return;
         setTrainerData(data);
@@ -135,7 +144,7 @@ export default function TrainerDashboard({
       })
       .catch(() => { if (active) setSleepLoadError(true); });
     return () => { active = false; };
-  }, [sleepPeriod]);
+  }, []);
 
   // Sincronización del Sidebar
   useEffect(() => {
@@ -170,7 +179,7 @@ export default function TrainerDashboard({
         default: return true;
       }
     });
-  }, [sleepRecords, timeRange]);
+  }, [sleepRecords, timeRange, SYSTEM_DATE]);
 
   // ────────────────────────────────────────────────────────────
   // 💤 DATOS DERIVADOS DEL MÓDULO DE SUEÑO
@@ -283,7 +292,7 @@ export default function TrainerDashboard({
       ...prev,
     ]);
     // Sincronizar en segundo plano
-    UserService.getTrainerDashboardSummary({ sleep_period: sleepPeriod })
+    UserService.getTrainerDashboardSummary({ sleep_period: SLEEP_PERIOD })
       .then((data) => {
         setTrainerData(data);
         setSleepRecords(data.sleep_records || []);
@@ -345,6 +354,15 @@ export default function TrainerDashboard({
             </div>
           )}
 
+          {/* Registro de asistencia: mismo componente del admin, solo con las subáreas del entrenador */}
+          {effectiveAction === 'registro_asistencia' && (
+            <div className="view-fade-in">
+              {permisosCargando ? <CargaCircular texto="Cargando" /> : hasPermission('registrar_asistencia')
+                ? <RegistroAsistencia soloMisSubareas />
+                : <div className="no-data-cell">No tienes permiso para registrar asistencia.</div>}
+            </div>
+          )}
+
           {(effectiveAction === 'asistencias' || effectiveAction === 'asistencia') && (
             <div className="view-fade-in">
               <AsistenciasTrainerView
@@ -363,6 +381,12 @@ export default function TrainerDashboard({
           {(effectiveAction === 'mis_tests' || effectiveAction === 'crear_test') && (
             <div className="view-fade-in">
               <TestsTrainer seccion={effectiveAction === 'crear_test' ? 'catalogo' : 'tests'} />
+            </div>
+          )}
+
+          {effectiveAction === 'tests_analisis' && (
+            <div className="view-fade-in">
+              <AnalisisTestsTrainer />
             </div>
           )}
 
@@ -406,7 +430,6 @@ export default function TrainerDashboard({
                 }}
                 onCancel={() => setSelectedAthleteForReg(null)}
                 systemDate={SYSTEM_DATE}
-                registrarRole="Entrenador"
                 qualityColor={qualityColor}
               />
             </div>
@@ -449,7 +472,6 @@ export default function TrainerDashboard({
                 filters={filters}
                 setFilters={setFilters}
                 filteredAthletes={filteredAthletes}
-                pendingAthletes={pendingAthletes}
                 getAthleteStats={getAthleteStats}
                 openRegistrationModal={openRegistrationModal}
                 onOpenPanel={openAthletePanel}
@@ -464,21 +486,6 @@ export default function TrainerDashboard({
                 allAthletes={myAthletes}
                 onSaveSleep={handleSaveSleep}
                 systemDate={SYSTEM_DATE}
-                registrarRole="Entrenador"
-                sleepPeriod={sleepPeriod}
-                setSleepPeriod={setSleepPeriod}
-              />
-            </div>
-          )}
-
-          {!registrandoSueno && effectiveAction === 'sueño_auditoria' && (
-            <div className="view-fade-in">
-              <SleepAuditView
-                pendingAthletes={pendingAthletes}
-                athletes={myAthletes}
-                systemDate={SYSTEM_DATE}
-                openRegistrationModal={openRegistrationModal}
-                onOpenPanel={openAthletePanel}
               />
             </div>
           )}

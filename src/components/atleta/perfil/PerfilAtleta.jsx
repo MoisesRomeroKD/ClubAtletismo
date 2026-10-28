@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BadgeCheck, CalendarDays, Gauge, IdCard, Mail, Phone, Users, UsersRound } from 'lucide-react';
+import UserService from '../../../api/services/Userservice';
 import '../../../styles/components/atleta/PerfilAtleta.css';
 
 /*
@@ -8,12 +9,11 @@ import '../../../styles/components/atleta/PerfilAtleta.css';
  *   1. Mis datos: ficha técnica, categoría y subáreas (con su turno).
  *   2. Mis entrenadores.
  *   3. Mi representante.
- * Solo muestra campos que el sistema guarda. Todavía NO está conectada al backend:
- * mientras tanto los datos llegan vacíos y la pantalla lo indica (no se inventan datos).
+ * Los datos vienen de GET /api/v1/users/atleta/perfil/ (solo lectura).
  */
 
-// Forma de los datos que enviará el backend al conectarla.
-const PERFIL_SIN_CONECTAR = {
+// Forma de los datos del backend (vacía mientras carga).
+const PERFIL_VACIO = {
   atleta: {
     cedula: null,
     nombres: null,
@@ -56,16 +56,51 @@ function Dato({ etiqueta, children, icono: Icono }) {
   );
 }
 
-export default function PerfilAtleta({ perfil = PERFIL_SIN_CONECTAR }) {
-  const { atleta, entrenadores, representantes } = perfil;
-  const sinConectar = perfil === PERFIL_SIN_CONECTAR;
+export default function PerfilAtleta() {
+  const [estado, setEstado] = useState({ perfil: PERFIL_VACIO, cargando: true, error: '' });
+
+  useEffect(() => {
+    let activo = true;
+    UserService.getMiPerfilAtleta()
+      .then((datos) => {
+        if (activo) {
+          setEstado({
+            perfil: {
+              atleta: { ...PERFIL_VACIO.atleta, ...(datos?.atleta || {}) },
+              entrenadores: Array.isArray(datos?.entrenadores) ? datos.entrenadores : [],
+              representantes: Array.isArray(datos?.representantes) ? datos.representantes : [],
+            },
+            cargando: false,
+            error: '',
+          });
+        }
+      })
+      .catch((error) => {
+        if (activo) {
+          setEstado({
+            perfil: PERFIL_VACIO,
+            cargando: false,
+            error: error.response?.data?.detail || 'No se pudo cargar tu perfil. Intenta de nuevo.',
+          });
+        }
+      });
+    return () => { activo = false; };
+  }, []);
+
+  const { atleta, entrenadores, representantes } = estado.perfil;
+
+  if (estado.cargando) {
+    return (
+      <div className="perfil-atleta">
+        <p className="perfil-atleta__aviso" role="status">Cargando tu perfil...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="perfil-atleta">
-      {sinConectar && (
-        <p className="perfil-atleta__aviso" role="status">
-          Esta pantalla aún no está conectada al sistema: los datos aparecerán cuando se conecte.
-        </p>
+      {estado.error && (
+        <p className="perfil-atleta__aviso" role="alert">{estado.error}</p>
       )}
 
       {/* Encabezado */}

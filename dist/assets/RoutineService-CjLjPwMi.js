@@ -1,0 +1,1 @@
+import{C as e}from"./index-CJfRMwhp.js";var t=`/v1/rutinas/planes`,n={list:async()=>(await e.get(t)).data,create:async n=>(await e.post(t,n)).data,update:async(n,r)=>(await e.patch(`${t}/${n}`,r)).data,publish:async n=>(await e.post(`${t}/${n}/publicar`)).data};export{n as t};

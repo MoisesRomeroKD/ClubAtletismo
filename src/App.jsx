@@ -11,7 +11,8 @@ import { ApplicationPermissionsProvider } from "./context/ApplicationPermissions
 
 import AppRoutes from "./routes/AppRoutes";
 import ConnectivityBanner from "./components/layout/ConnectivityBanner";
-import SincronizacionSueno from "./components/layout/SincronizacionSueno";
+import ServidorIniciando from "./components/layout/ServidorIniciando";
+import Notificaciones from "./components/layout/Notificaciones";
 
 import TopbarPublic from "./components/layout/public/TopbarPublic";
 import SidebarPublic from "./components/layout/public/SidebarPublic";
@@ -197,7 +198,8 @@ export default function App() {
     <ThemeProvider>
       <LayoutProvider>
         <ConnectivityBanner />
-        <SincronizacionSueno />
+        <ServidorIniciando />
+        <Notificaciones />
         <Router>
           <ApplicationPermissionsProvider role={role}>
             <AppContent

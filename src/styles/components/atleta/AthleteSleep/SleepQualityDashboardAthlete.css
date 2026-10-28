@@ -624,3 +624,124 @@
 .historial-sueno__lista .history-score {
   width: auto;
 }
+
+.historial-sueno__grafico {
+  width: 100%;
+  height: 220px;
+  margin-top: 0.75rem;
+}
+
+.historial-sueno__tooltip {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.8rem;
+}
+
+
+/* KPI compacto del historial: solo tan ancho como su contenido (no ocupa toda la fila). */
+.sleep-dashboard-wrapper .historial-sueno__kpi {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  justify-self: start;
+  gap: 24px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 14px 20px;
+}
+
+.sleep-dashboard-wrapper .historial-sueno__kpi .stat-label,
+.sleep-dashboard-wrapper .historial-sueno__kpi .stat-context {
+  margin: 0;
+}
+
+.sleep-dashboard-wrapper .historial-sueno__kpi .stat-value {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+
+/* Título de la pantalla "Mi análisis de sueño" */
+.sleep-dashboard-wrapper .historial-sueno__pagina-titulo {
+  margin: 0 0 1rem;
+  color: var(--text-main);
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+}
+
+
+/* Paginación de la lista (15 por página) y filtro por tiempo */
+.sleep-dashboard-wrapper .historial-sueno__paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+
+.sleep-dashboard-wrapper .historial-sueno__total {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.sleep-dashboard-wrapper .historial-sueno__paginacion-botones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.sleep-dashboard-wrapper .historial-sueno__paginacion-botones button {
+  padding: 6px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font: inherit;
+  cursor: pointer;
+}
+
+.sleep-dashboard-wrapper .historial-sueno__paginacion-botones button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .sleep-dashboard-wrapper .historial-sueno__paginacion-botones {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* Título a la izquierda y filtro por tiempo a la derecha */
+.sleep-dashboard-wrapper .historial-sueno__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.sleep-dashboard-wrapper .historial-sueno__cabecera .historial-sueno__pagina-titulo {
+  margin: 0;
+}
+
+.sleep-dashboard-wrapper .historial-sueno__periodo {
+  min-width: 190px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-input, var(--bg-card));
+  color: var(--text-main);
+  font: inherit;
+}

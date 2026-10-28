@@ -54,7 +54,6 @@ const PerfilTrainer = () => {
     }
   };
 
-  const areasOrdenadas = ['Velocidad', 'Resistencia', 'Salto', 'Lanzamiento'];
   const subareasPorArea = subareas.reduce((grupos, subarea) => {
     const area = subarea.subarea_detalle?.area?.nombre || 'Sin área';
 
@@ -65,6 +64,11 @@ const PerfilTrainer = () => {
     grupos[area].push(subarea);
     return grupos;
   }, {});
+
+  // Las áreas salen de los datos del backend, en orden alfabético (sin lista fija).
+  const areasOrdenadas = Object.keys(subareasPorArea)
+    .filter((area) => area !== 'Sin área')
+    .sort((a, b) => a.localeCompare(b, 'es'));
 
   const gruposDeSubareas = [
     ...areasOrdenadas

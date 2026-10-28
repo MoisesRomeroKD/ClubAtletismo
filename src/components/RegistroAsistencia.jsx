@@ -15,14 +15,14 @@ const emptyPage = {
   total_paginas: 0,
 };
 
-export default function RegistroAsistencia() {
+// soloMisSubareas (entrenador): las áreas y subáreas salen de las subáreas donde está habilitado,
+// porque el servidor solo le deja registrar en ellas.
+export default function RegistroAsistencia({ soloMisSubareas = false }) {
   const [areas, setAreas] = useState([]);
   const [subareas, setSubareas] = useState([]);
-  const [draftFilters, setDraftFilters] = useState({
-    area_id: '',
-    subarea_id: '',
-    cedula: '',
-  });
+  const [misSubareas, setMisSubareas] = useState(null);
+  // Los filtros se aplican al elegirlos (sin botón "Aplicar"). La búsqueda espera a que se deje de escribir.
+  const [busqueda, setBusqueda] = useState('');
   const [filters, setFilters] = useState({
     area_id: '',
     subarea_id: '',
@@ -41,11 +41,56 @@ export default function RegistroAsistencia() {
   const [cursor, setCursor] = useState(null);
   const [numeroPagina, setNumeroPagina] = useState(1);
   const requestId = useRef(0);
-  // En celular los filtros van en el panel del botón flotante "Filtros" (mismo diseño que Reportes);
-  // se cierra al aplicar.
+  // En celular los filtros van en el panel del botón flotante "Filtros" (mismo diseño que Reportes).
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
 
+  const cambiarFiltros = (cambios) => {
+    setMessage({ text: '', type: '' });
+    setCursor(null);
+    setNumeroPagina(1);
+    setFilters((actuales) => ({ ...actuales, ...cambios }));
+  };
+
   useEffect(() => {
+    const espera = setTimeout(() => {
+      const texto = busqueda.trim();
+      setFilters((actuales) => {
+        if (actuales.cedula === texto) return actuales;
+        setCursor(null);
+        setNumeroPagina(1);
+        return { ...actuales, cedula: texto };
+      });
+    }, 400);
+    return () => clearTimeout(espera);
+  }, [busqueda]);
+
+  // Entrenador: sus subáreas (con su área) en una sola consulta.
+  useEffect(() => {
+    if (!soloMisSubareas) return undefined;
+    let active = true;
+    podApi.get('/v1/users/entrenador/mis-subareas/').then((response) => {
+      if (!active) return;
+      const lista = (Array.isArray(response.data) ? response.data : [])
+        .map((fila) => fila.subarea_detalle)
+        .filter(Boolean);
+      setMisSubareas(lista);
+      setAreas([...new Map(lista.filter((s) => s.area).map((s) => [s.area.id, s.area])).values()]);
+    }).catch((error) => {
+      if (active) {
+        setMisSubareas([]);
+        setMessage({
+          text: error.response?.data?.detail || 'No se pudieron cargar tus subáreas.',
+          type: 'error',
+        });
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [soloMisSubareas]);
+
+  useEffect(() => {
+    if (soloMisSubareas) return undefined;
     let active = true;
     podApi.get('/v1/atletismo/areas/').then((response) => {
       if (active) setAreas(response.data);
@@ -61,13 +106,21 @@ export default function RegistroAsistencia() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [soloMisSubareas]);
 
   useEffect(() => {
+    if (soloMisSubareas) {
+      // Sin pedir nada al servidor: se filtran sus subáreas por el área elegida.
+      setSubareas((misSubareas || []).filter(
+        (subarea) => !filters.area_id || String(subarea.area?.id) === String(filters.area_id),
+      ));
+      setIsLoadingSubareas(misSubareas === null);
+      return undefined;
+    }
     let active = true;
     setIsLoadingSubareas(true);
     podApi.get('/v1/atletismo/subareas/', {
-      params: draftFilters.area_id ? { area_id: draftFilters.area_id } : {},
+      params: filters.area_id ? { area_id: filters.area_id } : {},
     }).then((response) => {
       if (active) setSubareas(response.data);
     }).catch((error) => {
@@ -84,16 +137,10 @@ export default function RegistroAsistencia() {
     return () => {
       active = false;
     };
-  }, [draftFilters.area_id]);
+  }, [filters.area_id, soloMisSubareas, misSubareas]);
 
   useEffect(() => {
     const currentRequestId = ++requestId.current;
-    // La asistencia se pasa por subárea: hasta elegir una no se muestra ningún atleta.
-    if (!filters.subarea_id) {
-      setPageData(emptyPage);
-      setIsLoading(false);
-      return;
-    }
     setIsLoading(true);
 
     const params = { page: 1, page_size: PAGE_SIZE };
@@ -116,7 +163,7 @@ export default function RegistroAsistencia() {
         setAttendanceStatuses(
           Object.fromEntries(
             response.data.results.map((athlete) => [
-              athlete.id,
+              athlete.fila_id,
               athlete.estado_asistencia_hoy || (athlete.turno_abierto ? 'Presente' : 'Ausente'),
             ])
           )
@@ -139,21 +186,9 @@ export default function RegistroAsistencia() {
       });
   }, [filters, cursor, refreshKey]);
 
-  const applyFilters = (event) => {
-    event.preventDefault();
-    setMessage({ text: '', type: '' });
-    setCursor(null);
-    setNumeroPagina(1);
-    setFilters({
-      ...draftFilters,
-      cedula: draftFilters.cedula.trim(),
-    });
-    setFiltrosAbiertos(false);
-  };
-
   const clearFilters = () => {
     const cleared = { area_id: '', subarea_id: '', cedula: '' };
-    setDraftFilters(cleared);
+    setBusqueda('');
     setFilters(cleared);
     setCursor(null);
     setNumeroPagina(1);
@@ -162,24 +197,24 @@ export default function RegistroAsistencia() {
   };
 
   const registerAttendance = async (athlete) => {
-    const status = attendanceStatuses[athlete.id] || (athlete.turno_abierto ? 'Presente' : 'Ausente');
+    const status = attendanceStatuses[athlete.fila_id] || (athlete.turno_abierto ? 'Presente' : 'Ausente');
     if (status === 'Presente' && !athlete.turno_abierto) {
       setMessage({ text: `El turno de ${athlete.nombre} no está abierto: solo se puede registrar Ausente o Justificado.`, type: 'error' });
       return;
     }
-    const detail = justificationDetails[athlete.id] || '';
+    const detail = justificationDetails[athlete.fila_id] || '';
     if (status === 'Justificado' && !detail.trim()) {
       setMessage({ text: 'El detalle de la justificación es obligatorio.', type: 'error' });
       return;
     }
 
     setMessage({ text: '', type: '' });
-    setSavingAthleteId(athlete.id);
+    setSavingAthleteId(athlete.fila_id);
 
     try {
       const response = await podApi.post(`${attendanceApi}asistencia/registrar/`, {
         cedula: athlete.cedula,
-        subarea_id: filters.subarea_id,
+        subarea_id: athlete.subarea_id,
         status,
         detail: status === 'Justificado' ? detail.trim() : '',
       });
@@ -189,15 +224,15 @@ export default function RegistroAsistencia() {
       setMessage({ text: response.data.message, type: 'success' });
       // El atleta solo sale de la página en pantalla: no se recarga ni entra otro en su lugar.
       // Si la página queda vacía, se piden los 15 que siguen después de él.
-      const quedan = pageData.results.filter((item) => item.id !== athlete.id);
+      const quedan = pageData.results.filter((item) => item.fila_id !== athlete.fila_id);
       const total = Math.max(pageData.total_resultados - 1, 0);
       setPageData((current) => ({
         ...current,
-        results: current.results.filter((item) => item.id !== athlete.id),
+        results: current.results.filter((item) => item.fila_id !== athlete.fila_id),
         total_resultados: total,
         total_paginas: Math.ceil(total / PAGE_SIZE),
       }));
-      if (!quedan.length && total) setCursor({ despues: athlete.id });
+      if (!quedan.length && total) setCursor({ despues: athlete.fila_id });
     } catch (error) {
       setMessage({
         text: error.response?.data?.error || error.message || 'No se pudo registrar la asistencia. Intente nuevamente.',
@@ -212,31 +247,27 @@ export default function RegistroAsistencia() {
     const { results } = pageData;
     if (!results.length) return;
     if (direccion === 'siguiente') {
-      setCursor({ despues: results[results.length - 1].id });
+      setCursor({ despues: results[results.length - 1].fila_id });
       setNumeroPagina((numero) => numero + 1);
     } else {
-      setCursor({ antes: results[0].id });
+      setCursor({ antes: results[0].fila_id });
       setNumeroPagina((numero) => Math.max(numero - 1, 1));
     }
   };
 
-  // Filtros: se pintan en la barra (monitores) y en el panel "Filtros" (celular). "Aplicar filtros" cierra el panel.
+  // Filtros: se pintan en la barra (monitores) y en el panel "Filtros" (celular). Se aplican al elegirlos.
   const formularioFiltros = (
         <form
           className="registro-asistencia__search"
-          onSubmit={applyFilters}
+          onSubmit={(event) => event.preventDefault()}
         >
           <div className="registro-asistencia__filters">
             <div className="registro-asistencia__field">
               <label htmlFor="attendance-area">Área</label>
               <select
                 id="attendance-area"
-                value={draftFilters.area_id}
-                onChange={(event) => setDraftFilters((current) => ({
-                  ...current,
-                  area_id: event.target.value,
-                  subarea_id: '',
-                }))}
+                value={filters.area_id}
+                onChange={(event) => cambiarFiltros({ area_id: event.target.value, subarea_id: '' })}
               >
                 <option value="">Todas las áreas</option>
                 {areas.map((area) => (
@@ -246,17 +277,14 @@ export default function RegistroAsistencia() {
             </div>
 
             <div className="registro-asistencia__field">
-              <label htmlFor="attendance-subarea">Subárea *</label>
+              <label htmlFor="attendance-subarea">Subárea</label>
               <select
                 id="attendance-subarea"
-                value={draftFilters.subarea_id}
+                value={filters.subarea_id}
                 disabled={isLoadingSubareas}
-                onChange={(event) => setDraftFilters((current) => ({
-                  ...current,
-                  subarea_id: event.target.value,
-                }))}
+                onChange={(event) => cambiarFiltros({ subarea_id: event.target.value })}
               >
-                <option value="">Selecciona una subárea</option>
+                <option value="">Todas las subáreas</option>
                 {subareas.map((subarea) => (
                   <option key={subarea.id} value={subarea.id}>{subarea.nombre}</option>
                 ))}
@@ -268,24 +296,14 @@ export default function RegistroAsistencia() {
               <input
                 id="attendance-cedula"
                 type="search"
-                value={draftFilters.cedula}
-                onChange={(event) => setDraftFilters((current) => ({
-                  ...current,
-                  cedula: event.target.value,
-                }))}
+                value={busqueda}
+                onChange={(event) => setBusqueda(event.target.value)}
                 placeholder="Cédula o nombre del atleta"
               />
             </div>
           </div>
 
           <div className="registro-asistencia__filter-actions">
-            <button
-              className="registro-asistencia__button registro-asistencia__button--primary"
-              type="submit"
-              disabled={isLoading || !draftFilters.subarea_id}
-            >
-              Aplicar filtros
-            </button>
             <button
               className="registro-asistencia__button registro-asistencia__button--secondary"
               type="button"
@@ -378,15 +396,9 @@ export default function RegistroAsistencia() {
           </div>
         )}
 
-        {!isLoading && !filters.subarea_id && (
+        {!isLoading && pageData.results.length === 0 && (
           <div className="registro-asistencia__empty">
-            Elige una subárea en los filtros y pulsa "Aplicar filtros" para pasar asistencia.
-          </div>
-        )}
-
-        {!isLoading && filters.subarea_id && pageData.results.length === 0 && (
-          <div className="registro-asistencia__empty">
-            No hay atletas pendientes en esta subárea con los filtros seleccionados.
+            No hay atletas pendientes de asistencia hoy con estos filtros.
           </div>
         )}
 
@@ -395,7 +407,7 @@ export default function RegistroAsistencia() {
             {pageData.results.map((athlete) => (
               <li
                 className={`registro-asistencia__athlete ${athlete.pendiente ? 'is-pending' : 'is-registered'}`}
-                key={athlete.id}
+                key={athlete.fila_id}
               >
                 <div className="registro-asistencia__athlete-info">
                   <span className="registro-asistencia__avatar" aria-hidden="true">
@@ -403,7 +415,8 @@ export default function RegistroAsistencia() {
                   </span>
                   <div className="registro-asistencia__athlete-details">
                     <h3>{athlete.nombre}</h3>
-                    <p>Cédula <strong>{athlete.cedula}</strong></p>
+                    <p>Cédula <strong>{athlete.cedula}</strong> · <span className="ref-usuario">Ref. {athlete.id}</span></p>
+                    <p>Subárea: <strong>{athlete.subarea}</strong></p>
                     <p>
                       Turno: <strong>{athlete.turno_label}</strong> ({athlete.turno_horario})
                       {' · '}
@@ -422,30 +435,30 @@ export default function RegistroAsistencia() {
                   <span className={`registro-asistencia__status ${athlete.pendiente ? 'is-pending' : 'is-registered'}`}>
                     {athlete.pendiente ? 'Pendiente hoy' : athlete.estado_asistencia_hoy}
                   </span>
-                  <div className={`registro-asistencia__field registro-asistencia__field--status ${attendanceStatuses[athlete.id] === 'Justificado' ? 'has-justification' : ''}`}>
-                    <label htmlFor={`attendance-status-${athlete.id}`}>Estado</label>
+                  <div className={`registro-asistencia__field registro-asistencia__field--status ${attendanceStatuses[athlete.fila_id] === 'Justificado' ? 'has-justification' : ''}`}>
+                    <label htmlFor={`attendance-status-${athlete.fila_id}`}>Estado</label>
                     <select
-                      id={`attendance-status-${athlete.id}`}
-                      value={attendanceStatuses[athlete.id] || (athlete.turno_abierto ? 'Presente' : 'Ausente')}
+                      id={`attendance-status-${athlete.fila_id}`}
+                      value={attendanceStatuses[athlete.fila_id] || (athlete.turno_abierto ? 'Presente' : 'Ausente')}
                       onChange={(event) => setAttendanceStatuses((current) => ({
                         ...current,
-                        [athlete.id]: event.target.value,
+                        [athlete.fila_id]: event.target.value,
                       }))}
                     >
                       <option value="Presente" disabled={!athlete.turno_abierto}>Presente</option>
                       <option value="Ausente">Ausente</option>
                       <option value="Justificado">Justificado</option>
                     </select>
-                    {attendanceStatuses[athlete.id] === 'Justificado' && (
+                    {attendanceStatuses[athlete.fila_id] === 'Justificado' && (
                       <div className="registro-asistencia__justification">
-                        <label htmlFor={`attendance-detail-${athlete.id}`}>Detalle de la justificación *</label>
+                        <label htmlFor={`attendance-detail-${athlete.fila_id}`}>Detalle de la justificación *</label>
                         <textarea
-                          id={`attendance-detail-${athlete.id}`}
+                          id={`attendance-detail-${athlete.fila_id}`}
                           placeholder="Escriba el motivo de la justificación..."
-                          value={justificationDetails[athlete.id] || ''}
+                          value={justificationDetails[athlete.fila_id] || ''}
                           onChange={(event) => setJustificationDetails((current) => ({
                             ...current,
-                            [athlete.id]: event.target.value,
+                            [athlete.fila_id]: event.target.value,
                           }))}
                           required
                         />
@@ -458,7 +471,7 @@ export default function RegistroAsistencia() {
                     onClick={() => registerAttendance(athlete)}
                     disabled={savingAthleteId !== null}
                   >
-                    {savingAthleteId === athlete.id ? 'Guardando...' : 'Guardar'}
+                    {savingAthleteId === athlete.fila_id ? 'Guardando...' : 'Guardar'}
                   </button>
                 </div>
               </li>

@@ -1,5 +1,4 @@
 import podApi from '../podApi';
-import { registrarSueno } from './suenoPendientes';
 
 /*
  * Servicio para apps.users.
@@ -210,6 +209,18 @@ const UserService = {
     return response.data;
   },
 
+  // Perfil del atleta autenticado: sus datos, subáreas, entrenadores y representantes.
+  getMiPerfilAtleta: async () => {
+    const response = await podApi.get('/v1/users/atleta/perfil/');
+    return response.data;
+  },
+
+  // Análisis de asistencia del administrador (todos los atletas registrados, solo lectura).
+  getAnalisisAsistenciaAdmin: async () => {
+    const response = await podApi.get('/v1/asistencias/analisis/');
+    return response.data;
+  },
+
   getTrainerDashboardSummary: async (params = {}) => {
     const response = await podApi.get(
       '/v1/users/entrenador/dashboard/summary',
@@ -219,8 +230,11 @@ const UserService = {
     return response.data;
   },
 
-  // Si no hay conexión, el registro queda guardado en el dispositivo y se envía al volver internet.
-  registerSleep: async (athleteId, quality) => registrarSueno(athleteId, quality),
+  // Solo se registra el sueño de hoy: el backend pone la fecha.
+  registerSleep: async (athleteId, quality) => {
+    const response = await podApi.post('/v1/descanso/sueno/registrar/', { atleta_id: athleteId, calidad: quality });
+    return response.data;
+  },
 
   getAttendanceHistoryByCedula: async (cedula) => {
     const response = await podApi.get('/v1/asistencias/atletas/historial', {

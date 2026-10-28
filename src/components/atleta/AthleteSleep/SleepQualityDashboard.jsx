@@ -1,37 +1,38 @@
 import React, { useState } from 'react';
-import { CheckCircle, CloudOff } from 'lucide-react';
-import { registrarSueno } from '../../../api/services/suenoPendientes';
+import { CheckCircle } from 'lucide-react';
+import UserService from '../../../api/services/Userservice';
 import SleepRegistrationView from '../../trainer/sleeptracker/SleepRegistrationView';
 
 // Registro de sueño del día, con la misma pantalla de "Registrar Sueño" del administrador y del entrenador.
-// El promedio y el historial están en "Historial de sueño".
+// El promedio y el historial están en "Mi análisis de sueño".
 const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' });
 
-const SleepQualityDashboard = ({ onRegistrado }) => {
+const SleepQualityDashboard = ({ historial = [], onRegistrado }) => {
     const [resultado, setResultado] = useState(null);
+    // Si ya registró el sueño de hoy, no se vuelve a mostrar el formulario: solo el aviso.
+    const registroDeHoy = (Array.isArray(historial) ? historial : [])
+        .find((registro) => String(registro.date || '').slice(0, 10) === hoyCaracas());
     const storedId = localStorage.getItem('user_id') || localStorage.getItem('userId');
 
-    // Sin conexión, el registro queda guardado en el dispositivo y se envía al volver internet.
     const guardar = async (athleteId, calidad) => {
-        const response = await registrarSueno(athleteId, calidad);
-        if (response.pendiente) {
-            setResultado({ pendiente: true, texto: response.message });
-            return;
-        }
+        const response = await UserService.registerSleep(athleteId, calidad);
         if (response.status !== 'success') {
             throw new Error(response.message || 'No se pudo realizar el registro.');
         }
-        setResultado({ pendiente: false, texto: `Registraste tu sueño de hoy: ${calidad}/10.` });
+        setResultado(`Registraste tu sueño de hoy: ${calidad}/10.`);
         onRegistrado?.();
     };
 
-    if (resultado) {
+    const textoRegistrado = resultado
+        || (registroDeHoy ? `Ya registraste tu sueño de hoy: ${registroDeHoy.calidad}/10.` : '');
+
+    if (textoRegistrado) {
         return (
             <div className="sleep-registration-view">
                 <div className="sl-card sl-card--centered sl-reg-form">
                     <div className="sl-reg-alert" role="status">
-                        {resultado.pendiente ? <CloudOff size={18} /> : <CheckCircle size={18} />}
-                        <span>{resultado.texto}</span>
+                        <CheckCircle size={18} />
+                        <span>{textoRegistrado}</span>
                     </div>
                 </div>
             </div>
@@ -47,7 +48,6 @@ const SleepQualityDashboard = ({ onRegistrado }) => {
             athlete={{ id: storedId }}
             onSave={guardar}
             systemDate={hoyCaracas()}
-            registrarRole="Atleta"
             modoAtleta
         />
     );

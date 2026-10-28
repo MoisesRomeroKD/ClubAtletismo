@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { notificar } from '../../../utils/notificar';
 
 const DAYS_OF_WEEK = [
   'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'
@@ -118,7 +119,7 @@ export const usePlanBuilder = (initialWeeksCount = 8, initialPlan = null) => {
 
   const nextStep = useCallback(() => {
     if (currentStep === 1 && !planDetails.name.trim()) {
-      alert('Por favor, ingresa el nombre del plan antes de continuar.');
+      notificar('Ingresa el nombre del plan antes de continuar.', { tipo: 'aviso' });
       return;
     }
     setCurrentStep(prev => Math.min(prev + 1, 3));

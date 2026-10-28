@@ -37,10 +37,10 @@ export default function SidebarAthlete({
   const navItems = [
     { id: 'home', label: 'Home', icon: Home, category: 'principal' },
     { id: 'tests', label: 'Tests', icon: ClipboardList, category: 'rendimiento' },
-    { id: 'asistencias', label: 'Mis asistencias', icon: Clock3, category: 'rendimiento' },
-    { id: 'antropometria', label: 'Antropometría', icon: Activity, category: 'rendimiento' },
+    { id: 'asistencias', label: 'Mi análisis de asistencia', icon: Clock3, category: 'rendimiento' },
+    { id: 'antropometria', label: 'Cineantropometría', icon: Activity, category: 'rendimiento' },
     { id: 'sueno', label: 'Sueño y Fatiga', icon: Zap, category: 'rendimiento' }, // ID corregido
-    { id: 'sueno_historial', label: 'Historial de sueño', icon: History, category: 'rendimiento' },
+    { id: 'sueno_historial', label: 'Mi análisis de sueño', icon: History, category: 'rendimiento' },
     { id: 'perfil', label: 'Mi perfil', icon: UserRound, category: 'info' },
   ];
 

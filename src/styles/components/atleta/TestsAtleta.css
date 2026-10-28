@@ -143,3 +143,136 @@
     padding: 1rem;
   }
 }
+
+
+/* Resumen: KPIs y evolución por prueba */
+.tests-atl-resumen {
+  display: grid;
+  gap: 1rem;
+}
+
+.tests-atl-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.tests-atl-kpi {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-main);
+  border-left: 4px solid var(--func-primary);
+  border-radius: 10px;
+  background: var(--bg-surface);
+}
+
+.tests-atl-kpi span {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.tests-atl-kpi strong {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.tests-atl-pruebas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 1rem;
+}
+
+.tests-atl-prueba {
+  display: grid;
+  align-content: start;
+  gap: 0.6rem;
+  padding: 1rem;
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+  background: var(--bg-surface);
+}
+
+.tests-atl-prueba header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.tests-atl-prueba h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.tests-atl-prueba small,
+.tests-atl-nota {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.tests-atl-prueba-datos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.tests-atl-prueba-datos dt {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.tests-atl-prueba-datos dd {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.tests-atl-tendencia {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.tests-atl-tendencia--mejoro { color: var(--state-success); }
+.tests-atl-tendencia--empeoro { color: var(--state-danger); }
+.tests-atl-tendencia--igual { color: var(--text-muted); }
+
+.tests-atl-grafico {
+  width: 100%;
+  height: 160px;
+}
+
+.tests-atl-tooltip {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.8rem;
+}
+
+.tests-atl-subtitulo {
+  margin: 0.5rem 0 0;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .tests-atl-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tests-atl {
+    padding: 1rem;
+  }
+}

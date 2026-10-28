@@ -124,7 +124,7 @@ function DetalleTest({ testId, onVolver }) {
               {test.convocados.map((fila) => (
                 <article className="tests-adm-card" key={fila.atleta_id}>
                   <h4>{fila.nombre} {fila.apellido}</h4>
-                  <p className="tests-adm-card-sub">C.I. {fila.cedula} · {fila.categoria || 'Sin categoría'}</p>
+                  <p className="tests-adm-card-sub">Cédula {fila.cedula} · {fila.categoria || 'Sin categoría'}</p>
                   <dl>
                     <div><dt>Resultado</dt><dd>{fila.ausente ? 'Ausente' : conUnidad(fila.valor, test.prueba_unidad)}</dd></div>
                     {fila.observacion && <div><dt>Observación</dt><dd>{fila.observacion}</dd></div>}
@@ -224,7 +224,7 @@ function TestsProgramados({ pruebas, filtrosBase }) {
           <div className="responsive-list__table tests-adm-tabla-wrap">
             <table className="tests-adm-tabla">
               <thead>
-                <tr><th>Fecha</th><th>Prueba</th><th>Entrenador</th><th>Área · Subárea</th><th>Estado</th><th>Resultados</th><th>Acciones</th></tr>
+                <tr><th>Fecha</th><th>Prueba</th><th>Entrenador</th><th>Subárea</th><th>Estado</th><th>Resultados</th><th>Acciones</th></tr>
               </thead>
               <tbody>
                 {lista.filas.map((test) => (
@@ -232,7 +232,7 @@ function TestsProgramados({ pruebas, filtrosBase }) {
                     <td>{formatFecha(test.fecha)}</td>
                     <td className="tests-adm-fuerte">{test.prueba_nombre}</td>
                     <td>{test.entrenador_nombre || '—'}</td>
-                    <td>{test.area_nombre} · {test.subarea_nombre}</td>
+                    <td>{test.subarea_nombre}</td>
                     <td><EstadoBadge estado={test.estado} label={test.estado_label} /></td>
                     <td>{test.resultados_registrados} de {test.convocados_total}</td>
                     <td>
@@ -256,7 +256,7 @@ function TestsProgramados({ pruebas, filtrosBase }) {
                   <dl>
                     <div><dt>Fecha</dt><dd>{formatFecha(test.fecha)}</dd></div>
                     <div><dt>Entrenador</dt><dd>{test.entrenador_nombre || '—'}</dd></div>
-                    <div><dt>Subárea</dt><dd>{test.area_nombre} · {test.subarea_nombre}</dd></div>
+                    <div><dt>Subárea</dt><dd>{test.subarea_nombre}</dd></div>
                     <div><dt>Resultados</dt><dd>{test.resultados_registrados} de {test.convocados_total}</dd></div>
                   </dl>
                   <div className="tests-adm-fila-acciones">

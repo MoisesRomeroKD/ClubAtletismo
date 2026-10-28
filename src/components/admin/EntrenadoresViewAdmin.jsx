@@ -10,7 +10,8 @@ const PAGE_SIZE = 15;
 // Reglas de formato al editar (las mismas que valida el backend).
 const SOLO_LETRAS = /[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]/g;
 const NOMBRE_COMPLETO = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]{2,60}$/;
-const CEDULA_COMPLETA = /^\d{7,8}$/;
+// Cédula: de 1.000.000 a 49.999.999.
+const CEDULA_COMPLETA = /^(?:[1-9]\d{6}|[1-4]\d{7})$/;
 const TELEFONO_COMPLETO = /^0\d{10}$/;
 const GMAIL = /^[a-z0-9](?:\.?[a-z0-9])*@gmail\.com$/;
 
@@ -68,7 +69,7 @@ function EditarEntrenadorForm({ entrenador, onCancel, onGuardado }) {
     apellidos: NOMBRE_COMPLETO.test(form.apellidos.trim()) ? '' : 'Escribe al menos 2 letras.',
     // Si no se cambió, no se revisa: así se pueden guardar otros datos aunque la cédula guardada tenga otro formato.
     cedula: form.cedula === (entrenador.cedula || '') || CEDULA_COMPLETA.test(form.cedula)
-      ? '' : 'La cédula debe tener 7 u 8 números (ej. 12345678).',
+      ? '' : 'La cédula debe ser un número entre 1.000.000 y 49.999.999 (ej. 12345678).',
     correo: form.correo === (entrenador.email || '').toLowerCase() || GMAIL.test(form.correo)
       ? '' : 'Solo se aceptan correos de Gmail (ej. nombre@gmail.com).',
     telefono: TELEFONO_COMPLETO.test(form.telefono) ? '' : 'El teléfono debe tener 11 números y empezar por 0 (ej. 04141234567).',
@@ -254,7 +255,7 @@ function EntrenadorDrawer({ entrenador, puedeEditar, onClose, onGuardado }) {
               {editando ? 'EDITAR ENTRENADOR' : modo === 'subareas' ? 'ASIGNAR SUBÁREAS' : 'DETALLE DEL ENTRENADOR'}
             </span>
             <h3 id="entrenadores-drawer-titulo">{nombreDe(entrenador)}</h3>
-            <p>C.I. {entrenador.cedula || '—'}</p>
+            <p>Cédula {entrenador.cedula || '—'}</p>
           </div>
           <button type="button" className="entrenadores-drawer-cerrar" onClick={onClose} aria-label="Cerrar">
             <X size={20} />
@@ -487,6 +488,7 @@ const EntrenadoresViewAdmin = () => {
       <table className="entrenadores-admin-tabla">
         <thead>
           <tr>
+            <th>Ref.</th>
             <th>Cédula</th>
             <th>Nombre Completo</th>
             <th>Correo Electrónico</th>
@@ -497,6 +499,7 @@ const EntrenadoresViewAdmin = () => {
         <tbody>
           {entrenadores.map((entrenador) => (
             <tr key={entrenador.user_id}>
+              <td className="ref-usuario">{entrenador.user_id}</td>
               <td className="entrenadores-admin-cedula">{entrenador.cedula || '—'}</td>
               <td className="entrenadores-admin-nombre">{nombreDe(entrenador)}</td>
               <td className="entrenadores-admin-dato">{entrenador.email || '—'}</td>
@@ -514,6 +517,7 @@ const EntrenadoresViewAdmin = () => {
           <article className="entrenadores-admin-card" key={entrenador.user_id}>
             <h3 className="entrenadores-admin-nombre">{nombreDe(entrenador)}</h3>
             <dl>
+              <div><dt>Ref.</dt><dd className="ref-usuario">{entrenador.user_id}</dd></div>
               <div><dt>Cédula</dt><dd className="entrenadores-admin-cedula">{entrenador.cedula || '—'}</dd></div>
               <div><dt>Correo</dt><dd>{entrenador.email || '—'}</dd></div>
               <div><dt>Teléfono</dt><dd>{entrenador.tlf || '—'}</dd></div>

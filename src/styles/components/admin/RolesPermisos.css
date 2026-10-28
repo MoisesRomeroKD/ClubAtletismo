@@ -859,7 +859,13 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
+/* Título a la izquierda; filtros y buscador a la derecha. */
 .roles-gestion-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
   padding-bottom: 0.75rem;
   border-bottom: 2px solid var(--func-primary);
 }

@@ -201,6 +201,13 @@ html.scroll-bloqueado .content-area {
    Fallback con @supports para navegadores antiguos incluido abajo.
 ============================================================================ */
 
+/* Número de referencia (id del usuario) en las listas de personas: único y fijo. */
+.ref-usuario {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 .responsive-list {
   container-type: inline-size;
   container-name: responsive-list;

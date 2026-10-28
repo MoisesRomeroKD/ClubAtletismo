@@ -186,3 +186,85 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Asistencia por mes */
+.asis-atleta__mensual {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+  background: var(--bg-surface);
+}
+
+.asis-atleta__mensual h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.asis-atleta__grafico {
+  width: 100%;
+  height: 200px;
+}
+
+.asis-atleta__nota {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.asis-atleta__tooltip {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.8rem;
+}
+
+
+/* Paginación de la lista (15 por página) y filtro por tiempo */
+.asis-atleta__paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+
+.asis-atleta__total {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.asis-atleta__paginacion-botones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.asis-atleta__paginacion-botones button {
+  padding: 6px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font: inherit;
+  cursor: pointer;
+}
+
+.asis-atleta__paginacion-botones button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .asis-atleta__paginacion-botones {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

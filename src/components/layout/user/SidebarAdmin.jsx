@@ -19,6 +19,7 @@ import {
   Dumbbell,
   MoonStar,
   LayoutDashboard,
+  ChartColumn,
   AlertCircle,
   UserRound,
   CalendarClock,
@@ -73,16 +74,18 @@ const testsGroup = {
   items: [
     { id: 'tests-programados', label: 'Tests programados', icon: CalendarClock },
     { id: 'tests-resultados', label: 'Resultados', icon: ListChecks },
+    { id: 'tests-analisis', label: 'Análisis', icon: ChartColumn },
   ],
 };
 
 const antropometriaGroup = {
   id: 'antropometriaAdmin',
-  label: 'Antropometría',
+  label: 'Cineantropometría',
   icon: Activity,
   items: [
     { id: 'antropometria-programar', label: 'Mediciones', icon: CalendarClock },
     { id: 'antropometria-datos', label: 'Datos registrados', icon: ListChecks },
+    { id: 'antropometria-analisis', label: 'Análisis', icon: ChartColumn },
   ],
 };
 
@@ -180,7 +183,7 @@ const collapsibleGroups = [
       },
       {
         id: 'parametros-antropometria',
-        label: 'Parámetros de antropometría',
+        label: 'Parámetros de cineantropometría',
         icon: SlidersHorizontal,
       },
     ],
@@ -206,6 +209,7 @@ export const getAdminSidebarModules = (hasPermission) => {
     (item) => (
       (item.id !== 'roles-permisos' || hasPermission('gestionar_permisos'))
       && (item.id !== 'categorias' || hasPermission('ver_categorias_deportivas') || hasPermission('gestionar_categorias_deportivas'))
+        && (item.id !== 'registro-asistencia' || hasPermission('registrar_asistencia'))
     )
   );
 };
@@ -254,9 +258,11 @@ export default function SidebarAdmin({
     'registro-asistencia': '/admin/asistencias/registro',
     'tests-programados': '/admin/tests/programados',
     'tests-resultados': '/admin/tests/resultados',
+    'tests-analisis': '/admin/tests/analisis',
     athletes: '/admin/atletas',
     'antropometria-programar': '/admin/antropometria/programar',
     'antropometria-datos': '/admin/antropometria/datos',
+    'antropometria-analisis': '/admin/antropometria/analisis',
     'parametros-antropometria': '/admin/configuracion/antropometria',
     'sueño_general': '/admin/sueno/general',
     'sueño_individual': '/admin/sueno/individual',
@@ -336,6 +342,7 @@ export default function SidebarAdmin({
       (item) => (
         (item.id !== 'roles-permisos' || hasPermission('gestionar_permisos'))
         && (item.id !== 'categorias' || hasPermission('ver_categorias_deportivas') || hasPermission('gestionar_categorias_deportivas'))
+        && (item.id !== 'registro-asistencia' || hasPermission('registrar_asistencia'))
       )
     );
     if (visibleItems.length === 0) return null;

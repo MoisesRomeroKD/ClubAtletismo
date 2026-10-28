@@ -16,6 +16,9 @@ import exercisesService from "../../../api/services/ExercisesService";
 import RoutineService from "../../../api/services/RoutineService";
 import "../../../styles/components/trainer/BuilderPlanForm.css";
 
+// Hoy en hora de Caracas: las fechas que se programan son desde hoy en adelante.
+const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' });
+
 const getList = (response) => (Array.isArray(response) ? response : response?.results || []);
 
 const formatError = (value) => {
@@ -301,6 +304,7 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
                     type="date"
                     className="form-control"
                     value={startDate}
+                    min={startDate && startDate < hoyCaracas() ? startDate : hoyCaracas()}
                     onChange={(e) => setStartDate(e.target.value)}
                   />
                 </div>

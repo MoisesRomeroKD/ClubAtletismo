@@ -1,0 +1,300 @@
+/* ============================================================
+   SERVIDOR INICIANDO: pantalla mientras el servidor se enciende.
+   Solo variables del theme (modo claro y oscuro).
+   ============================================================ */
+.servidor-iniciando {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+/* Brillos de fondo */
+.servidor-iniciando__fondo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.servidor-iniciando__brillo {
+  position: absolute;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 50%;
+  filter: blur(64px);
+  animation: servidor-iniciando-brillo 3s ease-in-out infinite;
+}
+
+.servidor-iniciando__brillo--uno {
+  top: -10rem;
+  left: -10rem;
+  background: color-mix(in srgb, var(--state-success) 14%, transparent);
+}
+
+.servidor-iniciando__brillo--dos {
+  right: -10rem;
+  bottom: -10rem;
+  background: color-mix(in srgb, var(--func-primary) 14%, transparent);
+  animation-delay: 1.5s;
+}
+
+@keyframes servidor-iniciando-brillo {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+/* Tarjeta */
+.servidor-iniciando__tarjeta {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 32rem;
+  padding: 2rem;
+  border: 1px solid var(--border-main);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--bg-card) 88%, transparent);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(16px);
+}
+
+/* Cabecera */
+.servidor-iniciando__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.servidor-iniciando__marca {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.servidor-iniciando__logo {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: var(--state-success);
+  color: var(--bg-main);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--state-success) 30%, transparent);
+}
+
+.servidor-iniciando__marca h1 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.servidor-iniciando__marca p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.servidor-iniciando__insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--state-success) 30%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--state-success) 10%, transparent);
+  color: var(--state-success);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.servidor-iniciando__insignia i {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  animation: servidor-iniciando-latido 1.2s ease-out infinite;
+}
+
+.servidor-iniciando__insignia--alerta {
+  border-color: color-mix(in srgb, var(--state-warning) 30%, transparent);
+  background: color-mix(in srgb, var(--state-warning) 10%, transparent);
+  color: var(--state-warning);
+}
+
+@keyframes servidor-iniciando-latido {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 60%, transparent); }
+  100% { box-shadow: 0 0 0 8px transparent; }
+}
+
+/* Círculo central */
+.servidor-iniciando__estado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.servidor-iniciando__circulo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 6rem;
+  height: 6rem;
+  margin-bottom: 1.5rem;
+  border: 4px solid color-mix(in srgb, var(--state-success) 20%, transparent);
+  border-radius: 50%;
+  color: var(--state-success);
+}
+
+.servidor-iniciando__circulo::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 4px solid var(--state-success);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: servidor-iniciando-girar 1s linear infinite;
+}
+
+.servidor-iniciando__circulo svg {
+  animation: servidor-iniciando-pulso 2s ease-in-out infinite;
+}
+
+.servidor-iniciando__circulo--listo::after {
+  border-top-color: var(--state-success);
+  animation: none;
+}
+
+@keyframes servidor-iniciando-girar {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes servidor-iniciando-pulso {
+  50% { opacity: 0.5; }
+}
+
+.servidor-iniciando__estado h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.servidor-iniciando__estado p {
+  max-width: 24rem;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* Barra */
+.servidor-iniciando__progreso {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.servidor-iniciando__progreso-textos {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.servidor-iniciando__barra {
+  height: 0.625rem;
+  padding: 2px;
+  overflow: hidden;
+  border: 1px solid var(--border-main);
+  border-radius: 999px;
+  background: var(--bg-surface);
+}
+
+.servidor-iniciando__barra span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--state-success), var(--func-primary));
+  transition: width 0.3s ease;
+}
+
+/* Consola */
+.servidor-iniciando__consola {
+  height: 8rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  overflow-y: auto;
+  border: 1px solid var(--border-main);
+  border-radius: 0.75rem;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.75rem;
+}
+
+.servidor-iniciando__linea {
+  margin-bottom: 0.25rem;
+}
+
+.servidor-iniciando__linea--acento {
+  color: var(--state-success);
+}
+
+.servidor-iniciando__linea--error {
+  color: var(--state-danger);
+}
+
+/* Botón */
+.servidor-iniciando__boton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--border-main);
+  border-radius: 0.75rem;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.servidor-iniciando__boton:hover:not(:disabled) {
+  border-color: var(--state-success);
+}
+
+.servidor-iniciando__boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.servidor-iniciando__girar {
+  animation: servidor-iniciando-girar 1s linear infinite;
+}
+
+.servidor-iniciando__nota {
+  margin: 1.5rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .servidor-iniciando__tarjeta {
+    padding: 1.25rem;
+  }
+}

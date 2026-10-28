@@ -17,12 +17,18 @@ import {
   Legend
 } from 'recharts';
 
-import { Save, AlertCircle, CheckCircle2, ArrowUpRight, ArrowDownRight, Minus, SlidersHorizontal, X } from 'lucide-react';
+import {
+  Save, AlertCircle, CheckCircle2, ArrowUpRight, ArrowDownRight, Minus, SlidersHorizontal, X,
+  Lock, UserRound, TrendingUp, ClipboardCheck, Layers, List, Search, Plus, ChartColumn,
+} from 'lucide-react';
 
 import '../../../styles/components/trainer/CineantropometriaTrainer.css';
 
 import UserService from '../../../api/services/Userservice';
 import CineantropometriaService from '../../../api/services/Cineantropometriaservice';
+
+// Hoy en hora de Caracas: las fechas que se programan son desde hoy en adelante.
+const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' });
 
 // Búsqueda de personas: cédula (con o sin V/E, puntos o guiones) o nombre completo en cualquier orden,
 // sin importar mayúsculas ni acentos ("moises romero" encuentra "Moisés Arturo Romero").
@@ -91,20 +97,6 @@ const REQUIRED_RAW_FIELDS = [
 | UTILIDADES DE PRESENTACIÓN
 |--------------------------------------------------------------------------
 */
-
-const resultsToRadarData = (results = []) => {
-  return AXES.map((axis) => {
-    const result = results.find(
-      (item) => item.axis === axis.key
-    );
-
-    return {
-      subject: axis.label,
-      score: Number(result?.score ?? 0)
-    };
-  });
-};
-
 
 /**
  * Convierte la respuesta del endpoint /radar/
@@ -221,9 +213,7 @@ const CineantropometriaTrainer = () => {
   const [saveState, setSaveState] = useState('idle');
   const [missingFields, setMissingFields] = useState([]);
 
-  const [evaluationDate, setEvaluationDate] = useState(
-    new Date().toISOString().slice(0, 10)
-  );
+  const [evaluationDate, setEvaluationDate] = useState(hoyCaracas);
 
 
   /*
@@ -1113,31 +1103,6 @@ const CineantropometriaTrainer = () => {
 
   /*
   |--------------------------------------------------------------------------
-  | ESTADÍSTICAS DE PRESENTACIÓN
-  |--------------------------------------------------------------------------
-  */
-
-  const evaluatedCount = useMemo(() => {
-
-    const athleteIds =
-      new Set(
-        evaluations.map(
-          (evaluation) =>
-            evaluation.athlete
-        )
-      );
-
-    return athleteIds.size;
-
-  }, [
-    evaluations
-  ]);
-
-
-
-
-  /*
-  |--------------------------------------------------------------------------
   | RADAR ACTUAL
   |--------------------------------------------------------------------------
   */
@@ -1290,7 +1255,7 @@ const CineantropometriaTrainer = () => {
 
               <div className="pod-lock-badge">
 
-                <i className="fa-solid fa-lock"></i>
+                <Lock size={16} aria-hidden="true" />
 
                 Exclusivo atletas asignados
 
@@ -1298,14 +1263,6 @@ const CineantropometriaTrainer = () => {
 
             </div>
 
-            <div className="pod-mobile-cards">
-              {filteredAthletes.map((athlete) => (
-                <article className="pod-mobile-card" key={athlete.user_id}>
-                  <strong>{athlete.name}</strong><span>{athlete.cedula || '--'} · {athlete.categoria || '--'}</span><span>{athlete.subareas_lista_texto || '--'}</span><span>Evaluaciones: {selectedAthlete?.user_id === athlete.user_id ? evaluations.length : '—'}</span>
-                  <div><button className="pod-btn-eval" onClick={() => handleSelectForEvaluation(athlete)}>Evaluar</button><button className="pod-btn-secondary" onClick={() => handleSelectForProfile(athlete)}>Ver perfil</button></div>
-                </article>
-              ))}
-            </div>
 
           </div>
 
@@ -1389,7 +1346,7 @@ const CineantropometriaTrainer = () => {
 
                 <div className="pod-kpi-sub">
 
-                  <i className="fa-solid fa-circle-check"></i>
+                  <CheckCircle2 size={16} aria-hidden="true" />
 
                   En tus áreas
 
@@ -1399,7 +1356,7 @@ const CineantropometriaTrainer = () => {
 
               <div className="pod-kpi-icon">
 
-                <i className="fa-solid fa-user-ninja"></i>
+                <UserRound size={16} aria-hidden="true" />
 
               </div>
 
@@ -1424,7 +1381,7 @@ const CineantropometriaTrainer = () => {
 
                 <div className="pod-kpi-sub">
 
-                  <i className="fa-solid fa-chart-line"></i>
+                  <TrendingUp size={16} aria-hidden="true" />
 
                   Del atleta seleccionado
 
@@ -1434,7 +1391,7 @@ const CineantropometriaTrainer = () => {
 
               <div className="pod-kpi-icon">
 
-                <i className="fa-solid fa-clipboard-check"></i>
+                <ClipboardCheck size={16} aria-hidden="true" />
 
               </div>
 
@@ -1459,7 +1416,7 @@ const CineantropometriaTrainer = () => {
 
                 <div className="pod-kpi-sub">
 
-                  <i className="fa-solid fa-layer-group"></i>
+                  <Layers size={16} aria-hidden="true" />
 
                   Según tu habilitación
 
@@ -1469,7 +1426,7 @@ const CineantropometriaTrainer = () => {
 
               <div className="pod-kpi-icon">
 
-                <i className="fa-solid fa-list"></i>
+                <List size={16} aria-hidden="true" />
 
               </div>
 
@@ -1513,7 +1470,7 @@ const CineantropometriaTrainer = () => {
 
               <div className="pod-search-input-wrapper">
 
-                <i className="fa-solid fa-magnifying-glass"></i>
+                <Search size={16} aria-hidden="true" />
 
                 <input
                   type="text"
@@ -1694,7 +1651,7 @@ const CineantropometriaTrainer = () => {
                               }
                             >
 
-                              <i className="fa-solid fa-plus"></i>
+                              <Plus size={16} aria-hidden="true" />
 
                               Evaluar
 
@@ -1710,7 +1667,7 @@ const CineantropometriaTrainer = () => {
                               }
                             >
 
-                              <i className="fa-solid fa-chart-simple"></i>
+                              <ChartColumn size={16} aria-hidden="true" />
 
                               Ver perfil
 
@@ -1728,6 +1685,16 @@ const CineantropometriaTrainer = () => {
                 </tbody>
 
               </table>
+
+              {/* Celular: tarjetas en vez de la tabla */}
+              <div className="pod-mobile-cards">
+                {filteredAthletes.map((athlete) => (
+                  <article className="pod-mobile-card" key={athlete.user_id}>
+                    <strong>{athlete.name}</strong><span>{athlete.cedula || '--'} · {athlete.categoria || '--'}</span><span>{athlete.subareas_lista_texto || '--'}</span><span>Evaluaciones: {selectedAthlete?.user_id === athlete.user_id ? evaluations.length : '—'}</span>
+                    <div><button className="pod-btn-eval" onClick={() => handleSelectForEvaluation(athlete)}>Evaluar</button><button className="pod-btn-secondary" onClick={() => handleSelectForProfile(athlete)}>Ver perfil</button></div>
+                  </article>
+                ))}
+              </div>
 
             </div>
 
@@ -1963,6 +1930,7 @@ const CineantropometriaTrainer = () => {
                   <input
                     type="date"
                     value={evaluationDate}
+                    min={hoyCaracas()}
                     onChange={(event) =>
                       setEvaluationDate(
                         event.target.value
@@ -2433,8 +2401,8 @@ const CineantropometriaTrainer = () => {
                           <Radar
                             name="Puntuación"
                             dataKey="score"
-                            stroke="var(--clr-azul-base)"
-                            fill="#3b82f6"
+                            stroke="var(--func-primary)"
+                            fill="var(--func-primary)"
                             fillOpacity={0.4}
                           />
 
@@ -2497,14 +2465,7 @@ const CineantropometriaTrainer = () => {
                                 type="monotone"
                                 dataKey={axis.label}
                                 stroke={
-                                  [
-                                    '#ef4444',
-                                    '#f59e0b',
-                                    '#10b981',
-                                    '#3b82f6',
-                                    '#8b5cf6',
-                                    '#ec4899'
-                                  ][index]
+                                  `var(--chart-cat-${index + 1})`
                                 }
                                 strokeWidth={2}
                                 dot={{

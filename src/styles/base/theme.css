@@ -91,6 +91,13 @@
     --func-primary: var(--clr-azul-base);
     --func-primary-hover: var(--clr-azul-dark);
     --func-primary-bg-soft: var(--clr-azul-light);
+    /* Gráficos: 6 colores para series distintas (validados para daltonismo). Ir en orden, sin repetir. */
+    --chart-cat-1: #2a78d6;
+    --chart-cat-2: #eb6834;
+    --chart-cat-3: #1baf7a;
+    --chart-cat-4: #eda100;
+    --chart-cat-5: #e87ba4;
+    --chart-cat-6: #6250d6;
 
     /* Mapeo UI */
     --bg-sidebar: var(--clr-blanco-muted);
@@ -138,6 +145,12 @@ body.dark-mode {
     --func-primary: var(--clr-azul-base);
     --func-primary-hover: var(--clr-azul-light);
     --func-primary-bg-soft: rgba(37, 99, 235, 0.15);
+    --chart-cat-1: #3987e5;
+    --chart-cat-2: #d95926;
+    --chart-cat-3: #199e70;
+    --chart-cat-4: #c98500;
+    --chart-cat-5: #d55181;
+    --chart-cat-6: #9085e9;
 
     --bg-sidebar: var(--clr-negro-muted);
     --bg-sidebar-hover: rgba(255, 255, 255, 0.05);
