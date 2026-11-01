@@ -121,6 +121,13 @@ export default function ServidorIniciando() {
     return () => clearTimeout(salida);
   }, [estado.listo, estado.desdeInicio]);
 
+  // Mientras se muestra, la página de abajo no se desplaza (un solo scroll: el de esta pantalla).
+  useEffect(() => {
+    if (!estado.visible) return undefined;
+    document.documentElement.classList.add('scroll-bloqueado');
+    return () => document.documentElement.classList.remove('scroll-bloqueado');
+  }, [estado.visible]);
+
   // La consola baja sola al último mensaje.
   useEffect(() => {
     if (consolaRef.current) consolaRef.current.scrollTop = consolaRef.current.scrollHeight;

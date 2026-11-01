@@ -40,6 +40,7 @@ const PERMISSION_DESCRIPTIONS = {
   ver_categorias_deportivas: 'Permite consultar los rangos de categorías deportivas de atletas.',
   gestionar_categorias_deportivas: 'Permite crear, editar y eliminar categorías deportivas de atletas.',
   gestionar_areas: 'Permite crear, cambiar el nombre y eliminar áreas y subáreas.',
+  gestionar_discapacidades: 'Permite crear, editar y eliminar discapacidades del catálogo (las que se asignan a los atletas).',
   vaciar_auditoria: 'Permite exportar toda la auditoría (PDF y Excel) y luego borrar los registros exportados.',
 };
 

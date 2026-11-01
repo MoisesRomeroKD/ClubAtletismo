@@ -1158,3 +1158,21 @@
   font-size: 0.85rem;
 }
 
+/* Discapacidades del atleta (N a N) al editar */
+.atletas-discapacidades {
+  display: grid;
+  gap: 0.4rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+}
+
+.atletas-discapacidad {
+  align-items: center;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  font-size: 0.85rem;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
+}

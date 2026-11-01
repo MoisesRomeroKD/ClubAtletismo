@@ -3,7 +3,8 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import {
-  Link
+  Link,
+  useNavigate
 } from "react-router-dom";
 
 import {
@@ -11,11 +12,19 @@ import {
   Menu,
   Moon,
   Sun,
+  UserRound,
   X
 } from "lucide-react";
 
 import "../../../styles/layouts/TopbarUser.css";
 
+
+// Página del perfil de cada rol (se abre desde el menú de la cuenta).
+const PERFIL_POR_ROL = {
+  administrador: "/admin/mi-perfil",
+  entrenador: "/entrenador/perfil",
+  atleta: "/atleta/perfil",
+};
 
 const TopbarUser = ({
   role,
@@ -39,9 +48,10 @@ const TopbarUser = ({
 
 
   // ==========================================================
-  // MENÚ DEL PERFIL: cambio de tema y cierre de sesión
+  // MENÚ DE LA CUENTA: mi perfil, cambio de tema y cierre de sesión
   // ==========================================================
 
+  const navigate = useNavigate();
   const [menuAbierto, setMenuAbierto] = useState(false);
   const menuRef = useRef(null);
 
@@ -63,6 +73,12 @@ const TopbarUser = ({
 
   const cambiarTema = () => {
     onToggleTheme?.();
+  };
+
+  const abrirPerfil = () => {
+    setMenuAbierto(false);
+    const ruta = PERFIL_POR_ROL[role];
+    if (ruta) navigate(ruta);
   };
 
   const cerrarSesion = () => {
@@ -277,6 +293,12 @@ const TopbarUser = ({
 
           {menuAbierto && (
             <div className="user-profile-dropdown" role="menu">
+              {PERFIL_POR_ROL[role] && (
+                <button type="button" role="menuitem" className="user-profile-dropdown__item" onClick={abrirPerfil}>
+                  <UserRound size={18} />
+                  <span>Mi perfil</span>
+                </button>
+              )}
               <button type="button" role="menuitem" className="user-profile-dropdown__item" onClick={cambiarTema}>
                 {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
                 <span>{isDarkMode ? "Modo claro" : "Modo oscuro"}</span>

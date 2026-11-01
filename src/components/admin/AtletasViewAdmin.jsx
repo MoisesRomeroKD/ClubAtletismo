@@ -203,6 +203,22 @@ function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
   const [errorCarga, setErrorCarga] = useState('');
   const [elegidas, setElegidas] = useState({});
   const [subareasTocadas, setSubareasTocadas] = useState(false);
+  // Discapacidades (N a N): catálogo y las marcadas para este atleta.
+  const [catalogoDiscapacidades, setCatalogoDiscapacidades] = useState([]);
+  const [discapacidades, setDiscapacidades] = useState(() => (atleta.discapacidades || []).map((item) => item.id));
+
+  useEffect(() => {
+    let active = true;
+    UserService.getDiscapacidades()
+      .then((data) => { if (active) setCatalogoDiscapacidades(Array.isArray(data) ? data : []); })
+      .catch(() => { if (active) setCatalogoDiscapacidades([]); });
+    return () => { active = false; };
+  }, []);
+
+  const alternarDiscapacidad = (id) => {
+    setMensaje('');
+    setDiscapacidades((actuales) => (actuales.includes(id) ? actuales.filter((item) => item !== id) : [...actuales, id]));
+  };
 
   useEffect(() => {
     let active = true;
@@ -291,6 +307,7 @@ function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
         correo: form.correo,
         fecha_nacimiento: form.fecha_nacimiento,
         sexo: form.sexo,
+        discapacidades,
         ...(conRep && {
           representante: {
             nombres: form.rep_nombres.trim(),
@@ -419,6 +436,22 @@ function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
           )}
         </div>
 
+        <p className="atletas-adm-drawer-seccion">Discapacidades</p>
+        <div className="atletas-adm-drawer-bloque atletas-editar-bloque">
+          {!catalogoDiscapacidades.length ? (
+            <p className="atletas-editar-nota">No hay discapacidades en el catálogo (se agregan en Configuración → Discapacidades).</p>
+          ) : (
+            <div className="atletas-discapacidades">
+              {catalogoDiscapacidades.map((item) => (
+                <label key={item.id} className="atletas-discapacidad">
+                  <input type="checkbox" checked={discapacidades.includes(item.id)} onChange={() => alternarDiscapacidad(item.id)} />
+                  <span>{item.nombre}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+
         <p className="atletas-adm-drawer-seccion">Familiar responsable</p>
         <div className="atletas-adm-drawer-bloque atletas-editar-bloque atletas-adm-drawer-bloque--ultimo">
           {!conRep ? (
@@ -535,6 +568,11 @@ function PerfilDrawer({ atleta, onClose, puedeEditar, onGuardado }) {
               <p className="atletas-adm-drawer-seccion">Contacto del atleta</p>
               <div className="atletas-adm-drawer-bloque">
                 <DataPoint label="Correo" value={atleta.email} />
+              </div>
+
+              <p className="atletas-adm-drawer-seccion">Discapacidades</p>
+              <div className="atletas-adm-drawer-bloque">
+                <DataPoint label="Discapacidades" value={(atleta.discapacidades || []).map((item) => item.nombre).join(', ') || 'Ninguna'} />
               </div>
 
               <p className="atletas-adm-drawer-seccion">Familiar responsable</p>

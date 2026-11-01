@@ -207,6 +207,11 @@ const UserService = {
     return response.data;
   },
 
+  // Catálogo (permiso gestionar_discapacidades): { nombre, observacion }.
+  createDiscapacidad: async (data) => (await podApi.post('/v1/users/catalogos/discapacidades/', data)).data,
+  updateDiscapacidad: async (id, data) => (await podApi.patch(`/v1/users/catalogos/discapacidades/${id}/`, data)).data,
+  deleteDiscapacidad: async (id) => { await podApi.delete(`/v1/users/catalogos/discapacidades/${id}/`); },
+
   // ============================================================
   // SUBÁREAS DEL ENTRENADOR
   // GET /api/v1/users/entrenador/mis-subareas/

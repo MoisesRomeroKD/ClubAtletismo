@@ -25,6 +25,7 @@ const CategoriasDeportivasAdmin = lazy(() => import('../components/admin/Categor
 const ReporteAdmin = lazy(() => import('../components/admin/ReporteAdmin'));
 const AuditoriaAdmin = lazy(() => import('../components/admin/AuditoriaAdmin'));
 const GestionConstancias = lazy(() => import('../components/admin/GestionConstancias'));
+const DiscapacidadesAdmin = lazy(() => import('../components/admin/DiscapacidadesAdmin'));
 
 // COMPONENTE DE ANTROPOMETRÍA
 const AntropometriaAdmin = lazy(() => import('../components/admin/antropometria/AntropometriaAdmin'));
@@ -75,6 +76,7 @@ export default function AdminDashboard({
     '/admin/representantes': 'representantes',
     '/admin/areas-subareas': 'areas-subareas',
     '/admin/categorias': 'categorias',
+    '/admin/discapacidades': 'discapacidades',
     '/admin/mi-perfil': 'mi-perfil',
     '/admin/ejercicios': 'ejercicios',
     '/admin/reportes': 'reportes',
@@ -270,6 +272,11 @@ export default function AdminDashboard({
         )}
         {effectiveTab === 'mi-perfil' && <MiPerfilViewAdmin />}
         {effectiveTab === 'categorias' && <CategoriasDeportivasAdmin />}
+        {effectiveTab === 'discapacidades' && (
+          permissionsLoading ? <CargaCircular texto="Cargando" />
+            : hasPermission('gestionar_discapacidades') ? <DiscapacidadesAdmin />
+              : <p className="no-data-cell">No tienes permiso para gestionar discapacidades.</p>
+        )}
         {effectiveTab === 'ejercicios' && <ExercisesAdmin />}
 
         </Suspense>

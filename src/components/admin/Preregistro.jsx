@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import podApi from '../../api/podApi';
 import { notificar } from '../../utils/notificar';
 import UserService from '../../api/services/Userservice';
+import { useApplicationPermissions } from '../../context/ApplicationPermissionsContext';
 import '../../styles/components/admin/Preregistro.css';
 
 // Reglas de formato (las mismas que valida el backend en apps/users/services.py).
@@ -128,6 +129,8 @@ const FORMULARIO_VACIO = {
   subarea_id: '',
   turno: 'manana',
   subareas_ids: [],
+  // Atleta: discapacidades del catálogo (puede tener varias).
+  discapacidades: [],
 };
 
 // Edad mínima del atleta: 9 años. Se acepta hasta el 31/12 de (año actual - 9).
@@ -153,6 +156,7 @@ const mensajeError = (error, porDefecto) => {
 
 const Preregistro = () => {
   const navigate = useNavigate();
+  const { hasPermission } = useApplicationPermissions();
   // Al cerrarse el aviso de éxito se vuelve a la pantalla inicial del preregistro.
   const volverAlPreregistro = () => navigate('/admin/prerregistro');
   // Estado para el rol seleccionado (null = mostrar selector de rol)
@@ -187,6 +191,22 @@ const Preregistro = () => {
     return grupos;
   }, {});
   const areasOrdenadas = Object.keys(subareasPorArea).sort((a, b) => a.localeCompare(b, 'es'));
+
+  // Catálogo de discapacidades para marcar las del atleta.
+  const [catalogoDiscapacidades, setCatalogoDiscapacidades] = useState([]);
+  useEffect(() => {
+    let activo = true;
+    UserService.getDiscapacidades()
+      .then((data) => { if (activo) setCatalogoDiscapacidades(Array.isArray(data) ? data : []); })
+      .catch(() => { if (activo) setCatalogoDiscapacidades([]); });
+    return () => { activo = false; };
+  }, []);
+  const alternarDiscapacidad = (id) => setFormData((actual) => ({
+    ...actual,
+    discapacidades: actual.discapacidades.includes(id)
+      ? actual.discapacidades.filter((item) => item !== id)
+      : [...actual.discapacidades, id],
+  }));
   const alternarSubareaEntrenador = (id) => setFormData((actual) => ({
     ...actual,
     subareas_ids: actual.subareas_ids.includes(id)
@@ -694,6 +714,24 @@ const Preregistro = () => {
           <p className="preregistro-nota-subarea">
             El entrenador del atleta se asigna después, en Atletas → Editar. Las subáreas se pueden cambiar ahí.
           </p>
+
+          {/* Discapacidades del atleta: siempre visible; puede tener varias o ninguna. */}
+          <fieldset className="preregistro-discapacidades">
+            <legend>Discapacidades (opcional)</legend>
+            {catalogoDiscapacidades.length > 0 ? catalogoDiscapacidades.map((item) => (
+              <label key={item.id} className="preregistro-discapacidad">
+                <input type="checkbox" checked={formData.discapacidades.includes(item.id)} onChange={() => alternarDiscapacidad(item.id)} />
+                <span>{item.nombre}</span>
+              </label>
+            )) : (
+              <p className="preregistro-discapacidades-vacio">
+                Todavía no hay discapacidades en el catálogo.
+                {hasPermission('gestionar_discapacidades') && (
+                  <> <button type="button" className="preregistro-discapacidades-enlace" onClick={() => navigate('/admin/discapacidades')}>Agregarlas en Configuración → Discapacidades</button></>
+                )}
+              </p>
+            )}
+          </fieldset>
 
           </>}
           <div className="preregistro-form-actions">

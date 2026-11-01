@@ -1,0 +1,181 @@
+/* Catálogo de discapacidades (administrador) */
+.discap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin: 0 auto;
+  max-width: 860px;
+  padding: 1.5rem;
+}
+
+.discap__header h2 {
+  color: var(--text-main);
+  font-size: 1.4rem;
+  margin: 0 0 0.35rem;
+}
+
+.discap__header p,
+.discap__muted {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.discap__form {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+
+.discap__form h3 {
+  color: var(--text-main);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.discap__form label {
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  font-weight: 600;
+  gap: 0.35rem;
+}
+
+.discap__form input,
+.discap__form textarea {
+  background: var(--bg-main);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  color: var(--text-main);
+  font: inherit;
+  font-weight: 400;
+  min-width: 0;
+  padding: 0.5rem 0.75rem;
+}
+
+.discap__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.discap__btn {
+  align-items: center;
+  background: var(--func-primary);
+  border: 1px solid var(--func-primary);
+  border-radius: 8px;
+  color: var(--clr-blanco-pura);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  gap: 0.4rem;
+  min-height: 40px;
+  padding: 0.45rem 0.9rem;
+}
+
+.discap__btn--ghost {
+  background: transparent;
+  border-color: var(--border-main);
+  color: var(--text-main);
+}
+
+.discap__btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.discap__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.discap__fila {
+  align-items: flex-start;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+}
+
+.discap__fila > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.discap__fila strong {
+  color: var(--text-main);
+}
+
+.discap__fila span {
+  color: var(--text-main);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.discap__fila small {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.discap__fila-acciones {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.25rem;
+}
+
+.discap__icono {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+
+.discap__icono:hover {
+  background: var(--bg-surface);
+  color: var(--func-primary);
+}
+
+.discap__icono--peligro {
+  color: var(--state-danger);
+}
+
+.discap__ok {
+  color: var(--state-success);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.discap__error {
+  color: var(--state-danger);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .discap {
+    padding: 1rem;
+  }
+}

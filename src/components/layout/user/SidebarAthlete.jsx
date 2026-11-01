@@ -6,7 +6,6 @@ import {
   ClipboardList,
   Clock3,
   Activity,
-  UserRound,
   History,
 } from 'lucide-react';
 
@@ -41,7 +40,6 @@ export default function SidebarAthlete({
     { id: 'antropometria', label: 'Cineantropometría', icon: Activity, category: 'rendimiento' },
     { id: 'sueno', label: 'Sueño y Fatiga', icon: Zap, category: 'rendimiento' }, // ID corregido
     { id: 'sueno_historial', label: 'Mi análisis de sueño', icon: History, category: 'rendimiento' },
-    { id: 'perfil', label: 'Mi perfil', icon: UserRound, category: 'info' },
   ];
 
   const handleNavigation = (tab) => {

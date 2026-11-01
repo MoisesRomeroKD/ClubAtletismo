@@ -21,11 +21,11 @@ import {
   LayoutDashboard,
   ChartColumn,
   AlertCircle,
-  UserRound,
   CalendarClock,
   ListChecks,
   SlidersHorizontal,
   FileSignature,
+  Accessibility,
 } from 'lucide-react';
 
 import '../../../styles/layouts/sidebar.css';
@@ -43,12 +43,6 @@ const navItems = [
     label: 'Auditoría',
     icon: ShieldCheck,
     category: 'info',
-  },
-  {
-    id: 'mi-perfil',
-    label: 'Mi perfil',
-    icon: UserRound,
-    category: 'profile',
   },
 ];
 
@@ -183,6 +177,12 @@ const collapsibleGroups = [
         icon: Tag,
       },
       {
+        // Catálogo de discapacidades (permiso gestionar_discapacidades).
+        id: 'discapacidades',
+        label: 'Discapacidades',
+        icon: Accessibility,
+      },
+      {
         id: 'ejercicios',
         label: 'Ejercicios',
         icon: Dumbbell,
@@ -209,13 +209,13 @@ export const getAdminSidebarModules = (hasPermission) => {
     ...reporteriaGroup.items,
     ...navItems.filter((item) => item.category === 'info'),
     ...collapsibleGroups[2].items,
-    ...navItems.filter((item) => item.category === 'profile'),
   ];
 
   return menuItems.filter(
     (item) => (
       (item.id !== 'roles-permisos' || hasPermission('gestionar_permisos'))
       && (item.id !== 'constancias' || hasPermission('emitir_constancias'))
+      && (item.id !== 'discapacidades' || hasPermission('gestionar_discapacidades'))
       && (item.id !== 'categorias' || hasPermission('ver_categorias_deportivas') || hasPermission('gestionar_categorias_deportivas'))
         && (item.id !== 'registro-asistencia' || hasPermission('registrar_asistencia'))
     )
@@ -241,7 +241,7 @@ export default function SidebarAdmin({
     if (currentPath === '/admin/areas-subareas') {
       return { configuracion: true };
     }
-    if (currentPath === '/admin/categorias' || currentPath === '/admin/configuracion/antropometria') {
+    if (['/admin/categorias', '/admin/discapacidades', '/admin/configuracion/antropometria'].includes(currentPath)) {
       return { configuracion: true };
     }
     if (currentPath.startsWith('/admin/antropometria') || currentPath === '/admin/cineantropometria') {
@@ -279,6 +279,7 @@ export default function SidebarAdmin({
     'sueño_individual': '/admin/sueno/individual',
     'sueño_pendientes': '/admin/sueno/pendientes',
     categorias: '/admin/categorias',
+    discapacidades: '/admin/discapacidades',
     prerregistro: '/admin/prerregistro',
     'prerregistros-pendientes': '/admin/prerregistros-pendientes',
     'roles-permisos': '/admin/roles-permisos',
@@ -354,6 +355,7 @@ export default function SidebarAdmin({
       (item) => (
         (item.id !== 'roles-permisos' || hasPermission('gestionar_permisos'))
         && (item.id !== 'constancias' || hasPermission('emitir_constancias'))
+        && (item.id !== 'discapacidades' || hasPermission('gestionar_discapacidades'))
         && (item.id !== 'categorias' || hasPermission('ver_categorias_deportivas') || hasPermission('gestionar_categorias_deportivas'))
         && (item.id !== 'registro-asistencia' || hasPermission('registrar_asistencia'))
       )
@@ -509,10 +511,6 @@ export default function SidebarAdmin({
 
           {renderCollapsibleGroup(
             collapsibleGroups[2]
-          )}
-
-          {renderNavGroup(
-            navItems.filter((item) => item.category === 'profile')
           )}
 
         </nav>

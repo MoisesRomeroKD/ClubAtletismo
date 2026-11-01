@@ -20,7 +20,6 @@ import {
   Activity,
   CalendarClock,
   Database,
-  User,
   FileText,
 } from 'lucide-react';
 
@@ -50,7 +49,6 @@ const trainerRoutePaths = {
 
 const navItems = [
   { id: 'home', label: 'Home', icon: Home },
-  { id: 'perfil', label: 'Perfil', icon: User },
   { id: 'mis_atletas', label: 'Mis Atletas', icon: Users },
   {
     id: 'asistencia', label: 'Asistencia', icon: UserCheck,
