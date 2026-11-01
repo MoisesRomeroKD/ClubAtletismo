@@ -116,6 +116,13 @@ function AppContent({
   );
 }
 
+// Los únicos roles con panel. Cualquier otro valor guardado se descarta (no se asume ninguno).
+const ROLES_VALIDOS = ['admin', 'entrenador', 'atleta'];
+const rolValido = (valor) => {
+  const rol = String(valor || '').toLowerCase().trim();
+  return ROLES_VALIDOS.includes(rol) ? rol : null;
+};
+
 export default function App() {
   /* ==========================================================
      INICIALIZACIÓN DEL ROL NORMALIZADO
@@ -124,13 +131,13 @@ export default function App() {
     const savedRole = localStorage.getItem('user_role');
     const savedToken = localStorage.getItem('token');
 
-    if (!savedRole || !savedToken) {
+    if (!rolValido(savedRole) || !savedToken) {
       if (savedRole) localStorage.removeItem('user_role');
       if (savedToken) localStorage.removeItem('token');
       return null;
     }
 
-    return savedRole.toLowerCase().trim();
+    return rolValido(savedRole);
   });
 
   const [currentAction, setCurrentAction] = useState("home");
@@ -139,11 +146,7 @@ export default function App() {
      SETTER GARANTIZADO EN MINÚSCULAS
      ========================================================== */
   const setRole = (newRole) => {
-    if (!newRole) {
-      setRoleState(null);
-      return;
-    }
-    setRoleState(newRole.toLowerCase().trim());
+    setRoleState(rolValido(newRole));
   };
 
   /* ==========================================================
@@ -154,7 +157,7 @@ export default function App() {
       const stored = localStorage.getItem('user_role');
       const storedToken = localStorage.getItem('token');
 
-      if (!stored || !storedToken) {
+      if (!rolValido(stored) || !storedToken) {
         if (stored) localStorage.removeItem('user_role');
         if (storedToken) localStorage.removeItem('token');
         setRoleState(null);
@@ -162,7 +165,7 @@ export default function App() {
         return;
       }
 
-      setRoleState(stored.toLowerCase().trim());
+      setRoleState(rolValido(stored));
       setCurrentAction("home");
     };
 

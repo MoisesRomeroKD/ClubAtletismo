@@ -25,6 +25,7 @@ import {
   CalendarClock,
   ListChecks,
   SlidersHorizontal,
+  FileSignature,
 } from 'lucide-react';
 
 import '../../../styles/layouts/sidebar.css';
@@ -36,12 +37,6 @@ const navItems = [
     label: 'Home',
     icon: Home,
     category: 'principal',
-  },
-  {
-    id: 'reportes',
-    label: 'Reportes',
-    icon: FileText,
-    category: 'info',
   },
   {
     id: 'auditoria',
@@ -56,6 +51,17 @@ const navItems = [
     category: 'profile',
   },
 ];
+
+// Reportería: reportes y constancias de entrenamiento (estas, con el permiso emitir_constancias).
+const reporteriaGroup = {
+  id: 'reporteria',
+  label: 'Reportería',
+  icon: FileText,
+  items: [
+    { id: 'reportes', label: 'Reportes', icon: FileText },
+    { id: 'constancias', label: 'Gestión de Constancias', icon: FileSignature },
+  ],
+};
 
 const attendanceGroup = {
   id: 'asistencia',
@@ -200,6 +206,7 @@ export const getAdminSidebarModules = (hasPermission) => {
     ...navItems.filter((item) => item.category === 'rendimiento'),
     ...sleepGroup.items,
     ...attendanceGroup.items,
+    ...reporteriaGroup.items,
     ...navItems.filter((item) => item.category === 'info'),
     ...collapsibleGroups[2].items,
     ...navItems.filter((item) => item.category === 'profile'),
@@ -208,6 +215,7 @@ export const getAdminSidebarModules = (hasPermission) => {
   return menuItems.filter(
     (item) => (
       (item.id !== 'roles-permisos' || hasPermission('gestionar_permisos'))
+      && (item.id !== 'constancias' || hasPermission('emitir_constancias'))
       && (item.id !== 'categorias' || hasPermission('ver_categorias_deportivas') || hasPermission('gestionar_categorias_deportivas'))
         && (item.id !== 'registro-asistencia' || hasPermission('registrar_asistencia'))
     )
@@ -245,6 +253,9 @@ export default function SidebarAdmin({
     if (currentPath.startsWith('/admin/asistencias')) {
       return { asistencia: true };
     }
+    if (currentPath === '/admin/reportes' || currentPath === '/admin/constancias') {
+      return { reporteria: true };
+    }
     if (activeTab?.startsWith('sueño_')) {
       return { suenoAdmin: true };
     }
@@ -279,6 +290,7 @@ export default function SidebarAdmin({
     ejercicios: '/admin/ejercicios',
     reportes: '/admin/reportes',
     auditoria: '/admin/auditoria',
+    constancias: '/admin/constancias',
   };
   const routeActiveTab = Object.entries(routePaths).find(([, path]) => path === location.pathname)?.[0];
   const selectedTab = routeActiveTab || activeTab;
@@ -341,6 +353,7 @@ export default function SidebarAdmin({
     const visibleItems = group.items.filter(
       (item) => (
         (item.id !== 'roles-permisos' || hasPermission('gestionar_permisos'))
+        && (item.id !== 'constancias' || hasPermission('emitir_constancias'))
         && (item.id !== 'categorias' || hasPermission('ver_categorias_deportivas') || hasPermission('gestionar_categorias_deportivas'))
         && (item.id !== 'registro-asistencia' || hasPermission('registrar_asistencia'))
       )
@@ -477,6 +490,8 @@ export default function SidebarAdmin({
           <div className="user-sidebar__group-title">
             Información y Control
           </div>
+
+          {renderCollapsibleGroup(reporteriaGroup)}
 
           {renderNavGroup(
             navItems.filter(

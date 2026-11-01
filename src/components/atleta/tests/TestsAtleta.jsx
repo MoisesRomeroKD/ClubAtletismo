@@ -11,6 +11,7 @@ const formatFecha = (iso) => {
 
 // Resultado del atleta: ausente, la marca con su unidad o pendiente si todavía no lo miden.
 const miResultado = (fila) => {
+  if (fila.recuperacion_pendiente) return `Recuperación el ${formatFecha(fila.fecha_recuperacion)}`;
   if (fila.ausente) return 'Ausente';
   if (fila.valor === null || fila.valor === undefined) return 'Pendiente';
   return `${fila.valor} ${fila.unidad}`;

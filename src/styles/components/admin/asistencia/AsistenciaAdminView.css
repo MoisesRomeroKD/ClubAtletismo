@@ -960,3 +960,127 @@
   align-items: center;
   gap: 4px;
 }
+
+/* Últimos 7 días: corregir asistencias (permiso editar_asistencia) */
+.att-correcciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.att-correcciones__fila {
+  align-items: center;
+  border-bottom: 1px solid var(--border-main);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+.att-correcciones__dato {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.att-correcciones__fecha {
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.att-correcciones__subarea {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.att-correcciones__estado,
+.att-correcciones__acciones {
+  align-items: center;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.att-correcciones__form {
+  display: flex;
+  flex: 1 1 14rem;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+
+.att-correcciones__form select,
+.att-correcciones__form input {
+  background: var(--bg-main);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 0.8rem;
+  min-height: 34px;
+  min-width: 0;
+  padding: 0.3rem 0.5rem;
+}
+
+.att-correcciones__form input {
+  flex: 1 1 10rem;
+}
+
+.att-correcciones__lapiz,
+.att-correcciones__cancelar,
+.att-correcciones__guardar {
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.att-correcciones__lapiz {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  display: inline-flex;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+}
+
+.att-correcciones__lapiz:hover {
+  background: var(--bg-surface);
+  color: var(--func-primary);
+}
+
+.att-correcciones__guardar {
+  background: var(--func-primary);
+  border: 1px solid var(--func-primary);
+  color: var(--clr-blanco-pura);
+  padding: 0.35rem 0.75rem;
+}
+
+.att-correcciones__cancelar {
+  background: transparent;
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+  padding: 0.35rem 0.75rem;
+}
+
+.att-correcciones__guardar:disabled,
+.att-correcciones__cancelar:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.att-correcciones__error {
+  color: var(--state-danger);
+  flex-basis: 100%;
+  font-size: 0.8rem;
+  margin: 0;
+  text-align: right;
+}

@@ -2,9 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowLeft, SlidersHorizontal, X } from 'lucide-react';
 import TestService from '../../../api/services/Testservice';
+import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
 import '../../../styles/components/admin/tests/TestsAdmin.css';
 
 const PAGE_SIZE = 15;
+
+// Hoy en hora de Caracas: la recuperación se programa desde hoy en adelante.
+const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' });
 
 const ESTADOS = [
   ['programado', 'Programado'],
@@ -65,9 +69,69 @@ function EstadoBadge({ estado, label }) {
   return <span className={`tests-adm-estado tests-adm-estado--${estado}`}>{label}</span>;
 }
 
-/* ---------------- Resultados de un test (solo consulta) ---------------- */
+/* ---------------- Reprogramar: recuperación individual de un test finalizado ---------------- */
+// Solo para quienes no presentaron (sin resultado) y aún no tienen recuperación. La fecha del test no cambia.
+function Reprogramar({ test, onReprogramado }) {
+  const [elegidos, setElegidos] = useState([]);
+  const [fecha, setFecha] = useState('');
+  const [guardando, setGuardando] = useState(false);
+  const [mensaje, setMensaje] = useState({ tipo: '', texto: '' });
+  const pendientes = test.convocados.filter((fila) => fila.valor === null && !fila.fecha_recuperacion);
+
+  const alternar = (atletaId) => {
+    setElegidos((actual) => (actual.includes(atletaId) ? actual.filter((id) => id !== atletaId) : [...actual, atletaId]));
+  };
+
+  const enviar = async (event) => {
+    event.preventDefault();
+    setGuardando(true);
+    setMensaje({ tipo: '', texto: '' });
+    try {
+      const actualizado = await TestService.reprogramarTest(test.id, { atletas: elegidos, fecha });
+      setElegidos([]);
+      setFecha('');
+      setMensaje({ tipo: 'ok', texto: `Recuperación programada para el ${formatFecha(fecha)}.` });
+      onReprogramado(actualizado);
+    } catch (error) {
+      setMensaje({ tipo: 'error', texto: mensajeError(error, 'No se pudo reprogramar.') });
+    } finally {
+      setGuardando(false);
+    }
+  };
+
+  return (
+    <form className="tests-adm-reprogramar" onSubmit={enviar}>
+      <h4>Reprogramar a quienes no presentaron</h4>
+      {!pendientes.length ? (
+        <p className="tests-adm-vacio">Todos presentaron el test o ya tienen su recuperación programada.</p>
+      ) : (
+        <>
+          <div className="tests-adm-reprogramar-lista">
+            {pendientes.map((fila) => (
+              <label key={fila.atleta_id} className="tests-adm-reprogramar-atleta">
+                <input type="checkbox" checked={elegidos.includes(fila.atleta_id)} onChange={() => alternar(fila.atleta_id)} />
+                <span>{fila.nombre} {fila.apellido} · Cédula {fila.cedula}{fila.ausente ? ' · Ausente' : ''}</span>
+              </label>
+            ))}
+          </div>
+          <label className="tests-adm-reprogramar-fecha">
+            <span>Fecha de recuperación</span>
+            <input type="date" value={fecha} min={hoyCaracas()} onChange={(event) => setFecha(event.target.value)} required />
+          </label>
+          <button type="submit" className="tests-adm-btn" disabled={guardando || !elegidos.length || !fecha}>
+            {guardando ? 'Guardando...' : `Reprogramar (${elegidos.length})`}
+          </button>
+        </>
+      )}
+      {mensaje.texto && <p className={mensaje.tipo === 'ok' ? 'tests-adm-ok' : 'tests-adm-error'} role={mensaje.tipo === 'ok' ? 'status' : 'alert'}>{mensaje.texto}</p>}
+    </form>
+  );
+}
+
+/* ---------------- Resultados de un test (consulta; con permiso, reprogramar si ya culminó) ---------------- */
 function DetalleTest({ testId, onVolver }) {
   const [detalle, setDetalle] = useState({ id: null, data: null, error: '' });
+  const { hasPermission } = useApplicationPermissions();
 
   useEffect(() => {
     let activo = true;
@@ -104,7 +168,7 @@ function DetalleTest({ testId, onVolver }) {
           <div className="responsive-list__table tests-adm-tabla-wrap">
             <table className="tests-adm-tabla">
               <thead>
-                <tr><th>Atleta</th><th>Cédula</th><th>Categoría</th><th>Resultado ({test.prueba_unidad})</th><th>Observación</th></tr>
+                <tr><th>Atleta</th><th>Cédula</th><th>Categoría</th><th>Resultado ({test.prueba_unidad})</th><th>Recuperación</th><th>Observación</th></tr>
               </thead>
               <tbody>
                 {test.convocados.map((fila) => (
@@ -113,6 +177,7 @@ function DetalleTest({ testId, onVolver }) {
                     <td>{fila.cedula}</td>
                     <td>{fila.categoria || '—'}</td>
                     <td>{fila.ausente ? 'Ausente' : conUnidad(fila.valor, test.prueba_unidad)}</td>
+                    <td>{fila.fecha_recuperacion ? `${formatFecha(fila.fecha_recuperacion)}${fila.recuperacion_pendiente ? ' (pendiente)' : ''}` : '—'}</td>
                     <td>{fila.observacion || '—'}</td>
                   </tr>
                 ))}
@@ -127,6 +192,7 @@ function DetalleTest({ testId, onVolver }) {
                   <p className="tests-adm-card-sub">Cédula {fila.cedula} · {fila.categoria || 'Sin categoría'}</p>
                   <dl>
                     <div><dt>Resultado</dt><dd>{fila.ausente ? 'Ausente' : conUnidad(fila.valor, test.prueba_unidad)}</dd></div>
+                    {fila.fecha_recuperacion && <div><dt>Recuperación</dt><dd>{fila.fecha_recuperacion ? `${formatFecha(fila.fecha_recuperacion)}${fila.recuperacion_pendiente ? ' (pendiente)' : ''}` : '—'}</dd></div>}
                     {fila.observacion && <div><dt>Observación</dt><dd>{fila.observacion}</dd></div>}
                   </dl>
                 </article>
@@ -134,6 +200,10 @@ function DetalleTest({ testId, onVolver }) {
             </div>
           </div>
         </div>
+      )}
+
+      {test.estado === 'realizado' && hasPermission('reprogramar_test') && (
+        <Reprogramar test={test} onReprogramado={(data) => setDetalle({ id: testId, data, error: '' })} />
       )}
     </section>
   );

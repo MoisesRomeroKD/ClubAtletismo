@@ -108,6 +108,17 @@ const UserService = {
     return response.data;
   },
 
+  // Cambiar el nombre o eliminar (permiso gestionar_areas). Solo se elimina lo que nada usa.
+  updateArea: async (id, data) => (await podApi.patch(`/v1/atletismo/areas/${id}/`, data)).data,
+  deleteArea: async (id) => { await podApi.delete(`/v1/atletismo/areas/${id}/`); },
+  updateSubarea: async (id, data) => (await podApi.patch(`/v1/atletismo/subareas/${id}/`, data)).data,
+  deleteSubarea: async (id) => { await podApi.delete(`/v1/atletismo/subareas/${id}/`); },
+
+  // Corregir registros ya guardados (hasta una semana después de su fecha).
+  // Asistencia: { status, detail } con editar_asistencia. Sueño: calidad 1-10 con editar_descanso.
+  corregirAsistencia: async (id, data) => (await podApi.patch(`/v1/asistencias/asistencia/${id}/`, data)).data,
+  corregirSueno: async (id, calidad) => (await podApi.patch(`/v1/descanso/sueno/${id}/`, { calidad })).data,
+
   // ============================================================
   // ENTRENADORES
   // GET /api/v1/users/entrenadores/
@@ -208,6 +219,14 @@ const UserService = {
 
     return response.data;
   },
+
+  // Preregistro: ¿la cédula del atleta ya está en el sistema? estado: no_existe, preregistrado, registrado u otro_rol.
+  consultarCedulaPreregistro: async (cedula) => (await podApi.get('/v1/users/preregistro/consultar-cedula/', { params: { cedula } })).data,
+
+  // Gestión de Constancias: buscar un atleta por cédula y pedir los datos de varias constancias a la vez
+  // (el PDF se arma en constanciaPdf.js).
+  buscarAtletaConstancia: async (cedula) => (await podApi.get('/v1/users/constancias/buscar/', { params: { cedula } })).data,
+  generarDatosConstancias: async (atletas) => (await podApi.post('/v1/users/constancias/generar/', { atletas })).data,
 
   // Perfil del atleta autenticado: sus datos, subáreas, entrenadores y representantes.
   getMiPerfilAtleta: async () => {

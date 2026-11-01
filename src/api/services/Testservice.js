@@ -16,6 +16,8 @@ const TestService = {
   // Planilla del entrenador: cada fila se guarda al momento y luego se finaliza el test.
   saveResultadoAtleta: async (id, atletaId, data) => (await podApi.put(`${BASE}/tests/${id}/resultados/${atletaId}/`, data)).data,
   finalizarTest: async (id) => (await podApi.post(`${BASE}/tests/${id}/finalizar/`)).data,
+  // Recuperación individual de un test finalizado (administrador): { atletas: [ids], fecha }.
+  reprogramarTest: async (id, data) => (await podApi.post(`${BASE}/tests/${id}/reprogramar/`, data)).data,
   getAtletasDisponibles: async (params = {}) => (await podApi.get(`${BASE}/tests/atletas-disponibles/`, { params })).data,
   getFiltrosTests: async () => (await podApi.get(`${BASE}/tests/filtros/`)).data,
 

@@ -13,7 +13,7 @@ const formatFecha = (iso) => {
 
 export default function AntropometriaResumen() {
   const { hasPermission } = useApplicationPermissions();
-  const puedeVer = hasPermission('ver_evaluaciones');
+  const puedeVer = hasPermission('ver_cineantropometria');
   const navigate = useNavigate();
   const [estado, setEstado] = useState({ data: null, error: '' });
 

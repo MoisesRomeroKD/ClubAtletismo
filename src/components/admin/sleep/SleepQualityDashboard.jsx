@@ -83,6 +83,7 @@ async function getAdminSleepData() {
       (history.historial || []).forEach((record) => {
         sleepRecords.push({
           id: `${athlete.id}-${record.date}`,
+          registroId: record.id,
           athleteId: athlete.id,
           date: record.date,
           quality: Number(record.calidad),
@@ -100,6 +101,7 @@ export default function SleepQualityDashboard({
 }) {
   const { hasPermission } = useApplicationPermissions();
   const puedeRegistrarSueno = hasPermission('registrar_descanso');
+  const puedeCorregirSueno = hasPermission('editar_descanso');
   const [adminData, setAdminData] = useState(null);
   const [loadError, setLoadError] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
@@ -232,6 +234,17 @@ export default function SleepQualityDashboard({
     return response;
   };
 
+  // Corrige la calidad de un registro ya guardado (hasta una semana después de su fecha).
+  const corregirSueno = async (registroId, quality) => {
+    await UserService.corregirSueno(registroId, quality);
+    setAdminData((prev) => prev && {
+      ...prev,
+      sleepRecords: prev.sleepRecords.map((record) => (
+        record.registroId === registroId ? { ...record, quality: Number(quality) } : record
+      )),
+    });
+  };
+
   // Abre la pantalla "Registrar Sueño" (la misma de Pendientes) en la sección actual.
   const openRegistration = (athlete) => {
     if (!puedeRegistrarSueno) return;
@@ -327,6 +340,7 @@ export default function SleepQualityDashboard({
           onClose={() => setSelectedAthleteForPanel(null)}
           getAthleteStats={getAthleteStats}
           onRegistrar={puedeRegistrarSueno ? openRegistration : undefined}
+          onCorregir={puedeCorregirSueno ? corregirSueno : undefined}
           qualityColor={qualityColor}
           systemDate={systemDate}
         />

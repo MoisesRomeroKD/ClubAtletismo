@@ -4,6 +4,7 @@ import { ArrowLeft, Plus, SlidersHorizontal, X } from 'lucide-react';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts';
 import CineantropometriaService from '../../../api/services/Cineantropometriaservice';
 import UserService from '../../../api/services/Userservice';
+import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
 import '../../../styles/components/admin/antropometria/AntropometriaAdmin.css';
 
 // Hoy en hora de Caracas: las fechas que se programan son desde hoy en adelante.
@@ -110,6 +111,19 @@ function RadarEjes({ ejes }) {
 }
 
 /* ---------------- Formulario de mediciones de un atleta ---------------- */
+// Rango de cada medición (lo manda el backend, que también lo valida): '' si el valor sirve.
+const errorDeRango = (valor, nombre, unidad, limites) => {
+  if (!limites || valor === '' || valor === undefined) return '';
+  const numero = Number(valor);
+  if (!Number.isFinite(numero)) return `${nombre}: debe ser un número.`;
+  if (numero < 0) return `${nombre}: no puede ser negativo.`;
+  if (numero < limites.minimo || numero > limites.maximo) return `${nombre}: debe estar entre ${limites.minimo} y ${limites.maximo} ${unidad}.`;
+  const decimales = (String(valor).split('.')[1] || '').replace(/0+$/, '').length;
+  if (decimales > limites.decimales) return `${nombre}: admite hasta ${limites.decimales} decimales.`;
+  return '';
+};
+const pasoDe = (decimales) => (decimales === 0 ? '1' : decimales === 1 ? '0.1' : '0.01');
+
 function FormularioMediciones({ medicionId, atleta, medicionesPorEje, onGuardado, onCancelar }) {
   const [valores, setValores] = useState({});
   const [guardando, setGuardando] = useState(false);
@@ -117,6 +131,13 @@ function FormularioMediciones({ medicionId, atleta, medicionesPorEje, onGuardado
 
   const guardar = async (event) => {
     event.preventDefault();
+    const errores = Object.entries(medicionesPorEje).flatMap(([eje, config]) => config.campos
+      .map(([campo, nombre, unidad, limites]) => errorDeRango(valores[`${eje}.${campo}`], nombre, unidad, limites))
+      .filter(Boolean));
+    if (errores.length) {
+      setError(errores.join(' '));
+      return;
+    }
     setGuardando(true);
     setError('');
     const measurements = Object.fromEntries(Object.entries(medicionesPorEje).map(([eje, config]) => [
@@ -139,11 +160,12 @@ function FormularioMediciones({ medicionId, atleta, medicionesPorEje, onGuardado
         {Object.entries(medicionesPorEje).map(([eje, config]) => (
           <fieldset key={eje}>
             <legend>{EJES.find(([id]) => id === eje)?.[1] || eje}</legend>
-            {config.campos.map(([campo, nombre, unidad]) => (
+            {config.campos.map(([campo, nombre, unidad, limites]) => (
               <label key={campo}>
-                <span>{nombre} ({unidad})</span>
+                <span>{nombre} ({unidad}){limites && ` · ${limites.minimo} a ${limites.maximo}`}</span>
                 <input
-                  type="number" step="0.01" inputMode="decimal" required
+                  type="number" inputMode="decimal" required
+                  min={limites?.minimo ?? 0} max={limites?.maximo} step={pasoDe(limites?.decimales ?? 2)}
                   value={valores[`${eje}.${campo}`] ?? ''}
                   onChange={(event) => setValores((prev) => ({ ...prev, [`${eje}.${campo}`]: event.target.value }))}
                 />
@@ -670,6 +692,8 @@ function DatosRegistrados({ subareas }) {
 }
 
 /* ---------------- Vista principal ---------------- */
+// Con el permiso registrar_cineantropometria el administrador programa mediciones y registra los
+// datos de los atletas en cualquier subárea (5.2, 5.5, CU-24 y CU-25); sin él, solo consulta.
 const SECCIONES = {
   programar: { titulo: 'Mediciones' },
   datos: { titulo: 'Datos registrados' },
@@ -677,6 +701,8 @@ const SECCIONES = {
 
 export default function AntropometriaAdmin({ seccion = 'programar' }) {
   const [subareas, setSubareas] = useState({ filas: [], error: '' });
+  const { hasPermission } = useApplicationPermissions();
+  const puedeRegistrar = hasPermission('registrar_cineantropometria');
 
   useEffect(() => {
     let activo = true;
@@ -692,16 +718,18 @@ export default function AntropometriaAdmin({ seccion = 'programar' }) {
     <div className="antro-adm">
       <header className="antro-adm-header">
         <h2>{actual.titulo}</h2>
+        {puedeRegistrar && seccion !== 'datos' && (
+          <p>Agenda mediciones en cualquier subárea y registra los datos de cada atleta convocado.</p>
+        )}
       </header>
       {subareas.error && <p className="antro-adm-error" role="alert">{subareas.error}</p>}
       {seccion === 'datos' ? (
         <DatosRegistrados subareas={subareas.filas} />
       ) : (
-        // Cineantropometría la programa y registra el entrenador: el administrador solo consulta.
         <ProgramarMedicion
           subareas={subareas.filas}
-          puedeEditar={false}
-          puedeRegistrar={false}
+          puedeEditar={puedeRegistrar}
+          puedeRegistrar={puedeRegistrar}
         />
       )}
     </div>

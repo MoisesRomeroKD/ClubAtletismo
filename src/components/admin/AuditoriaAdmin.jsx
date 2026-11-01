@@ -43,10 +43,12 @@ const iniciales = (nombre) => (nombre || '?')
   .map((parte) => parte[0].toUpperCase())
   .join('');
 
-// Fecha y hora en que se hizo la acción.
+// Fecha y hora en que se hizo la acción: la que guardó el backend, siempre en hora de Caracas
+// (no la zona horaria del navegador).
 const formatFecha = (evento) => {
   return new Date(evento.fecha).toLocaleString('es-VE', {
-    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    timeZone: 'America/Caracas',
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit',
   });
 };
 
@@ -89,10 +91,12 @@ function Cedula({ evento }) {
 function AuditEventRow({ evento, onView }) {
   return (
     <tr>
+      <td className="audit-tabular audit-nowrap"><FechaEvento evento={evento} /></td>
       <td className="audit-nowrap"><Usuario evento={evento} /></td>
       <td className="audit-tabular audit-nowrap"><Cedula evento={evento} /></td>
       <td><RolBadge rol={evento.rol} /></td>
       <td>{evento.modulo_label}</td>
+      <td><span className={`audit-accion audit-accion--${String(evento.accion).toLowerCase()}`}>{evento.accion}</span></td>
       <td className="audit-nowrap audit-action-cell">
         <button className="audit-view-button" type="button" onClick={(clickEvent) => onView(evento, clickEvent.currentTarget)}>
           Ver detalle<Eye size={15} aria-hidden="true" />
@@ -110,6 +114,8 @@ function AuditEventCard({ evento, onView }) {
         <span className="audit-card-modulo">{evento.modulo_label}</span>
       </div>
       <dl className="audit-card-fields">
+        <div><dt>Fecha y hora</dt><dd><FechaEvento evento={evento} /></dd></div>
+        <div><dt>Acción</dt><dd><span className={`audit-accion audit-accion--${String(evento.accion).toLowerCase()}`}>{evento.accion}</span></dd></div>
         <div><dt>Cédula</dt><dd><Cedula evento={evento} /></dd></div>
         <div><dt>Rol</dt><dd><RolBadge rol={evento.rol} /></dd></div>
       </dl>
@@ -530,7 +536,7 @@ export default function AuditoriaAdmin() {
             <div className="responsive-list__table">
               <div className="audit-table-wrap">
                 <table className="audit-table">
-                  <thead><tr><th>Nombre</th><th>Cédula</th><th>Rol</th><th>Módulo</th><th>Acción</th></tr></thead>
+                  <thead><tr><th>Fecha y hora</th><th>Nombre</th><th>Cédula</th><th>Rol</th><th>Módulo</th><th>Acción</th><th>Detalle</th></tr></thead>
                   <tbody>{eventos.map((evento) => <AuditEventRow evento={evento} key={evento.id} onView={handleViewDetail} />)}</tbody>
                 </table>
               </div>

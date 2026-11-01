@@ -228,6 +228,33 @@ const Preregistro = () => {
     setFormData((actual) => ({ ...actual, representante_cedula: '' }));
   };
 
+  // Cédula del atleta: al completarla se consulta al backend si ya está en el sistema
+  // (registrado, preregistrado, de otro rol o libre). Solo si está libre se piden sus demás datos.
+  const [consulta, setConsulta] = useState({ cedula: '', estado: '', atleta: null, error: '', cargando: false });
+  const cedulaAtleta = formData.cedula;
+  const cedulaCompleta = selectedRole === 'Atleta' && REGLAS.cedula.completo.test(cedulaAtleta);
+  const consultaVigente = cedulaCompleta && consulta.cedula === cedulaAtleta;
+  const cedulaLibre = consultaVigente && consulta.estado === 'no_existe';
+
+  useEffect(() => {
+    if (!cedulaCompleta) return undefined;
+    let activo = true;
+    const espera = setTimeout(() => {
+      setConsulta({ cedula: cedulaAtleta, estado: '', atleta: null, error: '', cargando: true });
+      UserService.consultarCedulaPreregistro(cedulaAtleta)
+        .then((data) => { if (activo) setConsulta({ cedula: cedulaAtleta, estado: data.estado, atleta: data.atleta || null, error: '', cargando: false }); })
+        .catch((error) => {
+          if (activo) {
+            setConsulta({
+              cedula: cedulaAtleta, estado: '', atleta: null, cargando: false,
+              error: error.response?.data?.detail || 'No se pudo consultar la cédula.',
+            });
+          }
+        });
+    }, 350);
+    return () => { activo = false; clearTimeout(espera); };
+  }, [cedulaAtleta, cedulaCompleta]);
+
   const reiniciarFormulario = () => {
     setFormData(FORMULARIO_VACIO);
     setRechazados({});
@@ -346,8 +373,8 @@ const Preregistro = () => {
     }
   };
 
-  // Antes de pasar al atleta, el navegador revisa los campos del representante (obligatorios y formato).
-  const handleContinueToAthlete = (e) => {
+  // Antes de pasar al representante, el navegador revisa los campos del atleta (obligatorios y formato).
+  const handleContinuar = (e) => {
     const campos = e.currentTarget.form.querySelectorAll('input, select');
     for (const campo of campos) {
       if (!campo.checkValidity()) {
@@ -526,102 +553,12 @@ const Preregistro = () => {
         </h3>
 
         <div className="preregistro-progress" aria-label={`Paso ${individualStep} de 2`}>
-          <span className={individualStep === 1 ? 'active' : ''}>1/2 Representante</span>
-          <span className={individualStep === 2 ? 'active' : ''}>2/2 Atleta</span>
+          <span className={individualStep === 1 ? 'active' : ''}>1/2 Atleta</span>
+          <span className={individualStep === 2 ? 'active' : ''}>2/2 Representante</span>
         </div>
 
         <form onSubmit={handleSubmitIndividual} className="preregistro-form">
           {individualStep === 1 && <>
-          {/* Cédula del representante: también busca a los ya registrados */}
-          <div className="preregistro-field preregistro-rep-buscar">
-            <label htmlFor="representante_cedula">Cédula del representante</label>
-            {representanteElegido ? (
-              <div className="preregistro-rep-elegido">
-                <div>
-                  <strong>{representanteElegido.nombre_completo}</strong>
-                  <span>Cédula {representanteElegido.cedula || '—'} · Tlf. {representanteElegido.tlf || '—'}</span>
-                  <small>Ya registrado · {representanteElegido.atletas_total} atleta{representanteElegido.atletas_total === 1 ? '' : 's'} a cargo</small>
-                </div>
-                <button type="button" className="preregistro-rep-cambiar" onClick={quitarRepresentante}>Cambiar</button>
-              </div>
-            ) : (
-              <>
-                <input
-                  id="representante_cedula"
-                  type="text"
-                  inputMode="numeric"
-                  name="representante_cedula"
-                  value={formData.representante_cedula}
-                  onChange={(event) => { setSugerenciasCerradas(false); handleInputChange(event); }}
-                  required
-                  pattern={PATRON_CEDULA}
-                  maxLength={8}
-                  title={AYUDA_CEDULA}
-                  placeholder="Ej. 12345678"
-                  autoComplete="off"
-                  {...validacion('representante_cedula')}
-                />
-                {renderAviso('representante_cedula')}
-                {textoRep.length >= MIN_DIGITOS && !sugerenciasCerradas && busquedaRep.texto === textoRep && busquedaRep.resultados.length > 0 && (
-                  <ul className="preregistro-rep-resultados" role="listbox" aria-label="Representantes ya registrados">
-                    <li className="preregistro-rep-vacio">
-                      {busquedaRep.resultados.find((representante) => representante.cedula === textoRep) ? 'Esta cédula ya está registrada:' : '¿Es alguno de estos representantes?'}
-                    </li>
-                    {busquedaRep.resultados.map((representante) => (
-                      <li key={representante.id}>
-                        <button type="button" role="option" aria-selected="false" onClick={() => elegirRepresentante(representante)}>
-                          <strong>{representante.nombre_completo}</strong>
-                          <span>Cédula {representante.cedula || '—'} · {representante.atletas_total} atleta{representante.atletas_total === 1 ? '' : 's'}</span>
-                        </button>
-                      </li>
-                    ))}
-                    {!busquedaRep.resultados.find((representante) => representante.cedula === textoRep) && (
-                      <li>
-                        <button type="button" className="preregistro-rep-ninguno" onClick={() => setSugerenciasCerradas(true)}>
-                          Ninguno: es un representante nuevo
-                        </button>
-                      </li>
-                    )}
-                  </ul>
-                )}
-              </>
-            )}
-          </div>
-
-          {!representanteElegido && <>
-          <div className="preregistro-field">
-            <label htmlFor="representante_nombres">Nombres del representante</label>
-            <input id="representante_nombres" type="text" name="representante_nombres" value={formData.representante_nombres} onChange={handleInputChange} required pattern={PATRON_NOMBRE} maxLength={60} title={AYUDA_NOMBRE} {...validacion('representante_nombres')} />
-            {renderAviso('representante_nombres')}
-          </div>
-          <div className="preregistro-field">
-            <label htmlFor="representante_apellidos">Apellidos del representante</label>
-            <input id="representante_apellidos" type="text" name="representante_apellidos" value={formData.representante_apellidos} onChange={handleInputChange} required pattern={PATRON_NOMBRE} maxLength={60} title={AYUDA_NOMBRE} {...validacion('representante_apellidos')} />
-            {renderAviso('representante_apellidos')}
-          </div>
-          <div className="preregistro-field">
-            <label htmlFor="representante_telefono">Teléfono del representante</label>
-            <input id="representante_telefono" type="tel" inputMode="numeric" name="representante_telefono" value={formData.representante_telefono} onChange={handleInputChange} required pattern={PATRON_TELEFONO} maxLength={11} title={AYUDA_TELEFONO} placeholder="Ej. 04141234567" {...validacion('representante_telefono')} />
-            {renderAviso('representante_telefono')}
-          </div>
-          </>}
-          <div className="preregistro-field">
-            <label htmlFor="representante_relacion">Relación con el atleta</label>
-            <select id="representante_relacion" name="representante_relacion" value={formData.representante_relacion} onChange={handleInputChange} required>
-              <option value="Madre">Madre</option>
-              <option value="Padre">Padre</option>
-              <option value="Tutor Legal">Tutor Legal</option>
-              <option value="Abuelo/a">Abuelo/a</option>
-              <option value="Hermano/a">Hermano/a</option>
-              <option value="Otro">Otro / Responsable</option>
-            </select>
-          </div>
-          <div className="preregistro-form-actions">
-            <button type="button" className="preregistro-submit-button" onClick={handleContinueToAthlete}>Continuar al atleta</button>
-          </div>
-          </>}
-
-          {individualStep === 2 && <>
           <div className="preregistro-campo">
             <label htmlFor="atleta_cedula">Cédula</label>
             <input
@@ -639,8 +576,34 @@ const Preregistro = () => {
               {...validacion('cedula')}
             />
             {renderAviso('cedula')}
+            {consultaVigente && consulta.cargando && <small className="preregistro-consulta">Buscando la cédula en el sistema...</small>}
+            {consultaVigente && consulta.error && <small className="preregistro-aviso" role="alert">{consulta.error}</small>}
+            {consultaVigente && consulta.estado === 'no_existe' && (
+              <small className="preregistro-consulta preregistro-consulta--libre">Esta cédula no está en el sistema: continúa con el preregistro.</small>
+            )}
+            {consultaVigente && consulta.estado === 'otro_rol' && (
+              <small className="preregistro-aviso" role="alert">Esta cédula ya pertenece a un entrenador o administrador.</small>
+            )}
           </div>
 
+          {consultaVigente && consulta.atleta && (
+            <div className="preregistro-existente" role="status">
+              <strong>
+                {consulta.estado === 'registrado'
+                  ? 'Este atleta ya está registrado en el sistema.'
+                  : 'Este atleta ya está preregistrado: falta que complete su registro (crear su contraseña con el código que se envía a su correo).'}
+              </strong>
+              <span>{consulta.atleta.nombres} {consulta.atleta.apellidos} · Cédula {consulta.atleta.cedula}</span>
+              <span>Correo: {consulta.atleta.correo || '—'}</span>
+              <span>Subáreas: {consulta.atleta.subareas.map((fila) => fila.subarea).join(', ') || '—'}</span>
+              <span>
+                Representante: {consulta.atleta.representantes.map((rep) => `${rep.nombres} ${rep.apellidos} (${rep.relacion})`).join(', ') || '—'}
+              </span>
+              <small>No hace falta volver a cargar sus datos. Para cambiarlos usa Atletas → Editar{consulta.estado === 'preregistrado' ? ' o Prerregistros Pendientes' : ''}.</small>
+            </div>
+          )}
+
+          {cedulaLibre && <>
           <div className="preregistro-campo">
             <label htmlFor="atleta_nombres">Nombres</label>
             <input
@@ -732,6 +695,97 @@ const Preregistro = () => {
             El entrenador del atleta se asigna después, en Atletas → Editar. Las subáreas se pueden cambiar ahí.
           </p>
 
+          </>}
+          <div className="preregistro-form-actions">
+            <button type="button" className="preregistro-submit-button" onClick={handleContinuar} disabled={!cedulaLibre}>Continuar al representante</button>
+          </div>
+          </>}
+
+          {individualStep === 2 && <>
+          {/* Cédula del representante: también busca a los ya registrados */}
+          <div className="preregistro-field preregistro-rep-buscar">
+            <label htmlFor="representante_cedula">Cédula del representante</label>
+            {representanteElegido ? (
+              <div className="preregistro-rep-elegido">
+                <div>
+                  <strong>{representanteElegido.nombre_completo}</strong>
+                  <span>Cédula {representanteElegido.cedula || '—'} · Tlf. {representanteElegido.tlf || '—'}</span>
+                  <small>Ya registrado · {representanteElegido.atletas_total} atleta{representanteElegido.atletas_total === 1 ? '' : 's'} a cargo</small>
+                </div>
+                <button type="button" className="preregistro-rep-cambiar" onClick={quitarRepresentante}>Cambiar</button>
+              </div>
+            ) : (
+              <>
+                <input
+                  id="representante_cedula"
+                  type="text"
+                  inputMode="numeric"
+                  name="representante_cedula"
+                  value={formData.representante_cedula}
+                  onChange={(event) => { setSugerenciasCerradas(false); handleInputChange(event); }}
+                  required
+                  pattern={PATRON_CEDULA}
+                  maxLength={8}
+                  title={AYUDA_CEDULA}
+                  placeholder="Ej. 12345678"
+                  autoComplete="off"
+                  {...validacion('representante_cedula')}
+                />
+                {renderAviso('representante_cedula')}
+                {textoRep.length >= MIN_DIGITOS && !sugerenciasCerradas && busquedaRep.texto === textoRep && busquedaRep.resultados.length > 0 && (
+                  <ul className="preregistro-rep-resultados" role="listbox" aria-label="Representantes ya registrados">
+                    <li className="preregistro-rep-vacio">
+                      {busquedaRep.resultados.find((representante) => representante.cedula === textoRep) ? 'Esta cédula ya está registrada:' : '¿Es alguno de estos representantes?'}
+                    </li>
+                    {busquedaRep.resultados.map((representante) => (
+                      <li key={representante.id}>
+                        <button type="button" role="option" aria-selected="false" onClick={() => elegirRepresentante(representante)}>
+                          <strong>{representante.nombre_completo}</strong>
+                          <span>Cédula {representante.cedula || '—'} · {representante.atletas_total} atleta{representante.atletas_total === 1 ? '' : 's'}</span>
+                        </button>
+                      </li>
+                    ))}
+                    {!busquedaRep.resultados.find((representante) => representante.cedula === textoRep) && (
+                      <li>
+                        <button type="button" className="preregistro-rep-ninguno" onClick={() => setSugerenciasCerradas(true)}>
+                          Ninguno: es un representante nuevo
+                        </button>
+                      </li>
+                    )}
+                  </ul>
+                )}
+              </>
+            )}
+          </div>
+
+          {!representanteElegido && <>
+          <div className="preregistro-field">
+            <label htmlFor="representante_nombres">Nombres del representante</label>
+            <input id="representante_nombres" type="text" name="representante_nombres" value={formData.representante_nombres} onChange={handleInputChange} required pattern={PATRON_NOMBRE} maxLength={60} title={AYUDA_NOMBRE} {...validacion('representante_nombres')} />
+            {renderAviso('representante_nombres')}
+          </div>
+          <div className="preregistro-field">
+            <label htmlFor="representante_apellidos">Apellidos del representante</label>
+            <input id="representante_apellidos" type="text" name="representante_apellidos" value={formData.representante_apellidos} onChange={handleInputChange} required pattern={PATRON_NOMBRE} maxLength={60} title={AYUDA_NOMBRE} {...validacion('representante_apellidos')} />
+            {renderAviso('representante_apellidos')}
+          </div>
+          <div className="preregistro-field">
+            <label htmlFor="representante_telefono">Teléfono del representante</label>
+            <input id="representante_telefono" type="tel" inputMode="numeric" name="representante_telefono" value={formData.representante_telefono} onChange={handleInputChange} required pattern={PATRON_TELEFONO} maxLength={11} title={AYUDA_TELEFONO} placeholder="Ej. 04141234567" {...validacion('representante_telefono')} />
+            {renderAviso('representante_telefono')}
+          </div>
+          </>}
+          <div className="preregistro-field">
+            <label htmlFor="representante_relacion">Relación con el atleta</label>
+            <select id="representante_relacion" name="representante_relacion" value={formData.representante_relacion} onChange={handleInputChange} required>
+              <option value="Madre">Madre</option>
+              <option value="Padre">Padre</option>
+              <option value="Tutor Legal">Tutor Legal</option>
+              <option value="Abuelo/a">Abuelo/a</option>
+              <option value="Hermano/a">Hermano/a</option>
+              <option value="Otro">Otro / Responsable</option>
+            </select>
+          </div>
           <div className="preregistro-campo-acciones">
             <button type="button" className="preregistro-back-button" onClick={() => setIndividualStep(1)}>Atrás</button>
             <button
@@ -742,6 +796,7 @@ const Preregistro = () => {
             </button>
           </div>
           </>}
+
         </form>
       </div>}
 

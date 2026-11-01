@@ -63,8 +63,9 @@ const navItems = [
   {
     id: 'tests', label: 'Tests', icon: ClipboardList,
     grupo: [
-      { id: 'mis_tests', label: 'Mis tests', icon: ListChecks },
-      { id: 'crear_test', label: 'Crear test', icon: PlusCircle },
+      // Mis tests: con cualquiera de los permisos de tests. Crear test (catálogo): registrar_test.
+      { id: 'mis_tests', label: 'Mis tests', icon: ListChecks, permission: ['registrar_test', 'editar_test', 'corregir_resultados_test'] },
+      { id: 'crear_test', label: 'Crear test', icon: PlusCircle, permission: 'registrar_test' },
       { id: 'tests_resultados', label: 'Resultados', icon: Award },
       { id: 'tests_analisis', label: 'Análisis', icon: ChartColumn },
     ],
@@ -73,7 +74,7 @@ const navItems = [
     id: 'cine', label: 'Cineantropometría', icon: Activity,
     grupo: [
       { id: 'cineantropometria', label: 'Panel', icon: Activity },
-      { id: 'cine_programar', label: 'Programar medición', icon: CalendarClock },
+      { id: 'cine_programar', label: 'Programar medición', icon: CalendarClock, permission: 'registrar_cineantropometria' },
       { id: 'cine_datos', label: 'Datos registrados', icon: Database },
     ],
   },
@@ -102,7 +103,8 @@ export default function SidebarTrainer({
   const navigate = useNavigate();
   const { hasPermission } = useApplicationPermissions();
   // Se ocultan las opciones sin permiso (también dentro de los grupos) y los grupos que quedan vacíos.
-  const conPermiso = (item) => !item.permission || hasPermission(item.permission);
+  // permission puede ser uno o varios (basta con tener uno).
+  const conPermiso = (item) => !item.permission || [].concat(item.permission).some(hasPermission);
   const visibleNavItems = navItems
     .filter(conPermiso)
     .map((item) => (item.grupo ? { ...item, grupo: item.grupo.filter(conPermiso) } : item))

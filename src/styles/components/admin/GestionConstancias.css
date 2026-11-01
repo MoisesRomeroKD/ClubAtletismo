@@ -1,0 +1,239 @@
+/* Gestión de Constancias (administrador) */
+.constancias {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin: 0 auto;
+  max-width: 960px;
+  padding: 1.5rem;
+}
+
+.constancias__header h2 {
+  color: var(--text-main);
+  font-size: 1.4rem;
+  margin: 0 0 0.35rem;
+}
+
+.constancias__header p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.constancias__buscar,
+.constancias__seleccion,
+.constancias__encontrado {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+
+.constancias__buscar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.constancias__buscar label {
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.constancias__buscar-fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.constancias__buscar-fila input {
+  background: var(--bg-main);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  color: var(--text-main);
+  flex: 1 1 12rem;
+  font: inherit;
+  min-height: 40px;
+  min-width: 0;
+  padding: 0.45rem 0.75rem;
+}
+
+.constancias__btn {
+  align-items: center;
+  background: var(--func-primary);
+  border: 1px solid var(--func-primary);
+  border-radius: 8px;
+  color: var(--clr-blanco-pura);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  gap: 0.4rem;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0.45rem 0.9rem;
+}
+
+.constancias__btn--ghost {
+  background: transparent;
+  border-color: var(--border-main);
+  color: var(--text-main);
+}
+
+.constancias__btn--primario {
+  font-size: 0.95rem;
+  min-height: 46px;
+  padding: 0.6rem 1.25rem;
+}
+
+.constancias__btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.constancias__encontrado {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.constancias__encontrado > div:first-child,
+.constancias__card > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.constancias__encontrado strong,
+.constancias__card strong,
+.constancias__fuerte {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.constancias__encontrado span,
+.constancias__card span {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.constancias__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.constancias__seleccion-head {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.constancias__seleccion-head h3 {
+  color: var(--text-main);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.constancias__tabla {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.constancias__tabla th,
+.constancias__tabla td {
+  border-bottom: 1px solid var(--border-main);
+  color: var(--text-main);
+  font-size: 0.85rem;
+  padding: 0.55rem 0.5rem;
+  text-align: left;
+}
+
+.constancias__tabla th {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.constancias__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.constancias__card {
+  align-items: center;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  padding: 0.65rem 0.75rem;
+}
+
+.constancias__quitar {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--state-danger);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+
+.constancias__quitar:hover {
+  background: var(--bg-main);
+}
+
+.constancias__vacio {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.constancias__error {
+  color: var(--state-danger);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.constancias__ok {
+  color: var(--state-success);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.constancias__generar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.constancias__generar small {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 640px) {
+  .constancias {
+    padding: 1rem;
+  }
+
+  .constancias__generar .constancias__btn {
+    width: 100%;
+  }
+}

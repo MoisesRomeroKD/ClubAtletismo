@@ -408,6 +408,61 @@ body.dark-mode .sleep-athlete-detail-panel {
   min-width: 0;
 }
 
+/* Corregir la calidad de un registro (permiso editar_descanso, hasta 1 semana) */
+.sl-correccion {
+  align-items: center;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.sl-correccion--tarjeta {
+  display: flex;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.sl-correccion__slider {
+  accent-color: var(--func-primary);
+  max-width: 100%;
+  min-width: 0;
+  width: 7rem;
+}
+
+.sl-correccion--tarjeta .sl-correccion__slider {
+  flex: 1 1 8rem;
+}
+
+.sl-correccion__acciones {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.sl-correccion__lapiz {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+}
+
+.sl-correccion__lapiz:hover {
+  background: var(--bg-surface);
+  color: var(--func-primary);
+}
+
+.sl-correccion__error {
+  color: var(--state-danger);
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem;
+}
+
 .sl-sleep-card {
   display: grid;
   gap: 0.55rem;

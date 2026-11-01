@@ -1054,3 +1054,35 @@ body.dark-mode .preregistro-metrica--valida .preregistro-metrica-label {
   accent-color: var(--func-primary);
   cursor: pointer;
 }
+
+/* Consulta de la cédula del atleta: libre, ya registrado o preregistrado */
+.preregistro-consulta {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+
+.preregistro-consulta--libre {
+  color: var(--state-success);
+  font-weight: 600;
+}
+
+.preregistro-existente {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  grid-column: 1 / -1;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--state-warning);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.preregistro-existente small {
+  color: var(--text-muted);
+}

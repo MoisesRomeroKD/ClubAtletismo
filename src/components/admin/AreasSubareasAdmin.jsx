@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import {
-  Ban,
   ChevronDown,
   Footprints,
   Grid2X2,
@@ -8,6 +7,7 @@ import {
   Pencil,
   Plus,
   Target,
+  Trash2,
   X,
   Zap,
 } from 'lucide-react';
@@ -30,6 +30,8 @@ const getAreaIcon = (areaName = '') => {
   return Grid2X2;
 };
 
+const porNombre = (left, right) => left.nombre.localeCompare(right.nombre, 'es', { sensitivity: 'base' });
+
 const getRequestError = (requestError, fallback) => {
   const data = requestError.response?.data;
   if (typeof data === 'string') return data;
@@ -49,15 +51,19 @@ export default function AreasSubareasAdmin() {
   const [expandedAreaId, setExpandedAreaId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  // activeForm: 'area' | 'subarea'; editingId: el que se edita (null = crear).
   const [activeForm, setActiveForm] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  // Lo que se va a eliminar: { tipo: 'area' | 'subarea', item }.
+  const [toDelete, setToDelete] = useState(null);
   const [formName, setFormName] = useState('');
   const [formAreaId, setFormAreaId] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  const canAddArea = hasPermission('add_area');
-  const canAddSubarea = hasPermission('add_subarea');
+  // Crear, cambiar el nombre y eliminar: permiso gestionar_areas.
+  const canManage = hasPermission('gestionar_areas');
 
   useEffect(() => {
     let isMounted = true;
@@ -95,6 +101,7 @@ export default function AreasSubareasAdmin() {
 
   const openAreaForm = () => {
     setActiveForm('area');
+    setEditingId(null);
     setFormName('');
     setFormAreaId('');
     setFormError(null);
@@ -103,8 +110,18 @@ export default function AreasSubareasAdmin() {
 
   const openSubareaForm = (areaId) => {
     setActiveForm('subarea');
+    setEditingId(null);
     setFormName('');
     setFormAreaId(String(areaId));
+    setFormError(null);
+    setSuccessMessage(null);
+  };
+
+  const openEditForm = (tipo, item) => {
+    setActiveForm(tipo);
+    setEditingId(item.id);
+    setFormName(item.nombre);
+    setFormAreaId(tipo === 'subarea' ? String(item.area?.id || '') : '');
     setFormError(null);
     setSuccessMessage(null);
   };
@@ -112,7 +129,37 @@ export default function AreasSubareasAdmin() {
   const closeForm = () => {
     if (isSaving) return;
     setActiveForm(null);
+    setEditingId(null);
+    setToDelete(null);
     setFormError(null);
+  };
+
+  const openDelete = (tipo, item) => {
+    setToDelete({ tipo, item });
+    setFormError(null);
+    setSuccessMessage(null);
+  };
+
+  const handleDelete = async () => {
+    const { tipo, item } = toDelete;
+    setIsSaving(true);
+    setFormError(null);
+    try {
+      if (tipo === 'area') {
+        await UserService.deleteArea(item.id);
+        setAreas((current) => current.filter((area) => area.id !== item.id));
+        setSuccessMessage(`Área ${item.nombre} eliminada.`);
+      } else {
+        await UserService.deleteSubarea(item.id);
+        setSubareas((current) => current.filter((subarea) => subarea.id !== item.id));
+        setSuccessMessage(`Subárea ${item.nombre} eliminada.`);
+      }
+      setToDelete(null);
+    } catch (requestError) {
+      setFormError(getRequestError(requestError, 'No se pudo eliminar. Inténtalo de nuevo.'));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -126,29 +173,38 @@ export default function AreasSubareasAdmin() {
     setIsSaving(true);
     setFormError(null);
     try {
-      if (activeForm === 'area') {
-        const createdArea = await UserService.createArea({ nombre });
+      if (activeForm === 'area' && editingId) {
+        const updatedArea = await UserService.updateArea(editingId, { nombre });
         setAreas((currentAreas) =>
-          [...currentAreas, createdArea].sort((left, right) =>
-            left.nombre.localeCompare(right.nombre, 'es', { sensitivity: 'base' })
-          )
+          currentAreas.map((area) => (area.id === editingId ? updatedArea : area)).sort(porNombre)
         );
+        // Las subáreas muestran el nombre de su área.
+        setSubareas((currentSubareas) => currentSubareas.map((subarea) => (
+          subarea.area?.id === editingId ? { ...subarea, area: updatedArea } : subarea
+        )));
+        setSuccessMessage('Área actualizada correctamente.');
+      } else if (activeForm === 'area') {
+        const createdArea = await UserService.createArea({ nombre });
+        setAreas((currentAreas) => [...currentAreas, createdArea].sort(porNombre));
         setSuccessMessage('Área creada correctamente.');
+      } else if (editingId) {
+        const updatedSubarea = await UserService.updateSubarea(editingId, { nombre });
+        setSubareas((currentSubareas) =>
+          currentSubareas.map((subarea) => (subarea.id === editingId ? updatedSubarea : subarea)).sort(porNombre)
+        );
+        setSuccessMessage('Subárea actualizada correctamente.');
       } else {
         const areaId = Number(formAreaId);
         const createdSubarea = await UserService.createSubarea({
           nombre,
           area_id: areaId,
         });
-        setSubareas((currentSubareas) =>
-          [...currentSubareas, createdSubarea].sort((left, right) =>
-            left.nombre.localeCompare(right.nombre, 'es', { sensitivity: 'base' })
-          )
-        );
+        setSubareas((currentSubareas) => [...currentSubareas, createdSubarea].sort(porNombre));
         setExpandedAreaId(areaId);
         setSuccessMessage('Subárea creada correctamente.');
       }
       setActiveForm(null);
+      setEditingId(null);
       setFormName('');
       setFormAreaId('');
     } catch (requestError) {
@@ -187,7 +243,7 @@ export default function AreasSubareasAdmin() {
               Organiza la estructura de disciplinas y especialidades atléticas.
             </p>
           </div>
-          {canAddArea && (
+          {canManage && (
             <button
               className="area-admin-primary-action"
               onClick={openAreaForm}
@@ -265,26 +321,28 @@ export default function AreasSubareasAdmin() {
                               <span className="area-admin-subarea-dot" />
                               {subarea.nombre}
                             </span>
-                            <span className="area-admin-subarea-actions">
-                              <button
-                                aria-label={`Editar ${subarea.nombre}`}
-                                className="area-admin-icon-action"
-                                disabled
-                                title="Editar"
-                                type="button"
-                              >
-                                <Pencil aria-hidden="true" size={17} />
-                              </button>
-                              <button
-                                aria-label={`Inhabilitar ${subarea.nombre}`}
-                                className="area-admin-icon-action is-danger"
-                                disabled
-                                title="Inhabilitar"
-                                type="button"
-                              >
-                                <Ban aria-hidden="true" size={17} />
-                              </button>
-                            </span>
+                            {canManage && (
+                              <span className="area-admin-subarea-actions">
+                                <button
+                                  aria-label={`Editar ${subarea.nombre}`}
+                                  className="area-admin-icon-action"
+                                  onClick={() => openEditForm('subarea', subarea)}
+                                  title="Editar"
+                                  type="button"
+                                >
+                                  <Pencil aria-hidden="true" size={17} />
+                                </button>
+                                <button
+                                  aria-label={`Eliminar ${subarea.nombre}`}
+                                  className="area-admin-icon-action is-danger"
+                                  onClick={() => openDelete('subarea', subarea)}
+                                  title="Eliminar"
+                                  type="button"
+                                >
+                                  <Trash2 aria-hidden="true" size={17} />
+                                </button>
+                              </span>
+                            )}
                           </li>
                         ))}
                       </ul>
@@ -294,15 +352,33 @@ export default function AreasSubareasAdmin() {
                       </p>
                     )}
 
-                    {canAddSubarea && (
-                      <button
-                        className="area-admin-add-subarea"
-                        onClick={() => openSubareaForm(area.id)}
-                        type="button"
-                      >
-                        <Plus aria-hidden="true" size={16} />
-                        Agregar Subárea
-                      </button>
+                    {canManage && (
+                      <div className="area-admin-panel-actions">
+                        <button
+                          className="area-admin-add-subarea"
+                          onClick={() => openSubareaForm(area.id)}
+                          type="button"
+                        >
+                          <Plus aria-hidden="true" size={16} />
+                          Agregar Subárea
+                        </button>
+                        <button
+                          className="area-admin-add-subarea"
+                          onClick={() => openEditForm('area', area)}
+                          type="button"
+                        >
+                          <Pencil aria-hidden="true" size={16} />
+                          Editar área
+                        </button>
+                        <button
+                          className="area-admin-add-subarea is-danger"
+                          onClick={() => openDelete('area', area)}
+                          type="button"
+                        >
+                          <Trash2 aria-hidden="true" size={16} />
+                          Eliminar área
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -323,7 +399,7 @@ export default function AreasSubareasAdmin() {
           >
             <header className="area-admin-modal-header">
               <h2 id="area-admin-modal-title">
-                {activeForm === 'area' ? 'Agregar Área' : 'Agregar Subárea'}
+                {`${editingId ? 'Editar' : 'Agregar'} ${activeForm === 'area' ? 'Área' : 'Subárea'}`}
               </h2>
               <button
                 aria-label="Cerrar formulario"
@@ -338,7 +414,7 @@ export default function AreasSubareasAdmin() {
 
             <form onSubmit={handleSubmit}>
               <div className="area-admin-modal-body">
-                {activeForm === 'subarea' && (
+                {activeForm === 'subarea' && !editingId && (
                   <label className="area-admin-field">
                     <span>Área</span>
                     <select
@@ -389,6 +465,61 @@ export default function AreasSubareasAdmin() {
                 </button>
               </footer>
             </form>
+          </section>
+        </div>
+      )}
+
+      {toDelete && (
+        <div className="area-admin-modal-backdrop">
+          <section
+            aria-labelledby="area-admin-delete-title"
+            aria-modal="true"
+            className="area-admin-modal"
+            role="dialog"
+          >
+            <header className="area-admin-modal-header">
+              <h2 id="area-admin-delete-title">
+                {toDelete.tipo === 'area' ? 'Eliminar Área' : 'Eliminar Subárea'}
+              </h2>
+              <button
+                aria-label="Cerrar"
+                className="area-admin-modal-close"
+                disabled={isSaving}
+                onClick={closeForm}
+                type="button"
+              >
+                <X aria-hidden="true" size={20} />
+              </button>
+            </header>
+            <div className="area-admin-modal-body">
+              <p className="area-admin-confirm-text">
+                {`¿Eliminar ${toDelete.tipo === 'area' ? 'el área' : 'la subárea'} ${toDelete.item.nombre}? `}
+                Solo se puede eliminar si nada la usa todavía.
+              </p>
+              {formError && (
+                <div className="area-admin-form-error" role="alert">
+                  {formError}
+                </div>
+              )}
+            </div>
+            <footer className="area-admin-modal-footer">
+              <button
+                className="area-admin-secondary-action"
+                disabled={isSaving}
+                onClick={closeForm}
+                type="button"
+              >
+                Cancelar
+              </button>
+              <button
+                className="area-admin-primary-action is-danger"
+                disabled={isSaving}
+                onClick={handleDelete}
+                type="button"
+              >
+                {isSaving ? 'Eliminando...' : 'Eliminar'}
+              </button>
+            </footer>
           </section>
         </div>
       )}

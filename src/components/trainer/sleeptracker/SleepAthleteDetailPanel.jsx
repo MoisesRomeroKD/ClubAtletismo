@@ -1,9 +1,15 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { X, Pencil } from 'lucide-react';
 import '../../../styles/components/trainer/SleepModuleTheme.css';
 import '../../../styles/components/trainer/SleepAthleteDetailPanel.css';
 
 const DAYS_IN_WINDOW = 30;
+// Un registro de sueño se puede corregir hasta una semana después de su fecha.
+const DIAS_PARA_CORREGIR = 7;
+
+function diasDesde(dateStr, systemDate) {
+  return Math.round((new Date(systemDate) - new Date(dateStr)) / 86400000);
+}
 
 function getLastNDates(referenceDate, days) {
   const dates = [];
@@ -32,10 +38,13 @@ export default function SleepAthleteDetailPanel({
   onClose,
   getAthleteStats,
   onRegistrar,
+  onCorregir,
   qualityColor,
   systemDate,
 }) {
   const isOpen = Boolean(athlete);
+  // Corrección en la misma fila: { id, calidad, guardando, error }.
+  const [corrigiendo, setCorrigiendo] = useState(null);
   const { records = [], todayRecord } = athlete ? getAthleteStats(athlete.id) : {};
 
   useEffect(() => {
@@ -65,6 +74,59 @@ export default function SleepAthleteDetailPanel({
   );
 
   if (!athlete) return null;
+
+  const idDe = (record) => record.registroId ?? record.id;
+  const sePuedeCorregir = (record) => Boolean(onCorregir)
+    && Number.isInteger(idDe(record))
+    && diasDesde(record.date, systemDate) <= DIAS_PARA_CORREGIR;
+  const empezar = (record) => setCorrigiendo({ id: idDe(record), calidad: record.quality, guardando: false, error: '' });
+  const guardar = async () => {
+    setCorrigiendo((actual) => ({ ...actual, guardando: true, error: '' }));
+    try {
+      await onCorregir(corrigiendo.id, corrigiendo.calidad);
+      setCorrigiendo(null);
+    } catch (error) {
+      setCorrigiendo((actual) => ({
+        ...actual,
+        guardando: false,
+        error: error.response?.data?.message || 'No se pudo corregir el registro.',
+      }));
+    }
+  };
+  const editando = (record) => corrigiendo?.id === idDe(record);
+  const deslizador = (
+    <input
+      type="range"
+      min="1"
+      max="10"
+      step="1"
+      className="sl-correccion__slider"
+      value={corrigiendo?.calidad ?? 1}
+      onChange={(e) => setCorrigiendo((actual) => ({ ...actual, calidad: Number(e.target.value) }))}
+      aria-label="Calidad corregida"
+    />
+  );
+  const botonesCorreccion = (
+    <span className="sl-correccion__acciones">
+      <button type="button" className="sl-btn sl-btn-primary" onClick={guardar} disabled={corrigiendo?.guardando}>
+        {corrigiendo?.guardando ? 'Guardando...' : 'Guardar'}
+      </button>
+      <button type="button" className="sl-btn" onClick={() => setCorrigiendo(null)} disabled={corrigiendo?.guardando}>
+        Cancelar
+      </button>
+    </span>
+  );
+  const botonLapiz = (record) => (
+    <button
+      type="button"
+      className="sl-correccion__lapiz"
+      onClick={() => empezar(record)}
+      aria-label={`Corregir el sueño del ${record.date}`}
+      title="Corregir"
+    >
+      <Pencil size={16} />
+    </button>
+  );
 
   return (
     <div className="sleep-athlete-detail-panel">
@@ -136,6 +198,7 @@ export default function SleepAthleteDetailPanel({
           {/* Historial */}
           <section>
             <h4 className="sl-detail-section-title">Historial de registros</h4>
+            {corrigiendo?.error && <p className="sl-correccion__error" role="alert">{corrigiendo.error}</p>}
 
             <div className="responsive-list">
               <div className="responsive-list__table">
@@ -146,12 +209,13 @@ export default function SleepAthleteDetailPanel({
                         <th>Fecha</th>
                         <th className="sl-table__th--center">Calidad</th>
                         <th>Registrado por</th>
+                        {onCorregir && <th aria-label="Corregir" />}
                       </tr>
                     </thead>
                     <tbody>
                       {history.length === 0 ? (
                         <tr>
-                          <td colSpan="3" className="sl-table__empty">
+                          <td colSpan={onCorregir ? 4 : 3} className="sl-table__empty">
                             Sin registros aún.
                           </td>
                         </tr>
@@ -161,13 +225,20 @@ export default function SleepAthleteDetailPanel({
                             <td>{formatRelativeDate(record.date, systemDate)}</td>
                             <td
                               className="sl-table__td--center-strong"
-                              style={{ color: qualityColor(record.quality) }}
+                              style={{ color: qualityColor(editando(record) ? corrigiendo.calidad : record.quality) }}
                             >
-                              {record.quality}
+                              {editando(record) ? (
+                                <span className="sl-correccion">{deslizador}{corrigiendo.calidad}</span>
+                              ) : record.quality}
                             </td>
                             <td>
                               <span className="sl-badge">{record.registrarRole}</span>
                             </td>
+                            {onCorregir && (
+                              <td>
+                                {editando(record) ? botonesCorreccion : sePuedeCorregir(record) && botonLapiz(record)}
+                              </td>
+                            )}
                           </tr>
                         ))
                       )}
@@ -188,8 +259,14 @@ export default function SleepAthleteDetailPanel({
                       >
                         <div className="sl-sleep-card-header">
                           <strong>{formatRelativeDate(record.date, systemDate)}</strong>
-                          <b>{record.quality}</b>
+                          <span className="sl-correccion">
+                            <b>{editando(record) ? corrigiendo.calidad : record.quality}</b>
+                            {!editando(record) && sePuedeCorregir(record) && botonLapiz(record)}
+                          </span>
                         </div>
+                        {editando(record) && (
+                          <div className="sl-correccion sl-correccion--tarjeta">{deslizador}{botonesCorreccion}</div>
+                        )}
                         <div className="sl-sleep-card-meta">
                           Registrado por: {record.registrarRole}
                         </div>

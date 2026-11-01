@@ -4,9 +4,10 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { Users, Activity, Calendar as CalendarIcon, ChevronRight, ChevronLeft, Search, Filter, Map, Layers, Target, CheckCircle2, XCircle, AlertCircle, ChevronDown, Clock, ArrowLeft, ArrowUpRight, ArrowDownRight, TrendingUp, Fingerprint, RefreshCcw, Database, SlidersHorizontal, X } from 'lucide-react';
+import { Users, Activity, Calendar as CalendarIcon, ChevronRight, ChevronLeft, Search, Filter, Map, Layers, Target, CheckCircle2, XCircle, AlertCircle, ChevronDown, Clock, ArrowLeft, Pencil, ArrowUpRight, ArrowDownRight, TrendingUp, Fingerprint, RefreshCcw, Database, SlidersHorizontal, X } from 'lucide-react';
 import '../../../styles/components/trainer/AsistenciasTrainerView.css';
 import UserService from '../../../api/services/Userservice';
+import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
 
 // Búsqueda de personas: cédula (con o sin V/E, puntos o guiones) o nombre completo en cualquier orden,
 // sin importar mayúsculas ni acentos ("moises romero" encuentra "Moisés Arturo Romero").
@@ -281,7 +282,111 @@ const MonthlyCalendar = ({ sessions, month, year }) => {
   );
 };
 
-const AthleteDetailView = ({ athleteId, onBack, allSessions, period, athletes }) => {
+// Asistencias de la última semana: con el permiso editar_asistencia se corrigen aquí
+// (el backend solo acepta hasta una semana después de la fecha).
+const DIAS_PARA_CORREGIR = 7;
+const ESTADO_BACKEND = { [STATUS.ATTENDANCE]: 'Presente', [STATUS.ABSENCE]: 'Ausente', [STATUS.JUSTIFIED]: 'Justificado' };
+const diasDesde = (fecha, hoy) => Math.round((new Date(hoy) - new Date(fecha)) / 86400000);
+const formatoFecha = (fecha) => new Date(`${fecha}T00:00:00`).toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit', month: 'short' });
+
+const CorreccionesSemana = ({ sessions, today, onCorregir }) => {
+  const [editando, setEditando] = useState(null);
+  const recientes = sessions
+    .filter((s) => {
+      const dias = diasDesde(s.date, today);
+      return dias >= 0 && dias <= DIAS_PARA_CORREGIR;
+    })
+    .sort((a, b) => b.date.localeCompare(a.date) || a.subarea.localeCompare(b.subarea));
+
+  const guardar = async () => {
+    const estado = ESTADO_BACKEND[editando.status];
+    if (estado === 'Justificado' && !editando.detail.trim()) {
+      setEditando((actual) => ({ ...actual, error: 'Escribe el detalle de la justificación.' }));
+      return;
+    }
+    setEditando((actual) => ({ ...actual, guardando: true, error: '' }));
+    try {
+      await onCorregir(editando.registroId, { status: estado, detail: editando.detail });
+      setEditando(null);
+    } catch (error) {
+      setEditando((actual) => ({
+        ...actual,
+        guardando: false,
+        error: error.response?.data?.error || 'No se pudo corregir la asistencia.',
+      }));
+    }
+  };
+
+  return (
+    <Card className="card-padding">
+      <h3 className="section-title">
+        <Clock className="icon-md text-indigo" /> Últimos 7 días
+      </h3>
+      {recientes.length === 0 ? (
+        <div className="empty-chart-box">Sin asistencias en la última semana</div>
+      ) : (
+        <ul className="att-correcciones">
+          {recientes.map((s) => (
+            <li key={s.registroId} className="att-correcciones__fila">
+              <div className="att-correcciones__dato">
+                <span className="att-correcciones__fecha">{formatoFecha(s.date)}</span>
+                <span className="att-correcciones__subarea">{s.subarea}</span>
+              </div>
+              {editando?.registroId === s.registroId ? (
+                <div className="att-correcciones__form">
+                  <select
+                    value={editando.status}
+                    onChange={(e) => setEditando((actual) => ({ ...actual, status: e.target.value, error: '' }))}
+                    aria-label="Nuevo estado"
+                  >
+                    <option value={STATUS.ATTENDANCE}>Presente</option>
+                    <option value={STATUS.ABSENCE}>Ausente</option>
+                    <option value={STATUS.JUSTIFIED}>Justificado</option>
+                  </select>
+                  {editando.status === STATUS.JUSTIFIED && (
+                    <input
+                      type="text"
+                      value={editando.detail}
+                      maxLength={300}
+                      placeholder="Detalle de la justificación"
+                      onChange={(e) => setEditando((actual) => ({ ...actual, detail: e.target.value, error: '' }))}
+                    />
+                  )}
+                  <div className="att-correcciones__acciones">
+                    <button type="button" className="att-correcciones__guardar" onClick={guardar} disabled={editando.guardando}>
+                      {editando.guardando ? 'Guardando...' : 'Guardar'}
+                    </button>
+                    <button type="button" className="att-correcciones__cancelar" onClick={() => setEditando(null)} disabled={editando.guardando}>
+                      Cancelar
+                    </button>
+                  </div>
+                  {editando.error && <p className="att-correcciones__error" role="alert">{editando.error}</p>}
+                </div>
+              ) : (
+                <div className="att-correcciones__estado">
+                  <StatusBadge status={s.status} />
+                  {onCorregir && (
+                    <button
+                      type="button"
+                      className="att-correcciones__lapiz"
+                      onClick={() => setEditando({ registroId: s.registroId, status: s.status, detail: s.detail || '', guardando: false, error: '' })}
+                      aria-label={`Corregir asistencia del ${s.date} en ${s.subarea}`}
+                      title="Corregir"
+                    >
+                      <Pencil className="icon-xs" />
+                    </button>
+                  )}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
+  );
+};
+
+const AthleteDetailView = ({ athleteId, onBack, allSessions, period, athletes, today, onCorregir }) => {
   const athlete = athletes.find(a => a.id === athleteId);
   const rawSessions = allSessions.filter(s => s.athleteId === athleteId);
   const sessions = filterSessionsByPeriod(rawSessions, period);
@@ -416,6 +521,8 @@ const AthleteDetailView = ({ athleteId, onBack, allSessions, period, athletes })
 
             <MonthlyCalendar sessions={sessions} month={new Date().getMonth()} year={new Date().getFullYear()} />
           </Card>
+
+          <CorreccionesSemana sessions={rawSessions} today={today} onCorregir={onCorregir} />
         </div>
       </div>
     </div>
@@ -669,18 +776,35 @@ export default function AsistenciasTrainerView() {
     assignments.areas = Object.keys(assignments.subareas);
     return assignments;
   }, [realAthletes]);
-  const realSessions = useMemo(() => (dashboardData?.attendance_records || []).flatMap((record) => {
+  // Cada asistencia cuenta una sola vez, en la subárea en la que se tomó (el backend la manda con el registro).
+  const realSessions = useMemo(() => (dashboardData?.attendance_records || []).map((record) => {
     const athlete = realAthletes.find((item) => item.id === record.athleteId);
-    return (athlete?.assignments || [{ area: 'Sin área', subarea: 'Sin subárea', category: 'Sin categoría' }]).map((assignment) => ({
-      id: `${record.id}-${assignment.subarea}`,
+    const assignment = athlete?.assignments.find((item) => item.subarea === record.subarea);
+    return {
+      id: String(record.id),
+      registroId: record.id,
+      detail: record.detail || '',
       athleteId: record.athleteId,
       athleteName: athlete?.name || 'Atleta',
       date: record.date,
-      ...assignment,
+      area: record.area || 'Sin área',
+      subarea: record.subarea || 'Sin subárea',
+      category: assignment?.category || athlete?.assignments[0]?.category || 'Sin categoría',
       status: record.status === 'Presente' ? STATUS.ATTENDANCE
         : record.status === 'Ausente' ? STATUS.ABSENCE : STATUS.JUSTIFIED
-    }));
+    };
   }), [dashboardData, realAthletes]);
+  // Corrige una asistencia ya guardada y la actualiza aquí mismo, sin recargar.
+  const { hasPermission } = useApplicationPermissions();
+  const corregirAsistencia = async (registroId, datos) => {
+    const actualizada = await UserService.corregirAsistencia(registroId, datos);
+    setDashboardData((prev) => ({
+      ...prev,
+      attendance_records: prev.attendance_records.map((record) => (
+        record.id === registroId ? { ...record, status: actualizada.status, detail: actualizada.detail } : record
+      )),
+    }));
+  };
   const [currentView, setCurrentView] = useState('dashboard');
   const [selectedAthlete, setSelectedAthlete] = useState(null);
 
@@ -902,6 +1026,8 @@ export default function AsistenciasTrainerView() {
               allSessions={realSessions}
               athletes={realAthletes}
               period={selectedPeriod}
+              today={dashboardData?.date}
+              onCorregir={hasPermission('editar_asistencia') ? corregirAsistencia : undefined}
             />
           )}
         </div>

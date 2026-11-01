@@ -24,6 +24,7 @@ const ExercisesAdmin = lazy(() => import('../components/admin/ExercisesAdmin'));
 const CategoriasDeportivasAdmin = lazy(() => import('../components/admin/CategoriasDeportivasAdmin'));
 const ReporteAdmin = lazy(() => import('../components/admin/ReporteAdmin'));
 const AuditoriaAdmin = lazy(() => import('../components/admin/AuditoriaAdmin'));
+const GestionConstancias = lazy(() => import('../components/admin/GestionConstancias'));
 
 // COMPONENTE DE ANTROPOMETRÍA
 const AntropometriaAdmin = lazy(() => import('../components/admin/antropometria/AntropometriaAdmin'));
@@ -78,6 +79,7 @@ export default function AdminDashboard({
     '/admin/ejercicios': 'ejercicios',
     '/admin/reportes': 'reportes',
     '/admin/auditoria': 'auditoria',
+    '/admin/constancias': 'constancias',
   };
   const routeActiveTab = rutas[location.pathname];
   const effectiveTab = routeActiveTab || activeTab;
@@ -256,6 +258,11 @@ export default function AdminDashboard({
         {/* SECCIONES COMPLEMENTARIAS */}
         {effectiveTab === 'reportes' && <ReporteAdmin />}
         {effectiveTab === 'auditoria' && <AuditoriaAdmin />}
+        {effectiveTab === 'constancias' && (
+          permissionsLoading ? <CargaCircular texto="Cargando" />
+            : hasPermission('emitir_constancias') ? <GestionConstancias />
+              : <p className="no-data-cell">No tienes permiso para emitir constancias.</p>
+        )}
         {effectiveTab === 'areas-subareas' && (
           <section className="dashboard-section">
             <AreasSubareasAdmin />

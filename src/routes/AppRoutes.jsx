@@ -141,6 +141,7 @@ export default function AppRoutes({
           <Route path="/admin/ejercicios" element={adminDashboardElement} />
           <Route path="/admin/reportes" element={adminDashboardElement} />
           <Route path="/admin/auditoria" element={adminDashboardElement} />
+          <Route path="/admin/constancias" element={adminDashboardElement} />
           <Route path="/admin/*" element={adminDashboardElement} />
 
           <Route path="/entrenador" element={<Navigate to="/entrenador/home" replace />} />

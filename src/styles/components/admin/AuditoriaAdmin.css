@@ -941,3 +941,29 @@
     width: 100%;
   }
 }
+
+/* Acción realizada: crear, editar o eliminar */
+.audit-accion {
+  border: 1px solid var(--border-main);
+  border-radius: 999px;
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.6rem;
+  white-space: nowrap;
+}
+
+.audit-accion--crear {
+  border-color: var(--state-success);
+  color: var(--state-success);
+}
+
+.audit-accion--editar {
+  border-color: var(--func-primary);
+  color: var(--func-primary);
+}
+
+.audit-accion--eliminar {
+  border-color: var(--state-danger);
+  color: var(--state-danger);
+}

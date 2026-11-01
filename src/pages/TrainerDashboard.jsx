@@ -301,6 +301,14 @@ export default function TrainerDashboard({
     return response;
   };
 
+  // Corrige la calidad de un registro ya guardado (hasta una semana después de su fecha).
+  const corregirSueno = async (registroId, quality) => {
+    await UserService.corregirSueno(registroId, quality);
+    setSleepRecords((prev) => prev.map((record) => (
+      (record.registroId ?? record.id) === registroId ? { ...record, quality: Number(quality) } : record
+    )));
+  };
+
   // Abre la pantalla "Registrar Sueño" (la misma de Pendientes) en la sección actual.
   const openRegistrationModal = (athlete) => {
     setSelectedAthleteForPanel(null);
@@ -380,7 +388,11 @@ export default function TrainerDashboard({
 
           {(effectiveAction === 'mis_tests' || effectiveAction === 'crear_test') && (
             <div className="view-fade-in">
-              <TestsTrainer seccion={effectiveAction === 'crear_test' ? 'catalogo' : 'tests'} />
+              {permisosCargando ? <CargaCircular texto="Cargando" /> : (effectiveAction === 'crear_test'
+                ? hasPermission('registrar_test')
+                : ['registrar_test', 'editar_test', 'corregir_resultados_test'].some(hasPermission))
+                ? <TestsTrainer seccion={effectiveAction === 'crear_test' ? 'catalogo' : 'tests'} />
+                : <div className="no-data-cell">No tienes permiso para crear tests ni registrar sus resultados.</div>}
             </div>
           )}
 
@@ -416,7 +428,9 @@ export default function TrainerDashboard({
 
           {(effectiveAction === 'cine_programar' || effectiveAction === 'cine_datos') && (
             <div className="view-fade-in">
-              <MedicionesTrainer key={effectiveAction} seccion={effectiveAction === 'cine_datos' ? 'datos' : 'programar'} />
+              {effectiveAction === 'cine_programar' && !permisosCargando && !hasPermission('registrar_cineantropometria')
+                ? <div className="no-data-cell">No tienes permiso para programar mediciones ni registrar sus resultados.</div>
+                : <MedicionesTrainer key={effectiveAction} seccion={effectiveAction === 'cine_datos' ? 'datos' : 'programar'} />}
             </div>
           )}
 
@@ -498,6 +512,7 @@ export default function TrainerDashboard({
             onClose={closeAthletePanel}
             getAthleteStats={getAthleteStats}
             onRegistrar={openRegistrationModal}
+            onCorregir={hasPermission('editar_descanso') ? corregirSueno : undefined}
             qualityColor={qualityColor}
             systemDate={SYSTEM_DATE}
           />

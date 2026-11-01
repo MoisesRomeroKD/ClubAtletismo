@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
 
 import {
   Radar,
@@ -129,6 +130,10 @@ const getAxisScore = (results = [], axisName) => {
 */
 
 const CineantropometriaTrainer = () => {
+
+  // Programar y registrar cineantropometría requiere el permiso registrar_cineantropometria.
+  const { hasPermission } = useApplicationPermissions();
+  const puedeEvaluar = hasPermission('registrar_cineantropometria');
 
   /*
   |--------------------------------------------------------------------------
@@ -1642,6 +1647,7 @@ const CineantropometriaTrainer = () => {
                             }}
                           >
 
+                            {puedeEvaluar && (
                             <button
                               className="pod-btn-eval"
                               onClick={() =>
@@ -1656,6 +1662,7 @@ const CineantropometriaTrainer = () => {
                               Evaluar
 
                             </button>
+                            )}
 
 
                             <button
@@ -1691,7 +1698,7 @@ const CineantropometriaTrainer = () => {
                 {filteredAthletes.map((athlete) => (
                   <article className="pod-mobile-card" key={athlete.user_id}>
                     <strong>{athlete.name}</strong><span>{athlete.cedula || '--'} · {athlete.categoria || '--'}</span><span>{athlete.subareas_lista_texto || '--'}</span><span>Evaluaciones: {selectedAthlete?.user_id === athlete.user_id ? evaluations.length : '—'}</span>
-                    <div><button className="pod-btn-eval" onClick={() => handleSelectForEvaluation(athlete)}>Evaluar</button><button className="pod-btn-secondary" onClick={() => handleSelectForProfile(athlete)}>Ver perfil</button></div>
+                    <div>{puedeEvaluar && <button className="pod-btn-eval" onClick={() => handleSelectForEvaluation(athlete)}>Evaluar</button>}<button className="pod-btn-secondary" onClick={() => handleSelectForProfile(athlete)}>Ver perfil</button></div>
                   </article>
                 ))}
               </div>
@@ -1710,6 +1717,8 @@ const CineantropometriaTrainer = () => {
             NUEVA EVALUACIÓN
         ============================================================== */}
 
+        {/* Evaluar solo con el permiso registrar_cineantropometria. */}
+        {puedeEvaluar && (
         <section
           className="pod-section"
           id="nueva-evaluacion"
@@ -2181,6 +2190,7 @@ const CineantropometriaTrainer = () => {
           )}
 
         </section>
+        )}
 
 
         <hr className="pod-divider" />

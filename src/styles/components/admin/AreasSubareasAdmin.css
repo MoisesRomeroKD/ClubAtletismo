@@ -288,6 +288,28 @@
   padding: 0.35rem 0;
 }
 
+.area-admin-panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+
+.area-admin-add-subarea.is-danger {
+  color: var(--state-danger);
+}
+
+.area-admin-primary-action.is-danger {
+  background: var(--state-danger);
+  border-color: var(--state-danger);
+}
+
+.area-admin-confirm-text {
+  color: var(--text-main);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
 .area-admin-state {
   color: var(--text-muted);
   padding: 2.5rem 1rem;

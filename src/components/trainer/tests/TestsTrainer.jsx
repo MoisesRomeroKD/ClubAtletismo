@@ -3,12 +3,18 @@ import { createPortal } from 'react-dom';
 import { ArrowLeft, Plus, SlidersHorizontal, X } from 'lucide-react';
 import TestService from '../../../api/services/Testservice';
 import UserService from '../../../api/services/Userservice';
+import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
 import '../../../styles/components/trainer/TestsTrainer.css';
 
 // Hoy en hora de Caracas: las fechas que se programan son desde hoy en adelante.
 const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' });
 
 const PAGE_SIZE = 15;
+
+// Un test finalizado se puede corregir (permiso corregir_resultados_test) hasta una semana después de su fecha.
+const DIAS_PARA_CORREGIR = 7;
+const diasDesde = (fecha) => Math.round((new Date(hoyCaracas()) - new Date(fecha)) / 86400000);
+const sePuedeCorregir = (test) => test.estado === 'realizado' && diasDesde(test.fecha) <= DIAS_PARA_CORREGIR;
 
 const UNIDADES = [
   ['s', 'Segundos (s)'],
@@ -90,7 +96,23 @@ const valoresDeFila = (fila) => ({
 
 const mismaFila = (a, b) => a.valor === b.valor && a.ausente === b.ausente && a.observacion === b.observacion;
 
+// Límites de la prueba: de 0 a su valor máximo y con sus decimales ('' si el valor sirve).
+const errorDeLimites = (valor, test) => {
+  if (valor === '') return '';
+  const numero = Number(valor);
+  if (!Number.isFinite(numero)) return 'Escribe un número.';
+  if (numero < 0) return 'No puede ser negativo.';
+  if (numero > Number(test.prueba_valor_maximo)) return `Máximo ${Number(test.prueba_valor_maximo)} ${test.prueba_unidad}.`;
+  const decimales = (String(valor).split('.')[1] || '').replace(/0+$/, '').length;
+  if (decimales > test.prueba_decimales) {
+    return test.prueba_decimales === 0 ? 'Debe ser un número entero.' : `Hasta ${test.prueba_decimales} decimales.`;
+  }
+  return '';
+};
+const pasoDe = (decimales) => (decimales === 0 ? '1' : decimales === 1 ? '0.1' : '0.01');
+
 function PlanillaTest({ testId, onVolver }) {
+  const { hasPermission } = useApplicationPermissions();
   const [detalle, setDetalle] = useState({ id: null, data: null, error: '' });
   const [valores, setValores] = useState({});
   const [guardados, setGuardados] = useState({});
@@ -118,11 +140,22 @@ function PlanillaTest({ testId, onVolver }) {
   if (detalle.error) return <p className="tests-ent-vacio tests-ent-error" role="alert">{detalle.error}</p>;
 
   const test = detalle.data;
-  const editable = test.estado === 'programado';
+  const corrigiendo = sePuedeCorregir(test) && hasPermission('corregir_resultados_test');
+  const editable = (test.estado === 'programado' && hasPermission('registrar_test')) || corrigiendo;
+  // Test finalizado: solo los atletas con recuperación pendiente, desde su fecha, se cargan aquí.
+  const recuperaHoy = (fila) => test.estado === 'realizado' && fila.recuperacion_pendiente
+    && fila.fecha_recuperacion <= hoyCaracas() && hasPermission('registrar_test');
+  const editableFila = (fila) => editable || recuperaHoy(fila);
+  const columnaEstado = editable || test.convocados.some(recuperaHoy);
   const actualDe = (atletaId) => valores[atletaId] || filaVacia;
 
   const guardarFila = async (atletaId, fila) => {
     if (guardados[atletaId] && mismaFila(guardados[atletaId], fila)) return;
+    const errorLimite = fila.ausente ? '' : errorDeLimites(fila.valor, test);
+    if (errorLimite) {
+      setEstadoFila((prev) => ({ ...prev, [atletaId]: { tipo: 'error', texto: errorLimite } }));
+      return;
+    }
     setEstadoFila((prev) => ({ ...prev, [atletaId]: { tipo: 'guardando', texto: 'Guardando...' } }));
     try {
       const guardada = await TestService.saveResultadoAtleta(testId, atletaId, {
@@ -156,7 +189,7 @@ function PlanillaTest({ testId, onVolver }) {
   const finalizar = async () => {
     const aviso = sinResultado
       ? `Hay ${sinResultado} atleta(s) sin resultado ni marcados como ausentes. ¿Finalizar el test de todas formas?`
-      : '¿Finalizar el test? Después no se podrán cambiar los resultados.';
+      : '¿Finalizar el test? Después solo se podrán corregir los resultados con el permiso de corregir resultados, hasta una semana después de su fecha.';
     if (!window.confirm(aviso)) return;
     setFinalizando(true);
     setMensaje({ tipo: '', texto: '' });
@@ -185,12 +218,25 @@ function PlanillaTest({ testId, onVolver }) {
       <div className="tests-ent-detalle-head">
         <div>
           <h3>{test.prueba_nombre}</h3>
-          <p>{test.area_nombre} · {test.subarea_nombre} · {formatFecha(test.fecha)} · unidad: {test.prueba_unidad}</p>
+          <p>{test.area_nombre} · {test.subarea_nombre} · {formatFecha(test.fecha)} · unidad: {test.prueba_unidad} · resultado de 0 a {Number(test.prueba_valor_maximo)}</p>
         </div>
         <EstadoBadge estado={test.estado} label={test.estado_label} />
       </div>
 
-      {editable && (
+      {corrigiendo && (
+        <p className="tests-ent-progreso">
+          Estás corrigiendo un test finalizado: cada cambio se guarda solo y queda en la auditoría.
+          {' '}Se puede corregir hasta una semana después de la fecha del test.
+        </p>
+      )}
+
+      {!editable && test.convocados.some(recuperaHoy) && (
+        <p className="tests-ent-progreso">
+          Recuperación: carga aquí el resultado de los atletas reprogramados. Cada fila se guarda sola.
+        </p>
+      )}
+
+      {editable && !corrigiendo && (
         <p className="tests-ent-progreso">
           Cada fila se guarda sola: el resultado y la observación al salir del campo, y "Ausente" al marcarlo.
           {' '}Faltan {sinResultado} de {test.convocados.length} atletas.
@@ -204,20 +250,25 @@ function PlanillaTest({ testId, onVolver }) {
           <div className="responsive-list__table tests-ent-tabla-wrap">
             <table className="tests-ent-tabla">
               <thead>
-                <tr><th>Atleta</th><th>Cédula</th><th>Categoría</th><th>Resultado ({test.prueba_unidad})</th><th>Ausente</th><th>Observación</th>{editable && <th>Estado</th>}</tr>
+                <tr><th>Atleta</th><th>Cédula</th><th>Categoría</th><th>Resultado ({test.prueba_unidad})</th><th>Ausente</th><th>Observación</th>{columnaEstado && <th>Estado</th>}</tr>
               </thead>
               <tbody>
                 {test.convocados.map((fila) => {
                   const actual = actualDe(fila.atleta_id);
                   return (
                     <tr key={fila.atleta_id}>
-                      <td className="tests-ent-fuerte">{fila.nombre} {fila.apellido}</td>
+                      <td className="tests-ent-fuerte">
+                        {fila.nombre} {fila.apellido}
+                        {fila.fecha_recuperacion && (
+                          <small className="tests-ent-muted"> · Recuperación {formatFecha(fila.fecha_recuperacion)}{fila.recuperacion_pendiente ? '' : ' (presentó)'}</small>
+                        )}
+                      </td>
                       <td>{fila.cedula}</td>
                       <td>{fila.categoria || '—'}</td>
                       <td>
-                        {editable ? (
+                        {editableFila(fila) ? (
                           <input
-                            type="number" min="0" step="0.01" inputMode="decimal"
+                            type="number" min="0" max={test.prueba_valor_maximo} step={pasoDe(test.prueba_decimales)} inputMode="decimal"
                             className="tests-ent-input-valor"
                             value={actual.ausente ? '' : actual.valor}
                             disabled={actual.ausente}
@@ -231,13 +282,13 @@ function PlanillaTest({ testId, onVolver }) {
                         <input
                           type="checkbox"
                           checked={actual.ausente}
-                          disabled={!editable}
+                          disabled={!editableFila(fila)}
                           onChange={(event) => cambiarAusente(fila.atleta_id, event.target.checked)}
                           aria-label={`${fila.nombre} ${fila.apellido} ausente`}
                         />
                       </td>
                       <td>
-                        {editable ? (
+                        {editableFila(fila) ? (
                           <input
                             type="text" className="tests-ent-input-obs"
                             value={actual.observacion}
@@ -247,7 +298,7 @@ function PlanillaTest({ testId, onVolver }) {
                           />
                         ) : (fila.observacion || '—')}
                       </td>
-                      {editable && <td>{estadoDe(fila.atleta_id)}</td>}
+                      {columnaEstado && <td>{editableFila(fila) && estadoDe(fila.atleta_id)}</td>}
                     </tr>
                   );
                 })}
@@ -262,15 +313,18 @@ function PlanillaTest({ testId, onVolver }) {
                   <article className="tests-ent-card" key={fila.atleta_id}>
                     <div className="tests-ent-card-head">
                       <h4>{fila.nombre} {fila.apellido}</h4>
-                      {editable && estadoDe(fila.atleta_id)}
+                      {editableFila(fila) && estadoDe(fila.atleta_id)}
                     </div>
-                    <p className="tests-ent-card-sub">Cédula {fila.cedula} · {fila.categoria || 'Sin categoría'}</p>
-                    {editable ? (
+                    <p className="tests-ent-card-sub">
+                      Cédula {fila.cedula} · {fila.categoria || 'Sin categoría'}
+                      {fila.fecha_recuperacion && ` · Recuperación ${formatFecha(fila.fecha_recuperacion)}${fila.recuperacion_pendiente ? '' : ' (presentó)'}`}
+                    </p>
+                    {editableFila(fila) ? (
                       <div className="tests-ent-card-campos">
                         <label>
                           <span>Resultado ({test.prueba_unidad})</span>
                           <input
-                            type="number" min="0" step="0.01" inputMode="decimal"
+                            type="number" min="0" max={test.prueba_valor_maximo} step={pasoDe(test.prueba_decimales)} inputMode="decimal"
                             value={actual.ausente ? '' : actual.valor}
                             disabled={actual.ausente}
                             onChange={(event) => cambiar(fila.atleta_id, 'valor', event.target.value)}
@@ -308,7 +362,7 @@ function PlanillaTest({ testId, onVolver }) {
         <p className={mensaje.tipo === 'ok' ? 'tests-ent-ok' : 'tests-ent-error'} role={mensaje.tipo === 'ok' ? 'status' : 'alert'}>{mensaje.texto}</p>
       )}
 
-      {editable && test.convocados.length > 0 && (
+      {editable && !corrigiendo && test.convocados.length > 0 && (
         <div className="tests-ent-acciones">
           <button type="button" className="tests-ent-btn" disabled={finalizando} onClick={finalizar}>
             Finalizar test
@@ -472,12 +526,173 @@ function CrearTest({ pruebas, subareas, onCreado, onCancelar }) {
   );
 }
 
+/* ---------------- Rectificar un test programado (permiso editar_test) ---------------- */
+function EditarTest({ test, pruebas, subareas, onGuardado, onCancelar }) {
+  const [detalle, setDetalle] = useState({ id: null, convocados: [], error: '' });
+  const [form, setForm] = useState({
+    prueba: String(test.prueba),
+    fecha: test.fecha,
+    observaciones: test.observaciones || '',
+  });
+  const [disponibles, setDisponibles] = useState({ clave: '', filas: [], error: '' });
+  const [seleccion, setSeleccion] = useState(null);
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let activo = true;
+    TestService.getTest(test.id)
+      .then((data) => { if (activo) setDetalle({ id: test.id, convocados: data.convocados || [], error: '' }); })
+      .catch((err) => { if (activo) setDetalle({ id: test.id, convocados: [], error: mensajeError(err, 'No se pudo cargar el test.') }); });
+    return () => { activo = false; };
+  }, [test.id]);
+
+  const clave = `${test.subarea}-${form.prueba}`;
+  useEffect(() => {
+    let activo = true;
+    TestService.getAtletasDisponibles({ subarea: test.subarea, prueba: form.prueba, excluir_test: test.id })
+      .then((filas) => { if (activo) setDisponibles({ clave, filas: Array.isArray(filas) ? filas : [], error: '' }); })
+      .catch((err) => { if (activo) setDisponibles({ clave, filas: [], error: mensajeError(err, 'No se pudieron cargar tus atletas.') }); });
+    return () => { activo = false; };
+  }, [clave, test.subarea, test.id, form.prueba]);
+
+  const cargando = detalle.id !== test.id;
+  // Quien ya tiene resultado cargado no se puede quitar, y con resultados la prueba ya no cambia.
+  const conResultado = new Set(
+    detalle.convocados.filter((fila) => fila.ausente || fila.valor !== null).map((fila) => fila.atleta_id),
+  );
+  const elegidos = seleccion ?? detalle.convocados.map((fila) => fila.atleta_id);
+  const areaId = subareas.find((subarea) => subarea.id === test.subarea)?.areaId ?? null;
+  const pruebasDelArea = pruebas.filter((prueba) => prueba.area === areaId && (prueba.activa || prueba.id === test.prueba));
+
+  // La lista: los atletas que lleva en la subárea, más los convocados que ya no estén ahí.
+  const filas = disponibles.clave === clave ? disponibles.filas : [];
+  const lista = [
+    ...filas,
+    ...detalle.convocados
+      .filter((fila) => !filas.some((atleta) => atleta.atleta_id === fila.atleta_id))
+      .map((fila) => ({ ...fila, pendiente: false })),
+  ];
+
+  const alternar = (atletaId) => {
+    setSeleccion(elegidos.includes(atletaId) ? elegidos.filter((id) => id !== atletaId) : [...elegidos, atletaId]);
+  };
+
+  const enviar = async (event) => {
+    event.preventDefault();
+    if (!elegidos.length) {
+      setError('Elige al menos un atleta.');
+      return;
+    }
+    setGuardando(true);
+    setError('');
+    try {
+      await TestService.updateTest(test.id, { ...form, atletas: elegidos });
+      onGuardado();
+    } catch (err) {
+      setError(mensajeError(err, 'No se pudo rectificar el test.'));
+    } finally {
+      setGuardando(false);
+    }
+  };
+
+  if (cargando) return <p className="tests-ent-vacio">Cargando test...</p>;
+  if (detalle.error) return <p className="tests-ent-vacio tests-ent-error" role="alert">{detalle.error}</p>;
+
+  return (
+    <form className="tests-ent-panel tests-ent-form" onSubmit={enviar}>
+      <h3>Rectificar test · {test.subarea_nombre}</h3>
+      <div className="tests-ent-form-grid">
+        <label>
+          <span>Prueba</span>
+          <select
+            value={form.prueba}
+            onChange={(event) => setForm({ ...form, prueba: event.target.value })}
+            disabled={conResultado.size > 0}
+            required
+          >
+            {pruebasDelArea.map((prueba) => (
+              <option key={prueba.id} value={String(prueba.id)}>{prueba.nombre} ({prueba.unidad})</option>
+            ))}
+          </select>
+          {conResultado.size > 0 && <small className="tests-ent-muted">Ya tiene resultados: la prueba no se puede cambiar.</small>}
+        </label>
+        <label>
+          <span>Fecha</span>
+          <input
+            type="date"
+            value={form.fecha}
+            min={form.fecha < hoyCaracas() ? form.fecha : hoyCaracas()}
+            onChange={(event) => setForm({ ...form, fecha: event.target.value })}
+            required
+          />
+        </label>
+        <label>
+          <span>Observaciones</span>
+          <input
+            type="text"
+            value={form.observaciones}
+            onChange={(event) => setForm({ ...form, observaciones: event.target.value })}
+          />
+        </label>
+      </div>
+
+      <div className="tests-ent-atletas">
+        <div className="tests-ent-atletas-head">
+          <strong>Atletas convocados ({elegidos.length})</strong>
+        </div>
+        {disponibles.error ? (
+          <p className="tests-ent-error" role="alert">{disponibles.error}</p>
+        ) : disponibles.clave !== clave ? (
+          <p className="tests-ent-muted">Cargando atletas...</p>
+        ) : (
+          <div className="tests-ent-atletas-lista">
+            {lista.map((atleta) => {
+              const bloqueado = atleta.pendiente || conResultado.has(atleta.atleta_id);
+              return (
+                <label key={atleta.atleta_id} className={`tests-ent-atleta${bloqueado ? ' tests-ent-atleta--bloqueado' : ''}`}>
+                  <input
+                    type="checkbox"
+                    checked={elegidos.includes(atleta.atleta_id)}
+                    disabled={bloqueado}
+                    onChange={() => alternar(atleta.atleta_id)}
+                  />
+                  <span className="tests-ent-atleta-info">
+                    <strong>{atleta.nombre} {atleta.apellido}</strong>
+                    <small>Cédula {atleta.cedula}{atleta.categoria ? ` · ${atleta.categoria}` : ''}</small>
+                    {conResultado.has(atleta.atleta_id) && <small className="tests-ent-aviso">Ya tiene resultado cargado</small>}
+                    {atleta.pendiente && <small className="tests-ent-aviso">Ya tiene esta prueba pendiente en otro test</small>}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {error && <p className="tests-ent-error" role="alert">{error}</p>}
+
+      <div className="tests-ent-acciones">
+        <button type="button" className="tests-ent-btn tests-ent-btn--ghost" onClick={onCancelar}>Cancelar</button>
+        <button type="submit" className="tests-ent-btn" disabled={guardando || !elegidos.length}>
+          {guardando ? 'Guardando...' : 'Guardar cambios'}
+        </button>
+      </div>
+    </form>
+  );
+}
+
 /* ---------------- Pestaña: mis tests ---------------- */
 function MisTests({ pruebas, subareas }) {
   const [filtros, setFiltros] = useState({ subarea: '', estado: '', prueba: '' });
   const [recarga, setRecarga] = useState(0);
   const [formAbierto, setFormAbierto] = useState(false);
   const [planillaId, setPlanillaId] = useState(null);
+  const [editando, setEditando] = useState(null);
+  const { hasPermission } = useApplicationPermissions();
+  const puedeRegistrar = hasPermission('registrar_test');
+  const puedeEditar = hasPermission('editar_test');
+  const puedeCorregir = hasPermission('corregir_resultados_test');
   // En celular los filtros van en el panel del botón flotante "Filtros" (mismo diseño que Reportes).
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
   const [error, setError] = useState('');
@@ -504,12 +719,36 @@ function MisTests({ pruebas, subareas }) {
     return <PlanillaTest testId={planillaId} onVolver={() => { setPlanillaId(null); setRecarga((n) => n + 1); }} />;
   }
 
+  if (editando) {
+    return (
+      <EditarTest
+        test={editando}
+        pruebas={pruebas}
+        subareas={subareas}
+        onCancelar={() => setEditando(null)}
+        onGuardado={() => { setEditando(null); setRecarga((n) => n + 1); }}
+      />
+    );
+  }
+
+  const textoPlanilla = (test) => {
+    if (test.estado === 'programado' && puedeRegistrar) return 'Abrir planilla';
+    if (test.estado === 'realizado' && puedeRegistrar && test.recuperaciones_pendientes > 0) return 'Registrar recuperación';
+    if (puedeCorregir && sePuedeCorregir(test)) return 'Corregir resultados';
+    return 'Ver resultados';
+  };
+
   const accionesDe = (test) => (
     <div className="tests-ent-fila-acciones">
       <button type="button" className="tests-ent-btn tests-ent-btn--chico" onClick={() => setPlanillaId(test.id)}>
-        {test.estado === 'programado' ? 'Abrir planilla' : 'Ver resultados'}
+        {textoPlanilla(test)}
       </button>
-      {test.estado === 'programado' && (
+      {test.estado === 'programado' && puedeEditar && (
+        <button type="button" className="tests-ent-btn tests-ent-btn--chico tests-ent-btn--ghost" onClick={() => setEditando(test)}>
+          Rectificar
+        </button>
+      )}
+      {test.estado === 'programado' && puedeEditar && (
         <button type="button" className="tests-ent-btn tests-ent-btn--chico tests-ent-btn--peligro" onClick={() => cancelarTest(test)}>
           Cancelar
         </button>
@@ -560,7 +799,7 @@ function MisTests({ pruebas, subareas }) {
           document.body,
         )}
         <div className="filtros-escritorio">{controlesFiltro1}</div>
-        {!formAbierto && (
+        {!formAbierto && puedeRegistrar && (
           <div className="tests-ent-toolbar-acciones">
             <button type="button" className="tests-ent-btn" onClick={() => setFormAbierto(true)}>
               <Plus size={16} aria-hidden="true" />Asignar test
@@ -633,7 +872,7 @@ function MisTests({ pruebas, subareas }) {
 }
 
 /* ---------------- Pestaña: catálogo de pruebas (cualquier entrenador crea y edita) ---------------- */
-const PRUEBA_VACIA = { nombre: '', area: '', unidad: 's', criterio: 'menor', descripcion: '' };
+const PRUEBA_VACIA = { nombre: '', area: '', unidad: 's', criterio: 'menor', descripcion: '', valor_maximo: '', decimales: 2 };
 
 function CatalogoPruebas({ pruebas, subareas, onCambio }) {
   // Áreas donde el entrenador tiene subáreas: ahí puede crear pruebas.
@@ -674,7 +913,10 @@ function CatalogoPruebas({ pruebas, subareas, onCambio }) {
 
   const editar = (prueba) => {
     setEditandoId(prueba.id);
-    setForm({ nombre: prueba.nombre, area: String(prueba.area ?? ''), unidad: prueba.unidad, criterio: prueba.criterio, descripcion: prueba.descripcion || '' });
+    setForm({
+      nombre: prueba.nombre, area: String(prueba.area ?? ''), unidad: prueba.unidad, criterio: prueba.criterio,
+      descripcion: prueba.descripcion || '', valor_maximo: String(Number(prueba.valor_maximo)), decimales: prueba.decimales,
+    });
     setMensaje({ tipo: '', texto: '' });
   };
 
@@ -716,6 +958,24 @@ function CatalogoPruebas({ pruebas, subareas, onCambio }) {
               <option value="mayor">Mayor es mejor (ej. distancias)</option>
             </select>
           </label>
+          {/* El resultado va de 0 a este tope (en la unidad elegida). Se puede subir después. */}
+          <label>
+            <span>Valor máximo ({form.unidad})</span>
+            <input
+              type="number" min="0.01" step="0.01" inputMode="decimal" required
+              value={form.valor_maximo}
+              onChange={(event) => setForm({ ...form, valor_maximo: event.target.value })}
+              placeholder="Ej. 30"
+            />
+          </label>
+          <label>
+            <span>Decimales del resultado</span>
+            <select value={form.decimales} onChange={(event) => setForm({ ...form, decimales: Number(event.target.value) })}>
+              <option value={0}>Sin decimales</option>
+              <option value={1}>1 decimal</option>
+              <option value={2}>2 decimales</option>
+            </select>
+          </label>
           <label className="tests-ent-form-ancho">
             <span>Descripción (opcional)</span>
             <textarea rows={2} value={form.descripcion} onChange={(event) => setForm({ ...form, descripcion: event.target.value })} />
@@ -739,7 +999,7 @@ function CatalogoPruebas({ pruebas, subareas, onCambio }) {
           <div className="responsive-list__table tests-ent-tabla-wrap">
             <table className="tests-ent-tabla">
               <thead>
-                <tr><th>Prueba</th><th>Área</th><th>Unidad</th><th>Criterio</th><th>Estado</th><th>Acciones</th></tr>
+                <tr><th>Prueba</th><th>Área</th><th>Unidad</th><th>Criterio</th><th>Resultado</th><th>Estado</th><th>Acciones</th></tr>
               </thead>
               <tbody>
                 {pruebas.map((prueba) => (
@@ -751,6 +1011,7 @@ function CatalogoPruebas({ pruebas, subareas, onCambio }) {
                     <td>{prueba.area_nombre || '—'}</td>
                     <td>{prueba.unidad_label}</td>
                     <td>{prueba.criterio_label}</td>
+                    <td>0 a {Number(prueba.valor_maximo)} {prueba.unidad}</td>
                     <td>{prueba.activa ? 'Activa' : 'Desactivada'}</td>
                     <td>{accionesDe(prueba)}</td>
                   </tr>
@@ -770,6 +1031,7 @@ function CatalogoPruebas({ pruebas, subareas, onCambio }) {
                     <div><dt>Área</dt><dd>{prueba.area_nombre || '—'}</dd></div>
                     <div><dt>Unidad</dt><dd>{prueba.unidad_label}</dd></div>
                     <div><dt>Criterio</dt><dd>{prueba.criterio_label}</dd></div>
+                    <div><dt>Resultado</dt><dd>0 a {Number(prueba.valor_maximo)} {prueba.unidad}</dd></div>
                     {prueba.descripcion && <div><dt>Descripción</dt><dd>{prueba.descripcion}</dd></div>}
                   </dl>
                   {accionesDe(prueba)}

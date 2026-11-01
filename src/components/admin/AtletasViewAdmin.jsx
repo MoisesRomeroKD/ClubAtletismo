@@ -468,6 +468,7 @@ function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
 // Drawer lateral de perfil, inspirado en el patrón gu-sidePanel / ProfileModal
 function PerfilDrawer({ atleta, onClose, puedeEditar, onGuardado }) {
   const open = Boolean(atleta);
+
   // Se guarda el id del atleta que se está editando: al abrir otro perfil vuelve a modo lectura.
   const [editandoId, setEditandoId] = useState(null);
   const editando = Boolean(atleta) && editandoId === atleta.user_id;
@@ -547,6 +548,7 @@ function PerfilDrawer({ atleta, onClose, puedeEditar, onGuardado }) {
               <button type="button" className="atletas-adm-drawer-btn atletas-adm-drawer-btn--ghost" onClick={onClose}>
                 Cerrar
               </button>
+
               {puedeEditar && (
                 <button
                   type="button"
