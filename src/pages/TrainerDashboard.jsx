@@ -9,6 +9,7 @@ import '../styles/pages/TrainerDashboard.css';
 import UserService from '../api/services/Userservice';
 import CargaCircular from '../components/layout/CargaCircular';
 import { useApplicationPermissions } from '../context/ApplicationPermissionsContext';
+import { permisosDeSeccionEntrenador } from '../components/layout/user/permisosEntrenador';
 
 // 💤 Datos y contexto del módulo de Sueño y Descanso (sin coachContext)
 // Los pendientes de sueño son siempre los de hoy.
@@ -111,6 +112,8 @@ export default function TrainerDashboard({
     .find(([, path]) => path === location.pathname)?.[0] || legacyRouteAction;
   const rawAction = routeAction || currentAction;
   const effectiveAction = rawAction === 'sueño_registro' ? 'sueño_pendientes' : rawAction;
+  // Sin el permiso de la sección no se dibuja su pantalla (aunque se entre por la dirección).
+  const permisosSeccion = permisosDeSeccionEntrenador(effectiveAction);
 
   const handleTabChange = (action) => {
     const path = TRAINER_ROUTE_PATHS[action];
@@ -344,6 +347,12 @@ export default function TrainerDashboard({
       )}
         <Suspense fallback={<CargaCircular texto="Cargando sección" />}>
 
+          {permisosSeccion && permisosCargando ? (
+            <CargaCircular texto="Cargando" />
+          ) : permisosSeccion && !permisosSeccion.some(hasPermission) ? (
+            <div className="no-data-cell" role="alert">No tienes permiso para ver esta sección.</div>
+          ) : (
+          <>
           {(effectiveAction === 'home' || effectiveAction === 'dashboard_view') && (
             <div className="view-fade-in">
               <TrainerDashboardView />
@@ -365,9 +374,7 @@ export default function TrainerDashboard({
           {/* Registro de asistencia: mismo componente del admin, solo con las subáreas del entrenador */}
           {effectiveAction === 'registro_asistencia' && (
             <div className="view-fade-in">
-              {permisosCargando ? <CargaCircular texto="Cargando" /> : hasPermission('registrar_asistencia')
-                ? <RegistroAsistencia soloMisSubareas />
-                : <div className="no-data-cell">No tienes permiso para registrar asistencia.</div>}
+              <RegistroAsistencia soloMisSubareas />
             </div>
           )}
 
@@ -388,11 +395,7 @@ export default function TrainerDashboard({
 
           {(effectiveAction === 'mis_tests' || effectiveAction === 'crear_test') && (
             <div className="view-fade-in">
-              {permisosCargando ? <CargaCircular texto="Cargando" /> : (effectiveAction === 'crear_test'
-                ? hasPermission('registrar_test')
-                : ['registrar_test', 'editar_test', 'corregir_resultados_test'].some(hasPermission))
-                ? <TestsTrainer seccion={effectiveAction === 'crear_test' ? 'catalogo' : 'tests'} />
-                : <div className="no-data-cell">No tienes permiso para crear tests ni registrar sus resultados.</div>}
+              <TestsTrainer seccion={effectiveAction === 'crear_test' ? 'catalogo' : 'tests'} />
             </div>
           )}
 
@@ -428,9 +431,7 @@ export default function TrainerDashboard({
 
           {(effectiveAction === 'cine_programar' || effectiveAction === 'cine_datos') && (
             <div className="view-fade-in">
-              {effectiveAction === 'cine_programar' && !permisosCargando && !hasPermission('registrar_cineantropometria')
-                ? <div className="no-data-cell">No tienes permiso para programar mediciones ni registrar sus resultados.</div>
-                : <MedicionesTrainer key={effectiveAction} seccion={effectiveAction === 'cine_datos' ? 'datos' : 'programar'} />}
+              <MedicionesTrainer key={effectiveAction} seccion={effectiveAction === 'cine_datos' ? 'datos' : 'programar'} />
             </div>
           )}
 
@@ -502,6 +503,8 @@ export default function TrainerDashboard({
                 systemDate={SYSTEM_DATE}
               />
             </div>
+          )}
+          </>
           )}
 
         </Suspense>

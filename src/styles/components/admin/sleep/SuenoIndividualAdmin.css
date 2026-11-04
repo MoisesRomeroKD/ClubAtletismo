@@ -1,0 +1,226 @@
+/* Detalle Individual del sueño (administrador) */
+.sueno-ind {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sueno-ind__periodos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sueno-ind__periodo {
+  background: transparent;
+  border: 1px solid var(--border-main);
+  border-radius: 999px;
+  color: var(--text-main);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.85rem;
+}
+
+.sueno-ind__periodo--activo {
+  background: var(--func-primary);
+  border-color: var(--func-primary);
+  color: var(--clr-blanco-pura);
+}
+
+.sueno-ind__barra {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.sueno-ind__buscar {
+  align-items: center;
+  background: var(--bg-main);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  color: var(--text-muted);
+  display: flex;
+  flex: 1 1 16rem;
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 0 0.65rem;
+}
+
+.sueno-ind__buscar input {
+  background: transparent;
+  border: 0;
+  color: var(--text-main);
+  flex: 1;
+  font: inherit;
+  min-height: 38px;
+  min-width: 0;
+  outline: none;
+}
+
+.sueno-ind__barra select,
+.filtros-sheet__body select {
+  background: var(--bg-main);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 0.85rem;
+  min-height: 40px;
+  padding: 0.35rem 0.6rem;
+}
+
+.sueno-ind__tabla {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.sueno-ind__tabla th,
+.sueno-ind__tabla td {
+  border-bottom: 1px solid var(--border-main);
+  color: var(--text-main);
+  font-size: 0.85rem;
+  padding: 0.6rem 0.5rem;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.sueno-ind__tabla th {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.sueno-ind__nombre {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.sueno-ind__muted {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.sueno-ind__error {
+  color: var(--state-danger);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.sueno-ind__hoy {
+  border: 1px solid var(--state-warning);
+  border-radius: 999px;
+  color: var(--state-warning);
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.1rem 0.55rem;
+  white-space: nowrap;
+}
+
+.sueno-ind__hoy--ok {
+  border-color: var(--state-success);
+  color: var(--state-success);
+}
+
+.sueno-ind__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.sueno-ind__btn {
+  background: var(--func-primary);
+  border: 1px solid var(--func-primary);
+  border-radius: 6px;
+  color: var(--clr-blanco-pura);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  white-space: nowrap;
+}
+
+.sueno-ind__btn--ghost {
+  background: transparent;
+  border-color: var(--border-main);
+  color: var(--text-main);
+}
+
+.sueno-ind--cargando {
+  opacity: 0.6;
+}
+
+.sueno-ind__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.sueno-ind__card {
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 0.9rem;
+}
+
+.sueno-ind__card-head {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.sueno-ind__card dl {
+  display: grid;
+  gap: 0.35rem 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.sueno-ind__card dt {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.sueno-ind__card dd {
+  color: var(--text-main);
+  font-size: 0.85rem;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.sueno-ind__paginacion {
+  align-items: center;
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  gap: 0.5rem 1rem;
+  justify-content: space-between;
+}
+
+.sueno-ind__paginacion > div {
+  align-items: center;
+  display: flex;
+  gap: 0.6rem;
+}
+
+.sueno-ind__paginacion button {
+  background: transparent;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  color: var(--text-main);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+}
+
+.sueno-ind__paginacion button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

@@ -18,6 +18,7 @@ const coincidePersona = (texto, nombre, cedula) => {
 
 const PERMISSION_DESCRIPTIONS = {
   ver_atletas: 'Permite consultar la nómina de atletas y los perfiles disponibles.',
+  ver_personal: 'Permite consultar los directorios de administradores, entrenadores y representantes.',
   editar_usuarios: 'Permite crear o modificar usuarios y perfiles de atletas.',
   emitir_constancias: 'Permite generar la constancia de entrenamiento (PDF) de un atleta activo; quien la emite queda como firmante.',
   ver_asistencia: 'Permite consultar los registros de asistencia disponibles para este usuario.',
@@ -35,12 +36,14 @@ const PERMISSION_DESCRIPTIONS = {
   registrar_cineantropometria: 'Permite programar mediciones de cineantropometría y registrar sus resultados (el entrenador en sus subáreas; el administrador en cualquiera).',
   editar_cineantropometria: 'Permite modificar los rangos de puntaje de los ejes de cineantropometría.',
   ver_reportes: 'Permite consultar los reportes disponibles para este usuario.',
-  gestionar_preregistros: 'Permite crear y consultar prerregistros pendientes.',
+  ver_preregistros: 'Permite consultar la lista de prerregistros pendientes.',
+  gestionar_preregistros: 'Permite crear prerregistros (individuales y por Excel) y consultar los pendientes.',
   gestionar_permisos: 'Permite otorgar o quitar permisos funcionales a otros usuarios desde la sección Roles y Permisos.',
   ver_categorias_deportivas: 'Permite consultar los rangos de categorías deportivas de atletas.',
   gestionar_categorias_deportivas: 'Permite crear, editar y eliminar categorías deportivas de atletas.',
   gestionar_areas: 'Permite crear, cambiar el nombre y eliminar áreas y subáreas.',
   gestionar_discapacidades: 'Permite crear, editar y eliminar discapacidades del catálogo (las que se asignan a los atletas).',
+  ver_auditoria: 'Permite consultar la auditoría del sistema.',
   vaciar_auditoria: 'Permite exportar toda la auditoría (PDF y Excel) y luego borrar los registros exportados.',
 };
 
@@ -95,6 +98,14 @@ function PermisosDrawer({ usuario, catalogo, onClose }) {
   }, [onClose]);
 
   const cargando = carga.id !== usuario.id;
+  // Solo los permisos que aplican a su rol: primero los predeterminados, después los opcionales.
+  const rolUsuario = String(usuario.rol || '').trim().toLowerCase();
+  const tipoDe = (permission) => permission.roles?.[rolUsuario];
+  const aplicables = catalogo.filter((permission) => tipoDe(permission));
+  const grupos = [
+    ['predeterminado', 'Predeterminados del rol', 'Los recibe todo usuario de este rol al crearse; se pueden quitar.'],
+    ['opcional', 'Opcionales', 'Se otorgan solo a quien corresponda.'],
+  ].map(([tipo, titulo, ayuda]) => ({ tipo, titulo, ayuda, permisos: aplicables.filter((permission) => tipoDe(permission) === tipo) }));
   const sinCambios = !cargando
     && seleccion.length === carga.permisos.length
     && seleccion.every((codename) => carga.permisos.includes(codename));
@@ -107,6 +118,13 @@ function PermisosDrawer({ usuario, catalogo, onClose }) {
         : [...current, codename]
     ));
   };
+
+  // Marca o quita de una vez todos los permisos que aplican a su rol (se guardan con "Guardar permisos").
+  const marcarTodos = (marcar) => {
+    setSuccessMessage('');
+    setSeleccion(marcar ? aplicables.map((permission) => permission.codename) : []);
+  };
+  const totalMarcados = seleccion.filter((codename) => aplicables.some((p) => p.codename === codename)).length;
 
   const handleSave = async () => {
     try {
@@ -147,15 +165,18 @@ function PermisosDrawer({ usuario, catalogo, onClose }) {
         <div className="roles-drawer-cuerpo">
           <h4 className="roles-drawer-subtitulo">
             Permisos asignados
-            {!cargando && <span>{seleccion.length} de {catalogo.length}</span>}
+            {!cargando && <span>{totalMarcados} de {aplicables.length}</span>}
           </h4>
 
           {cargando && !carga.error && <div role="status" className="roles-gestion-muted">Consultando permisos...</div>}
           {carga.error && <div role="alert" className="roles-gestion-error">{carga.error}</div>}
 
-          {!cargando && !carga.error && (
+          {!cargando && !carga.error && grupos.filter((grupo) => grupo.permisos.length).map((grupo) => (
+            <section key={grupo.tipo} className="roles-drawer-grupo">
+              <p className="roles-drawer-grupo-titulo">{grupo.titulo}</p>
+              <p className="roles-gestion-muted">{grupo.ayuda}</p>
             <div className="roles-drawer-permisos">
-              {catalogo.map((permission) => {
+              {grupo.permisos.map((permission) => {
                 const description = PERMISSION_DESCRIPTIONS[permission.codename];
                 const activo = seleccion.includes(permission.codename);
                 return (
@@ -187,12 +208,23 @@ function PermisosDrawer({ usuario, catalogo, onClose }) {
                 );
               })}
             </div>
-          )}
+            </section>
+          ))}
         </div>
 
         <footer className="roles-drawer-pie">
           {errorMessage && <div role="alert" className="roles-gestion-error">{errorMessage}</div>}
           {successMessage && <div role="status" className="roles-gestion-exito">{successMessage}</div>}
+          {!cargando && !carga.error && aplicables.length > 0 && (
+            <div className="roles-drawer-todos">
+              <button type="button" className="roles-drawer-secundario" onClick={() => marcarTodos(true)} disabled={totalMarcados === aplicables.length}>
+                Marcar todos
+              </button>
+              <button type="button" className="roles-drawer-secundario" onClick={() => marcarTodos(false)} disabled={totalMarcados === 0}>
+                Quitar todos
+              </button>
+            </div>
+          )}
           <div className="roles-drawer-botones">
             <button type="button" className="roles-drawer-secundario" onClick={onClose}>Cerrar</button>
             <button

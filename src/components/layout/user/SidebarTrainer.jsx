@@ -25,6 +25,7 @@ import {
 
 import '../../../styles/layouts/sidebar.css';
 import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
+import { puedeVerSeccionEntrenador } from './permisosEntrenador';
 
 const trainerRoutePaths = {
   home: '/entrenador/home',
@@ -54,16 +55,14 @@ const navItems = [
     id: 'asistencia', label: 'Asistencia', icon: UserCheck,
     grupo: [
       { id: 'asistencias', label: 'Análisis de asistencia', icon: UserCheck },
-      // Solo lo ve quien tiene el permiso de registrar asistencia.
-      { id: 'registro_asistencia', label: 'Registro de asistencia', icon: ClipboardCheck, permission: 'registrar_asistencia' },
+      { id: 'registro_asistencia', label: 'Registro de asistencia', icon: ClipboardCheck },
     ],
   },
   {
     id: 'tests', label: 'Tests', icon: ClipboardList,
     grupo: [
-      // Mis tests: con cualquiera de los permisos de tests. Crear test (catálogo): registrar_test.
-      { id: 'mis_tests', label: 'Mis tests', icon: ListChecks, permission: ['registrar_test', 'editar_test', 'corregir_resultados_test'] },
-      { id: 'crear_test', label: 'Crear test', icon: PlusCircle, permission: 'registrar_test' },
+      { id: 'mis_tests', label: 'Mis tests', icon: ListChecks },
+      { id: 'crear_test', label: 'Crear test', icon: PlusCircle },
       { id: 'tests_resultados', label: 'Resultados', icon: Award },
       { id: 'tests_analisis', label: 'Análisis', icon: ChartColumn },
     ],
@@ -72,7 +71,7 @@ const navItems = [
     id: 'cine', label: 'Cineantropometría', icon: Activity,
     grupo: [
       { id: 'cineantropometria', label: 'Panel', icon: Activity },
-      { id: 'cine_programar', label: 'Programar medición', icon: CalendarClock, permission: 'registrar_cineantropometria' },
+      { id: 'cine_programar', label: 'Programar medición', icon: CalendarClock },
       { id: 'cine_datos', label: 'Datos registrados', icon: Database },
     ],
   },
@@ -101,8 +100,8 @@ export default function SidebarTrainer({
   const navigate = useNavigate();
   const { hasPermission } = useApplicationPermissions();
   // Se ocultan las opciones sin permiso (también dentro de los grupos) y los grupos que quedan vacíos.
-  // permission puede ser uno o varios (basta con tener uno).
-  const conPermiso = (item) => !item.permission || [].concat(item.permission).some(hasPermission);
+  // Cada opción pide el permiso de su sección (permisosEntrenador.js); los grupos vacíos se ocultan.
+  const conPermiso = (item) => puedeVerSeccionEntrenador(item.id, hasPermission);
   const visibleNavItems = navItems
     .filter(conPermiso)
     .map((item) => (item.grupo ? { ...item, grupo: item.grupo.filter(conPermiso) } : item))
@@ -185,6 +184,8 @@ export default function SidebarTrainer({
             );
           })}
 
+          {/* Sueño y Descanso: con el permiso ver_descanso (solo de sus atletas). */}
+          {puedeVerSeccionEntrenador('sueño_general', hasPermission) && (
           <div className="user-sidebar__group">
             <button
               type="button"
@@ -212,6 +213,7 @@ export default function SidebarTrainer({
               </div>
             )}
           </div>
+          )}
 
           <div className="user-sidebar__group">
             <button

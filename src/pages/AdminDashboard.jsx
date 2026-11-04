@@ -35,6 +35,7 @@ const AnalisisTestsAdmin = lazy(() => import('../components/admin/tests/Analisis
 
 import '../styles/pages/AdminDashboard.css';
 import { useApplicationPermissions } from '../context/ApplicationPermissionsContext';
+import { permisosDeSeccionAdmin } from '../components/layout/user/permisosAdmin';
 import CargaCircular from '../components/layout/CargaCircular';
 
 const TESTS_SECCIONES = {
@@ -85,6 +86,9 @@ export default function AdminDashboard({
   };
   const routeActiveTab = rutas[location.pathname];
   const effectiveTab = routeActiveTab || activeTab;
+  // Sin el permiso de la sección no se dibuja su pantalla (aunque se entre por la dirección).
+  const permisosSeccion = permisosDeSeccionAdmin(effectiveTab);
+  const seccionBloqueada = Boolean(permisosSeccion) && !permisosSeccion.some(hasPermission);
 
   // Si la sección tiene URL propia se navega a ella; si no, solo se cambia la sección.
   const handleTabChange = (tabId) => {
@@ -112,6 +116,14 @@ export default function AdminDashboard({
       <div className="admin-dashboard-container">
         <Suspense fallback={<CargaCircular texto="Cargando sección" />}>
 
+        {permisosSeccion && permissionsLoading ? (
+          <CargaCircular texto="Cargando" />
+        ) : seccionBloqueada ? (
+          <section className="dashboard-section" role="alert">
+            No tienes permiso para ver esta sección.
+          </section>
+        ) : (
+        <>
         {/* DASHBOARD HOME */}
         {effectiveTab === 'home' && (
           <DashboardView />
@@ -165,20 +177,6 @@ export default function AdminDashboard({
           </section>
         )}
 
-        {/* EXCEL / CARGA MASIVA */}
-        {effectiveTab === 'excel' && (
-          <section className="dashboard-section">
-            <h2>Cargar Datos desde Excel</h2>
-          </section>
-        )}
-
-        {/* DISCIPLINAS */}
-        {effectiveTab === 'disciplinas' && (
-          <section className="dashboard-section">
-            <h2>Gestión de Disciplinas</h2>
-          </section>
-        )}
-
         {/* ASISTENCIA */}
         {effectiveTab === 'asistencias' && (
           <AsistenciaAdminView />
@@ -203,17 +201,7 @@ export default function AdminDashboard({
         )}
 
         {/* ROLES Y PERMISOS */}
-        {effectiveTab === 'roles-permisos' && (
-          permissionsLoading ? (
-            <section className="dashboard-section">Cargando permisos...</section>
-          ) : hasPermission('gestionar_permisos') ? (
-            <RolesPermisos />
-          ) : (
-            <section className="dashboard-section" role="alert">
-              No tienes permiso para gestionar permisos.
-            </section>
-          )
-        )}
+        {effectiveTab === 'roles-permisos' && <RolesPermisos />}
 
         {/* GESTIÓN DE ADMINISTRADORES */}
         {effectiveTab === 'administradores' && (
@@ -260,11 +248,7 @@ export default function AdminDashboard({
         {/* SECCIONES COMPLEMENTARIAS */}
         {effectiveTab === 'reportes' && <ReporteAdmin />}
         {effectiveTab === 'auditoria' && <AuditoriaAdmin />}
-        {effectiveTab === 'constancias' && (
-          permissionsLoading ? <CargaCircular texto="Cargando" />
-            : hasPermission('emitir_constancias') ? <GestionConstancias />
-              : <p className="no-data-cell">No tienes permiso para emitir constancias.</p>
-        )}
+        {effectiveTab === 'constancias' && <GestionConstancias />}
         {effectiveTab === 'areas-subareas' && (
           <section className="dashboard-section">
             <AreasSubareasAdmin />
@@ -272,12 +256,10 @@ export default function AdminDashboard({
         )}
         {effectiveTab === 'mi-perfil' && <MiPerfilViewAdmin />}
         {effectiveTab === 'categorias' && <CategoriasDeportivasAdmin />}
-        {effectiveTab === 'discapacidades' && (
-          permissionsLoading ? <CargaCircular texto="Cargando" />
-            : hasPermission('gestionar_discapacidades') ? <DiscapacidadesAdmin />
-              : <p className="no-data-cell">No tienes permiso para gestionar discapacidades.</p>
-        )}
+        {effectiveTab === 'discapacidades' && <DiscapacidadesAdmin />}
         {effectiveTab === 'ejercicios' && <ExercisesAdmin />}
+        </>
+        )}
 
         </Suspense>
       </div>

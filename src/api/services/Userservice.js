@@ -260,13 +260,6 @@ const UserService = {
     return response.data;
   },
 
-  getAttendanceHistoryByCedula: async (cedula) => {
-    const response = await podApi.get('/v1/asistencias/atletas/historial', {
-      params: { cedula },
-    });
-    return response.data;
-  },
-
   getSleepHistoryByAthlete: async (athleteId) => {
     const response = await podApi.get(
       `/v1/descanso/sueno/consultar/${athleteId}`
@@ -291,13 +284,9 @@ const UserService = {
     return response.data;
   },
 
-  getAdminSleepDashboard: async (params = {}) => {
-    const response = await podApi.get(
-      '/v1/descanso/sueno/dashboard-admin',
-      { params }
-    );
-    return response.data;
-  },
+  // Sueño del administrador calculado en el servidor (permiso ver_descanso).
+  getSuenoAdminResumen: async (periodo) => (await podApi.get('/v1/descanso/sueno/admin/resumen/', { params: { periodo } })).data,
+  getSuenoAdminAtletas: async (params = {}) => (await podApi.get('/v1/descanso/sueno/admin/atletas/', { params })).data,
 
   getTrainerSleepHistory: async (params = {}) => {
     const response = await podApi.get(

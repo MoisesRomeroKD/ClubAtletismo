@@ -1297,6 +1297,22 @@ body.dark-mode .roles-lista-rol {
   cursor: pointer;
 }
 
+.roles-drawer-todos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.roles-drawer-todos .roles-drawer-secundario {
+  flex: 1 1 8rem;
+  padding: 8px 12px;
+}
+
+.roles-drawer-todos .roles-drawer-secundario:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .roles-drawer-pie .roles-gestion-guardar:disabled {
   cursor: not-allowed;
   opacity: 0.6;
@@ -1316,4 +1332,19 @@ body.dark-mode .roles-lista-rol {
   .roles-drawer-botones > button {
     flex: 1;
   }
+}
+
+/* Permisos del drawer separados en predeterminados y opcionales */
+.roles-drawer-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.roles-drawer-grupo-titulo {
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0;
 }

@@ -734,9 +734,12 @@ const Preregistro = () => {
           </fieldset>
 
           </>}
-          <div className="preregistro-form-actions">
-            <button type="button" className="preregistro-submit-button" onClick={handleContinuar} disabled={!cedulaLibre}>Continuar al representante</button>
-          </div>
+          {/* Solo con una cédula libre hay algo que preregistrar (si ya existe, no se muestra el botón). */}
+          {cedulaLibre && (
+            <div className="preregistro-form-actions">
+              <button type="button" className="preregistro-submit-button" onClick={handleContinuar}>Continuar al representante</button>
+            </div>
+          )}
           </>}
 
           {individualStep === 2 && <>

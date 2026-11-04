@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, ChevronLeft, ChevronRight, SlidersHorizontal, X } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, SlidersHorizontal, X, Pencil } from 'lucide-react';
 import podApi from '../../api/podApi';
 import UserService from '../../api/services/Userservice';
+import { useApplicationPermissions } from '../../context/ApplicationPermissionsContext';
 import '../../styles/components/admin/Preregistro.css';
 import '../../styles/components/admin/PrerregistrosPendientes.css';
 
@@ -23,6 +24,10 @@ const PrerregistrosPendientes = () => {
   const [filtros, setFiltros] = useState({ rol: '', area: '', subarea: '', desde: '', hasta: '' });
   const [catalogo, setCatalogo] = useState({ areas: [], subareas: [] });
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
+  // Edición del correo (por si se escribió mal y no le llega el código): una fila a la vez.
+  const { hasPermission } = useApplicationPermissions();
+  const puedeEditarCorreo = hasPermission('gestionar_preregistros');
+  const [edicion, setEdicion] = useState({ id: null, correo: '', error: '', guardando: false });
 
   // Áreas y subáreas para los filtros.
   useEffect(() => {
@@ -132,11 +137,15 @@ const PrerregistrosPendientes = () => {
     </>
   );
 
-  const subareasTexto = (atleta) => (
-    atleta.subareas?.length
-      ? atleta.subareas.map((ficha) => ficha.subarea).join(', ')
-      : '—'
-  );
+  // Lo que no corresponde a su rol (subáreas del administrador, fecha de quien no es atleta) dice
+  // "No aplica" en la tabla y "N/A" en las tarjetas del celular.
+  const noAplica = (corto) => (corto ? 'N/A' : 'No aplica');
+  const subareasTexto = (usuario, corto = false) => {
+    if (usuario.rol === 'Administrador') return noAplica(corto);
+    return usuario.subareas?.length
+      ? usuario.subareas.map((ficha) => ficha.subarea).join(', ')
+      : '—';
+  };
 
   // Paginación siempre visible: 15 por página.
   const renderPaginationControls = (abajo = false) => (
@@ -170,8 +179,69 @@ const PrerregistrosPendientes = () => {
     </div>
   );
 
+  const editarCorreo = (usuario) => setEdicion({ id: usuario.id, correo: usuario.correo || '', error: '', guardando: false });
+  const cancelarCorreo = () => setEdicion({ id: null, correo: '', error: '', guardando: false });
+  const guardarCorreo = async (event) => {
+    event.preventDefault();
+    setEdicion((actual) => ({ ...actual, error: '', guardando: true }));
+    try {
+      const { data } = await podApi.patch(`/v1/users/preregistro/pendientes/${edicion.id}/correo/`, { correo: edicion.correo });
+      setPendientes((actuales) => actuales.map((fila) => (fila.id === data.id ? { ...fila, correo: data.correo } : fila)));
+      cancelarCorreo();
+    } catch (error) {
+      setEdicion((actual) => ({
+        ...actual,
+        guardando: false,
+        error: error.response?.data?.detail || 'No se pudo guardar el correo.',
+      }));
+    }
+  };
+
+  const celdaCorreo = (usuario) => (
+    edicion.id === usuario.id ? (
+      <form className="prerregistros-pendientes__correo-form" onSubmit={guardarCorreo}>
+        <input
+          type="email"
+          value={edicion.correo}
+          onChange={(event) => setEdicion((actual) => ({ ...actual, correo: event.target.value, error: '' }))}
+          placeholder="nombre@gmail.com"
+          aria-label={`Correo de ${nombreDe(usuario)}`}
+          autoFocus
+          required
+        />
+        <div className="prerregistros-pendientes__correo-botones">
+          <button type="submit" className="prerregistros-pendientes__correo-guardar" disabled={edicion.guardando}>
+            {edicion.guardando ? 'Guardando...' : 'Guardar'}
+          </button>
+          <button type="button" className="prerregistros-pendientes__correo-cancelar" onClick={cancelarCorreo} disabled={edicion.guardando}>
+            Cancelar
+          </button>
+        </div>
+        {edicion.error && <span className="prerregistros-pendientes__correo-error" role="alert">{edicion.error}</span>}
+      </form>
+    ) : (
+      <span className="prerregistros-pendientes__correo">
+        <span>{usuario.correo || '—'}</span>
+        {puedeEditarCorreo && (
+          <button
+            type="button"
+            className="prerregistros-pendientes__correo-editar"
+            onClick={() => editarCorreo(usuario)}
+            aria-label={`Editar correo de ${nombreDe(usuario)}`}
+            title="Editar correo"
+          >
+            <Pencil size={14} aria-hidden="true" />
+          </button>
+        )}
+      </span>
+    )
+  );
+
   const nombreDe = (usuario) => `${usuario.nombres} ${usuario.apellidos}`.trim() || '—';
-  const fechaDe = (usuario) => (usuario.fecha ? new Date(usuario.fecha).toLocaleDateString() : '—');
+  const fechaDe = (usuario, corto = false) => {
+    if (usuario.rol !== 'Atleta') return noAplica(corto);
+    return usuario.fecha ? new Date(usuario.fecha).toLocaleDateString() : '—';
+  };
   const mensajeVacio = isLoading
     ? 'Cargando prerregistros pendientes...'
     : errorMessage || 'No hay prerregistros pendientes.';
@@ -236,6 +306,7 @@ const PrerregistrosPendientes = () => {
                   <th>Ref.</th>
                   <th>Cédula</th>
                   <th>Nombre completo</th>
+                  <th>Correo</th>
                   <th>Rol asignado</th>
                   <th>Subárea</th>
                   <th>Fecha</th>
@@ -247,6 +318,7 @@ const PrerregistrosPendientes = () => {
                     <td className="ref-usuario">{usuario.id}</td>
                     <td>{usuario.cedula}</td>
                     <td className="preregistro-name">{nombreDe(usuario)}</td>
+                    <td>{celdaCorreo(usuario)}</td>
                     <td><span className="preregistro-role">{usuario.rol || '—'}</span></td>
                     <td>{subareasTexto(usuario)}</td>
                     <td className="preregistro-date">{fechaDe(usuario)}</td>
@@ -263,8 +335,9 @@ const PrerregistrosPendientes = () => {
                   <span className="preregistro-role">{usuario.rol || '—'}</span>
                 </div>
                 <span>Cédula {usuario.cedula} · <span className="ref-usuario">Ref. {usuario.id}</span></span>
-                <span>Subárea: {subareasTexto(usuario)}</span>
-                <span>Prerregistro: {fechaDe(usuario)}</span>
+                {celdaCorreo(usuario)}
+                <span>Subárea: {subareasTexto(usuario, true)}</span>
+                <span>Prerregistro: {fechaDe(usuario, true)}</span>
               </li>
             ))}
           </ul>

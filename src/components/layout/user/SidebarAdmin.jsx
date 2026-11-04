@@ -30,6 +30,7 @@ import {
 
 import '../../../styles/layouts/sidebar.css';
 import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
+import { puedeVerSeccionAdmin } from './permisosAdmin';
 
 const navItems = [
   {
@@ -211,15 +212,8 @@ export const getAdminSidebarModules = (hasPermission) => {
     ...collapsibleGroups[2].items,
   ];
 
-  return menuItems.filter(
-    (item) => (
-      (item.id !== 'roles-permisos' || hasPermission('gestionar_permisos'))
-      && (item.id !== 'constancias' || hasPermission('emitir_constancias'))
-      && (item.id !== 'discapacidades' || hasPermission('gestionar_discapacidades'))
-      && (item.id !== 'categorias' || hasPermission('ver_categorias_deportivas') || hasPermission('gestionar_categorias_deportivas'))
-        && (item.id !== 'registro-asistencia' || hasPermission('registrar_asistencia'))
-    )
-  );
+  // Solo las secciones que el usuario puede ver (permisos en permisosAdmin.js).
+  return menuItems.filter((item) => puedeVerSeccionAdmin(item.id, hasPermission));
 };
 
 export default function SidebarAdmin({
@@ -350,16 +344,18 @@ export default function SidebarAdmin({
       );
     });
 
+  // Un título de sección solo se muestra si alguna de sus opciones es visible para el usuario.
+  const algunaVisible = (...items) => items.some((item) => puedeVerSeccionAdmin(item.id, hasPermission));
+  const rendimientoVisible = algunaVisible(
+    ...testsGroup.items, ...antropometriaGroup.items, ...sleepGroup.items, ...attendanceGroup.items,
+    ...navItems.filter((item) => item.category === 'rendimiento'),
+  );
+  const informacionVisible = algunaVisible(...reporteriaGroup.items, ...navItems.filter((item) => item.category === 'info'));
+  const configuracionVisible = algunaVisible(...collapsibleGroups[2].items);
+
   const renderCollapsibleGroup = (group) => {
-    const visibleItems = group.items.filter(
-      (item) => (
-        (item.id !== 'roles-permisos' || hasPermission('gestionar_permisos'))
-        && (item.id !== 'constancias' || hasPermission('emitir_constancias'))
-        && (item.id !== 'discapacidades' || hasPermission('gestionar_discapacidades'))
-        && (item.id !== 'categorias' || hasPermission('ver_categorias_deportivas') || hasPermission('gestionar_categorias_deportivas'))
-        && (item.id !== 'registro-asistencia' || hasPermission('registrar_asistencia'))
-      )
-    );
+    // Se ocultan las opciones sin permiso, y el grupo entero si no queda ninguna.
+    const visibleItems = group.items.filter((item) => puedeVerSeccionAdmin(item.id, hasPermission));
     if (visibleItems.length === 0) return null;
 
     const isGroupOpen = !!openGroups[group.id];
@@ -471,9 +467,11 @@ export default function SidebarAdmin({
           {/* =================================================
               RENDIMIENTO
           ================================================= */}
+          {rendimientoVisible && (
           <div className="user-sidebar__group-title">
             Rendimiento
           </div>
+          )}
 
           {renderCollapsibleGroup(testsGroup)}
           {renderCollapsibleGroup(antropometriaGroup)}
@@ -489,25 +487,29 @@ export default function SidebarAdmin({
           {/* =================================================
               INFORMACIÓN Y CONTROL
           ================================================= */}
+          {informacionVisible && (
           <div className="user-sidebar__group-title">
             Información y Control
           </div>
+          )}
 
           {renderCollapsibleGroup(reporteriaGroup)}
 
           {renderNavGroup(
             navItems.filter(
               (item) =>
-                item.category === 'info'
+                item.category === 'info' && puedeVerSeccionAdmin(item.id, hasPermission)
             )
           )}
 
           {/* =================================================
               CONFIGURACIÓN
           ================================================= */}
+          {configuracionVisible && (
           <div className="user-sidebar__group-title">
             Configuración
           </div>
+          )}
 
           {renderCollapsibleGroup(
             collapsibleGroups[2]
