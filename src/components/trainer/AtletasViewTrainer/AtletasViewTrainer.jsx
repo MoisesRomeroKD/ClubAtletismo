@@ -205,15 +205,17 @@ export default function AtletasViewTrainer() {
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE) || 1;
 
-  // Debounce del campo de búsqueda
+  // Debounce del campo de búsqueda. Si el texto no cambió (por ejemplo, al abrir la pantalla) no se
+  // marca "Cargando": no habría una nueva consulta que lo apague y la lista desaparecería.
   useEffect(() => {
     const t = setTimeout(() => {
+      if (inputSearch === buscar) return;
       setIsLoading(true);
       setBuscar(inputSearch);
       setPage(1);
     }, 400);
     return () => clearTimeout(t);
-  }, [inputSearch]);
+  }, [inputSearch, buscar]);
 
   useEffect(() => {
     let active = true;

@@ -647,15 +647,17 @@ const AtletasViewAdmin = () => {
     </div>
   );
 
-  // Debounce del campo de búsqueda
+  // Debounce del campo de búsqueda. Si el texto no cambió (por ejemplo, al abrir la pantalla) no se
+  // marca "Cargando": no habría una nueva consulta que lo apague y la lista desaparecería.
   useEffect(() => {
     const t = setTimeout(() => {
+      if (inputFiltro === buscar) return;
       setIsLoading(true);
       setBuscar(inputFiltro);
       setPage(1);
     }, 400);
     return () => clearTimeout(t);
-  }, [inputFiltro]);
+  }, [inputFiltro, buscar]);
 
   useEffect(() => {
     let active = true;
