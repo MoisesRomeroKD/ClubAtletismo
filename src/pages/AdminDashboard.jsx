@@ -209,7 +209,6 @@ export default function AdminDashboard({
             <div className="admin-gestion-header">
               <div>
                 <h2 className="admin-gestion-titulo">Gestión de Administradores</h2>
-                <p className="admin-gestion-subtitulo">Personal con acceso y permisos de administración del sistema</p>
               </div>
             </div>
             <AdministradoresView />
@@ -222,7 +221,6 @@ export default function AdminDashboard({
             <div className="admin-gestion-header">
               <div>
                 <h2 className="admin-gestion-titulo">Gestión de Entrenadores</h2>
-                <p className="admin-gestion-subtitulo">Directorio del cuerpo técnico, especialidades asignadas y atletas a cargo</p>
               </div>
             </div>
 

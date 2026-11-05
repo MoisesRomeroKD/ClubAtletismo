@@ -216,3 +216,64 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Análisis por atleta: selector, ficha del atleta e historial por prueba */
+.analisis-tests__selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.analisis-tests__selector input,
+.analisis-tests__selector select {
+  flex: 1 1 16rem;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-input);
+  color: var(--text-main);
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.analisis-tests__ficha dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem 1.25rem;
+  margin: 0;
+}
+
+.analisis-tests__ficha dt {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.analisis-tests__ficha dd {
+  margin: 0;
+  color: var(--text-main);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.analisis-tests__subtitulo {
+  margin: 1.5rem 0 0.75rem;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+.analisis-tests__historial h4 {
+  margin: 0 0 0.75rem;
+  color: var(--text-main);
+  font-size: 0.95rem;
+}
+
+.analisis-tests__historial h4 small {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.analisis-tests__historial + .analisis-tests__historial {
+  margin-top: 1rem;
+}

@@ -105,10 +105,10 @@ const MASIVO_POR_ROL = {
   },
   Administrador: {
     plural: 'Administradores',
-    descripcion: 'Cada fila representa un administrador (sin representante, fecha de nacimiento ni teléfono):',
-    columnas: [['cedula', 12], ['nombres', 18], ['apellidos', 20], ['correo', 26]],
+    descripcion: 'Cada fila representa un administrador (sin representante, fecha de nacimiento ni teléfono). "cargo" es opcional (ej. Secretaria):',
+    columnas: [['cedula', 12], ['nombres', 18], ['apellidos', 20], ['correo', 26], ['cargo', 26]],
     ejemplos: [
-      { cedula: '14567890', nombres: 'Pedro Jose', apellidos: 'Blanco Rivas', correo: 'pedro.blanco@gmail.com' },
+      { cedula: '14567890', nombres: 'Pedro Jose', apellidos: 'Blanco Rivas', correo: 'pedro.blanco@gmail.com', cargo: 'Asistente administrativo' },
     ],
   },
 };
@@ -131,6 +131,8 @@ const FORMULARIO_VACIO = {
   subareas_ids: [],
   // Atleta: discapacidades del catálogo (puede tener varias).
   discapacidades: [],
+  // Administrador: su cargo en el club (texto libre, opcional).
+  cargo: '',
 };
 
 // Edad mínima del atleta: 9 años. Se acepta hasta el 31/12 de (año actual - 9).
@@ -241,6 +243,47 @@ const Preregistro = () => {
     setRepresentanteElegido(representante);
   };
 
+  // Representante nuevo cuya cédula es de un entrenador o administrador: se llenan su nombre, apellido y
+  // teléfono con los de su perfil y no se pueden editar (así no se guardan distintos). El administrador
+  // no guarda teléfono: ese sí se escribe. El backend hace lo mismo al guardar.
+  const [personalRep, setPersonalRep] = useState({ cedula: '', datos: null });
+  const cedulaRepCompleta = !representanteElegido && REGLAS.cedula.completo.test(textoRep);
+  const repEsPersonal = cedulaRepCompleta && personalRep.cedula === textoRep && personalRep.datos !== null;
+  const telefonoDelPerfil = repEsPersonal && Boolean(personalRep.datos.telefono);
+
+  useEffect(() => {
+    if (!cedulaRepCompleta) return undefined;
+    let activo = true;
+    const espera = setTimeout(() => {
+      UserService.getPersonalPorCedula(textoRep)
+        .then((data) => {
+          if (!activo) return;
+          const datos = data?.encontrado ? data : null;
+          setPersonalRep({ cedula: textoRep, datos });
+          if (datos) {
+            setFormData((actual) => ({
+              ...actual,
+              representante_nombres: datos.nombres,
+              representante_apellidos: datos.apellidos,
+              representante_telefono: datos.telefono || actual.representante_telefono,
+            }));
+          }
+        })
+        .catch(() => { if (activo) setPersonalRep({ cedula: textoRep, datos: null }); });
+    }, 350);
+    return () => { activo = false; clearTimeout(espera); };
+  }, [textoRep, cedulaRepCompleta]);
+
+  // Si cambia la cédula después de llenar los datos de un entrenador o administrador, esos datos se quitan.
+  const cambiarCedulaRep = (event) => {
+    setSugerenciasCerradas(false);
+    if (personalRep.datos && event.target.value !== personalRep.cedula) {
+      setPersonalRep({ cedula: '', datos: null });
+      setFormData((actual) => ({ ...actual, representante_nombres: '', representante_apellidos: '', representante_telefono: '' }));
+    }
+    handleInputChange(event);
+  };
+
   // "Cambiar": vuelve a la cédula vacía para escribir otra.
   const quitarRepresentante = () => {
     setRepresentanteElegido(null);
@@ -281,6 +324,7 @@ const Preregistro = () => {
     setTocados({});
     setRepresentanteElegido(null);
     setSugerenciasCerradas(false);
+    setPersonalRep({ cedula: '', datos: null });
   };
 
   const handleInputChange = (e) => {
@@ -365,8 +409,9 @@ const Preregistro = () => {
         notificar('Marca al menos una subárea del entrenador.', { tipo: 'aviso' });
         return;
       }
+      // El cargo solo lo tiene el administrador.
       const sinSubareas = (datosRol) => Object.fromEntries(Object.entries(datosRol).filter(([campo]) => (
-        !['subarea_id', 'turno', 'subareas_ids'].includes(campo)
+        !['subarea_id', 'turno', 'subareas_ids'].includes(campo) && (campo !== 'cargo' || rol === 'administrador')
       )));
       const datos = rol === 'Atleta'
         ? { ...sinSubareas(datosAtleta), subarea_id: formData.subarea_id, turno: formData.turno }
@@ -763,7 +808,7 @@ const Preregistro = () => {
                   inputMode="numeric"
                   name="representante_cedula"
                   value={formData.representante_cedula}
-                  onChange={(event) => { setSugerenciasCerradas(false); handleInputChange(event); }}
+                  onChange={cambiarCedulaRep}
                   required
                   pattern={PATRON_CEDULA}
                   maxLength={8}
@@ -773,6 +818,11 @@ const Preregistro = () => {
                   {...validacion('representante_cedula')}
                 />
                 {renderAviso('representante_cedula')}
+                {repEsPersonal && (
+                  <small className="preregistro-nota-personal" role="status">
+                    Esta cédula es de un {personalRep.datos.rol === 'Entrenador' ? 'entrenador' : 'administrador'} del club: se usan {telefonoDelPerfil ? 'su nombre, apellido y teléfono registrados' : 'su nombre y apellido registrados'}.
+                  </small>
+                )}
                 {textoRep.length >= MIN_DIGITOS && !sugerenciasCerradas && busquedaRep.texto === textoRep && busquedaRep.resultados.length > 0 && (
                   <ul className="preregistro-rep-resultados" role="listbox" aria-label="Representantes ya registrados">
                     <li className="preregistro-rep-vacio">
@@ -802,17 +852,17 @@ const Preregistro = () => {
           {!representanteElegido && <>
           <div className="preregistro-field">
             <label htmlFor="representante_nombres">Nombres del representante</label>
-            <input id="representante_nombres" type="text" name="representante_nombres" value={formData.representante_nombres} onChange={handleInputChange} required pattern={PATRON_NOMBRE} maxLength={60} title={AYUDA_NOMBRE} {...validacion('representante_nombres')} />
+            <input id="representante_nombres" type="text" name="representante_nombres" value={formData.representante_nombres} onChange={handleInputChange} readOnly={repEsPersonal} required pattern={PATRON_NOMBRE} maxLength={60} title={AYUDA_NOMBRE} {...validacion('representante_nombres')} />
             {renderAviso('representante_nombres')}
           </div>
           <div className="preregistro-field">
             <label htmlFor="representante_apellidos">Apellidos del representante</label>
-            <input id="representante_apellidos" type="text" name="representante_apellidos" value={formData.representante_apellidos} onChange={handleInputChange} required pattern={PATRON_NOMBRE} maxLength={60} title={AYUDA_NOMBRE} {...validacion('representante_apellidos')} />
+            <input id="representante_apellidos" type="text" name="representante_apellidos" value={formData.representante_apellidos} onChange={handleInputChange} readOnly={repEsPersonal} required pattern={PATRON_NOMBRE} maxLength={60} title={AYUDA_NOMBRE} {...validacion('representante_apellidos')} />
             {renderAviso('representante_apellidos')}
           </div>
           <div className="preregistro-field">
             <label htmlFor="representante_telefono">Teléfono del representante</label>
-            <input id="representante_telefono" type="tel" inputMode="numeric" name="representante_telefono" value={formData.representante_telefono} onChange={handleInputChange} required pattern={PATRON_TELEFONO} maxLength={11} title={AYUDA_TELEFONO} placeholder="Ej. 04141234567" {...validacion('representante_telefono')} />
+            <input id="representante_telefono" type="tel" inputMode="numeric" name="representante_telefono" value={formData.representante_telefono} onChange={handleInputChange} readOnly={telefonoDelPerfil} required pattern={PATRON_TELEFONO} maxLength={11} title={AYUDA_TELEFONO} placeholder="Ej. 04141234567" {...validacion('representante_telefono')} />
             {renderAviso('representante_telefono')}
           </div>
           </>}
@@ -1037,6 +1087,10 @@ const Preregistro = () => {
               <label htmlFor="correo">Correo Electrónico</label>
               <input id="correo" type="email" name="correo" value={formData.correo} onChange={handleInputChange} required pattern={PATRON_GMAIL} title={AYUDA_GMAIL} placeholder="nombre@gmail.com" {...validacion('correo')} />
               {renderAviso('correo')}
+            </div>
+            <div className="preregistro-field">
+              <label htmlFor="cargo">Cargo <small>(opcional)</small></label>
+              <input id="cargo" type="text" name="cargo" value={formData.cargo} onChange={(event) => setFormData((actual) => ({ ...actual, cargo: event.target.value.replace(/ {2,}/g, ' ').slice(0, 60) }))} maxLength={60} placeholder="Ej. Secretaria, Asistente administrativo" />
             </div>
             <div className="preregistro-form-actions">
               <button type="submit" className="preregistro-submit-button">

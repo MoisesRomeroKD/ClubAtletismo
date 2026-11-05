@@ -456,12 +456,24 @@ const EntrenadoresViewAdmin = () => {
         document.body,
       )}
       <div className="filtros-escritorio">{controlesFiltro}</div>
-      <span className="entrenadores-admin-total">{totalCount} {totalCount === 1 ? 'entrenador' : 'entrenadores'}</span>
+    </div>
+  );
+
+  // Paginación: arriba de la lista (para no bajar hasta el final) y también al final.
+  const paginacion = totalPages > 1 && (
+    <div className="entrenadores-admin-paginacion">
+      <button type="button" className="entrenadores-admin-pagina-btn" onClick={() => cambiarPagina(page - 1)} disabled={page <= 1 || isLoading}>
+        ← Anterior
+      </button>
+      <span className="entrenadores-admin-pagina-info">Página {page} de {totalPages} · {totalCount} entrenadores</span>
+      <button type="button" className="entrenadores-admin-pagina-btn" onClick={() => cambiarPagina(page + 1)} disabled={page >= totalPages || isLoading}>
+        Siguiente →
+      </button>
     </div>
   );
 
   if (isLoading) {
-    return <>{barraFiltros}<div className="entrenadores-admin-estado">Cargando entrenadores...</div></>;
+    return <>{barraFiltros}{paginacion}<div className="entrenadores-admin-estado">Cargando entrenadores...</div></>;
   }
 
   if (error) {
@@ -479,9 +491,18 @@ const EntrenadoresViewAdmin = () => {
     );
   }
 
+  // Inactivo = cuenta desactivada; Pendiente = prerregistrado que no ha creado su contraseña;
+  // Activo = está en el plantel y puede entrar.
+  const estadoDe = (entrenador) => {
+    if (entrenador.is_active === false) return <span className="entrenadores-admin-activo entrenadores-admin-activo--no">● Inactivo</span>;
+    if (entrenador.registro_pendiente) return <span className="entrenadores-admin-activo entrenadores-admin-activo--pendiente">● Pendiente</span>;
+    return <span className="entrenadores-admin-activo">● Activo</span>;
+  };
+
   return (
     <>
     {barraFiltros}
+    {paginacion}
     {aviso && <div role="status" className="entrenadores-admin-ok">{aviso}</div>}
     <div className="responsive-list">
     <div className="responsive-list__table entrenadores-admin-wrap">
@@ -493,6 +514,7 @@ const EntrenadoresViewAdmin = () => {
             <th>Nombre Completo</th>
             <th>Correo Electrónico</th>
             <th>Teléfono</th>
+            <th>Estado</th>
             <th><span className="entrenadores-admin-oculto">Detalle</span></th>
           </tr>
         </thead>
@@ -504,6 +526,7 @@ const EntrenadoresViewAdmin = () => {
               <td className="entrenadores-admin-nombre">{nombreDe(entrenador)}</td>
               <td className="entrenadores-admin-dato">{entrenador.email || '—'}</td>
               <td className="entrenadores-admin-dato">{entrenador.tlf || '—'}</td>
+              <td>{estadoDe(entrenador)}</td>
               <td className="entrenadores-admin-accion">{botonDetalle(entrenador)}</td>
             </tr>
           ))}
@@ -521,6 +544,7 @@ const EntrenadoresViewAdmin = () => {
               <div><dt>Cédula</dt><dd className="entrenadores-admin-cedula">{entrenador.cedula || '—'}</dd></div>
               <div><dt>Correo</dt><dd>{entrenador.email || '—'}</dd></div>
               <div><dt>Teléfono</dt><dd>{entrenador.tlf || '—'}</dd></div>
+              <div><dt>Estado</dt><dd>{estadoDe(entrenador)}</dd></div>
             </dl>
             {botonDetalle(entrenador)}
           </article>
@@ -529,17 +553,7 @@ const EntrenadoresViewAdmin = () => {
     </div>
     </div>
 
-    {totalPages > 1 && (
-      <div className="entrenadores-admin-paginacion">
-        <button type="button" className="entrenadores-admin-pagina-btn" onClick={() => cambiarPagina(page - 1)} disabled={page <= 1}>
-          ← Anterior
-        </button>
-        <span className="entrenadores-admin-pagina-info">Página {page} de {totalPages} · {totalCount} entrenadores</span>
-        <button type="button" className="entrenadores-admin-pagina-btn" onClick={() => cambiarPagina(page + 1)} disabled={page >= totalPages}>
-          Siguiente →
-        </button>
-      </div>
-    )}
+    {paginacion}
 
     {detalle && (
       <EntrenadorDrawer

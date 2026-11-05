@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
-  CartesianGrid, Legend, Line, LineChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart,
-  ResponsiveContainer, Tooltip, XAxis, YAxis,
+  Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart,
+  ResponsiveContainer, Tooltip,
 } from 'recharts';
 import podApi from '../../../api/podApi';
 import { CINE_AXES } from '../../reportes/reportUtils';
@@ -18,7 +18,6 @@ const formatFecha = (iso) => {
   const [y, m, d] = iso.slice(0, 10).split('-');
   return `${d}/${m}/${y}`;
 };
-const fechaCorta = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: '2-digit' });
 const numero = (valor, unidad = '') => (valor === null || valor === undefined ? '—' : `${valor}${unidad}`);
 
 // En palabras, para que el atleta sepa qué significa el puntaje.
@@ -92,11 +91,6 @@ export default function AntropometriaAtletaView() {
     actual: actual.ejes?.[eje] ?? null,
     anterior: anterior ? anterior.ejes?.[eje] ?? null : null,
   }));
-  const evolucion = evaluaciones.map((evaluacion) => ({
-    etiqueta: fechaCorta(evaluacion.fecha),
-    fecha: evaluacion.fecha,
-    promedio: evaluacion.promedio,
-  }));
   const ejesOrdenados = CINE_AXES
     .map(([eje, etiqueta]) => ({ eje, etiqueta, puntaje: actual.ejes?.[eje] ?? null }))
     .filter((fila) => fila.puntaje !== null)
@@ -117,11 +111,6 @@ export default function AntropometriaAtletaView() {
           <span>Última medición</span>
           <strong>{formatFecha(actual.fecha)}</strong>
           <small>{actual.subarea}</small>
-        </div>
-        <div className="antro-atl-kpi">
-          <span>Promedio de los 6 ejes</span>
-          <strong>{numero(actual.promedio)} <Cambio actual={actual.promedio} anterior={anterior?.promedio} /></strong>
-          <small>{nivel(actual.promedio)}{anterior ? ' · respecto a la anterior' : ''}</small>
         </div>
         <div className="antro-atl-kpi">
           <span>Altura</span>
@@ -183,23 +172,6 @@ export default function AntropometriaAtletaView() {
         </section>
       </div>
 
-      {evolucion.length > 1 && (
-        <section className="antro-atl-panel">
-          <h3>Evolución del promedio</h3>
-          <div className="antro-atl-linea" role="img" aria-label="Evolución del promedio de los 6 ejes">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={evolucion} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-main)" vertical={false} />
-                <XAxis dataKey="etiqueta" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis domain={[0, 100]} tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <Tooltip content={<TooltipEjes />} />
-                <Line type="monotone" dataKey="promedio" name="Promedio" stroke="var(--func-primary)" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </section>
-      )}
-
       <section className="antro-atl-panel">
         <h3>Historial de mediciones</h3>
         <div className="responsive-list">
@@ -209,7 +181,6 @@ export default function AntropometriaAtletaView() {
                 <tr>
                   <th>Fecha</th><th>Subárea</th><th>Altura</th><th>Peso</th>
                   {CINE_AXES.map(([eje, etiqueta]) => <th key={eje}>{etiqueta}</th>)}
-                  <th>Promedio</th>
                 </tr>
               </thead>
               <tbody>
@@ -220,7 +191,6 @@ export default function AntropometriaAtletaView() {
                     <td>{numero(evaluacion.altura_cm, ' cm')}</td>
                     <td>{numero(evaluacion.peso_kg, ' kg')}</td>
                     {CINE_AXES.map(([eje]) => <td key={eje}>{numero(evaluacion.ejes?.[eje])}</td>)}
-                    <td><strong>{numero(evaluacion.promedio)}</strong></td>
                   </tr>
                 ))}
               </tbody>
@@ -233,7 +203,6 @@ export default function AntropometriaAtletaView() {
                   <strong>{formatFecha(evaluacion.fecha)}</strong>
                   <span>{evaluacion.subarea} · {numero(evaluacion.altura_cm, ' cm')} · {numero(evaluacion.peso_kg, ' kg')}</span>
                 </div>
-                <strong>{numero(evaluacion.promedio)}</strong>
               </li>
             ))}
           </ul>

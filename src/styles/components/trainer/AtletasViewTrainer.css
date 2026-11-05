@@ -543,3 +543,9 @@
 }
 
 
+
+/* La paginación de arriba (debajo de los filtros) va pegada a la lista */
+.atletas-filtros-container + .atletas-paginacion {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}

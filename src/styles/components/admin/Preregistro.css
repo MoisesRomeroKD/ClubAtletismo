@@ -885,6 +885,22 @@ body.dark-mode .preregistro-metrica--valida .preregistro-metrica-label {
   line-height: 1.3;
 }
 
+/* El representante es un entrenador o administrador: sus datos vienen de su perfil. */
+.preregistro-nota-personal {
+  display: block;
+  margin-top: 4px;
+  color: var(--func-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.preregistro-field input[readonly] {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
 
 /* Buscar un representante ya registrado (paso 1 del preregistro de atleta) */
 .preregistro-field--ancho {

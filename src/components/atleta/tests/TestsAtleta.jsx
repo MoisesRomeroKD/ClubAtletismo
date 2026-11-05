@@ -54,7 +54,7 @@ export default function TestsAtleta() {
           <div className="responsive-list__table tests-atl-tabla-wrap">
             <table className="tests-atl-tabla">
               <thead>
-                <tr><th>Fecha</th><th>Prueba</th><th>Subárea</th><th>Estado</th><th>Mi resultado</th><th>Observación</th></tr>
+                <tr><th>Fecha</th><th>Prueba</th><th>Subárea</th><th>Entrenador</th><th>Estado</th><th>Mi resultado</th><th>Observación</th></tr>
               </thead>
               <tbody>
                 {estado.filas.map((fila) => (
@@ -62,6 +62,7 @@ export default function TestsAtleta() {
                     <td>{formatFecha(fila.fecha)}</td>
                     <td className="tests-atl-fuerte">{fila.prueba}</td>
                     <td>{fila.area ? `${fila.area} · ` : ''}{fila.subarea}</td>
+                    <td>{fila.entrenador || '—'}</td>
                     <td><span className={`tests-atl-estado tests-atl-estado--${fila.estado}`}>{fila.estado_label}</span></td>
                     <td className="tests-atl-fuerte">{miResultado(fila)}</td>
                     <td>{fila.observacion || '—'}</td>
@@ -81,6 +82,7 @@ export default function TestsAtleta() {
                   <dl>
                     <div><dt>Fecha</dt><dd>{formatFecha(fila.fecha)}</dd></div>
                     <div><dt>Subárea</dt><dd>{fila.area ? `${fila.area} · ` : ''}{fila.subarea}</dd></div>
+                    <div><dt>Entrenador</dt><dd>{fila.entrenador || '—'}</dd></div>
                     <div><dt>Mi resultado</dt><dd className="tests-atl-fuerte">{miResultado(fila)}</dd></div>
                     {fila.observacion && <div><dt>Observación</dt><dd>{fila.observacion}</dd></div>}
                   </dl>

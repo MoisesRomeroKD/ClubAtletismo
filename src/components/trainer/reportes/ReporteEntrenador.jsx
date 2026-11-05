@@ -835,7 +835,6 @@ function DetalleAtleta({ atletaId, params, rangoTexto, onClose }) {
                     <div className="report-detail-stats">
                       <div><strong>{formatNumber(ultima.altura_cm, ' cm')}</strong><span>Altura</span></div>
                       <div><strong>{formatNumber(ultima.peso_kg, ' kg')}</strong><span>Peso</span></div>
-                      <div><strong>{formatNumber(ultima.promedio)}</strong><span>Promedio ejes</span></div>
                     </div>
                     <p className="report-detail-caption">
                       Última evaluación: {formatDate(ultima.fecha)} · {ultima.area} · {ultima.subarea}

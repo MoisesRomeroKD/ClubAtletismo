@@ -1,54 +1,40 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { SlidersHorizontal, X } from 'lucide-react';
-import {
-  Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
-} from 'recharts';
 import TestService from '../../../api/services/Testservice';
 import UserService from '../../../api/services/Userservice';
+import ResumenTestsAtleta from '../../atleta/tests/ResumenTestsAtleta';
+import '../../../styles/components/atleta/TestsAtleta.css';
 import '../../../styles/components/admin/tests/AnalisisTests.css';
 
 /*
- * ANÁLISIS DE TESTS (entrenador): de los tests que creó (el backend limita los datos), cuántos tests se hicieron, cuántos resultados faltan,
- * participación por subárea y, por prueba, la evolución de la marca promedio y las mejores marcas.
+ * ANÁLISIS DE TESTS (entrenador: solo sus tests y sus subáreas). Arriba, un resumen general (tests, resultados, ausencias y
+ * atletas evaluados). Debajo, el análisis es POR ATLETA: se elige un atleta y se ven sus pruebas, una
+ * gráfica de evolución por prueba (cada una con su unidad, nunca mezclando atletas) y su historial.
+ * La comparación entre evaluaciones es la misma de "Mis tests" del atleta (ResumenTestsAtleta).
  * Datos reales: /evaluacion/tests/ y /evaluacion/resultados/ (sin paginar, con los filtros).
  */
 
-const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-const etiquetaMes = (clave) => `${MESES[Number(clave.slice(5, 7)) - 1]} ${clave.slice(2, 4)}`;
 const formatFecha = (iso) => {
+  if (!iso) return '—';
   const [y, m, d] = iso.slice(0, 10).split('-');
   return `${d}/${m}/${y}`;
 };
-const redondear = (valor) => Math.round(valor * 100) / 100;
-const esMejor = (a, b, criterio) => (criterio === 'menor' ? a < b : a > b);
 const conMarca = (fila) => !fila.ausente && fila.valor !== null && fila.valor !== undefined;
-
-function TooltipSimple({ active, payload, label, unidad = '' }) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="analisis-tests__tooltip">
-      <strong>{payload[0].payload.etiquetaLarga || label}</strong>
-      <span>{payload[0].value}{unidad ? ` ${unidad}` : ''}</span>
-    </div>
-  );
-}
-
-// Mejor marca de cada atleta en la prueba, ordenadas de mejor a peor.
-function mejoresMarcas(filas, criterio) {
-  const porAtleta = new Map();
-  filas.filter(conMarca).forEach((fila) => {
-    const actual = porAtleta.get(fila.atleta_id);
-    if (!actual || esMejor(fila.valor, actual.valor, criterio)) porAtleta.set(fila.atleta_id, fila);
-  });
-  return [...porAtleta.values()].sort((a, b) => (criterio === 'menor' ? a.valor - b.valor : b.valor - a.valor));
-}
+const normalizar = (texto) => String(texto || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const resultadoDe = (fila) => {
+  if (fila.ausente) return 'Ausente';
+  if (fila.valor === null || fila.valor === undefined) return 'Pendiente';
+  return `${fila.valor} ${fila.unidad}`;
+};
 
 export default function AnalisisTestsTrainer() {
   const [catalogo, setCatalogo] = useState({ pruebas: [], subareas: [] });
   const [filtros, setFiltros] = useState({ prueba: '', subarea: '', desde: '', hasta: '' });
   const [datos, setDatos] = useState({ clave: '', tests: [], resultados: [], error: '' });
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
+  const [busqueda, setBusqueda] = useState('');
+  const [atletaId, setAtletaId] = useState('');
 
   useEffect(() => {
     let activo = true;
@@ -82,58 +68,40 @@ export default function AnalisisTestsTrainer() {
 
   const cargando = datos.clave !== clave;
   const { tests, resultados } = datos;
-  const pruebaElegida = catalogo.pruebas.find((prueba) => String(prueba.id) === filtros.prueba);
 
-  // KPIs
-  const finalizados = tests.filter((test) => test.estado === 'finalizado').length;
+  // Resumen general
+  const finalizados = tests.filter((test) => test.estado === 'realizado').length;
   const convocados = resultados.length;
   const registrados = resultados.filter(conMarca).length;
   const ausencias = resultados.filter((fila) => fila.ausente).length;
   const atletasEvaluados = new Set(resultados.filter(conMarca).map((fila) => fila.atleta_id)).size;
 
-  // Tests por mes
-  const porMes = {};
-  tests.forEach((test) => { const mes = test.fecha.slice(0, 7); porMes[mes] = (porMes[mes] || 0) + 1; });
-  const testsPorMes = Object.keys(porMes).sort().slice(-12)
-    .map((mes) => ({ etiqueta: etiquetaMes(mes), cantidad: porMes[mes] }));
-
-  // Resultados registrados por subárea
-  const porSubarea = {};
-  resultados.filter(conMarca).forEach((fila) => { porSubarea[fila.subarea] = (porSubarea[fila.subarea] || 0) + 1; });
-  const participacion = Object.entries(porSubarea)
-    .map(([subarea, cantidad]) => ({ subarea, cantidad }))
-    .sort((a, b) => b.cantidad - a.cantidad)
-    .slice(0, 10);
-
-  // Una prueba elegida: evolución de la marca promedio y mejores marcas
-  const criterio = pruebaElegida?.criterio || resultados[0]?.criterio_codigo;
-  const unidad = pruebaElegida?.unidad || resultados[0]?.unidad || '';
-  const porFecha = {};
-  resultados.filter(conMarca).forEach((fila) => {
-    porFecha[fila.fecha] = porFecha[fila.fecha] || [];
-    porFecha[fila.fecha].push(fila.valor);
-  });
-  const evolucion = Object.keys(porFecha).sort().map((fecha) => ({
-    etiqueta: formatFecha(fecha),
-    promedio: redondear(porFecha[fecha].reduce((suma, valor) => suma + valor, 0) / porFecha[fecha].length),
-  }));
-  const mejores = filtros.prueba ? mejoresMarcas(resultados, criterio).slice(0, 10) : [];
-
-  // Sin prueba elegida: resumen por prueba
-  const resumenPruebas = useMemo(() => {
-    if (filtros.prueba) return [];
-    const grupos = new Map();
-    resultados.filter(conMarca).forEach((fila) => {
-      const grupo = grupos.get(fila.prueba_id) || { prueba: fila.prueba, unidad: fila.unidad, criterio: fila.criterio_codigo, filas: [] };
-      grupo.filas.push(fila);
-      grupos.set(fila.prueba_id, grupo);
+  // Atletas con evaluaciones (con los filtros) para elegir uno.
+  const atletas = useMemo(() => {
+    const unicos = new Map();
+    resultados.forEach((fila) => {
+      if (!unicos.has(fila.atleta_id)) {
+        unicos.set(fila.atleta_id, { id: fila.atleta_id, nombre: `${fila.nombre} ${fila.apellido}`.trim(), cedula: fila.cedula });
+      }
     });
-    return [...grupos.values()].map((grupo) => {
-      const mejor = mejoresMarcas(grupo.filas, grupo.criterio)[0];
-      const promedio = grupo.filas.reduce((suma, fila) => suma + fila.valor, 0) / grupo.filas.length;
-      return { ...grupo, cantidad: grupo.filas.length, promedio: redondear(promedio), mejor };
-    }).sort((a, b) => b.cantidad - a.cantidad);
-  }, [resultados, filtros.prueba]);
+    return [...unicos.values()].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+  }, [resultados]);
+  const opcionesAtleta = atletas.filter((atleta) => (
+    !busqueda.trim() || normalizar(`${atleta.nombre} ${atleta.cedula}`).includes(normalizar(busqueda.trim()))
+  ));
+  const atleta = atletas.find((fila) => String(fila.id) === atletaId) || null;
+
+  // Evaluaciones del atleta elegido (solo las suyas).
+  const filasAtleta = atleta
+    ? resultados.filter((fila) => fila.atleta_id === atleta.id).sort((a, b) => b.fecha.localeCompare(a.fecha))
+    : [];
+  const subareasAtleta = [...new Set(filasAtleta.map((fila) => (fila.area ? `${fila.area} · ${fila.subarea}` : fila.subarea)))];
+  const historialPorPrueba = [...filasAtleta.reduce((grupos, fila) => {
+    const grupo = grupos.get(fila.prueba_id) || { prueba: fila.prueba, unidad: fila.unidad, criterio: fila.criterio, filas: [] };
+    grupo.filas.push(fila);
+    grupos.set(fila.prueba_id, grupo);
+    return grupos;
+  }, new Map()).values()].sort((a, b) => a.prueba.localeCompare(b.prueba, 'es'));
 
   const cambiar = (campo, valor) => setFiltros((actual) => ({ ...actual, [campo]: valor }));
   const controlesFiltro = (
@@ -199,106 +167,73 @@ export default function AnalisisTestsTrainer() {
             <div className="analisis-tests__kpi"><span>Atletas evaluados</span><strong>{atletasEvaluados}</strong></div>
           </div>
 
-          {!tests.length ? (
-            <p className="analisis-tests__vacio">No hay tests con estos filtros.</p>
-          ) : (
-            <div className="analisis-tests__grid">
-              <section className="analisis-tests__panel">
-                <h3>Tests por mes</h3>
-                <div className="analisis-tests__grafico" role="img" aria-label="Cantidad de tests por mes">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={testsPorMes} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border-main)" vertical={false} />
-                      <XAxis dataKey="etiqueta" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <YAxis allowDecimals={false} tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <Tooltip content={<TooltipSimple unidad="tests" />} cursor={{ fill: 'var(--bg-surface)' }} />
-                      <Bar dataKey="cantidad" fill="var(--func-primary)" radius={[4, 4, 0, 0]} maxBarSize={44} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+          <section className="analisis-tests__panel analisis-tests__panel--ancho">
+            <h3>Análisis por atleta</h3>
+            {!atletas.length ? (
+              <p className="analisis-tests__vacio">No hay atletas evaluados con estos filtros.</p>
+            ) : (
+              <div className="analisis-tests__selector">
+                <input
+                  type="search"
+                  value={busqueda}
+                  onChange={(event) => setBusqueda(event.target.value)}
+                  placeholder="Buscar atleta por nombre o cédula..."
+                  aria-label="Buscar atleta por nombre o cédula"
+                />
+                <select value={atleta ? atletaId : ''} onChange={(event) => setAtletaId(event.target.value)} aria-label="Elegir atleta">
+                  <option value="">Elige un atleta ({opcionesAtleta.length})</option>
+                  {opcionesAtleta.map((fila) => <option key={fila.id} value={String(fila.id)}>{fila.nombre} · Cédula {fila.cedula}</option>)}
+                </select>
+              </div>
+            )}
+          </section>
+
+          {atletas.length > 0 && !atleta && (
+            <p className="analisis-tests__vacio">Elige un atleta para ver sus pruebas, su evolución y su historial.</p>
+          )}
+
+          {atleta && (
+            <>
+              <section className="analisis-tests__panel analisis-tests__panel--ancho analisis-tests__ficha">
+                <h3>{atleta.nombre}</h3>
+                <dl>
+                  <div><dt>Cédula</dt><dd>{atleta.cedula}</dd></div>
+                  <div><dt>Subárea</dt><dd>{subareasAtleta.join(', ') || '—'}</dd></div>
+                  <div><dt>Pruebas realizadas</dt><dd>{historialPorPrueba.map((grupo) => grupo.prueba).join(', ')}</dd></div>
+                  <div><dt>Evaluaciones</dt><dd>{filasAtleta.length} · última el {formatFecha(filasAtleta[0]?.fecha)}</dd></div>
+                </dl>
               </section>
 
-              <section className="analisis-tests__panel">
-                <h3>Resultados registrados por subárea</h3>
-                {participacion.length ? (
-                  <div className="analisis-tests__grafico" role="img" aria-label="Resultados registrados por subárea">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={participacion} layout="vertical" margin={{ top: 4, right: 16, left: 8, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-main)" horizontal={false} />
-                        <XAxis type="number" allowDecimals={false} tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                        <YAxis type="category" dataKey="subarea" width={110} tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                        <Tooltip content={<TooltipSimple unidad="resultados" />} cursor={{ fill: 'var(--bg-surface)' }} />
-                        <Bar dataKey="cantidad" fill="var(--func-primary)" radius={[0, 4, 4, 0]} maxBarSize={22} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                ) : <p className="analisis-tests__vacio">Todavía no hay resultados registrados.</p>}
-              </section>
+              <ResumenTestsAtleta
+                enTercera
+                filas={filasAtleta.map((fila) => ({ ...fila, criterio: fila.criterio_codigo }))}
+              />
 
-              {filtros.prueba ? (
-                <>
-                  <section className="analisis-tests__panel">
-                    <h3>Evolución de la marca promedio · {pruebaElegida?.nombre}</h3>
-                    {evolucion.length > 1 ? (
-                      <>
-                        <div className="analisis-tests__grafico" role="img" aria-label="Evolución de la marca promedio">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={evolucion} margin={{ top: 8, right: 12, left: -12, bottom: 0 }}>
-                              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-main)" vertical={false} />
-                              <XAxis dataKey="etiqueta" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                              <YAxis domain={['auto', 'auto']} reversed={criterio === 'menor'} tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                              <Tooltip content={<TooltipSimple unidad={unidad} />} />
-                              <Line type="monotone" dataKey="promedio" stroke="var(--func-primary)" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-                            </LineChart>
-                          </ResponsiveContainer>
-                        </div>
-                        <small className="analisis-tests__nota">
-                          {criterio === 'menor' ? 'Menor es mejor: el eje está invertido (más arriba es mejor).' : 'Mayor es mejor: más arriba es mejor.'}
-                        </small>
-                      </>
-                    ) : <p className="analisis-tests__vacio">Se necesitan al menos dos fechas con marcas para ver la evolución.</p>}
-                  </section>
-
-                  <section className="analisis-tests__panel">
-                    <h3>Mejores marcas · {pruebaElegida?.nombre}</h3>
-                    {mejores.length ? (
-                      <ol className="analisis-tests__ranking">
-                        {mejores.map((fila) => (
-                          <li key={fila.atleta_id}>
-                            <span>{fila.nombre} {fila.apellido}<small>{fila.subarea} · {formatFecha(fila.fecha)}</small></span>
-                            <strong>{fila.valor} {fila.unidad}</strong>
-                          </li>
+              <h3 className="analisis-tests__subtitulo">Historial por prueba</h3>
+              {historialPorPrueba.map((grupo) => (
+                <section key={grupo.prueba} className="analisis-tests__panel analisis-tests__panel--ancho analisis-tests__historial">
+                  <h4>{grupo.prueba} <small>{grupo.criterio} · {grupo.unidad}</small></h4>
+                  <div className="analisis-tests__tabla-wrap">
+                    <table className="analisis-tests__tabla">
+                      <thead>
+                        <tr><th>Fecha</th><th>Subárea</th><th>Resultado</th><th>Entrenador</th><th>Observación</th></tr>
+                      </thead>
+                      <tbody>
+                        {grupo.filas.map((fila) => (
+                          <tr key={fila.id}>
+                            <td>{formatFecha(fila.fecha)}</td>
+                            <td>{fila.subarea}</td>
+                            <td><strong>{resultadoDe(fila)}</strong></td>
+                            <td>{fila.entrenador || '—'}</td>
+                            <td>{fila.observacion || '—'}</td>
+                          </tr>
                         ))}
-                      </ol>
-                    ) : <p className="analisis-tests__vacio">Sin marcas registradas en esta prueba.</p>}
-                  </section>
-                </>
-              ) : (
-                <section className="analisis-tests__panel analisis-tests__panel--ancho">
-                  <h3>Resumen por prueba</h3>
-                  <p className="analisis-tests__nota">Elige una prueba en los filtros para ver su evolución y el ranking completo.</p>
-                  {resumenPruebas.length ? (
-                    <div className="analisis-tests__tabla-wrap">
-                      <table className="analisis-tests__tabla">
-                        <thead>
-                          <tr><th>Prueba</th><th>Marcas</th><th>Promedio</th><th>Mejor marca</th></tr>
-                        </thead>
-                        <tbody>
-                          {resumenPruebas.map((fila) => (
-                            <tr key={fila.prueba}>
-                              <td>{fila.prueba}<small>{fila.criterio === 'menor' ? 'Menor es mejor' : 'Mayor es mejor'}</small></td>
-                              <td>{fila.cantidad}</td>
-                              <td>{fila.promedio} {fila.unidad}</td>
-                              <td><strong>{fila.mejor.valor} {fila.unidad}</strong><small>{fila.mejor.nombre} {fila.mejor.apellido}</small></td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : <p className="analisis-tests__vacio">Todavía no hay marcas registradas.</p>}
+                      </tbody>
+                    </table>
+                  </div>
                 </section>
-              )}
-            </div>
+              ))}
+            </>
           )}
         </>
       )}

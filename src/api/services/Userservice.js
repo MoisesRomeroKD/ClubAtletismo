@@ -165,6 +165,9 @@ const UserService = {
     return response.data;
   },
 
+  // Paso del representante: si la cédula es de un entrenador o administrador devuelve sus datos.
+  getPersonalPorCedula: async (cedula) => (await podApi.get('/v1/users/preregistro/personal-por-cedula/', { params: { cedula } })).data,
+
   getRepresentatives: async (params = {}) => {
     const response = await podApi.get(
       '/v1/users/representantes',

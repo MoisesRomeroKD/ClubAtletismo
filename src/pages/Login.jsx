@@ -69,6 +69,31 @@ const doorVariantsRight = {
 
 const ESPERA_ENTRADA_MS = 1000;
 
+// Cuentas inactivas: tras el primer aviso del servidor se ocultan el botón de acceso y el enlace
+// de recuperar contraseña para ese correo. Se recuerdan mientras la pestaña esté abierta (la misma
+// clave la usa Recuperar contraseña); el backend igual rechaza cualquier intento.
+const CLAVE_INACTIVAS = 'cuentas_inactivas';
+const MENSAJE_INACTIVA = 'Su cuenta está inactiva. Comuníquese con la administración del club.';
+const leerInactivas = () => {
+  try {
+    const guardadas = JSON.parse(sessionStorage.getItem(CLAVE_INACTIVAS) || '[]');
+    return Array.isArray(guardadas) ? guardadas : [];
+  } catch {
+    return [];
+  }
+};
+const recordarInactiva = (identificador) => {
+  const lista = [...new Set([...leerInactivas(), identificador])];
+  try {
+    sessionStorage.setItem(CLAVE_INACTIVAS, JSON.stringify(lista));
+  } catch {
+    // Sin almacenamiento solo se recuerda en esta pantalla.
+  }
+  return lista;
+};
+// Los errores del login llegan como listas de un elemento.
+const primero = (valor) => (Array.isArray(valor) ? valor[0] : valor);
+
 export default function Login({ setRole }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -87,6 +112,8 @@ export default function Login({ setRole }) {
     username: '',
     password: '',
   });
+  const [inactivas, setInactivas] = useState(leerInactivas);
+  const cuentaInactiva = inactivas.includes(loginData.username.trim().toLowerCase());
 
 
   // ==========================================================
@@ -213,7 +240,7 @@ export default function Login({ setRole }) {
 
     e.preventDefault();
 
-    if (isLoading) {
+    if (isLoading || cuentaInactiva) {
       return;
     }
 
@@ -304,8 +331,15 @@ export default function Login({ setRole }) {
       );
 
 
+      // Cuenta inactiva: se avisa en el formulario y ya no se ofrece entrar ni recuperar la contraseña.
+      if (primero(error.response?.data?.status) === 'disabled') {
+        setShowNotification(false);
+        setInactivas(recordarInactiva(loginData.username.trim().toLowerCase()));
+        return;
+      }
+
       const errorMsg =
-        error.response?.data?.message ||
+        primero(error.response?.data?.message) ||
         error.response?.data?.detail ||
         error.response?.data?.error ||
         error.message ||
@@ -468,6 +502,12 @@ export default function Login({ setRole }) {
 
 
 
+            {cuentaInactiva ? (
+              <div className="auth-alerta-inactiva" role="alert">
+                {MENSAJE_INACTIVA}
+              </div>
+            ) : (
+            <>
             {/* ==================================================
                 RECUPERACIÓN
                 ================================================== */}
@@ -515,6 +555,8 @@ export default function Login({ setRole }) {
               </span>
 
             </button>
+            </>
+            )}
 
 
           </form>

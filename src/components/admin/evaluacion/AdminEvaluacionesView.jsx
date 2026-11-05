@@ -109,6 +109,14 @@ const AdminEvaluacionesView = () => {
     </>
   );
 
+  const paginacion = totalPaginas > 1 && (
+    <div className="admin-evaluaciones-paginacion">
+      <button type="button" onClick={() => setPage(page - 1)} disabled={page <= 1 || cargando}>← Anterior</button>
+      <span>Página {page} de {totalPaginas}</span>
+      <button type="button" onClick={() => setPage(page + 1)} disabled={page >= totalPaginas || cargando}>Siguiente →</button>
+    </div>
+  );
+
   return (
     <div className="admin-evaluaciones">
       <div className="admin-evaluaciones-header">
@@ -143,6 +151,9 @@ const AdminEvaluacionesView = () => {
         <div className="filtros-escritorio">{controlesFiltro}</div>
         <span className="admin-evaluaciones-total">{estado.total} {estado.total === 1 ? 'resultado' : 'resultados'}</span>
       </div>
+
+      {/* Paginación arriba de la lista (para no bajar hasta el final) y también al final. */}
+      {paginacion}
 
       {estado.error ? (
         <div className="admin-evaluaciones-vacio" role="alert">{estado.error}</div>
@@ -211,13 +222,7 @@ const AdminEvaluacionesView = () => {
         </div>
       )}
 
-      {totalPaginas > 1 && (
-        <div className="admin-evaluaciones-paginacion">
-          <button type="button" onClick={() => setPage(page - 1)} disabled={page <= 1 || cargando}>← Anterior</button>
-          <span>Página {page} de {totalPaginas}</span>
-          <button type="button" onClick={() => setPage(page + 1)} disabled={page >= totalPaginas || cargando}>Siguiente →</button>
-        </div>
-      )}
+      {paginacion}
     </div>
   );
 };

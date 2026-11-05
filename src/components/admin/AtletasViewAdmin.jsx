@@ -77,6 +77,9 @@ function EstadoModal({ atleta, onClose, onSaved }) {
         {estado === 'justificado' && (
           <p className="atletas-estado-hint">Un atleta justificado no aparece en el registro de asistencia diaria.</p>
         )}
+        {estado === 'inactivo' && (
+          <p className="atletas-estado-hint">Un atleta inactivo sale del plantel: su cuenta queda inactiva y no podrá iniciar sesión ni recuperar su contraseña.</p>
+        )}
 
         {requiereMotivo && (
           <label className="atletas-estado-field">
@@ -762,6 +765,31 @@ const AtletasViewAdmin = () => {
     </>
   );
 
+  // Paginación: arriba de la lista (para no bajar hasta el final) y también al final.
+  const paginacion = totalPages > 1 && (
+    <div className="atletas-paginacion">
+      <button
+        type="button"
+        className="atletas-paginacion-btn"
+        onClick={() => { setIsLoading(true); setPage((p) => Math.max(1, p - 1)); }}
+        disabled={page <= 1 || isLoading}
+      >
+        ← Anterior
+      </button>
+      <span className="atletas-paginacion-info">
+        Página {page} de {totalPages}
+      </span>
+      <button
+        type="button"
+        className="atletas-paginacion-btn"
+        onClick={() => { setIsLoading(true); setPage((p) => Math.min(totalPages, p + 1)); }}
+        disabled={page >= totalPages || isLoading}
+      >
+        Siguiente →
+      </button>
+    </div>
+  );
+
   return (
     <div className="atletas-adm">
       {/* FILTRO + ACCIONES */}
@@ -792,6 +820,8 @@ const AtletasViewAdmin = () => {
           {totalCount} atleta{totalCount !== 1 ? 's' : ''} en total
         </span>
       </div>
+
+      {paginacion}
 
       {isLoading ? (
         <div className="atletas-adm-estado-lista">Cargando lista de atletas...</div>
@@ -889,30 +919,7 @@ const AtletasViewAdmin = () => {
             <div className="atletas-adm-estado-lista">No se encontraron atletas con ese criterio.</div>
           )}
 
-          {/* PAGINACIÓN */}
-          {totalPages > 1 && (
-            <div className="atletas-paginacion">
-              <button
-                type="button"
-                className="atletas-paginacion-btn"
-                onClick={() => { setIsLoading(true); setPage((p) => Math.max(1, p - 1)); }}
-                disabled={page <= 1}
-              >
-                ← Anterior
-              </button>
-              <span className="atletas-paginacion-info">
-                Página {page} de {totalPages}
-              </span>
-              <button
-                type="button"
-                className="atletas-paginacion-btn"
-                onClick={() => { setIsLoading(true); setPage((p) => Math.min(totalPages, p + 1)); }}
-                disabled={page >= totalPages}
-              >
-                Siguiente →
-              </button>
-            </div>
-          )}
+          {paginacion}
         </>
       )}
 

@@ -283,6 +283,8 @@ function TestsProgramados({ pruebas, filtrosBase }) {
         <div className="filtros-escritorio">{controlesFiltro1}</div>
       </div>
 
+      {/* Paginación arriba de la lista (para no bajar hasta el final) y también al final. */}
+      <Paginacion page={lista.page} total={lista.total} onChange={lista.setPage} />
       {lista.error ? (
         <p className="tests-adm-vacio tests-adm-error" role="alert">{lista.error}</p>
       ) : lista.cargando ? (

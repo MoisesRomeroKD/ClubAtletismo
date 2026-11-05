@@ -103,14 +103,17 @@ function PermisosDrawer({ usuario, catalogo, onClose }) {
   const tipoDe = (permission) => permission.roles?.[rolUsuario];
   const aplicables = catalogo.filter((permission) => tipoDe(permission));
   const grupos = [
-    ['predeterminado', 'Predeterminados del rol', 'Los recibe todo usuario de este rol al crearse; se pueden quitar.'],
+    ['predeterminado', 'Predeterminados del rol', 'Vienen con la cuenta y no se pueden quitar: sin ellos el usuario no podría trabajar.'],
     ['opcional', 'Opcionales', 'Se otorgan solo a quien corresponda.'],
   ].map(([tipo, titulo, ayuda]) => ({ tipo, titulo, ayuda, permisos: aplicables.filter((permission) => tipoDe(permission) === tipo) }));
+  // Los predeterminados siempre están marcados (el backend también los mantiene).
+  const fijos = grupos[0].permisos.map((permission) => permission.codename);
   const sinCambios = !cargando
     && seleccion.length === carga.permisos.length
     && seleccion.every((codename) => carga.permisos.includes(codename));
 
   const togglePermission = (codename) => {
+    if (fijos.includes(codename)) return;
     setSuccessMessage('');
     setSeleccion((current) => (
       current.includes(codename)
@@ -119,12 +122,13 @@ function PermisosDrawer({ usuario, catalogo, onClose }) {
     ));
   };
 
-  // Marca o quita de una vez todos los permisos que aplican a su rol (se guardan con "Guardar permisos").
+  // Marca o quita de una vez los opcionales (se guardan con "Guardar permisos"); los predeterminados quedan.
   const marcarTodos = (marcar) => {
     setSuccessMessage('');
-    setSeleccion(marcar ? aplicables.map((permission) => permission.codename) : []);
+    setSeleccion(marcar ? aplicables.map((permission) => permission.codename) : fijos);
   };
   const totalMarcados = seleccion.filter((codename) => aplicables.some((p) => p.codename === codename)).length;
+  const opcionalesMarcados = seleccion.filter((codename) => grupos[1].permisos.some((p) => p.codename === codename)).length;
 
   const handleSave = async () => {
     try {
@@ -178,19 +182,22 @@ function PermisosDrawer({ usuario, catalogo, onClose }) {
             <div className="roles-drawer-permisos">
               {grupo.permisos.map((permission) => {
                 const description = PERMISSION_DESCRIPTIONS[permission.codename];
-                const activo = seleccion.includes(permission.codename);
+                const fijo = fijos.includes(permission.codename);
+                const activo = fijo || seleccion.includes(permission.codename);
                 return (
-                  <div key={permission.codename} className={`roles-gestion-permiso${activo ? ' roles-gestion-permiso--activo' : ''}`}>
+                  <div key={permission.codename} className={`roles-gestion-permiso${activo ? ' roles-gestion-permiso--activo' : ''}${fijo ? ' roles-gestion-permiso--fijo' : ''}`}>
                     <label htmlFor={`permission-${permission.codename}`}>
                       <input
                         id={`permission-${permission.codename}`}
                         type="checkbox"
                         checked={activo}
+                        disabled={fijo}
                         onChange={() => togglePermission(permission.codename)}
                       />
                       <span>
                         <span className="roles-gestion-permiso-nombre">{permission.name}</span>
                         <code>{permission.codename}</code>
+                        {fijo && <span className="roles-gestion-permiso-fijo">Incluido con la cuenta</span>}
                       </span>
                     </label>
                     {description && (
@@ -215,13 +222,13 @@ function PermisosDrawer({ usuario, catalogo, onClose }) {
         <footer className="roles-drawer-pie">
           {errorMessage && <div role="alert" className="roles-gestion-error">{errorMessage}</div>}
           {successMessage && <div role="status" className="roles-gestion-exito">{successMessage}</div>}
-          {!cargando && !carga.error && aplicables.length > 0 && (
+          {!cargando && !carga.error && grupos[1].permisos.length > 0 && (
             <div className="roles-drawer-todos">
-              <button type="button" className="roles-drawer-secundario" onClick={() => marcarTodos(true)} disabled={totalMarcados === aplicables.length}>
-                Marcar todos
+              <button type="button" className="roles-drawer-secundario" onClick={() => marcarTodos(true)} disabled={opcionalesMarcados === grupos[1].permisos.length}>
+                Marcar todos los opcionales
               </button>
-              <button type="button" className="roles-drawer-secundario" onClick={() => marcarTodos(false)} disabled={totalMarcados === 0}>
-                Quitar todos
+              <button type="button" className="roles-drawer-secundario" onClick={() => marcarTodos(false)} disabled={opcionalesMarcados === 0}>
+                Quitar todos los opcionales
               </button>
             </div>
           )}
@@ -293,6 +300,14 @@ const RolesPermisos = () => {
     if (filtroRol && String(user.rol || '').toLowerCase() !== filtroRol) return false;
     return coincidePersona(busqueda, user.nombre || user.username, user.cedula);
   });
+
+  // Inactivo = cuenta desactivada; Pendiente = prerregistrado que no ha creado su contraseña;
+  // Activo = está en el plantel y puede entrar.
+  const estadoDe = (user) => {
+    if (user.is_active === false) return <span className="roles-lista-activo roles-lista-activo--no">● Inactivo</span>;
+    if (user.registro_pendiente) return <span className="roles-lista-activo roles-lista-activo--pendiente">● Pendiente</span>;
+    return <span className="roles-lista-activo">● Activo</span>;
+  };
 
   const botonDetalle = (user) => (
     <button type="button" className="roles-lista-ver" onClick={() => setUsuarioDetalle(user)}>
@@ -379,6 +394,7 @@ const RolesPermisos = () => {
                       <th>Cédula</th>
                       <th>Rol</th>
                       <th>Correo</th>
+                      <th>Estado</th>
                       <th><span className="roles-lista-oculto">Detalle</span></th>
                     </tr>
                   </thead>
@@ -389,11 +405,12 @@ const RolesPermisos = () => {
                         <td>{user.cedula || '—'}</td>
                         <td><span className="roles-lista-rol">{etiquetaRol(user.rol)}</span></td>
                         <td className="roles-lista-correo">{user.email || '—'}</td>
+                        <td>{estadoDe(user)}</td>
                         <td className="roles-lista-accion">{botonDetalle(user)}</td>
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan="5" className="roles-lista-vacia">No hay administradores ni entrenadores que coincidan.</td>
+                        <td colSpan="6" className="roles-lista-vacia">No hay administradores ni entrenadores que coincidan.</td>
                       </tr>
                     )}
                   </tbody>
@@ -409,6 +426,7 @@ const RolesPermisos = () => {
                     </div>
                     <small>Cédula: {user.cedula || '—'}</small>
                     {user.email && <small className="roles-lista-correo">{user.email}</small>}
+                    <small>Estado: {estadoDe(user)}</small>
                     {botonDetalle(user)}
                   </article>
                 )) : (

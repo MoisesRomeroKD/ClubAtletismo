@@ -232,7 +232,7 @@ function DetalleMedicion({ medicionId, puedeRegistrar, onVolver }) {
                 </div>
                 {fila.evaluacion ? (
                   <span className="antro-adm-registrado">
-                    ✓ Registrado · {numero(fila.evaluacion.altura_cm, ' cm')} · {numero(fila.evaluacion.peso_kg, ' kg')} · prom. {numero(fila.evaluacion.promedio)}
+                    ✓ Registrado · {numero(fila.evaluacion.altura_cm, ' cm')} · {numero(fila.evaluacion.peso_kg, ' kg')}
                   </span>
                 ) : editable && abierto !== fila.atleta_id ? (
                   <button type="button" className="antro-adm-btn antro-adm-btn--chico" onClick={() => setAbierto(fila.atleta_id)}>
@@ -504,7 +504,6 @@ function HistorialAtleta({ atletaId, onVolver }) {
           <div className="antro-adm-resumen">
             <div><strong>{numero(ultima.altura_cm, ' cm')}</strong><span>Altura</span></div>
             <div><strong>{numero(ultima.peso_kg, ' kg')}</strong><span>Peso</span></div>
-            <div><strong>{numero(ultima.promedio)}</strong><span>Promedio ejes</span></div>
             <div><strong>{formatFecha(ultima.fecha)}</strong><span>Última evaluación</span></div>
           </div>
           <RadarEjes ejes={ultima.ejes} />
@@ -524,7 +523,7 @@ function HistorialAtleta({ atletaId, onVolver }) {
             <div className="responsive-list__table antro-adm-tabla-wrap">
               <table className="antro-adm-tabla">
                 <thead>
-                  <tr><th>Fecha</th><th>Subárea</th><th>Altura</th><th>Peso</th>{EJES.map(([eje, label]) => <th key={eje}>{label}</th>)}<th>Promedio</th></tr>
+                  <tr><th>Fecha</th><th>Subárea</th><th>Altura</th><th>Peso</th>{EJES.map(([eje, label]) => <th key={eje}>{label}</th>)}</tr>
                 </thead>
                 <tbody>
                   {evaluaciones.map((evaluacion) => (
@@ -534,7 +533,6 @@ function HistorialAtleta({ atletaId, onVolver }) {
                       <td>{numero(evaluacion.altura_cm, ' cm')}</td>
                       <td>{numero(evaluacion.peso_kg, ' kg')}</td>
                       {EJES.map(([eje]) => <td key={eje}>{numero(evaluacion.ejes?.[eje])}</td>)}
-                      <td className="antro-adm-fuerte">{numero(evaluacion.promedio)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -551,7 +549,6 @@ function HistorialAtleta({ atletaId, onVolver }) {
                     <dl>
                       <div><dt>Altura</dt><dd>{numero(evaluacion.altura_cm, ' cm')}</dd></div>
                       <div><dt>Peso</dt><dd>{numero(evaluacion.peso_kg, ' kg')}</dd></div>
-                      <div><dt>Promedio ejes</dt><dd>{numero(evaluacion.promedio)}</dd></div>
                     </dl>
                   </article>
                 ))}
@@ -595,7 +592,6 @@ function DatosRegistrados({ subareas }) {
         { key: 'altura_cm', label: 'Altura (cm)' },
         { key: 'peso_kg', label: 'Peso (kg)' },
         ...EJES.map(([eje, label]) => ({ key: eje, label, exportValue: (fila) => fila.ejes?.[eje] ?? '—' })),
-        { key: 'promedio', label: 'Promedio ejes' },
       ],
       rows: Array.isArray(filas) ? filas : [],
     }];
@@ -673,7 +669,7 @@ function DatosRegistrados({ subareas }) {
           <div className="responsive-list__table antro-adm-tabla-wrap">
             <table className="antro-adm-tabla">
               <thead>
-                <tr><th>Fecha</th><th>Atleta</th><th>Categoría</th><th>Subárea</th><th>Altura</th><th>Peso</th><th>Promedio</th><th>Acciones</th></tr>
+                <tr><th>Fecha</th><th>Atleta</th><th>Categoría</th><th>Subárea</th><th>Altura</th><th>Peso</th><th>Acciones</th></tr>
               </thead>
               <tbody>
                 {lista.filas.map((fila) => (
@@ -684,7 +680,6 @@ function DatosRegistrados({ subareas }) {
                     <td>{fila.subarea}</td>
                     <td>{numero(fila.altura_cm, ' cm')}</td>
                     <td>{numero(fila.peso_kg, ' kg')}</td>
-                    <td className="antro-adm-fuerte">{numero(fila.promedio)}</td>
                     <td>
                       <button type="button" className="antro-adm-btn antro-adm-btn--chico" onClick={() => setAtletaId(fila.atleta_id)}>Ver historial</button>
                     </td>
@@ -704,7 +699,6 @@ function DatosRegistrados({ subareas }) {
                   <dl>
                     <div><dt>Subárea</dt><dd>{fila.subarea} · {fila.categoria || 'Sin categoría'}</dd></div>
                     <div><dt>Altura / Peso</dt><dd>{numero(fila.altura_cm, ' cm')} · {numero(fila.peso_kg, ' kg')}</dd></div>
-                    <div><dt>Promedio ejes</dt><dd>{numero(fila.promedio)}</dd></div>
                   </dl>
                   <button type="button" className="antro-adm-btn antro-adm-btn--chico" onClick={() => setAtletaId(fila.atleta_id)}>Ver historial</button>
                 </article>

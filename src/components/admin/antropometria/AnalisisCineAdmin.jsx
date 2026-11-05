@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { SlidersHorizontal, X } from 'lucide-react';
 import {
-  Bar, BarChart, CartesianGrid, Line, LineChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart,
+  CartesianGrid, Legend, Line, LineChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart,
   ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts';
 import CineantropometriaService from '../../../api/services/Cineantropometriaservice';
@@ -10,11 +10,30 @@ import { CINE_AXES } from '../../reportes/reportUtils';
 import '../../../styles/components/admin/antropometria/AnalisisCine.css';
 
 /*
- * ANÁLISIS DE CINEANTROPOMETRÍA (administrador, solo consulta).
- * Usa la última medición de cada atleta: promedio de los 6 ejes del plantel, promedio por subárea,
- * evolución mensual y quiénes destacan en cada eje (en qué subárea podrían rendir mejor).
+ * ANÁLISIS DE CINEANTROPOMETRÍA (administrador, solo consulta). Resultados GLOBALES por eje:
+ * se juntan las mediciones de todos los atletas (la última de cada uno) y se agrupan por eje.
+ * Cada eje se resume por separado (nunca se suman ni promedian ejes distintos, que tienen unidades
+ * distintas): su indicador en su propia unidad y su puntaje de 0 a 100 (la escala de la app).
  * Datos reales: /cineantropometria/datos/ (todas las mediciones; los filtros se aplican aquí).
  */
+
+// Indicador de cada eje, con su unidad (el mismo que calcula el backend).
+const INDICADOR = {
+  potencia: 'Salto vertical (cm)',
+  velocidad: 'Sprint 30 m (s)',
+  resistencia: 'Nivel de Navette',
+  envergadura: 'Envergadura − altura (cm)',
+  fuerza: 'Sentadilla ÷ peso (ratio)',
+  flexibilidad: 'Test de Wells (cm)',
+};
+const COLOR_EJE = {
+  potencia: 'var(--chart-cat-1)',
+  velocidad: 'var(--chart-cat-2)',
+  resistencia: 'var(--chart-cat-3)',
+  envergadura: 'var(--chart-cat-4)',
+  fuerza: 'var(--chart-cat-5)',
+  flexibilidad: 'var(--chart-cat-6)',
+};
 
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 const etiquetaMes = (clave) => `${MESES[Number(clave.slice(5, 7)) - 1]} ${clave.slice(2, 4)}`;
@@ -23,9 +42,11 @@ const formatFecha = (iso) => {
   const [y, m, d] = iso.slice(0, 10).split('-');
   return `${d}/${m}/${y}`;
 };
-const promedioDe = (valores) => {
-  const validos = valores.filter((valor) => valor !== null && valor !== undefined);
-  return validos.length ? Math.round((validos.reduce((suma, valor) => suma + valor, 0) / validos.length) * 10) / 10 : null;
+const validos = (valores) => valores.filter((valor) => valor !== null && valor !== undefined);
+const promedioDe = (valores, decimales = 1) => {
+  const lista = validos(valores);
+  const factor = 10 ** decimales;
+  return lista.length ? Math.round((lista.reduce((suma, valor) => suma + valor, 0) / lista.length) * factor) / factor : null;
 };
 
 function TooltipSimple({ active, payload, label }) {
@@ -80,27 +101,38 @@ export default function AnalisisCineAdmin() {
     return mapa;
   }, new Map()).values()];
 
-  const promedioPlantel = promedioDe(ultimas.map((fila) => fila.promedio));
   const ultimaFecha = filtradas.reduce((max, fila) => (fila.fecha > max ? fila.fecha : max), '');
 
-  const radar = CINE_AXES.map(([eje, etiqueta]) => ({ eje: etiqueta, promedio: promedioDe(ultimas.map((fila) => fila.ejes?.[eje])) }));
+  // Resultado global de cada eje: los valores de todos los atletas, eje por eje.
+  const globalPorEje = CINE_AXES.map(([eje, etiqueta]) => {
+    const indicadores = validos(ultimas.map((fila) => fila.indicadores?.[eje]));
+    const puntajes = validos(ultimas.map((fila) => fila.ejes?.[eje]));
+    return {
+      eje,
+      etiqueta,
+      indicador: INDICADOR[eje],
+      promedioIndicador: promedioDe(indicadores, 2),
+      minimo: indicadores.length ? Math.min(...indicadores) : null,
+      maximo: indicadores.length ? Math.max(...indicadores) : null,
+      puntaje: promedioDe(puntajes),
+      atletas: puntajes.length,
+    };
+  });
+  const radar = globalPorEje.map((fila) => ({ eje: fila.etiqueta, promedio: fila.puntaje, atletas: fila.atletas }));
 
-  const porSubarea = Object.entries(ultimas.reduce((grupos, fila) => {
-    (grupos[fila.subarea] = grupos[fila.subarea] || []).push(fila.promedio);
-    return grupos;
-  }, {}))
-    .map(([subarea, promedios]) => ({ etiqueta: subarea, promedio: promedioDe(promedios), atletas: promedios.length }))
-    .sort((a, b) => (b.promedio ?? 0) - (a.promedio ?? 0))
-    .slice(0, 12);
-
+  // Evolución del puntaje global de cada eje: todas las mediciones de cada mes (todos los atletas).
   const porMes = Object.entries(filtradas.reduce((grupos, fila) => {
     const mes = fila.fecha.slice(0, 7);
-    (grupos[mes] = grupos[mes] || []).push(fila.promedio);
+    (grupos[mes] = grupos[mes] || []).push(fila);
     return grupos;
   }, {}))
     .sort(([a], [b]) => a.localeCompare(b))
     .slice(-12)
-    .map(([mes, promedios]) => ({ etiqueta: etiquetaMes(mes), promedio: promedioDe(promedios), atletas: promedios.length }));
+    .map(([mes, filas]) => ({
+      etiqueta: etiquetaMes(mes),
+      atletas: filas.length,
+      ...Object.fromEntries(CINE_AXES.map(([eje]) => [eje, promedioDe(filas.map((fila) => fila.ejes?.[eje]))])),
+    }));
 
   // Los 3 mejores de cada eje (última medición).
   const destacados = CINE_AXES.map(([eje, etiqueta]) => ({
@@ -140,7 +172,7 @@ export default function AnalisisCineAdmin() {
     <div className="analisis-cine">
       <header className="analisis-cine__encabezado">
         <h2>Análisis de cineantropometría</h2>
-        <p>Cada eje va de 0 a 100 (más alto es mejor). Se usa la última medición de cada atleta.</p>
+        <p>Resultados globales de todos los atletas, eje por eje (puntaje de 0 a 100: más alto es mejor). Se usa la última medición de cada atleta.</p>
       </header>
 
       <div className="analisis-cine__filtros">
@@ -175,14 +207,13 @@ export default function AnalisisCineAdmin() {
           <div className="analisis-cine__kpis">
             <div className="analisis-cine__kpi"><span>Atletas evaluados</span><strong>{ultimas.length}</strong></div>
             <div className="analisis-cine__kpi"><span>Mediciones</span><strong>{filtradas.length}</strong></div>
-            <div className="analisis-cine__kpi"><span>Promedio del plantel</span><strong>{promedioPlantel ?? '—'}</strong><small>de 100</small></div>
             <div className="analisis-cine__kpi"><span>Última medición</span><strong>{formatFecha(ultimaFecha)}</strong></div>
           </div>
 
           <div className="analisis-cine__grid">
             <section className="analisis-cine__panel">
-              <h3>Promedio por eje</h3>
-              <div className="analisis-cine__radar" role="img" aria-label="Promedio del plantel en cada eje">
+              <h3>Puntaje global por eje</h3>
+              <div className="analisis-cine__radar" role="img" aria-label="Puntaje global de todos los atletas en cada eje">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart data={radar} outerRadius="70%">
                     <PolarGrid stroke="var(--border-main)" />
@@ -196,35 +227,46 @@ export default function AnalisisCineAdmin() {
             </section>
 
             <section className="analisis-cine__panel">
-              <h3>Promedio por subárea</h3>
-              <div className="analisis-cine__grafico" role="img" aria-label="Promedio de los 6 ejes en cada subárea">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={porSubarea} layout="vertical" margin={{ top: 4, right: 16, left: 8, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-main)" horizontal={false} />
-                    <XAxis type="number" domain={[0, 100]} tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                    <YAxis type="category" dataKey="etiqueta" width={110} tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                    <Tooltip content={<TooltipSimple />} cursor={{ fill: 'var(--bg-surface)' }} />
-                    <Bar dataKey="promedio" fill="var(--func-primary)" radius={[0, 4, 4, 0]} maxBarSize={22} />
-                  </BarChart>
-                </ResponsiveContainer>
+              <h3>Resultado global por eje</h3>
+              <p className="analisis-cine__nota">Cada eje con su propio indicador y unidad; el puntaje va de 0 a 100.</p>
+              <div className="analisis-cine__tabla-wrap">
+                <table className="analisis-cine__tabla">
+                  <thead>
+                    <tr><th>Eje</th><th>Indicador promedio</th><th>Rango</th><th>Puntaje</th><th>Atletas</th></tr>
+                  </thead>
+                  <tbody>
+                    {globalPorEje.map((fila) => (
+                      <tr key={fila.eje}>
+                        <td><strong>{fila.etiqueta}</strong><small>{fila.indicador}</small></td>
+                        <td>{fila.promedioIndicador ?? '—'}</td>
+                        <td>{fila.minimo === null ? '—' : `${fila.minimo} a ${fila.maximo}`}</td>
+                        <td><strong>{fila.puntaje ?? '—'}</strong></td>
+                        <td>{fila.atletas}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </section>
 
             {porMes.length > 1 && (
               <section className="analisis-cine__panel analisis-cine__panel--ancho">
-                <h3>Evolución mensual del promedio</h3>
-                <div className="analisis-cine__grafico" role="img" aria-label="Promedio de las mediciones de cada mes">
+                <h3>Evolución del puntaje global por eje</h3>
+                <div className="analisis-cine__grafico" role="img" aria-label="Puntaje global de cada eje por mes">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={porMes} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--border-main)" vertical={false} />
                       <XAxis dataKey="etiqueta" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
                       <YAxis domain={[0, 100]} tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <Tooltip content={<TooltipSimple />} />
-                      <Line type="monotone" dataKey="promedio" stroke="var(--func-primary)" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                      <Tooltip />
+                      <Legend wrapperStyle={{ fontSize: 12 }} />
+                      {CINE_AXES.map(([eje, etiqueta]) => (
+                        <Line key={eje} type="monotone" dataKey={eje} name={etiqueta} stroke={COLOR_EJE[eje]} strokeWidth={2} dot={{ r: 3 }} connectNulls />
+                      ))}
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
-                <small className="analisis-cine__nota">Promedio de todas las mediciones hechas en cada mes.</small>
+                <small className="analisis-cine__nota">Puntaje promedio de cada eje entre todas las mediciones del mes (todos los atletas medidos).</small>
               </section>
             )}
 

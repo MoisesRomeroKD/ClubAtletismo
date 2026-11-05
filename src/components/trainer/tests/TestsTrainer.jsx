@@ -819,6 +819,8 @@ function MisTests({ pruebas, subareas }) {
 
       {error && <p className="tests-ent-error" role="alert">{error}</p>}
 
+      {/* Paginación arriba de la lista (para no bajar hasta el final) y también al final. */}
+      <Paginacion page={lista.page} total={lista.total} onChange={lista.setPage} />
       {lista.error ? (
         <p className="tests-ent-vacio tests-ent-error" role="alert">{lista.error}</p>
       ) : lista.cargando ? (

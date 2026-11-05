@@ -406,3 +406,86 @@
   color: var(--text-muted);
   font-size: 0.8rem;
 }
+
+/* Barra de filtros (buscador, área y subárea de sus atletas) */
+.representantes-admin-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+}
+
+.representantes-admin-buscar,
+.representantes-admin-select {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.representantes-admin-buscar {
+  width: 260px;
+  max-width: 100%;
+}
+
+.representantes-admin-buscar:focus,
+.representantes-admin-select:focus {
+  outline: none;
+  border-color: var(--func-primary);
+}
+
+.representantes-admin-total {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Paginación (15 por página): arriba de la lista y al final */
+.representantes-admin-paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.representantes-admin-filtros + .representantes-admin-paginacion {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.representantes-admin-pagina-btn {
+  padding: 8px 18px;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.representantes-admin-pagina-btn:hover:not(:disabled) {
+  border-color: var(--func-primary);
+  color: var(--func-primary);
+}
+
+.representantes-admin-pagina-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.representantes-admin-pagina-info {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}

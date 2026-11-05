@@ -678,7 +678,6 @@ const DETALLE_CINE_COLUMNS = [
   { key: 'subarea', label: 'Subárea', exportValue: (row) => `${row.area} · ${row.subarea}` },
   { key: 'altura_cm', label: 'Altura (cm)' },
   { key: 'peso_kg', label: 'Peso (kg)' },
-  { key: 'promedio', label: 'Promedio ejes' },
 ];
 
 function DetalleAtleta({ atletaId, params, rangoTexto, onClose }) {
@@ -866,7 +865,6 @@ function DetalleAtleta({ atletaId, params, rangoTexto, onClose }) {
                     <div className="report-detail-stats">
                       <div><strong>{formatNumber(ultima.altura_cm, ' cm')}</strong><span>Altura</span></div>
                       <div><strong>{formatNumber(ultima.peso_kg, ' kg')}</strong><span>Peso</span></div>
-                      <div><strong>{formatNumber(ultima.promedio)}</strong><span>Promedio ejes</span></div>
                     </div>
                     <p className="report-detail-caption">
                       Última evaluación: {formatDate(ultima.fecha)} · {ultima.area} · {ultima.subarea}

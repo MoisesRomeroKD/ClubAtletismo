@@ -4,6 +4,8 @@ import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YA
 /*
  * Resumen de "Mis tests" del atleta: por cada prueba, su última marca, su mejor marca,
  * si mejoró respecto a la anterior y cómo ha evolucionado. Solo usa las marcas registradas.
+ * También lo usa el análisis de tests (administrador y entrenador) con un solo atleta: con
+ * enTercera los textos hablan del atleta ("Mejoró") en lugar de a él ("Mejoraste").
  */
 
 const formatFecha = (iso) => {
@@ -51,19 +53,19 @@ function TooltipMarca({ active, payload, unidad }) {
 }
 
 const TENDENCIA = {
-  mejoro: { icono: TrendingUp, texto: 'Mejoraste', clase: 'mejoro' },
-  empeoro: { icono: TrendingDown, texto: 'Bajaste', clase: 'empeoro' },
-  igual: { icono: Minus, texto: 'Igual', clase: 'igual' },
+  mejoro: { icono: TrendingUp, texto: 'Mejoraste', tercera: 'Mejoró', clase: 'mejoro' },
+  empeoro: { icono: TrendingDown, texto: 'Bajaste', tercera: 'Bajó', clase: 'empeoro' },
+  igual: { icono: Minus, texto: 'Igual', tercera: 'Igual', clase: 'igual' },
 };
 
-export default function ResumenTestsAtleta({ filas }) {
+export default function ResumenTestsAtleta({ filas, enTercera = false }) {
   const realizados = filas.filter((fila) => !fila.ausente && fila.valor !== null && fila.valor !== undefined).length;
   const pendientes = filas.filter((fila) => !fila.ausente && (fila.valor === null || fila.valor === undefined)).length;
   const ausencias = filas.filter((fila) => fila.ausente).length;
   const pruebas = porPrueba(filas);
 
   return (
-    <section className="tests-atl-resumen" aria-label="Resumen de mis tests">
+    <section className="tests-atl-resumen" aria-label={enTercera ? 'Resumen de los tests del atleta' : 'Resumen de mis tests'}>
       <div className="tests-atl-kpis">
         <div className="tests-atl-kpi"><span>Tests realizados</span><strong>{realizados}</strong></div>
         <div className="tests-atl-kpi"><span>Pendientes</span><strong>{pendientes}</strong></div>
@@ -72,7 +74,9 @@ export default function ResumenTestsAtleta({ filas }) {
       </div>
 
       {pruebas.length === 0 ? (
-        <p className="tests-atl-vacio">Cuando tengas marcas registradas, aquí verás tu evolución en cada prueba.</p>
+        <p className="tests-atl-vacio">
+          {enTercera ? 'Este atleta todavía no tiene marcas registradas con estos filtros.' : 'Cuando tengas marcas registradas, aquí verás tu evolución en cada prueba.'}
+        </p>
       ) : (
         <div className="tests-atl-pruebas">
           {pruebas.map((prueba) => {
@@ -92,7 +96,7 @@ export default function ResumenTestsAtleta({ filas }) {
                 {prueba.anterior ? (
                   <p className={`tests-atl-tendencia tests-atl-tendencia--${tendencia.clase}`}>
                     <IconoTendencia size={16} aria-hidden="true" />
-                    {tendencia.texto} respecto al {formatFecha(prueba.anterior.fecha)} ({prueba.anterior.valor} {prueba.unidad})
+                    {enTercera ? tendencia.tercera : tendencia.texto} respecto al {formatFecha(prueba.anterior.fecha)} ({prueba.anterior.valor} {prueba.unidad})
                   </p>
                 ) : (
                   <p className="tests-atl-tendencia tests-atl-tendencia--igual">Primera marca registrada en esta prueba.</p>
@@ -115,6 +119,9 @@ export default function ResumenTestsAtleta({ filas }) {
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
+                )}
+                {datos.length < 2 && (
+                  <p className="tests-atl-vacio">Se necesitan al menos dos marcas en esta prueba para ver su evolución.</p>
                 )}
                 {datos.length > 1 && (
                   <small className="tests-atl-nota">

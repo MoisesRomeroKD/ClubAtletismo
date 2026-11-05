@@ -1112,6 +1112,20 @@ body.dark-mode .roles-lista-rol {
   color: var(--accent-card-text);
 }
 
+.roles-lista-activo {
+  font-weight: 600;
+  color: var(--state-success);
+  white-space: nowrap;
+}
+
+.roles-lista-activo--no {
+  color: var(--state-danger);
+}
+
+.roles-lista-activo--pendiente {
+  color: var(--state-warning);
+}
+
 .roles-lista-accion {
   text-align: right;
 }
@@ -1347,4 +1361,21 @@ body.dark-mode .roles-lista-rol {
   font-size: 0.85rem;
   font-weight: 700;
   margin: 0;
+}
+
+/* Permiso predeterminado: viene con la cuenta y no se puede quitar */
+.roles-gestion-permiso--fijo label {
+  cursor: default;
+}
+
+.roles-gestion-permiso--fijo input:disabled {
+  cursor: not-allowed;
+}
+
+.roles-gestion-permiso-fijo {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
 }

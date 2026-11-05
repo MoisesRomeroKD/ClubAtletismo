@@ -65,6 +65,10 @@
   color: var(--state-danger);
 }
 
+.administradores-activo--pendiente {
+  color: var(--state-warning);
+}
+
 /* Tarjetas en pantallas angostas (el cambio lo hace .responsive-list de App.css) */
 .administradores-cards {
   display: grid;
@@ -374,5 +378,106 @@
 @media (max-width: 480px) {
   .admins-drawer-botones > button {
     flex: 1;
+  }
+}
+
+/* Barra de filtros (buscador y estado) */
+.administradores-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+}
+
+.administradores-buscar,
+.administradores-select {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.administradores-buscar {
+  width: 280px;
+  max-width: 100%;
+}
+
+.administradores-buscar:focus,
+.administradores-select:focus {
+  outline: none;
+  border-color: var(--func-primary);
+}
+
+/* Paginación (15 por página) */
+.administradores-paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.administradores-pagina-btn {
+  padding: 8px 18px;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.administradores-pagina-btn:hover:not(:disabled) {
+  border-color: var(--func-primary);
+  color: var(--func-primary);
+}
+
+.administradores-pagina-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.administradores-pagina-info {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* Detalle (solo lectura) dentro del drawer */
+.admins-drawer-dato {
+  display: grid;
+  gap: 2px;
+}
+
+.admins-drawer-dato span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.admins-drawer-dato strong {
+  color: var(--text-main);
+  overflow-wrap: anywhere;
+}
+
+/* La paginación de arriba (debajo de los filtros) va pegada a la lista */
+.administradores-filtros + .administradores-paginacion {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+/* En celular los filtros van en el botón flotante: la barra no deja un recuadro vacío */
+@media (max-width: 768px) {
+  .administradores-filtros {
+    display: contents;
   }
 }

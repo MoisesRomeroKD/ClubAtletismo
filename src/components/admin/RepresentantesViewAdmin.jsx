@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Eye, X } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Eye, SlidersHorizontal, X } from 'lucide-react';
 import UserService from '../../api/services/Userservice';
 import { useApplicationPermissions } from '../../context/ApplicationPermissionsContext';
 import '../../styles/components/admin/RepresentantesViewAdmin.css';
@@ -217,32 +218,81 @@ function RepresentanteDrawer({ representante, puedeEditar, onClose, onGuardado }
 
 const totalAtletas = (total) => (total ? `${total} atleta${total === 1 ? '' : 's'}` : '—');
 
+const PAGE_SIZE = 15;
+
 const RepresentantesViewAdmin = () => {
   const [representantes, setRepresentantes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [detalle, setDetalle] = useState(null);
   const [aviso, setAviso] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [inputBuscar, setInputBuscar] = useState('');
+  // Área y subárea: las de los atletas que tiene a cargo.
+  const [filtros, setFiltros] = useState({ buscar: '', area: '', subarea: '' });
+  const [catalogo, setCatalogo] = useState([]);
+  // En celular los filtros van detrás del botón "Filtros" (en monitores siempre se ven).
+  const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
   const { hasPermission } = useApplicationPermissions();
   const puedeEditar = hasPermission('editar_usuarios');
 
-  useEffect(() => {
-    const fetchRepresentantes = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await UserService.getRepresentatives();
-        setRepresentantes(Array.isArray(response) ? response : []);
-      } catch (err) {
-        console.error('Error al cargar representantes:', err);
-        setError('No se pudo cargar la lista de representantes. Inténtalo de nuevo más tarde.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE) || 1;
 
-    fetchRepresentantes();
+  useEffect(() => {
+    let active = true;
+    UserService.getSubareas()
+      .then((data) => { if (active) setCatalogo(Array.isArray(data) ? data : data?.results || []); })
+      .catch(() => { if (active) setCatalogo([]); });
+    return () => { active = false; };
   }, []);
+
+  // El buscador espera a que se deje de escribir antes de pedir la lista.
+  useEffect(() => {
+    const texto = inputBuscar.trim();
+    if (texto === filtros.buscar) return undefined;
+    const espera = setTimeout(() => {
+      setIsLoading(true);
+      setPage(1);
+      setFiltros((actuales) => ({ ...actuales, buscar: texto }));
+    }, 400);
+    return () => clearTimeout(espera);
+  }, [inputBuscar, filtros.buscar]);
+
+  // El backend devuelve 15 representantes por página, ordenados por número de referencia.
+  useEffect(() => {
+    let active = true;
+    const params = { page, ...Object.fromEntries(Object.entries(filtros).filter(([, valor]) => valor)) };
+    UserService.getRepresentatives(params)
+      .then((response) => {
+        if (!active) return;
+        setRepresentantes(Array.isArray(response?.results) ? response.results : []);
+        setTotalCount(typeof response?.count === 'number' ? response.count : 0);
+        setError(null);
+      })
+      .catch((err) => {
+        console.error('Error al cargar representantes:', err);
+        if (active) setError('No se pudo cargar la lista de representantes. Inténtalo de nuevo más tarde.');
+      })
+      .finally(() => { if (active) setIsLoading(false); });
+    return () => { active = false; };
+  }, [page, filtros]);
+
+  const cambiarFiltro = (campo, valor) => {
+    setIsLoading(true);
+    setPage(1);
+    setFiltros((actuales) => ({ ...actuales, [campo]: valor, ...(campo === 'area' && { subarea: '' }) }));
+  };
+
+  const cambiarPagina = (nueva) => {
+    setIsLoading(true);
+    setPage(nueva);
+  };
+
+  // Áreas y subáreas para los selectores (la subárea se limita al área elegida).
+  const areas = [...new Map(catalogo.filter((subarea) => subarea.area).map((subarea) => [subarea.area.id, subarea.area])).values()]
+    .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+  const subareasVisibles = catalogo.filter((subarea) => !filtros.area || String(subarea.area?.id) === filtros.area);
 
   // Al guardar, se actualiza el representante en la lista y en el drawer abierto (conserva el total de atletas).
   const alGuardar = (actualizado) => {
@@ -259,26 +309,99 @@ const RepresentantesViewAdmin = () => {
     </button>
   );
 
+  const hayFiltros = Boolean(filtros.buscar || filtros.area || filtros.subarea);
+
+  // Filtros: se pintan en la barra (monitores) y en el panel "Filtros" (celular).
+  const controlesFiltro = (
+    <>
+      <input
+        type="search"
+        className="representantes-admin-buscar"
+        placeholder="Buscar por nombre o cédula..."
+        aria-label="Buscar representante por nombre o cédula"
+        value={inputBuscar}
+        onChange={(event) => setInputBuscar(event.target.value)}
+      />
+      <select className="representantes-admin-select" aria-label="Filtrar por área de sus atletas" value={filtros.area} onChange={(event) => cambiarFiltro('area', event.target.value)}>
+        <option value="">Todas las áreas</option>
+        {areas.map((area) => <option key={area.id} value={String(area.id)}>{area.nombre}</option>)}
+      </select>
+      <select className="representantes-admin-select" aria-label="Filtrar por subárea de sus atletas" value={filtros.subarea} onChange={(event) => cambiarFiltro('subarea', event.target.value)}>
+        <option value="">Todas las subáreas</option>
+        {subareasVisibles.map((subarea) => <option key={subarea.id} value={String(subarea.id)}>{subarea.nombre}</option>)}
+      </select>
+    </>
+  );
+
+  const barraFiltros = (
+    <div className="representantes-admin-filtros">
+      <button type="button" className="filtros-fab" onClick={() => setFiltrosAbiertos(true)}>
+        <SlidersHorizontal size={18} aria-hidden="true" />Filtros
+      </button>
+      {filtrosAbiertos && createPortal(
+        <div className="filtros-sheet" role="dialog" aria-modal="true" aria-label="Filtros">
+          <header className="filtros-sheet__header">
+            <h2>Filtros</h2>
+            <button type="button" className="filtros-sheet__cerrar" onClick={() => setFiltrosAbiertos(false)} aria-label="Cerrar filtros">
+              <X size={18} />
+            </button>
+          </header>
+          <div className="filtros-sheet__body">{controlesFiltro}</div>
+          <footer className="filtros-sheet__footer">
+            <button type="button" className="filtros-sheet__btn" onClick={() => setFiltrosAbiertos(false)}>Cerrar</button>
+            <button type="button" className="filtros-sheet__btn filtros-sheet__btn--primario" onClick={() => setFiltrosAbiertos(false)}>Aplicar filtros</button>
+          </footer>
+        </div>,
+        document.body,
+      )}
+      <div className="filtros-escritorio">{controlesFiltro}</div>
+      <span className="representantes-admin-total">{totalCount} {totalCount === 1 ? 'representante' : 'representantes'}</span>
+    </div>
+  );
+
+  // Paginación: arriba de la lista (para no bajar hasta el final) y también al final.
+  const paginacion = totalPages > 1 && (
+    <div className="representantes-admin-paginacion">
+      <button type="button" className="representantes-admin-pagina-btn" onClick={() => cambiarPagina(page - 1)} disabled={page <= 1 || isLoading}>
+        ← Anterior
+      </button>
+      <span className="representantes-admin-pagina-info">Página {page} de {totalPages} · {totalCount} representantes</span>
+      <button type="button" className="representantes-admin-pagina-btn" onClick={() => cambiarPagina(page + 1)} disabled={page >= totalPages || isLoading}>
+        Siguiente →
+      </button>
+    </div>
+  );
+
   if (isLoading) {
-    return <div className="representantes-admin-estado">Cargando representantes...</div>;
+    return <>{barraFiltros}{paginacion}<div className="representantes-admin-estado">Cargando representantes...</div></>;
   }
 
   if (error) {
-    return <div role="alert" className="representantes-admin-estado representantes-admin-estado--error">{error}</div>;
+    return <>{barraFiltros}<div role="alert" className="representantes-admin-estado representantes-admin-estado--error">{error}</div></>;
   }
 
   if (representantes.length === 0) {
-    return <div className="representantes-admin-estado">No hay representantes registrados en el sistema.</div>;
+    return (
+      <>
+        {barraFiltros}
+        <div className="representantes-admin-estado">
+          {hayFiltros ? 'No hay representantes con esos filtros.' : 'No hay representantes registrados en el sistema.'}
+        </div>
+      </>
+    );
   }
 
   return (
     <>
+    {barraFiltros}
+    {paginacion}
     {aviso && <div role="status" className="representantes-admin-ok">{aviso}</div>}
     <div className="responsive-list">
     <div className="responsive-list__table representantes-admin-wrap">
       <table className="representantes-admin-tabla">
         <thead>
           <tr>
+            <th>Ref.</th>
             <th>Cédula</th>
             <th>Nombre del Representante</th>
             <th>Teléfono</th>
@@ -289,6 +412,7 @@ const RepresentantesViewAdmin = () => {
         <tbody>
           {representantes.map((representante) => (
             <tr key={representante.id}>
+              <td className="ref-usuario">{representante.id}</td>
               <td className="representantes-admin-cedula">{representante.cedula || '—'}</td>
               <td className="representantes-admin-nombre">{nombreDe(representante)}</td>
               <td className="representantes-admin-dato">{representante.tlf || '—'}</td>
@@ -306,6 +430,7 @@ const RepresentantesViewAdmin = () => {
           <article className="representantes-admin-card" key={representante.id}>
             <h3 className="representantes-admin-nombre">{nombreDe(representante)}</h3>
             <dl>
+              <div><dt>Ref.</dt><dd className="ref-usuario">{representante.id}</dd></div>
               <div><dt>Cédula</dt><dd className="representantes-admin-cedula">{representante.cedula || '—'}</dd></div>
               <div><dt>Teléfono</dt><dd>{representante.tlf || '—'}</dd></div>
               <div>
@@ -319,6 +444,8 @@ const RepresentantesViewAdmin = () => {
       </div>
     </div>
     </div>
+
+    {paginacion}
 
     {detalle && (
       <RepresentanteDrawer

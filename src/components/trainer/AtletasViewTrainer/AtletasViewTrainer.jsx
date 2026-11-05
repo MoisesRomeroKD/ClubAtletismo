@@ -347,6 +347,29 @@ export default function AtletasViewTrainer() {
     </>
   );
 
+  // Paginación: arriba de la lista (para no bajar hasta el final) y también al final.
+  const paginacion = totalPages > 1 && (
+    <div className="atletas-paginacion">
+      <button
+        type="button"
+        className="atletas-paginacion-btn"
+        onClick={() => { setIsLoading(true); setPage((p) => Math.max(1, p - 1)); }}
+        disabled={page <= 1 || isLoading}
+      >
+        ← Anterior
+      </button>
+      <span className="atletas-paginacion-info">Página {page} de {totalPages}</span>
+      <button
+        type="button"
+        className="atletas-paginacion-btn"
+        onClick={() => { setIsLoading(true); setPage((p) => Math.min(totalPages, p + 1)); }}
+        disabled={page >= totalPages || isLoading}
+      >
+        Siguiente →
+      </button>
+    </div>
+  );
+
   return (
     <div className={`atletas-admin-container ${drawerOpen ? 'drawer-open' : ''}`}>
       <div className="atletas-filtros-container">
@@ -374,6 +397,8 @@ export default function AtletasViewTrainer() {
         <div className="filtros-escritorio">{controlesFiltro1}</div>
         <span className="atletas-counter">{totalCount} atleta{totalCount !== 1 ? 's' : ''} en total</span>
       </div>
+
+      {paginacion}
 
       {isLoading ? (
         <div className="atletas-loading">Cargando lista de atletas...</div>
@@ -457,27 +482,7 @@ export default function AtletasViewTrainer() {
 
           {!athletes.length && !isLoading && <div className="atletas-loading">No se encontraron atletas.</div>}
 
-          {totalPages > 1 && (
-            <div className="atletas-paginacion">
-              <button
-                type="button"
-                className="atletas-paginacion-btn"
-                onClick={() => { setIsLoading(true); setPage((p) => Math.max(1, p - 1)); }}
-                disabled={page <= 1}
-              >
-                ← Anterior
-              </button>
-              <span className="atletas-paginacion-info">Página {page} de {totalPages}</span>
-              <button
-                type="button"
-                className="atletas-paginacion-btn"
-                onClick={() => { setIsLoading(true); setPage((p) => Math.min(totalPages, p + 1)); }}
-                disabled={page >= totalPages}
-              >
-                Siguiente →
-              </button>
-            </div>
-          )}
+          {paginacion}
         </>
       )}
 

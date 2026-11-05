@@ -40,6 +40,27 @@ const QUOTES = [
 
 const columna = { display: 'flex', flexDirection: 'column', gap: '0.5rem' };
 
+// Cuentas inactivas (misma clave que el login): no pasan del paso 1 ni se les pide el código.
+const CLAVE_INACTIVAS = 'cuentas_inactivas';
+const MENSAJE_INACTIVA = 'Su cuenta está inactiva. Comuníquese con la administración del club.';
+const leerInactivas = () => {
+  try {
+    const guardadas = JSON.parse(sessionStorage.getItem(CLAVE_INACTIVAS) || '[]');
+    return Array.isArray(guardadas) ? guardadas : [];
+  } catch {
+    return [];
+  }
+};
+const recordarInactiva = (identificador) => {
+  const lista = [...new Set([...leerInactivas(), identificador])];
+  try {
+    sessionStorage.setItem(CLAVE_INACTIVAS, JSON.stringify(lista));
+  } catch {
+    // Sin almacenamiento solo se recuerda en esta pantalla.
+  }
+  return lista;
+};
+
 export default function RecuperarPassword() {
   const navigate = useNavigate();
   const [paso, setPaso] = useState(1);
@@ -53,8 +74,10 @@ export default function RecuperarPassword() {
   const [notificacion, setNotificacion] = useState('');
   const [currentQuote, setCurrentQuote] = useState(0);
   const temporizadorAviso = useRef(null);
+  const [inactivas, setInactivas] = useState(leerInactivas);
 
   const identificadorLimpio = identificador.trim();
+  const cuentaInactiva = inactivas.includes(identificadorLimpio.toLowerCase());
   const esIdentificadorValido = CEDULA_REGEX.test(identificadorLimpio) || CORREO_REGEX.test(identificadorLimpio);
   const esCodigoValido = OTP_REGEX.test(codigo);
 
@@ -74,6 +97,16 @@ export default function RecuperarPassword() {
 
   const errorDe = (error, porDefecto) => error.response?.data?.message || porDefecto;
 
+  // Si el servidor dice que la cuenta está inactiva se vuelve al paso 1 y ya no se ofrece seguir.
+  const siEstaInactiva = (error) => {
+    if (error.response?.data?.status !== 'disabled') return false;
+    setInactivas(recordarInactiva(identificadorLimpio.toLowerCase()));
+    setNotificacion('');
+    setCodigo('');
+    setPaso(1);
+    return true;
+  };
+
   // Si escribe solo números se trata como cédula (máximo 8); si no, como correo (sin espacios).
   const cambiarIdentificador = (valor) => {
     const sinEspacios = valor.replace(/\s/g, '');
@@ -84,6 +117,7 @@ export default function RecuperarPassword() {
 
   // PASO 1: pedir el código
   const solicitarCodigo = async () => {
+    if (cuentaInactiva) return;
     if (!esIdentificadorValido) {
       avisar('⚠️ Escribe tu correo o tu cédula (un número entre 1.000.000 y 49.999.999).');
       return;
@@ -95,6 +129,7 @@ export default function RecuperarPassword() {
       setCodigo('');
       setPaso(2);
     } catch (error) {
+      if (siEstaInactiva(error)) return;
       avisar(`⚠️ ${errorDe(error, 'No se pudo conectar con el servidor.')}`);
     } finally {
       setIsLoading(false);
@@ -113,6 +148,7 @@ export default function RecuperarPassword() {
       avisar('✅ Código verificado. Ahora crea tu contraseña nueva.');
       setPaso(3);
     } catch (error) {
+      if (siEstaInactiva(error)) return;
       avisar(`⚠️ ${errorDe(error, 'El código es inválido o venció.')}`);
     } finally {
       setIsLoading(false);
@@ -141,8 +177,9 @@ export default function RecuperarPassword() {
       avisar(respuesta.message || 'Tu contraseña se cambió. Ya puedes iniciar sesión.');
       setTimeout(() => navigate('/login', { replace: true }), 2500);
     } catch (error) {
-      avisar(`⚠️ ${errorDe(error, 'No se pudo cambiar la contraseña.')}`);
       setIsLoading(false);
+      if (siEstaInactiva(error)) return;
+      avisar(`⚠️ ${errorDe(error, 'No se pudo cambiar la contraseña.')}`);
     }
   };
 
@@ -154,6 +191,7 @@ export default function RecuperarPassword() {
       const respuesta = await authService.solicitarRecuperacion(identificadorLimpio);
       avisar(respuesta.message || 'Si los datos son correctos, enviamos un código nuevo.');
     } catch (error) {
+      if (siEstaInactiva(error)) return;
       avisar(`⚠️ ${errorDe(error, 'No se pudo reenviar el código.')}`);
     } finally {
       setIsLoading(false);
@@ -203,15 +241,19 @@ export default function RecuperarPassword() {
                     disabled={isLoading}
                   />
                 </div>
-                <button
-                  type="button"
-                  onClick={solicitarCodigo}
-                  disabled={!esIdentificadorValido || isLoading}
-                  className="auth-btn-skew"
-                  style={estiloBoton(esIdentificadorValido && !isLoading)}
-                >
-                  <span className="auth-btn-text">{isLoading ? 'ENVIANDO...' : 'ENVIAR CÓDIGO ➔'}</span>
-                </button>
+                {cuentaInactiva ? (
+                  <div className="auth-alerta-inactiva" role="alert">{MENSAJE_INACTIVA}</div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={solicitarCodigo}
+                    disabled={!esIdentificadorValido || isLoading}
+                    className="auth-btn-skew"
+                    style={estiloBoton(esIdentificadorValido && !isLoading)}
+                  >
+                    <span className="auth-btn-text">{isLoading ? 'ENVIANDO...' : 'ENVIAR CÓDIGO ➔'}</span>
+                  </button>
+                )}
               </div>
             )}
 

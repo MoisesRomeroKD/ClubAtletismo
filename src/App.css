@@ -393,3 +393,20 @@ html.scroll-bloqueado .content-area {
     cursor: pointer;
   }
 }
+
+/* ============================================================================
+   Aviso de cuenta inactiva (Login y Recuperar contraseña): ocupa el lugar
+   del botón de acceso, que ya no se muestra.
+   ============================================================================ */
+.auth-alerta-inactiva {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--state-danger);
+  border-left-width: 4px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--state-danger) 10%, transparent);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
