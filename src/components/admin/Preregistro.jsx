@@ -105,10 +105,10 @@ const MASIVO_POR_ROL = {
   },
   Administrador: {
     plural: 'Administradores',
-    descripcion: 'Cada fila representa un administrador (sin representante, fecha de nacimiento ni teléfono). "cargo" es opcional (ej. Secretaria):',
-    columnas: [['cedula', 12], ['nombres', 18], ['apellidos', 20], ['correo', 26], ['cargo', 26]],
+    descripcion: 'Cada fila representa un administrador (sin representante, fecha de nacimiento ni teléfono):',
+    columnas: [['cedula', 12], ['nombres', 18], ['apellidos', 20], ['correo', 26]],
     ejemplos: [
-      { cedula: '14567890', nombres: 'Pedro Jose', apellidos: 'Blanco Rivas', correo: 'pedro.blanco@gmail.com', cargo: 'Asistente administrativo' },
+      { cedula: '14567890', nombres: 'Pedro Jose', apellidos: 'Blanco Rivas', correo: 'pedro.blanco@gmail.com' },
     ],
   },
 };
@@ -131,8 +131,6 @@ const FORMULARIO_VACIO = {
   subareas_ids: [],
   // Atleta: discapacidades del catálogo (puede tener varias).
   discapacidades: [],
-  // Administrador: su cargo en el club (texto libre, opcional).
-  cargo: '',
 };
 
 // Edad mínima del atleta: 9 años. Se acepta hasta el 31/12 de (año actual - 9).
@@ -409,9 +407,8 @@ const Preregistro = () => {
         notificar('Marca al menos una subárea del entrenador.', { tipo: 'aviso' });
         return;
       }
-      // El cargo solo lo tiene el administrador.
       const sinSubareas = (datosRol) => Object.fromEntries(Object.entries(datosRol).filter(([campo]) => (
-        !['subarea_id', 'turno', 'subareas_ids'].includes(campo) && (campo !== 'cargo' || rol === 'administrador')
+        !['subarea_id', 'turno', 'subareas_ids'].includes(campo)
       )));
       const datos = rol === 'Atleta'
         ? { ...sinSubareas(datosAtleta), subarea_id: formData.subarea_id, turno: formData.turno }
@@ -1087,10 +1084,6 @@ const Preregistro = () => {
               <label htmlFor="correo">Correo Electrónico</label>
               <input id="correo" type="email" name="correo" value={formData.correo} onChange={handleInputChange} required pattern={PATRON_GMAIL} title={AYUDA_GMAIL} placeholder="nombre@gmail.com" {...validacion('correo')} />
               {renderAviso('correo')}
-            </div>
-            <div className="preregistro-field">
-              <label htmlFor="cargo">Cargo <small>(opcional)</small></label>
-              <input id="cargo" type="text" name="cargo" value={formData.cargo} onChange={(event) => setFormData((actual) => ({ ...actual, cargo: event.target.value.replace(/ {2,}/g, ' ').slice(0, 60) }))} maxLength={60} placeholder="Ej. Secretaria, Asistente administrativo" />
             </div>
             <div className="preregistro-form-actions">
               <button type="submit" className="preregistro-submit-button">

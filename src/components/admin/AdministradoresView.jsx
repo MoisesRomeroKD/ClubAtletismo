@@ -45,7 +45,6 @@ function EditarAdministradorForm({ admin, onCancel, onGuardado }) {
     apellidos: admin.lastname || '',
     cedula: cedulaActual,
     correo: admin.email || '',
-    cargo: admin.cargo || '',
     is_active: Boolean(admin.is_active),
   });
   const [rechazos, setRechazos] = useState({});
@@ -66,9 +65,6 @@ function EditarAdministradorForm({ admin, onCancel, onGuardado }) {
     } else if (campo === 'correo') {
       limpio = valor.replace(/\s/g, '').toLowerCase();
       if (limpio !== valor.toLowerCase()) rechazo = 'Aquí no se escriben espacios.';
-    } else if (campo === 'cargo') {
-      // Texto libre (ej. Secretaria, Asistente administrativo): hasta 60 caracteres.
-      limpio = valor.replace(/ {2,}/g, ' ').slice(0, 60);
     }
     setRechazos((previos) => ({ ...previos, [campo]: rechazo }));
     setErroresServidor((previos) => ({ ...previos, [campo]: '' }));
@@ -99,7 +95,6 @@ function EditarAdministradorForm({ admin, onCancel, onGuardado }) {
         nombres: form.nombres.trim(),
         apellidos: form.apellidos.trim(),
         correo: form.correo,
-        cargo: form.cargo.trim(),
         is_active: form.is_active,
         cedula: form.cedula,
       });
@@ -142,7 +137,6 @@ function EditarAdministradorForm({ admin, onCancel, onGuardado }) {
           <p className="admins-drawer-nota">Este administrador no tiene perfil: se crea con esta cédula.</p>
         )}
         {campo('correo', 'Correo electrónico', { type: 'email', required: true, placeholder: 'nombre@gmail.com' })}
-        {campo('cargo', 'Cargo', { type: 'text', maxLength: 60, placeholder: 'Ej. Secretaria, Asistente administrativo' })}
 
         <div className="admins-drawer-campo">
           <span className="admins-drawer-etiqueta">Rol</span>
@@ -216,7 +210,6 @@ function AdministradorDrawer({ admin, puedeEditar, onClose, onGuardado }) {
               <DatoFijo etiqueta="Apellidos">{admin.lastname}</DatoFijo>
               <DatoFijo etiqueta="Cédula">{admin.cedula}</DatoFijo>
               <DatoFijo etiqueta="Correo electrónico">{admin.email}</DatoFijo>
-              <DatoFijo etiqueta="Cargo">{admin.cargo || 'Sin cargo indicado'}</DatoFijo>
               <DatoFijo etiqueta="Rol">{etiquetaRol(admin.rol)}</DatoFijo>
               <DatoFijo etiqueta="Estado">{estadoDe(admin)}</DatoFijo>
               <DatoFijo etiqueta="Último acceso">{fechaHora(admin.last_login)}</DatoFijo>
@@ -403,7 +396,6 @@ const AdministradoresView = () => {
           <tr>
             <th>Ref.</th>
             <th>Nombre</th>
-            <th>Cargo</th>
             <th>Correo Electrónico</th>
             <th>Estado</th>
             <th><span className="administradores-oculto">Detalle</span></th>
@@ -414,7 +406,6 @@ const AdministradoresView = () => {
             <tr key={admin.id}>
               <td className="ref-usuario">{admin.id}</td>
               <td className="administradores-nombre">{admin.nombre_completo}</td>
-              <td>{admin.cargo || '—'}</td>
               <td className="administradores-email">{admin.email}</td>
               <td>{estadoDe(admin)}</td>
               <td className="administradores-accion">{botonDetalle(admin)}</td>
@@ -434,7 +425,6 @@ const AdministradoresView = () => {
             </div>
             <dl>
               <div><dt>Ref.</dt><dd className="ref-usuario">{admin.id}</dd></div>
-              <div><dt>Cargo</dt><dd>{admin.cargo || '—'}</dd></div>
               <div><dt>Correo</dt><dd>{admin.email}</dd></div>
             </dl>
             {botonDetalle(admin)}
