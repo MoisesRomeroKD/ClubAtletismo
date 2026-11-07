@@ -598,6 +598,90 @@ function ResumenAtletas({ params }) {
   );
 }
 
+// Lo que muestra el panel de indicadores, como secciones para el PDF / Excel.
+function seccionesResumen(data) {
+  if (!data) return [];
+  const { asistencia, sueno, evaluaciones, categorias, atletas_activos: activos } = data;
+  const secciones = [];
+  const indicadores = [];
+  if (asistencia) {
+    const variacion = asistencia.variacion;
+    indicadores.push({
+      indicador: 'Asistencia media',
+      valor: formatNumber(asistencia.porcentaje, '%'),
+      detalle: variacion === null || variacion === undefined
+        ? 'Sin datos del período anterior para comparar'
+        : `${variacion >= 0 ? '+' : ''}${variacion}% respecto al período anterior`,
+    });
+  }
+  if (sueno) {
+    indicadores.push({
+      indicador: 'Calidad de sueño promedio',
+      valor: sueno.promedio === null ? '—' : `${sueno.promedio}/10`,
+      detalle: `${sueno.registros} registros · escala del 1 al 10`,
+    });
+  }
+  indicadores.push({
+    indicador: 'Atletas activos',
+    valor: activos,
+    detalle: (categorias || []).map((c) => `${c.atletas} ${c.categoria}`).join(' · ') || 'Sin atletas',
+  });
+  if (evaluaciones) {
+    indicadores.push({
+      indicador: 'Evaluaciones registradas',
+      valor: evaluaciones.total,
+      detalle: `${evaluaciones.atletas_evaluados} evaluados · ${evaluaciones.pendientes} sin evaluación en el período`,
+    });
+  }
+  secciones.push({
+    title: 'Indicadores del período',
+    columns: [{ key: 'indicador', label: 'Indicador' }, { key: 'valor', label: 'Valor' }, { key: 'detalle', label: 'Detalle' }],
+    rows: indicadores,
+  });
+  if (asistencia) {
+    const porSemana = asistencia.tendencia?.agrupacion === 'semana';
+    secciones.push({
+      title: `Asistencia ${porSemana ? 'por semana' : 'por mes'}`,
+      columns: [
+        {
+          key: 'inicio',
+          label: porSemana ? 'Semana' : 'Mes',
+          exportValue: (row) => (porSemana ? `Semana del ${formatDate(row.inicio)}` : formatMonth(row.inicio.slice(0, 7))),
+        },
+        { key: 'presentes', label: 'Presentes' },
+        { key: 'ausentes', label: 'Ausentes' },
+        { key: 'justificados', label: 'Justificadas' },
+        { key: 'total', label: 'Total registros' },
+        { key: 'porcentaje', label: 'Asistencia', exportValue: (row) => formatNumber(row.porcentaje, '%') },
+      ],
+      rows: asistencia.tendencia?.periodos || [],
+    });
+    secciones.push({
+      title: 'Asistencia por categoría',
+      columns: [
+        { key: 'categoria', label: 'Categoría' },
+        { key: 'atletas', label: 'Atletas' },
+        { key: 'porcentaje', label: 'Asistencia', exportValue: (row) => formatNumber(row.porcentaje, '%') },
+        { key: 'ausentes', label: 'Ausencias' },
+        { key: 'justificados', label: 'Justificadas' },
+      ],
+      rows: asistencia.categorias || [],
+    });
+  }
+  if (sueno) {
+    secciones.push({
+      title: 'Distribución de la calidad de sueño',
+      columns: [
+        { key: 'rango', label: 'Rango (1-10)' },
+        { key: 'etiqueta', label: 'Nivel' },
+        { key: 'porcentaje', label: 'Porcentaje', exportValue: (row) => `${row.porcentaje ?? 0}%` },
+      ],
+      rows: sueno.registros ? sueno.distribucion || [] : [],
+    });
+  }
+  return secciones;
+}
+
 const sleepTone = (calidad) => (calidad >= 7 ? 'verde' : calidad >= 5 ? 'amarillo' : 'rojo');
 const barTone = (porcentaje) => (porcentaje === null ? 'is-empty' : porcentaje <= 70 ? 'is-low' : porcentaje < 85 ? 'is-mid' : 'is-high');
 
@@ -651,6 +735,10 @@ const DETALLE_CINE_COLUMNS = [
 ];
 
 function DetalleAtleta({ atletaId, params, rangoTexto, onClose }) {
+  const metaDetalle = (atleta) => ({
+    sujeto: `${atleta.nombre} ${atleta.apellido} · Cédula ${atleta.cedula || '—'}`.trim(),
+    filtros: [['Período', rangoTexto || 'Últimos 30 días']],
+  });
   const [state, setState] = useState({ id: null, data: null, error: '' });
 
   useEffect(() => {
@@ -727,9 +815,10 @@ function DetalleAtleta({ atletaId, params, rangoTexto, onClose }) {
         rows: data.cineantropometria,
       },
     ];
-    const fileName = `detalle_${atleta.cedula || atleta.id}`;
-    if (formato === 'excel') exportToExcel(fileName, sections);
-    else exportToPdf(fileName, `Detalle del atleta — ${nombreCompleto} (${rangoTexto || 'últimos 30 días'})`, sections);
+    const fileName = 'detalle_atleta';
+    const titulo = `Detalle del atleta — ${nombreCompleto}`;
+    if (formato === 'excel') exportToExcel(fileName, sections, metaDetalle(atleta), titulo);
+    else exportToPdf(fileName, titulo, sections, metaDetalle(atleta));
   };
 
   return createPortal(
@@ -900,7 +989,7 @@ function DetalleAtleta({ atletaId, params, rangoTexto, onClose }) {
   );
 }
 
-function SeccionesEntrenador({ filtros, mostrar, onVerDetalle }) {
+function SeccionesEntrenador({ filtros, mostrar, onVerDetalle, resumenParams, meta }) {
   const [inputBusqueda, setInputBusqueda] = useState('');
   const [busqueda, setBusqueda] = useState('');
   const [estadoFiltro, setEstadoFiltro] = useState('');
@@ -983,17 +1072,24 @@ function SeccionesEntrenador({ filtros, mostrar, onVerDetalle }) {
     ...(verCine && reporte ? ['cine'] : []),
   ];
 
-  const runExport = async (keys, fileName, title, format) => {
+  const runExport = async (keys, fileName, title, format, conResumen = false) => {
     setExporting(true);
     setExportError('');
     try {
-      const allRows = await Promise.all(keys.map((key) => fetchAllRows[key]()));
-      const sections = keys.map((key, index) => ({
-        ...SECTION_CONFIG[key],
-        rows: Array.isArray(allRows[index]) ? allRows[index] : [],
-      }));
-      if (format === 'excel') exportToExcel(fileName, sections);
-      else exportToPdf(fileName, title, sections);
+      // El reporte general lleva también los indicadores del período (lo mismo que se ve arriba en pantalla).
+      const [resumen, ...allRows] = await Promise.all([
+        conResumen && resumenParams ? UserService.getAdminReport({ ...resumenParams, seccion: 'resumen' }) : null,
+        ...keys.map((key) => fetchAllRows[key]()),
+      ]);
+      const sections = [
+        ...seccionesResumen(resumen),
+        ...keys.map((key, index) => ({
+          ...SECTION_CONFIG[key],
+          rows: Array.isArray(allRows[index]) ? allRows[index] : [],
+        })),
+      ];
+      if (format === 'excel') exportToExcel(fileName, sections, meta, title);
+      else await exportToPdf(fileName, title, sections, meta);
     } catch (error) {
       setExportError(errorMessage(error, 'No se pudo generar el archivo.'));
     } finally {
@@ -1001,11 +1097,11 @@ function SeccionesEntrenador({ filtros, mostrar, onVerDetalle }) {
     }
   };
 
-  const exportButtons = (keys, fileName, title) => (
+  const exportButtons = (keys, fileName, title, conResumen = false) => (
     <ExportButtons
-      disabled={exporting || !keys.length}
-      onExcel={() => runExport(keys, fileName, title, 'excel')}
-      onPdf={() => runExport(keys, fileName, title, 'pdf')}
+      disabled={exporting || (!keys.length && !conResumen)}
+      onExcel={() => runExport(keys, fileName, title, 'excel', conResumen)}
+      onPdf={() => runExport(keys, fileName, title, 'pdf', conResumen)}
     />
   );
   const reportButtons = (key, fileName, title) => exportButtons(reporte ? [key] : [], fileName, title);
@@ -1018,7 +1114,7 @@ function SeccionesEntrenador({ filtros, mostrar, onVerDetalle }) {
           <strong className="report-filter-title">Reporte de mis subáreas</strong>
           <p className="report-filter-hint">Exporta en un solo archivo las secciones visibles con los filtros aplicados.</p>
         </div>
-        {exportButtons(visibleKeys, 'reporte_subareas', 'Reporte de mis subáreas')}
+        {exportButtons(visibleKeys, 'reporte_subareas', 'Reporte de mis subáreas', Boolean(filtros.verAtletas && resumenParams))}
       </div>
       {exportError && <div className="report-panel report-error" role="alert">{exportError}</div>}
 
@@ -1129,6 +1225,27 @@ function ReporteSubareas() {
     [filtros.rangoValido, filtros.rango.desde, filtros.rango.hasta],
   );
 
+  const meta = useMemo(() => {
+    const area = catalogos.areas.find((a) => String(a.id) === String(aplicado.areaId))?.nombre || '';
+    const subarea = catalogos.subareas.find((x) => String(x.id) === String(aplicado.subareaId))?.nombre || '';
+    const usuario = aplicado.usuario;
+    const partes = [aplicado.categoria, area, subarea].filter(Boolean);
+    const sujeto = usuario
+      ? `${usuario.nombre}${usuario.cedula ? ` · Cédula ${usuario.cedula}` : ''}`
+      : partes.length ? partes.join(' · ') : 'Mis subáreas';
+    const secciones = MOSTRAR_OPCIONES.filter(([clave]) => aplicado.mostrar[clave]).map(([, label]) => label).join(', ');
+    return {
+      sujeto,
+      filtros: [
+        ['Período', filtros.rangoTexto],
+        ['Categoría', aplicado.categoria || 'Todas'],
+        ['Área', area || 'Todas'],
+        ['Subárea', subarea || 'Todas'],
+        ['Secciones', secciones],
+      ],
+    };
+  }, [aplicado, catalogos, filtros.rangoTexto]);
+
   const verDetalle = useCallback((id) => setDetalleId(id), []);
   const cerrarDetalle = useCallback(() => setDetalleId(null), []);
   const aplicarBorrador = () => {
@@ -1179,7 +1296,13 @@ function ReporteSubareas() {
 
       {filtros.verAtletas && indicadoresKey && <ResumenAtletas params={resumenParams} />}
 
-      <SeccionesEntrenador filtros={filtros} mostrar={aplicado.mostrar} onVerDetalle={verDetalle} />
+      <SeccionesEntrenador
+        filtros={filtros}
+        mostrar={aplicado.mostrar}
+        onVerDetalle={verDetalle}
+        resumenParams={resumenParams}
+        meta={meta}
+      />
 
       {detalleId && (
         <DetalleAtleta atletaId={detalleId} params={detalleParams} rangoTexto={filtros.rangoTexto} onClose={cerrarDetalle} />
