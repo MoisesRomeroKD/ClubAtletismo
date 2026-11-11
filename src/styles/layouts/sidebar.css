@@ -18,7 +18,6 @@
    el sidebar sigue siendo overlay (transform + backdrop).
    ============================================================================ */
 
-
 /* ============================================================================
    LAYOUT GENERAL
    ============================================================================ */
@@ -45,7 +44,6 @@
   box-sizing: border-box;
   transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 
 /* ============================================================================
    SIDEBAR BASE
@@ -81,7 +79,6 @@
     var(--transition-theme);
 }
 
-
 /* ============================================================================
    BACKDROP
    ============================================================================ */
@@ -97,7 +94,6 @@
 
   z-index: 90;
 }
-
 
 /* ============================================================================
    MAIN CONTENT
@@ -126,56 +122,9 @@
   margin-inline: auto;
 }
 
-
 /* ============================================================================
    ELEMENTOS INTERNOS
    ============================================================================ */
-
-.user-sidebar__header {
-  padding: 1.25rem 1.5rem;
-
-  display: flex;
-  align-items: center;
-
-  gap: 1rem;
-
-  border-bottom: 1px solid var(--border-main);
-
-  flex-shrink: 0;
-}
-
-
-.user-sidebar__mobile-menu-btn {
-  margin-left: auto;
-
-  background: transparent;
-  border: none;
-
-  color: var(--text-sidebar);
-
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-.user-sidebar__logo-icon {
-  color: var(--brand-tertiary);
-}
-
-
-.user-sidebar__title {
-  font-size: 1.25rem;
-
-  font-weight: 700;
-
-  letter-spacing: 1px;
-
-  color: var(--text-sidebar);
-}
-
 
 /* ============================================================================
    NAVEGACIÓN
@@ -194,18 +143,15 @@
   overflow-y: auto;
 }
 
-
 .user-sidebar__nav::-webkit-scrollbar {
   width: 4px;
 }
-
 
 .user-sidebar__nav::-webkit-scrollbar-thumb {
   background: var(--border-main);
 
   border-radius: 4px;
 }
-
 
 /* ============================================================================
    TÍTULOS DE GRUPO
@@ -221,7 +167,6 @@
 
   color: var(--text-muted);
 }
-
 
 /* ============================================================================
    NAV ITEMS
@@ -251,7 +196,6 @@
   box-sizing: border-box;
 }
 
-
 .user-sidebar__nav-item:hover,
 .user-sidebar__nav-item.is-active {
   background: var(--bg-sidebar-hover);
@@ -261,13 +205,11 @@
   border-color: var(--border-main);
 }
 
-
 .user-sidebar__nav-item.is-active {
   border-left: 3px solid var(--brand-tertiary);
 
   font-weight: bold;
 }
-
 
 .user-sidebar__nav-label {
   font-weight: 500;
@@ -275,23 +217,9 @@
   font-size: 0.95rem;
 }
 
-
 /* ============================================================================
    FOOTER
    ============================================================================ */
-
-.user-sidebar__footer {
-  padding: 1.25rem 1rem;
-
-  border-top: 1px solid var(--border-main);
-
-  flex-shrink: 0;
-
-  background: var(--bg-sidebar);
-
-  transition: var(--transition-theme);
-}
-
 
 /* ============================================================================
    SUBMENÚ
@@ -300,7 +228,6 @@
 .user-sidebar__submenu {
   animation: sidebarFadeIn 0.3s ease-in-out;
 }
-
 
 .user-sidebar__sub-btn {
   background: transparent;
@@ -323,12 +250,10 @@
   transition: color 0.2s ease;
 }
 
-
 .user-sidebar__sub-btn:hover,
 .user-sidebar__sub-btn.is-active {
   color: var(--brand-tertiary);
 }
-
 
 /* ============================================================================
    ANIMACIÓN
@@ -345,7 +270,6 @@
     transform: translateY(0);
   }
 }
-
 
 /* ============================================================================
    BREAKPOINT 1 — 320px (MÓVIL ULTRA PEQUEÑO)
@@ -375,7 +299,6 @@
   }
 }
 
-
 /* ============================================================================
    BREAKPOINT 2 — 375px (MÓVIL PEQUEÑO)
    ============================================================================ */
@@ -399,7 +322,6 @@
   }
 }
 
-
 /* ============================================================================
    BREAKPOINT 3 — 425px (MÓVIL GRANDE / PHABLET)
    ============================================================================ */
@@ -422,7 +344,6 @@
     font-size: 0.92rem;
   }
 }
-
 
 /* ============================================================================
    COMPORTAMIENTO MÓVIL (320px — 767px)
@@ -460,7 +381,6 @@
     display: flex !important;
   }
 }
-
 
 /* ============================================================================
    BREAKPOINT 4 — 768px (TABLET)
@@ -500,7 +420,6 @@
   }
 }
 
-
 /* ============================================================================
    BREAKPOINT 5 — 1024px (LAPTOP)
    Sidebar "encoge" el contenido: el padre reserva espacio con padding-left.
@@ -537,7 +456,6 @@
     display: none !important;
   }
 }
-
 
 /* ============================================================================
    BREAKPOINT 6 — 1440px (DESKTOP / FULL HD / QHD)
@@ -594,7 +512,6 @@
     display: none !important;
   }
 }
-
 
 /* ============================================================================
    BREAKPOINT 7 — 2560px (4K / ULTRA-WIDE)

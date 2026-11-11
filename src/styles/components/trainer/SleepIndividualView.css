@@ -329,20 +329,6 @@ body.dark-mode .sleep-individual-view {
   justify-content: center;
 }
 
-.sl-chart-grid line {
-  stroke: var(--sl-border);
-  stroke-width: 1;
-  stroke-dasharray: 4 4;
-}
-
-.sl-line-chart-path {
-  fill: none;
-  stroke: var(--sl-primary);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
 .sl-chart-container svg circle {
   transition: stroke-dashoffset 1s ease-out, stroke 0.3s ease;
 }

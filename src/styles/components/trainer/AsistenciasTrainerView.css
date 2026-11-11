@@ -104,10 +104,8 @@
 .icon-xs { width: 14px; height: 14px; }
 .icon-sm { width: 16px; height: 16px; }
 .icon-md { width: 20px; height: 20px; }
-.icon-lg { width: 24px; height: 24px; }
 
 .spin { animation: spin 1s linear infinite; }
-.pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
 
 @keyframes spin {
   from { transform: rotate(0deg); }
@@ -1083,4 +1081,16 @@
   font-size: 0.8rem;
   margin: 0;
   text-align: right;
+}
+
+/* Con el select desplegable del tema (theme.css) la flecha la dibuja el propio select */
+@supports (appearance: base-select) {
+  .period-select {
+    appearance: base-select;
+    padding-right: 16px;
+  }
+
+  .select-icons {
+    display: none;
+  }
 }

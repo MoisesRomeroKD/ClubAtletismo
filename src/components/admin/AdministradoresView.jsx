@@ -419,13 +419,12 @@ const AdministradoresView = () => {
       <div className="administradores-cards">
         {administradores.map((admin) => (
           <article className="administradores-card" key={admin.id}>
-            <div className="administradores-card-head">
-              <h3 className="administradores-nombre">{admin.nombre_completo}</h3>
-              {estadoDe(admin)}
-            </div>
+            <h3 className="administradores-nombre">{admin.nombre_completo}</h3>
             <dl>
               <div><dt>Ref.</dt><dd className="ref-usuario">{admin.id}</dd></div>
-              <div><dt>Correo</dt><dd>{admin.email}</dd></div>
+              <div><dt>Cédula</dt><dd className="administradores-card-cedula">{admin.cedula || '—'}</dd></div>
+              <div><dt>Correo</dt><dd>{admin.email || '—'}</dd></div>
+              <div><dt>Estado</dt><dd>{estadoDe(admin)}</dd></div>
             </dl>
             {botonDetalle(admin)}
           </article>

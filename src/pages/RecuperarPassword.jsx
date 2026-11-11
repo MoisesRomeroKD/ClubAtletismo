@@ -95,7 +95,7 @@ export default function RecuperarPassword() {
     temporizadorAviso.current = setTimeout(() => setNotificacion(''), 4500);
   };
 
-  const errorDe = (error, porDefecto) => error.response?.data?.message || porDefecto;
+  const errorDe = (error, porDefecto) => error.response?.data?.message || error.response?.data?.detail || porDefecto;
 
   // Si el servidor dice que la cuenta está inactiva se vuelve al paso 1 y ya no se ofrece seguir.
   const siEstaInactiva = (error) => {
@@ -169,6 +169,10 @@ export default function RecuperarPassword() {
     }
     if (password.length < 8) {
       avisar('⚠️ La contraseña debe tener al menos 8 caracteres.');
+      return;
+    }
+    if (/^\d+$/.test(password)) {
+      avisar('⚠️ La contraseña no puede tener solo números.');
       return;
     }
     try {
@@ -323,7 +327,7 @@ export default function RecuperarPassword() {
                       value={password}
                       onChange={(event) => setPassword(event.target.value)}
                       className="auth-input-line password-input-with-toggle"
-                      placeholder="Mínimo 8 caracteres"
+                      placeholder="Mínimo 8 caracteres, no solo números"
                       autoComplete="new-password"
                       disabled={isLoading}
                     />

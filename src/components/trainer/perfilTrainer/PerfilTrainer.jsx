@@ -93,7 +93,7 @@ const PerfilTrainer = () => {
         setPasswordStep(2);
       }
     } catch (err) {
-      setPasswordError(err.response?.data?.message || 'Error al solicitar código OTP');
+      setPasswordError(err.response?.data?.message || err.response?.data?.detail || 'Error al solicitar código OTP');
     } finally {
       setPasswordLoading(false);
     }
@@ -112,6 +112,9 @@ const PerfilTrainer = () => {
       });
 
       if (response.data.status === 'success') {
+        // Módulo 9.7.3: los tokens anteriores quedan invalidados; se guardan los nuevos.
+        if (response.data.access) localStorage.setItem('token', response.data.access);
+        if (response.data.refresh) localStorage.setItem('refresh_token', response.data.refresh);
         setPasswordSuccess(true);
         setPasswordStep(4); // Éxito
         setTimeout(() => {
@@ -124,7 +127,7 @@ const PerfilTrainer = () => {
         }, 3000);
       }
     } catch (err) {
-      setPasswordError(err.response?.data?.message || 'Error al validar código o cambiar contraseña');
+      setPasswordError(err.response?.data?.message || err.response?.data?.detail || 'Error al validar código o cambiar contraseña');
     } finally {
       setPasswordLoading(false);
     }

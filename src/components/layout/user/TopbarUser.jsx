@@ -1,6 +1,7 @@
 // src/components/layouts/TopbarUser.jsx
 
 import React, { useEffect, useRef, useState } from "react";
+import { revocarSesionEnServidor } from '../../../api/cerrarSesion.js';
 
 import {
   Link,
@@ -83,6 +84,7 @@ const TopbarUser = ({
 
   const cerrarSesion = () => {
     setMenuAbierto(false);
+    revocarSesionEnServidor();
     localStorage.clear();
     if (typeof onLogout === "function") onLogout();
     else window.location.href = "/login";

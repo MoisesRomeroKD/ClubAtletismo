@@ -108,7 +108,7 @@ export default function MiPerfilViewAdmin() {
         setPasswordStep(2);
       }
     } catch (err) {
-      setPasswordError(err.response?.data?.message || err.response?.data?.error || 'Error al solicitar código OTP');
+      setPasswordError(err.response?.data?.message || err.response?.data?.detail || err.response?.data?.error || 'Error al solicitar código OTP');
     } finally {
       setPasswordLoading(false);
     }
@@ -139,7 +139,7 @@ export default function MiPerfilViewAdmin() {
         }, 3000);
       }
     } catch (err) {
-      setPasswordError(err.response?.data?.message || err.response?.data?.error || 'Error al validar código o cambiar contraseña');
+      setPasswordError(err.response?.data?.message || err.response?.data?.detail || err.response?.data?.error || 'Error al validar código o cambiar contraseña');
     } finally {
       setPasswordLoading(false);
     }

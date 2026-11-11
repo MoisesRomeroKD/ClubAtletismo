@@ -342,6 +342,9 @@ const UserService = {
       password,
       confirm_password
     });
+    // Módulo 9.7.3: los tokens anteriores quedan invalidados; se guardan los nuevos.
+    if (response.data?.access) localStorage.setItem('token', response.data.access);
+    if (response.data?.refresh) localStorage.setItem('refresh_token', response.data.refresh);
     return response.data;
   },
 

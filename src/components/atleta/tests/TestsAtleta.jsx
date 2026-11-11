@@ -22,6 +22,14 @@ const mensajeError = (error, fallback) => {
   return typeof data?.detail === 'string' ? data.detail : fallback;
 };
 
+// Observación de un resultado: si se registró (marca o ausencia) y no tiene observación, "Sin novedad";
+// si todavía no se registró nada, "Sin registro".
+const observacionDe = (fila) => {
+  const registrado = fila.ausente || (fila.valor !== null && fila.valor !== undefined && fila.valor !== '');
+  if (!registrado) return 'Sin registro';
+  return fila.observacion || 'Sin novedad';
+};
+
 export default function TestsAtleta() {
   const [estado, setEstado] = useState({ cargando: true, filas: [], error: '' });
 
@@ -65,7 +73,7 @@ export default function TestsAtleta() {
                     <td>{fila.entrenador || '—'}</td>
                     <td><span className={`tests-atl-estado tests-atl-estado--${fila.estado}`}>{fila.estado_label}</span></td>
                     <td className="tests-atl-fuerte">{miResultado(fila)}</td>
-                    <td>{fila.observacion || '—'}</td>
+                    <td>{observacionDe(fila)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -84,7 +92,7 @@ export default function TestsAtleta() {
                     <div><dt>Subárea</dt><dd>{fila.area ? `${fila.area} · ` : ''}{fila.subarea}</dd></div>
                     <div><dt>Entrenador</dt><dd>{fila.entrenador || '—'}</dd></div>
                     <div><dt>Mi resultado</dt><dd className="tests-atl-fuerte">{miResultado(fila)}</dd></div>
-                    {fila.observacion && <div><dt>Observación</dt><dd>{fila.observacion}</dd></div>}
+                    <div><dt>Observación</dt><dd>{observacionDe(fila)}</dd></div>
                   </dl>
                 </article>
               ))}

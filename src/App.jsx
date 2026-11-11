@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { revocarSesionEnServidor } from './api/cerrarSesion.js';
 import { BrowserRouter as Router, useNavigate } from "react-router-dom";
 
 import { ThemeProvider } from "./context/ThemeContext";
@@ -180,6 +181,7 @@ export default function App() {
      LOGOUT COMPLETO
      ========================================================== */
   const handleLogout = () => {
+    revocarSesionEnServidor();
     [
       'token',
       'refresh_token',

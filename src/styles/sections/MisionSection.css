@@ -56,10 +56,6 @@
   gap: 0.875rem;
 }
 
-.icon-display {
-  font-size: 32px;
-}
-
 .mision-heading {
   font-family: 'Anton', sans-serif;
   font-size: 32px; /* headline-lg-mobile */
@@ -97,7 +93,6 @@
   transform: scaleX(1);
 }
 
-
 @media (min-width: 481px) and (max-width: 768px) {
   /* ------------------------------------------------------------------------
       2. TABLET (De 481px a 768px)
@@ -124,7 +119,6 @@
     font-size: 17px;
   }
 }
-
 
 @media (min-width: 769px) and (max-width: 1200px) {
   /* ------------------------------------------------------------------------
@@ -158,7 +152,6 @@
   }
 }
 
-
 @media (min-width: 1201px) {
   /* ------------------------------------------------------------------------
       4. PC / ESCRITORIO GRANDE (Desde 1201px en adelante)
@@ -177,10 +170,6 @@
   .mision-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 4rem;
-  }
-
-  .icon-display {
-    font-size: 36px;
   }
 
   .mision-heading {

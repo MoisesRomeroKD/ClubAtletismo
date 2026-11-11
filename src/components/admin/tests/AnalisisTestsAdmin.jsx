@@ -27,6 +27,14 @@ const resultadoDe = (fila) => {
   return `${fila.valor} ${fila.unidad}`;
 };
 
+// Observación de un resultado: si se registró (marca o ausencia) y no tiene observación, "Sin novedad";
+// si todavía no se registró nada, "Sin registro".
+const observacionDe = (fila) => {
+  const registrado = fila.ausente || (fila.valor !== null && fila.valor !== undefined && fila.valor !== '');
+  if (!registrado) return 'Sin registro';
+  return fila.observacion || 'Sin novedad';
+};
+
 export default function AnalisisTestsAdmin() {
   const [catalogo, setCatalogo] = useState({ pruebas: [], subareas: [] });
   const [filtros, setFiltros] = useState({ prueba: '', subarea: '', desde: '', hasta: '' });
@@ -223,7 +231,7 @@ export default function AnalisisTestsAdmin() {
                             <td>{fila.subarea}</td>
                             <td><strong>{resultadoDe(fila)}</strong></td>
                             <td>{fila.entrenador || '—'}</td>
-                            <td>{fila.observacion || '—'}</td>
+                            <td>{observacionDe(fila)}</td>
                           </tr>
                         ))}
                       </tbody>

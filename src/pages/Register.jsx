@@ -296,7 +296,7 @@ export default function Register({ setRole }) {
     } catch (error) {
       localStorage.setItem(REGISTER_ATTEMPTS_KEY, String(attempts + 1));
       
-      const errorMsg = error.response?.data?.message || "Error al conectar con el servidor.";
+      const errorMsg = error.response?.data?.message || error.response?.data?.detail || "Error al conectar con el servidor.";
       triggerNotification(`⚠️ ${errorMsg}`);
     } finally {
       setIsLoading(false);
@@ -321,7 +321,7 @@ export default function Register({ setRole }) {
       setRegisterStep(3);
       
     } catch (error) {
-      const errorMsg = error.response?.data?.message || "El código OTP es inválido o expiró.";
+      const errorMsg = error.response?.data?.message || error.response?.data?.detail || "El código OTP es inválido o expiró.";
       triggerNotification(`⚠️ ${errorMsg}`);
     } finally {
       setIsLoading(false);
@@ -348,6 +348,10 @@ export default function Register({ setRole }) {
 
     if (registerData.password.length < 8) {
       triggerNotification("⚠️ La contraseña debe tener al menos 8 caracteres.");
+      return;
+    }
+    if (/^\d+$/.test(registerData.password)) {
+      triggerNotification("⚠️ La contraseña no puede tener solo números.");
       return;
     }
 
@@ -377,7 +381,7 @@ export default function Register({ setRole }) {
       }
 
     } catch (error) {
-      const errorMsg = error.response?.data?.message || "Error al completar el registro.";
+      const errorMsg = error.response?.data?.message || error.response?.data?.detail || "Error al completar el registro.";
       triggerNotification(`⚠️ ${errorMsg}`);
     } finally {
       setIsLoading(false);
@@ -396,7 +400,7 @@ export default function Register({ setRole }) {
       const response = await authService.requestOtp(registerData.cedula);
       triggerNotification(response.message || "Se envió un mensaje a su correo con el código a ingresar.");
     } catch (error) {
-      triggerNotification(`⚠️ ${error.response?.data?.message || "No se pudo reenviar el código."}`);
+      triggerNotification(`⚠️ ${error.response?.data?.message || error.response?.data?.detail || "No se pudo reenviar el código."}`);
     } finally {
       setIsLoading(false);
     }
@@ -689,7 +693,7 @@ export default function Register({ setRole }) {
                       value={registerData.password}
                       onChange={handleRegisterChange}
                       className="auth-input-line password-input-with-toggle"
-                      placeholder="Mínimo 8 caracteres"
+                      placeholder="Mínimo 8 caracteres, no solo números"
                       autoComplete="new-password"
                       disabled={isLoading}
                     />

@@ -536,7 +536,9 @@ const DashboardView = ({
   period,
   athletes,
   onSelectAthlete,
-  navContext
+  navContext,
+  showGlobalSummary = true,
+  showDirectory = true,
 }) => {
   const kpis = calculateKPIs(sessions);
 
@@ -600,16 +602,18 @@ const DashboardView = ({
 
   return (
     <div className="dashboard-layout">
-      {/* KPIs Principales */}
-      <div className="kpis-grid-4">
-        <KPICard title="Total Sesiones" value={kpis.total} icon={Database} colorClass="kpi-bg-indigo" />
-        <KPICard title="Asistencia Real" value={`${kpis.attPercent.toFixed(1)}%`} subtext={`${kpis.attendance} de ${kpis.total}`} icon={TrendingUp} colorClass="kpi-bg-emerald" trend={attendanceTrend} />
-        <KPICard title="Inasistencias" value={kpis.absence} subtext={`${kpis.absPercent.toFixed(1)}% del total`} icon={XCircle} colorClass="kpi-bg-rose" />
-        <KPICard title="Justificadas" value={kpis.justificada} subtext="No cuentan como asistencia" icon={AlertCircle} colorClass="kpi-bg-sky" />
-      </div>
+      {showGlobalSummary && (
+        <>
+          {/* KPIs Principales */}
+          <div className="kpis-grid-4">
+            <KPICard title="Total Sesiones" value={kpis.total} icon={Database} colorClass="kpi-bg-indigo" />
+            <KPICard title="Asistencia Real" value={`${kpis.attPercent.toFixed(1)}%`} subtext={`${kpis.attendance} de ${kpis.total}`} icon={TrendingUp} colorClass="kpi-bg-emerald" trend={attendanceTrend} />
+            <KPICard title="Inasistencias" value={kpis.absence} subtext={`${kpis.absPercent.toFixed(1)}% del total`} icon={XCircle} colorClass="kpi-bg-rose" />
+            <KPICard title="Justificadas" value={kpis.justificada} subtext="No cuentan como asistencia" icon={AlertCircle} colorClass="kpi-bg-sky" />
+          </div>
 
-      {/* Gráficos */}
-      <div className={`charts-grid ${showAreaChart ? 'grid-cols-3-lg' : 'grid-cols-2-lg'}`}>
+          {/* Gráficos */}
+          <div className={`charts-grid ${showAreaChart ? 'grid-cols-3-lg' : 'grid-cols-2-lg'}`}>
         {showAreaChart && (
           <Card className="card-padding">
             <h3 className="chart-card-title">Comparativa por Área</h3>
@@ -656,10 +660,12 @@ const DashboardView = ({
             </ResponsiveContainer>
           </div>
         </Card>
-      </div>
+          </div>
+        </>
+      )}
 
       {/* Tabla de Atletas — usa el patrón GLOBAL .responsive-list de App.css */}
-      <Card className="directory-card">
+      {showDirectory && <Card className="directory-card">
         <div className="directory-header">
           <h3 className="directory-title">Directorio de Atletas ({athleteStats.length})</h3>
           <span className="directory-subtitle">Ordenado por Cédula</span>
@@ -742,14 +748,14 @@ const DashboardView = ({
             )}
           </div>
         </div>
-      </Card>
+      </Card>}
     </div>
   );
 };
 
 // Análisis de asistencia del administrador: copia del análisis del entrenador, con todos los atletas
 // registrados y datos reales del backend (/v1/asistencias/analisis/).
-export default function AsistenciaAdminView() {
+export default function AsistenciaAdminView({ activeSection = 'asistencia_general' }) {
   const [dashboardData, setDashboardData] = useState(null);
   const [loadError, setLoadError] = useState(false);
   useEffect(() => {
@@ -807,8 +813,16 @@ export default function AsistenciaAdminView() {
       )),
     }));
   };
-  const [currentView, setCurrentView] = useState('dashboard');
-  const [selectedAthlete, setSelectedAthlete] = useState(null);
+  const [navegacion, setNavegacion] = useState({
+    section: 'asistencia_individual',
+    view: 'dashboard',
+    athleteId: null,
+  });
+  const estadoVista = navegacion.section === activeSection
+    ? navegacion
+    : { section: activeSection, view: 'dashboard', athleteId: null };
+  const currentView = estadoVista.view;
+  const selectedAthlete = estadoVista.athleteId;
 
   const [navContext, setNavContext] = useState({ type: 'global', value: null });
   const [selectedPeriod, setSelectedPeriod] = useState('6meses');
@@ -818,6 +832,7 @@ export default function AsistenciaAdminView() {
   // En celular los filtros van en el panel del botón flotante "Filtros" (mismo diseño que Reportes).
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
   const searchTimeout = useRef(null);
+  const esVistaIndividual = activeSection === 'asistencia_individual';
 
   const scopedSessions = useMemo(() => {
     let base = realSessions;
@@ -866,9 +881,11 @@ export default function AsistenciaAdminView() {
   };
 
   const handleSelectAthlete = (id) => {
-    setSelectedAthlete(id);
-    setCurrentView('athlete');
+    setNavegacion({ section: activeSection, view: 'athlete', athleteId: id });
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const volverAlDirectorio = () => {
+    setNavegacion({ section: activeSection, view: 'dashboard', athleteId: null });
   };
 
   if (loadError) return <div className="attendance-view"><div className="no-data-cell">No se pudieron cargar las asistencias.</div></div>;
@@ -888,8 +905,7 @@ export default function AsistenciaAdminView() {
                   onChange={(e) => {
                     const value = e.target.value;
                     setNavContext(value === 'global' ? { type: 'global', value: null } : { type: 'area', value });
-                    setSelectedAthlete(null);
-                    setCurrentView('dashboard');
+                    volverAlDirectorio();
                   }}
                 >
                   <option value="global">Vista Global</option>
@@ -909,8 +925,7 @@ export default function AsistenciaAdminView() {
                     } else {
                       setNavContext({ type: 'subarea', value: subarea });
                     }
-                    setSelectedAthlete(null);
-                    setCurrentView('dashboard');
+                    volverAlDirectorio();
                   }}
                 >
                   <option value="all">Todas las subáreas</option>
@@ -922,7 +937,7 @@ export default function AsistenciaAdminView() {
               </div>
 
               {/* Buscador por cédula o nombre */}
-              <div className="attendance-search search-input-wrapper">
+              {esVistaIndividual && <div className="attendance-search search-input-wrapper">
                 <div className="search-icon-left">
                   {searchState === 'searching_local' || searchState === 'searching_server' ?
                     <RefreshCcw className="icon-sm text-indigo spin" /> :
@@ -949,7 +964,7 @@ export default function AsistenciaAdminView() {
                     {searchState === 'not_found' && <span className="tooltip-text text-rose"><XCircle className="icon-xs"/> No se encontró ningún atleta con esa cédula o nombre.</span>}
                   </div>
                 )}
-              </div>
+              </div>}
 
               {/* Selector de Período */}
               <div className="attendance-period select-wrapper">
@@ -980,7 +995,7 @@ export default function AsistenciaAdminView() {
           {/* Filters Row */}
           <div className="attendance-toolbar-row">
             <h1 className="attendance-title">
-              {currentView === 'athlete' ? 'Detalle de Atleta' : 'Asistencia Global'}
+              {currentView === 'athlete' ? 'Detalle de Atleta' : esVistaIndividual ? 'Detalle Individual' : 'Asistencia Global'}
             </h1>
 
             <div className="attendance-controls flex-center-gap">
@@ -1020,11 +1035,13 @@ export default function AsistenciaAdminView() {
               athletes={realAthletes}
               navContext={navContext}
               onSelectAthlete={handleSelectAthlete}
+              showGlobalSummary={!esVistaIndividual}
+              showDirectory={esVistaIndividual}
             />
           ) : (
             <AthleteDetailView
               athleteId={selectedAthlete}
-              onBack={() => setCurrentView('dashboard')}
+              onBack={volverAlDirectorio}
               allSessions={realSessions}
               athletes={realAthletes}
               period={selectedPeriod}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { SlidersHorizontal, X } from 'lucide-react';
+import { Eye, SlidersHorizontal, X } from 'lucide-react';
 import UserService from '../../api/services/Userservice';
 import { useApplicationPermissions } from '../../context/ApplicationPermissionsContext';
 import '../../styles/components/admin/AtletasViewAdmin.css';
@@ -161,6 +161,38 @@ const EDAD_MINIMA_ATLETA = 9;
 const anioMaximoNacimiento = () => Number(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' }).slice(0, 4)) - EDAD_MINIMA_ATLETA;
 const maxNacimiento = () => `${anioMaximoNacimiento()}-12-31`;
 
+// Años de nacimiento que cubren las categorías deportivas configuradas (el atleta debe entrar en alguna).
+function useRangoNacimiento() {
+  const [rango, setRango] = useState(null);
+  useEffect(() => {
+    let activo = true;
+    UserService.getAthleteCategories()
+      .then((categorias) => {
+        const lista = Array.isArray(categorias) ? categorias : [];
+        if (!activo || !lista.length) return;
+        setRango({
+          desde: Math.min(...lista.map((c) => Number(c.birth_year_start))),
+          hasta: Math.max(...lista.map((c) => Number(c.birth_year_end))),
+        });
+      })
+      .catch(() => {});
+    return () => { activo = false; };
+  }, []);
+  return rango;
+}
+
+const fueraDeRango = (fecha, rango) => {
+  if (!fecha) return true;
+  if (!rango) return fecha > maxNacimiento();
+  const anio = Number(fecha.slice(0, 4));
+  return anio < rango.desde || anio > rango.hasta;
+};
+
+const mensajeRango = (rango) => (rango
+  ? `El año de nacimiento debe estar entre ${rango.desde} y ${rango.hasta} (años de las categorías deportivas del club).`
+  : `El atleta debe tener al menos ${EDAD_MINIMA_ATLETA} años: nacido en ${anioMaximoNacimiento()} o antes.`);
+
+
 // Mientras se escribe, cada campo descarta lo que no le corresponde y devuelve el aviso.
 const limpiarCampo = (campo, valor) => {
   const tipo = TIPO_CAMPO[campo];
@@ -180,6 +212,7 @@ const limpiarCampo = (campo, valor) => {
 };
 
 function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
+  const rangoNacimiento = useRangoNacimiento();
   const representante = atleta.representantes?.[0];
   const [form, setForm] = useState({
     nombres: atleta.nombres || '',
@@ -286,8 +319,9 @@ function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
       ? '' : 'La cédula debe ser un número entre 1.000.000 y 49.999.999 (ej. 12345678).',
     correo: form.correo === (atleta.email || '').toLowerCase() || GMAIL.test(form.correo)
       ? '' : 'Solo se aceptan correos de Gmail (ej. nombre@gmail.com).',
-    fecha_nacimiento: form.fecha_nacimiento && form.fecha_nacimiento <= maxNacimiento()
-      ? '' : `El atleta debe tener al menos ${EDAD_MINIMA_ATLETA} años: nacido en ${anioMaximoNacimiento()} o antes.`,
+    // Si no se cambió, no se revisa (así se pueden guardar otros datos de un atleta registrado antes de la regla).
+    fecha_nacimiento: form.fecha_nacimiento === (atleta.fecha_nacimiento || '') || !fueraDeRango(form.fecha_nacimiento, rangoNacimiento)
+      ? '' : mensajeRango(rangoNacimiento),
     rep_nombres: !conRep || NOMBRE_COMPLETO.test(form.rep_nombres.trim()) ? '' : 'Escribe al menos 2 letras.',
     rep_apellidos: !conRep || NOMBRE_COMPLETO.test(form.rep_apellidos.trim()) ? '' : 'Escribe al menos 2 letras.',
     rep_telefono: !conRep || TELEFONO_COMPLETO.test(form.rep_telefono)
@@ -366,7 +400,11 @@ function EditarAtletaForm({ atleta, onCancel, onGuardado }) {
           {campo('nombres', 'Nombres', { type: 'text', maxLength: 60 })}
           {campo('apellidos', 'Apellidos', { type: 'text', maxLength: 60 })}
           {campo('cedula', 'Cédula', { type: 'text', inputMode: 'numeric', placeholder: 'Ej. 12345678' })}
-          {campo('fecha_nacimiento', 'Fecha de nacimiento', { type: 'date', max: maxNacimiento() })}
+          {campo('fecha_nacimiento', 'Fecha de nacimiento', {
+            type: 'date',
+            min: rangoNacimiento ? `${rangoNacimiento.desde}-01-01` : undefined,
+            max: rangoNacimiento ? `${rangoNacimiento.hasta}-12-31` : maxNacimiento(),
+          })}
           <div className="atletas-editar-campo">
             <label htmlFor="atleta-editar-sexo">Sexo</label>
             <select id="atleta-editar-sexo" value={form.sexo} onChange={(event) => setForm((previo) => ({ ...previo, sexo: event.target.value }))}>
@@ -777,7 +815,7 @@ const AtletasViewAdmin = () => {
         ← Anterior
       </button>
       <span className="atletas-paginacion-info">
-        Página {page} de {totalPages}
+        Página {page} de {totalPages} · {totalCount} atleta{totalCount !== 1 ? 's' : ''}
       </span>
       <button
         type="button"
@@ -816,9 +854,6 @@ const AtletasViewAdmin = () => {
           document.body,
         )}
         <div className="filtros-escritorio">{controlesFiltro1}</div>
-        <span className="atletas-adm-total">
-          {totalCount} atleta{totalCount !== 1 ? 's' : ''} en total
-        </span>
       </div>
 
       {paginacion}
@@ -871,45 +906,23 @@ const AtletasViewAdmin = () => {
           </div>
 
           <div className="responsive-list__cards">
-          <div className="atletas-adm-cards">
+          <div className="atletas-adm-lista-cards">
             {atletas.map((item, idx) => (
-              <div key={item.user_id ?? idx} className="atletas-adm-card">
-                <div className="atletas-adm-card-head">
-                  <div className="atletas-adm-card-identidad">
-                    <div className="atletas-adm-avatar">{iniciales(item.name)}</div>
-                    <div>
-                      <h3 className="atletas-adm-card-nombre">{item.name || '-'}</h3>
-                      <p className="atletas-adm-card-cedula">Cédula {item.cedula || '-'} · <span className="ref-usuario">Ref. {item.user_id}</span></p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="atletas-adm-card-grid">
-                  <div>
-                    <p className="atletas-adm-card-label">SUBÁREA</p>
-                    <p className="atletas-adm-card-valor">{item.subarea_nombre_principal || '—'}</p>
-                  </div>
-                  <div>
-                    <p className="atletas-adm-card-label">ENTRENADOR</p>
-                    <p className="atletas-adm-card-valor">{nombreEntrenadores(item.entrenadores) || '—'}</p>
-                  </div>
-                  <div>
-                    <p className="atletas-adm-card-label atletas-adm-card-label--espaciado">ESTADO</p>
-                    {renderEstadoControl(item)}
-                  </div>
-                </div>
-
-                <div className="atletas-adm-card-footer">
-                  <div>
-                    <p className="atletas-adm-card-label">FAMILIAR / CONTACTO</p>
-                    <p className="atletas-adm-card-familiar">{nombreRepresentantes(item.representantes) || '—'}</p>
-                    <p className="atletas-adm-card-telefono">{telefonoRepresentante(item.representantes)}</p>
-                  </div>
-                  <button type="button" className="atletas-adm-ver atletas-adm-ver--card" onClick={() => handleVerPerfil(item)}>
-                    Ver perfil
-                  </button>
-                </div>
-              </div>
+              <article key={item.user_id ?? idx} className="atletas-adm-lista-card">
+                <h3>{item.name || '—'}</h3>
+                <dl>
+                  <div><dt>Ref.</dt><dd className="ref-usuario">{item.user_id}</dd></div>
+                  <div><dt>Cédula</dt><dd className="atletas-adm-lista-card-cedula">{item.cedula || '—'}</dd></div>
+                  <div><dt>Subárea</dt><dd>{item.subarea_nombre_principal || '—'}</dd></div>
+                  <div><dt>Entrenador</dt><dd>{nombreEntrenadores(item.entrenadores) || '—'}</dd></div>
+                  <div><dt>Representante</dt><dd>{nombreRepresentantes(item.representantes) || '—'}</dd></div>
+                  <div><dt>Teléfono (repr.)</dt><dd>{telefonoRepresentante(item.representantes) || '—'}</dd></div>
+                  <div><dt>Estado</dt><dd>{renderEstadoControl(item)}</dd></div>
+                </dl>
+                <button type="button" className="atletas-adm-lista-ver" onClick={() => handleVerPerfil(item)}>
+                  <Eye size={15} aria-hidden="true" />Ver detalle
+                </button>
+              </article>
             ))}
           </div>
           </div>

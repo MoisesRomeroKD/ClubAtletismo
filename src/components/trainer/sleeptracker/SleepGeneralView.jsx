@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -11,7 +12,7 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { Users, Zap, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Users, Moon, CheckCircle2, AlertCircle, SlidersHorizontal, X } from 'lucide-react';
 import '../../../styles/components/trainer/SleepModuleTheme.css';
 import '../../../styles/components/trainer/SleepGeneralView.css';
 
@@ -45,6 +46,24 @@ export default function SleepGeneralView({
     { key: 'year', label: 'Anual' },
   ];
 
+  // En celular el filtro va detrás del botón "Filtros" (en monitores siempre se ve).
+  const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
+  const botonesTiempo = (
+    <div className="sl-time-filter-bar">
+      {timeOptions.map((opt) => (
+        <button
+          key={opt.key}
+          type="button"
+          className={`sl-time-btn ${timeRange === opt.key ? 'active' : ''}`}
+          onClick={() => setTimeRange && setTimeRange(opt.key)}
+          aria-pressed={timeRange === opt.key}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  );
+
   const registeredPct = dashboardStats.registeredPct ?? 0;
   const pieData = [
     { name: 'Completado', value: registeredPct, color: 'var(--func-primary)' },
@@ -66,19 +85,27 @@ export default function SleepGeneralView({
           </header>
         )}
 
-        {/* Filtro temporal */}
-        <div className="sl-time-filter-bar">
-          {timeOptions.map((opt) => (
-            <button
-              key={opt.key}
-              type="button"
-              className={`sl-time-btn ${timeRange === opt.key ? 'active' : ''}`}
-              onClick={() => setTimeRange && setTimeRange(opt.key)}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
+        {/* Filtro temporal: barra en monitores, botón "Filtros" en celular */}
+        <button type="button" className="filtros-fab" onClick={() => setFiltrosAbiertos(true)}>
+          <SlidersHorizontal size={18} aria-hidden="true" />Filtros
+        </button>
+        {filtrosAbiertos && createPortal(
+          <div className="filtros-sheet" role="dialog" aria-modal="true" aria-label="Filtros">
+            <header className="filtros-sheet__header">
+              <h2>Filtros</h2>
+              <button type="button" className="filtros-sheet__cerrar" onClick={() => setFiltrosAbiertos(false)} aria-label="Cerrar filtros">
+                <X size={18} />
+              </button>
+            </header>
+            <div className="filtros-sheet__body">{botonesTiempo}</div>
+            <footer className="filtros-sheet__footer">
+              <button type="button" className="filtros-sheet__btn" onClick={() => setFiltrosAbiertos(false)}>Cerrar</button>
+              <button type="button" className="filtros-sheet__btn filtros-sheet__btn--primario" onClick={() => setFiltrosAbiertos(false)}>Aplicar filtros</button>
+            </footer>
+          </div>,
+          document.body,
+        )}
+        <div className="filtros-escritorio">{botonesTiempo}</div>
 
         {/* KPIs */}
         <div className="sl-kpi-grid">
@@ -88,13 +115,12 @@ export default function SleepGeneralView({
               <Users size={20} />
             </div>
             <div className="sl-kpi-value">{dashboardStats.totalAthletes ?? 0}</div>
-            <div className="sl-kpi-subtext">Atletas en el grupo seleccionado</div>
           </div>
 
           <div className="sl-card">
             <div className="sl-kpi-title">
               Calidad Promedio
-              <Zap size={20} />
+              <Moon size={20} />
             </div>
             <div className="sl-kpi-value">
               {dashboardStats.avgQualityToday ?? 0}{' '}
@@ -114,7 +140,6 @@ export default function SleepGeneralView({
                 ({dashboardStats.registeredPct ?? 0}%)
               </span>
             </div>
-            <div className="sl-kpi-subtext">Atletas con registro para hoy</div>
           </div>
 
           <div className="sl-card sl-card--danger">
@@ -125,7 +150,6 @@ export default function SleepGeneralView({
             <div className="sl-kpi-value sl-kpi-value--danger">
               {dashboardStats.pendingToday ?? 0}
             </div>
-            <div className="sl-kpi-subtext">Requieren seguimiento hoy</div>
           </div>
         </div>
 
@@ -179,7 +203,7 @@ export default function SleepGeneralView({
                     tickLine={false}
                     tick={{ fontSize: 12, fill: 'var(--text-muted)' }}
                   />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'var(--func-primary)', strokeDasharray: '4 4' }} />
                   <Area
                     type="monotone"
                     dataKey="quality"
@@ -187,6 +211,7 @@ export default function SleepGeneralView({
                     strokeWidth={3}
                     fillOpacity={1}
                     fill="url(#sleepQualityGradient)"
+                    dot={{ r: 3, fill: 'var(--func-primary)', stroke: 'none' }}
                     activeDot={{
                       r: 6,
                       fill: 'var(--func-primary)',

@@ -53,7 +53,7 @@ const RoutineManager = lazyWithDelay(() => import('../components/trainer/builder
 const TrainerDashboardView = lazyWithDelay(() => import('../components/trainer/dashboard/TrainerDashboardView'));
 
 // 📐 Importación perezosa del Módulo de Cineantropometría
-const CineantropometriaTrainer = lazyWithDelay(() => import('../components/trainer/cineantropometria/CineantropometriaTrainer'));
+const AnalisisCineTrainer = lazyWithDelay(() => import('../components/trainer/cineantropometria/AnalisisCineTrainer'));
 const MedicionesTrainer = lazyWithDelay(() => import('../components/trainer/cineantropometria/MedicionesTrainer'));
 
 // 💤 Importación perezosa de los componentes del módulo de Sueño y Descanso
@@ -425,7 +425,7 @@ export default function TrainerDashboard({
 
           {(effectiveAction === 'cineantropometria' || effectiveAction === 'cineantropometria_trainer') && (
             <div className="view-fade-in">
-              <CineantropometriaTrainer />
+              <AnalisisCineTrainer />
             </div>
           )}
 

@@ -1,8 +1,15 @@
 import axios from 'axios';
 import { pedirRevisionServidor } from './servidorEstado.js';
 
+// URL del backend. En Vercel se define VITE_API_URL (por ejemplo https://clubatletismo.onrender.com/api);
+// si se escribe sin "/api" se agrega sola. Sin la variable se usa el servidor de producción (Render).
+const API_URL = (() => {
+    const url = (import.meta.env.VITE_API_URL || 'https://clubatletismo.onrender.com/api').trim().replace(/\/+$/, '');
+    return url.endsWith('/api') ? url : `${url}/api`;
+})();
+
 const podApi = axios.create({
-    baseURL: 'https://clubatletismo.onrender.com/api', 
+    baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
     }

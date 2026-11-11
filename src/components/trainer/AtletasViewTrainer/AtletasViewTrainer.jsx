@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronLeft, ChevronRight, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, SlidersHorizontal, X } from 'lucide-react';
 import UserService from '../../../api/services/Userservice';
 import '../../../styles/components/trainer/AtletasViewTrainer.css';
 
@@ -330,14 +330,19 @@ export default function AtletasViewTrainer() {
             ))}
           </select>
         )}
-        <select className="atletas-category-select" aria-label="Filtrar atletas por área" value={ubicacion.area} onChange={(event) => cambiarUbicacion('area', event.target.value)}>
-          <option value="">Todas las áreas</option>
-          {areasFiltro.map((area) => <option key={area.id} value={String(area.id)}>{area.nombre}</option>)}
-        </select>
-        <select className="atletas-category-select" aria-label="Filtrar atletas por subárea" value={ubicacion.subarea} onChange={(event) => cambiarUbicacion('subarea', event.target.value)}>
-          <option value="">Todas mis subáreas</option>
-          {subareasFiltro.map((subarea) => <option key={subarea.id} value={String(subarea.id)}>{subarea.nombre}</option>)}
-        </select>
+        {/* Área y subárea solo si el entrenador tiene más de una: con una sola no hay nada que filtrar. */}
+        {areasFiltro.length > 1 && (
+          <select className="atletas-category-select" aria-label="Filtrar atletas por área" value={ubicacion.area} onChange={(event) => cambiarUbicacion('area', event.target.value)}>
+            <option value="">Todas las áreas</option>
+            {areasFiltro.map((area) => <option key={area.id} value={String(area.id)}>{area.nombre}</option>)}
+          </select>
+        )}
+        {misSubareas.length > 1 && (
+          <select className="atletas-category-select" aria-label="Filtrar atletas por subárea" value={ubicacion.subarea} onChange={(event) => cambiarUbicacion('subarea', event.target.value)}>
+            <option value="">Todas mis subáreas</option>
+            {subareasFiltro.map((subarea) => <option key={subarea.id} value={String(subarea.id)}>{subarea.nombre}</option>)}
+          </select>
+        )}
         <select className="atletas-category-select" aria-label="Filtrar atletas por turno" value={ubicacion.turno} onChange={(event) => cambiarUbicacion('turno', event.target.value)}>
           <option value="">Todos los turnos</option>
           <option value="manana">Mañana</option>
@@ -358,7 +363,7 @@ export default function AtletasViewTrainer() {
       >
         ← Anterior
       </button>
-      <span className="atletas-paginacion-info">Página {page} de {totalPages}</span>
+      <span className="atletas-paginacion-info">Página {page} de {totalPages} · {totalCount} atleta{totalCount !== 1 ? 's' : ''}</span>
       <button
         type="button"
         className="atletas-paginacion-btn"
@@ -395,7 +400,6 @@ export default function AtletasViewTrainer() {
           document.body,
         )}
         <div className="filtros-escritorio">{controlesFiltro1}</div>
-        <span className="atletas-counter">{totalCount} atleta{totalCount !== 1 ? 's' : ''} en total</span>
       </div>
 
       {paginacion}
@@ -447,32 +451,26 @@ export default function AtletasViewTrainer() {
 
             {/* ⬇️ WRAPPER de visibilidad (App.css) + GRID interno (módulo) */}
             <div className="responsive-list__cards">
-              <div className="atletas-cards-grid">
+              <div className="atletas-lista-cards">
                 {athletes.map((athlete) => (
-                  <article className="atletas-trainer-card" key={athlete.id}>
-                    <div className="atletas-trainer-card-heading">
-                      <div className="atletas-perfil-avatar">{initials(`${athlete.nombres} ${athlete.apellidos}`)}</div>
+                  <article className="atletas-lista-card" key={athlete.id}>
+                    <h3>{`${athlete.nombres} ${athlete.apellidos}`.trim() || '—'}</h3>
+                    <dl>
+                      <div><dt>Ref.</dt><dd className="ref-usuario">{athlete.id}</dd></div>
+                      <div><dt>Cédula</dt><dd className="atletas-lista-card-cedula">{athlete.cedula || '—'}</dd></div>
+                      <div><dt>Subárea</dt><dd>{athlete.subarea || '—'}</dd></div>
+                      <div><dt>Categoría</dt><dd>{athlete.categoria || '—'}</dd></div>
+                      <div><dt>Correo</dt><dd>{athlete.email || '—'}</dd></div>
                       <div>
-                        <h2>{`${athlete.nombres} ${athlete.apellidos}`.trim() || '-'}</h2>
-                        <small>Cédula {athlete.cedula || '-'} · <span className="ref-usuario">Ref. {athlete.id}</span></small>
+                        <dt>Estado</dt>
+                        <dd>
+                          <EstadoBadge estado={athlete.estado} />
+                          {athlete.estado === 'justificado' && athlete.estadoMotivo && <p className="atletas-estado-motivo">{athlete.estadoMotivo}</p>}
+                        </dd>
                       </div>
-                    </div>
-                    <div className="atletas-trainer-card-grid">
-                      <DataPoint label="Subárea" value={athlete.subarea} />
-                      <DataPoint label="Categoría" value={athlete.categoria} />
-                      <DataPoint label="Correo" value={athlete.email} />
-                      <div className="atletas-data-point">
-                        <span className="atletas-data-point-label">Estado</span>
-                        <span className="atletas-data-point-value"><EstadoBadge estado={athlete.estado} /></span>
-                      </div>
-                    </div>
-                    {athlete.estado === 'justificado' && athlete.estadoMotivo && <p className="atletas-estado-motivo">{athlete.estadoMotivo}</p>}
-                    <button
-                      className="atletas-btn-ver"
-                      type="button"
-                      onClick={() => setSelectedAthlete(athlete)}
-                    >
-                      Ver perfil
+                    </dl>
+                    <button type="button" className="atletas-lista-ver" onClick={() => setSelectedAthlete(athlete)}>
+                      <Eye size={15} aria-hidden="true" />Ver detalle
                     </button>
                   </article>
                 ))}

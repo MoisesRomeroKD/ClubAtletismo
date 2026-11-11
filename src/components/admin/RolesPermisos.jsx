@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Eye, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, SlidersHorizontal, X } from 'lucide-react';
 import podApi from '../../api/podApi';
 import '../../styles/components/admin/RolesPermisos.css';
 
@@ -31,6 +31,8 @@ const PERMISSION_DESCRIPTIONS = {
   registrar_test: 'Permite crear tests y registrar sus resultados en la planilla (entrenador, en sus subáreas).',
   editar_test: 'Permite rectificar un test programado: fecha, observaciones, prueba, atletas convocados o cancelarlo.',
   corregir_resultados_test: 'Permite corregir los resultados de un test ya finalizado, hasta una semana después de su fecha.',
+  asignar_test: 'Permite al administrador crear pruebas y asignar tests en cualquier subárea, eligiendo al entrenador responsable que registrará los resultados.',
+  crear_plan: 'Permite al administrador crear planes de entrenamiento para el entrenador que elija (a sus atletas o subáreas), y editar, publicar o eliminar los borradores.',
   reprogramar_test: 'Permite dar una fecha de recuperación, en un test ya finalizado, a los atletas que no lo presentaron.',
   ver_cineantropometria: 'Permite consultar todas las mediciones de cineantropometría y sus resultados.',
   registrar_cineantropometria: 'Permite programar mediciones de cineantropometría y registrar sus resultados (el entrenador en sus subáreas; el administrador en cualquiera).',
@@ -249,8 +251,11 @@ function PermisosDrawer({ usuario, catalogo, onClose }) {
   );
 }
 
+const POR_PAGINA = 15;
+
 const RolesPermisos = () => {
   const [usuarios, setUsuarios] = useState([]);
+  const [pagina, setPagina] = useState(1);
   const [catalogo, setCatalogo] = useState([]);
   const [filtroRol, setFiltroRol] = useState('');
   const [busqueda, setBusqueda] = useState('');
@@ -301,6 +306,37 @@ const RolesPermisos = () => {
     return coincidePersona(busqueda, user.nombre || user.username, user.cedula);
   });
 
+  // Paginación: 15 por página, con los controles arriba y abajo de la lista.
+  const totalPaginas = Math.max(1, Math.ceil(usuariosVisibles.length / POR_PAGINA));
+  const paginaActual = Math.min(pagina, totalPaginas);
+  const usuariosPagina = usuariosVisibles.slice((paginaActual - 1) * POR_PAGINA, paginaActual * POR_PAGINA);
+  const controlesPaginacion = (
+    <div className="roles-paginacion">
+      <span className="roles-paginacion-total">
+        {usuariosVisibles.length} usuario{usuariosVisibles.length === 1 ? '' : 's'} · {POR_PAGINA} por página
+      </span>
+      <div className="roles-paginacion-botones">
+        <button
+          type="button"
+          className="roles-paginacion-btn"
+          disabled={paginaActual <= 1}
+          onClick={() => setPagina(paginaActual - 1)}
+        >
+          <ChevronLeft size={16} aria-hidden="true" />Anterior
+        </button>
+        <span className="roles-paginacion-info">Página {paginaActual} de {totalPaginas}</span>
+        <button
+          type="button"
+          className="roles-paginacion-btn"
+          disabled={paginaActual >= totalPaginas}
+          onClick={() => setPagina(paginaActual + 1)}
+        >
+          Siguiente<ChevronRight size={16} aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  );
+
   // Inactivo = cuenta desactivada; Pendiente = prerregistrado que no ha creado su contraseña;
   // Activo = está en el plantel y puede entrar.
   const estadoDe = (user) => {
@@ -323,7 +359,7 @@ const RolesPermisos = () => {
                 <button
                   key={etiqueta}
                   type="button"
-                  onClick={() => setFiltroRol(valor)}
+                  onClick={() => { setFiltroRol(valor); setPagina(1); }}
                   aria-pressed={filtroRol === valor}
                   className={`roles-gestion-filtro ${filtroRol === valor ? 'roles-gestion-filtro--activo' : ''}`}
                 >
@@ -337,7 +373,7 @@ const RolesPermisos = () => {
                 placeholder="Buscar por cédula o nombre y apellido"
                 aria-label="Buscar por cédula o nombre y apellido"
                 value={busqueda}
-                onChange={(event) => setBusqueda(event.target.value)}
+                onChange={(event) => { setBusqueda(event.target.value); setPagina(1); }}
               />
             </div>
     </>
@@ -384,6 +420,7 @@ const RolesPermisos = () => {
         <>
           {errorMessage && <div role="alert" className="roles-gestion-error">{errorMessage}</div>}
 
+          {!errorMessage && controlesPaginacion}
           {!errorMessage && (
             <div className="responsive-list">
               <div className="responsive-list__table">
@@ -399,7 +436,7 @@ const RolesPermisos = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {usuariosVisibles.length ? usuariosVisibles.map((user) => (
+                    {usuariosPagina.length ? usuariosPagina.map((user) => (
                       <tr key={user.id}>
                         <td className="roles-lista-nombre">{user.nombre || user.username}</td>
                         <td>{user.cedula || '—'}</td>
@@ -418,7 +455,7 @@ const RolesPermisos = () => {
               </div>
 
               <div className="responsive-list__cards">
-                {usuariosVisibles.length ? usuariosVisibles.map((user) => (
+                {usuariosPagina.length ? usuariosPagina.map((user) => (
                   <article key={user.id} className="roles-lista-card">
                     <div>
                       <strong>{user.nombre || user.username}</strong>
@@ -435,6 +472,7 @@ const RolesPermisos = () => {
               </div>
             </div>
           )}
+          {!errorMessage && controlesPaginacion}
         </>
       )}
 

@@ -153,16 +153,12 @@ body.dark-mode :is(
   color: var(--text-muted);
   font-size: 0.9rem;
 }
-
-.sleep-general-view .sl-time-filter-bar,
-.sleep-pending-view .sl-period-filter-bar {
+.sleep-general-view .sl-time-filter-bar {
   border: 1px solid var(--border-main);
   border-radius: var(--border-radius-md);
   background: var(--bg-card);
 }
-
-.sleep-general-view .sl-time-btn,
-.sleep-pending-view .sl-period-btn {
+.sleep-general-view .sl-time-btn {
   border-radius: calc(var(--border-radius-md) - 2px);
   font-family: inherit;
 }
@@ -186,65 +182,31 @@ body.dark-mode :is(
   background: color-mix(in srgb, var(--func-primary) 12%, var(--bg-card));
   color: var(--func-primary);
 }
-
 .sleep-pending-view .sl-empty-card,
-.sleep-audit-view .sl-empty-card,
 .sleep-athlete-detail-panel .sl-empty-card {
   border: 1px dashed var(--border-main);
   background: var(--bg-card);
 }
-
-.sleep-audit-view .sl-history-filters {
-  border: 1px solid var(--border-main);
-  border-radius: var(--border-radius-md);
-  background: var(--bg-surface);
-}
-
-.sleep-audit-view .sl-table-container,
 .sleep-athlete-detail-panel .sl-detail-history-table-wrap {
   overflow-x: auto;
   border: 1px solid var(--border-main);
   border-radius: var(--border-radius-md);
 }
-
-.sleep-audit-view .sl-table th,
 .sleep-athlete-detail-panel .sl-table th {
   background: var(--bg-surface);
   color: var(--text-muted);
   font-family: inherit;
 }
-
-.sleep-audit-view .sl-table td,
 .sleep-athlete-detail-panel .sl-table td {
   color: var(--text-main);
   font-family: inherit;
 }
-
-.sleep-audit-view .sl-table tbody tr:hover,
 .sleep-athlete-detail-panel .sl-table tbody tr:hover {
   background: color-mix(in srgb, var(--func-primary) 5%, var(--bg-card));
 }
 
-.sleep-audit-view .sl-history-pagination button {
-  border: 1px solid var(--border-main);
-  border-radius: var(--border-radius-md);
-  background: var(--bg-card);
-  color: var(--text-main);
-  font-family: inherit;
-}
-
 .sleep-registration-view .sl-card--centered {
   box-shadow: var(--shadow-card);
-}
-
-.sleep-registration-view .sl-form-group__label {
-  color: var(--text-muted);
-}
-
-.sleep-registration-view .sl-athlete-summary {
-  border: 1px solid color-mix(in srgb, var(--func-primary) 22%, var(--border-main));
-  border-radius: var(--border-radius-md);
-  background: color-mix(in srgb, var(--func-primary) 6%, var(--bg-card));
 }
 
 .sleep-registration-view .sl-actions .sl-btn-primary {
