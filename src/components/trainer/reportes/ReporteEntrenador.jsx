@@ -22,7 +22,6 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import UserService from '../../../api/services/Userservice';
 import { exportToExcel, exportToPdf } from '../../../api/services/reportExport';
 import { CINE_AXES, ESTADO_LABELS, errorMessage, formatDate, formatMonth, formatNumber } from '../../reportes/reportUtils';
@@ -575,31 +574,8 @@ function ResumenAtletas({ params }) {
                 <div><h2>Calidad de sueño</h2><p>{sueno.registros} registros en el período</p></div>
                 <Moon className="report-icon-tertiary" size={20} />
               </div>
-              {sueno.registros && sueno.tendencia?.periodos?.length ? (
-                <>
-                  <p className="report-description">
-                    Calidad promedio {sueno.tendencia.agrupacion === 'dia' ? 'por día' : 'por semana'} (escala del 1 al 10).
-                  </p>
-                  <div className="report-sleep-line" role="img" aria-label="Calidad de sueño promedio por fecha">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart
-                        data={sueno.tendencia.periodos.map((p) => ({ ...p, etiqueta: formatDate(p.inicio) }))}
-                        margin={{ top: 8, right: 12, left: -20, bottom: 0 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-main)" vertical={false} />
-                        <XAxis dataKey="etiqueta" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} minTickGap={24} />
-                        <YAxis domain={[1, 10]} ticks={[1, 4, 7, 10]} tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                        <Tooltip
-                          formatter={(valor, _nombre, item) => [`${valor}/10 · ${item.payload.registros} registros`, 'Calidad promedio']}
-                          labelFormatter={(etiqueta) => (sueno.tendencia.agrupacion === 'dia' ? etiqueta : `Semana del ${etiqueta}`)}
-                          contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border-main)', borderRadius: 8, color: 'var(--text-main)', fontSize: 12 }}
-                        />
-                        <Line type="monotone" dataKey="promedio" stroke="var(--state-warning)" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </>
-              ) : sueno.registros ? (
+              <p className="report-description">Distribución de la calidad de sueño registrada (escala del 1 al 10).</p>
+              {sueno.registros ? (
                 <div className="report-sleep-distribution">
                   {sueno.distribucion.map((item) => (
                     <div className="report-sleep-row" key={item.clave}>
@@ -692,18 +668,7 @@ function seccionesResumen(data) {
       rows: asistencia.categorias || [],
     });
   }
-  if (sueno?.tendencia?.periodos?.length) {
-    const porDia = sueno.tendencia.agrupacion === 'dia';
-    secciones.push({
-      title: `Calidad de sueño ${porDia ? 'por día' : 'por semana'}`,
-      columns: [
-        { key: 'inicio', label: porDia ? 'Fecha' : 'Semana', exportValue: (row) => (porDia ? formatDate(row.inicio) : `Semana del ${formatDate(row.inicio)}`) },
-        { key: 'promedio', label: 'Calidad promedio (1-10)' },
-        { key: 'registros', label: 'Registros' },
-      ],
-      rows: sueno.tendencia.periodos,
-    });
-  } else if (sueno) {
+  if (sueno) {
     secciones.push({
       title: 'Distribución de la calidad de sueño',
       columns: [

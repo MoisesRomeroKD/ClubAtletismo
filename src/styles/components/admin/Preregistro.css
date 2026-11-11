@@ -3,6 +3,14 @@
    PREREGISTRO
    ========================================================= */
 
+.preregistro-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
 /* =========================================================
    SELECTOR DE ROL
    ========================================================= */
@@ -125,6 +133,25 @@
 /* =========================================================
    HEADER
    ========================================================= */
+
+.preregistro-card-header {
+  margin-bottom: 20px;
+}
+
+.preregistro-card-header h2 {
+  margin: 0 0 6px;
+  color: var(--text-main);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.preregistro-card-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
 
 .preregistro-mode-toggle {
   display: inline-flex;
@@ -290,6 +317,17 @@
    TABLA
    ========================================================= */
 
+.preregistro-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.preregistro-cards-wrap { display: none; }
+@media (max-width: 869px) {
+  .preregistro-table-wrapper > .preregistro-table { display: none; }
+  .preregistro-cards-wrap { display: block; }
+}
+
 .preregistro-table {
   width: 100%;
   border-collapse: collapse;
@@ -364,6 +402,36 @@
 
   font-size: 12px;
   font-weight: 600;
+}
+
+.preregistro-action {
+  text-align: right;
+}
+
+.preregistro-review-button {
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: var(--func-primary);
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.preregistro-review-button:hover {
+  text-decoration: underline;
+}
+
+.preregistro-empty {
+  padding: 24px !important;
+
+  color: var(--text-muted);
+  text-align: center;
 }
 
 /* =========================================================
@@ -833,6 +901,7 @@ body.dark-mode .preregistro-metrica--valida .preregistro-metrica-label {
   cursor: not-allowed;
 }
 
+
 /* Buscar un representante ya registrado (paso 1 del preregistro de atleta) */
 .preregistro-field--ancho {
   grid-column: 1 / -1;
@@ -928,6 +997,7 @@ body.dark-mode .preregistro-metrica--valida .preregistro-metrica-label {
   font-size: 13px;
   font-weight: 600;
 }
+
 
 /* Subáreas al preregistrar */
 .preregistro-nota-subarea {

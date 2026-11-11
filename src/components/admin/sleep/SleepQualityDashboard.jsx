@@ -147,6 +147,7 @@ export default function SleepQualityDashboard({ activeSection = 'sueño_general'
     <section className="admin-sleep-dashboard">
       <header className="admin-sleep-dashboard__header">
         <h1>Sueño y Descanso</h1>
+        <h2 className="admin-sleep-dashboard__seccion">{enGeneral ? 'Vista General' : 'Detalle Individual'}</h2>
       </header>
 
       {saveError && <div className="admin-sleep-dashboard__error" role="alert">{saveError}</div>}

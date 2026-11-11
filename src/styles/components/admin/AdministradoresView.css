@@ -47,6 +47,15 @@
   color: var(--text-muted);
 }
 
+.administradores-rol {
+  background-color: var(--func-primary-bg-soft);
+  color: var(--func-primary);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
 .administradores-activo {
   font-weight: 600;
   color: var(--state-success);
@@ -99,6 +108,14 @@
   font-size: 0.9rem;
   color: var(--text-main);
   overflow-wrap: anywhere;
+}
+
+.administradores-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 /* ============================================================
@@ -462,28 +479,5 @@
 @media (max-width: 768px) {
   .administradores-filtros {
     display: contents;
-  }
-}
-
-.administradores-card-cedula {
-  font-weight: 600;
-  color: var(--brand-accent);
-}
-
-/* Celular: la paginación cabe en una sola fila, como en Entrenadores */
-@media (max-width: 520px) {
-  .administradores-paginacion {
-    gap: 0.5rem;
-    flex-wrap: nowrap;
-  }
-
-  .administradores-pagina-btn {
-    padding: 8px 12px;
-    white-space: nowrap;
-  }
-
-  .administradores-pagina-info {
-    font-size: 0.8rem;
-    text-align: center;
   }
 }

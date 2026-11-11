@@ -440,6 +440,8 @@ body.dark-mode .sleep-pending-view {
   gap: 8px;
   flex-wrap: wrap;
 }
+
+.sl-badge-area,
 .sl-badge-subarea {
   font-size: 0.78rem;
   color: var(--sl-text-muted);
@@ -448,6 +450,8 @@ body.dark-mode .sleep-pending-view {
   border-radius: 4px;
   border: 1px solid var(--sl-border);
 }
+
+.sl-badge-area strong,
 .sl-badge-subarea strong {
   color: var(--sl-text-primary);
   font-weight: 600;

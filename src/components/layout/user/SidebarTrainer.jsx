@@ -27,10 +27,6 @@ import '../../../styles/layouts/sidebar.css';
 import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
 import { puedeVerSeccionEntrenador } from './permisosEntrenador';
 
-/*
- * Menú del entrenador con el mismo orden que el del administrador (Principal, Rendimiento e
- * Información y Control), pero con las secciones del entrenador.
- */
 const trainerRoutePaths = {
   home: '/entrenador/home',
   perfil: '/entrenador/perfil',
@@ -52,76 +48,35 @@ const trainerRoutePaths = {
   reportes: '/entrenador/reportes',
 };
 
-const principalItems = [
+const navItems = [
   { id: 'home', label: 'Home', icon: Home },
   { id: 'mis_atletas', label: 'Mis Atletas', icon: Users },
-];
-
-const testsGroup = {
-  id: 'tests',
-  label: 'Tests',
-  icon: ClipboardList,
-  items: [
-    { id: 'mis_tests', label: 'Mis tests', icon: ListChecks },
-    { id: 'crear_test', label: 'Crear test', icon: PlusCircle },
-    { id: 'tests_resultados', label: 'Resultados', icon: Award },
-    { id: 'tests_analisis', label: 'Análisis', icon: ChartColumn },
-  ],
-};
-
-const cineGroup = {
-  id: 'cine',
-  label: 'Cineantropometría',
-  icon: Activity,
-  items: [
-    { id: 'cine_programar', label: 'Programar medición', icon: CalendarClock },
-    { id: 'cine_datos', label: 'Datos registrados', icon: Database },
-    { id: 'cineantropometria', label: 'Análisis', icon: ChartColumn },
-  ],
-};
-
-const sleepGroup = {
-  id: 'sueno',
-  label: 'Sueño y Descanso',
-  icon: MoonStar,
-  items: [
-    { id: 'sueño_general', label: 'Vista General', icon: LayoutDashboard },
-    { id: 'sueño_individual', label: 'Detalle Individual', icon: Users },
-    { id: 'sueño_pendientes', label: 'Pendientes', icon: AlertCircle },
-  ],
-};
-
-const attendanceGroup = {
-  id: 'asistencia',
-  label: 'Asistencia',
-  icon: UserCheck,
-  items: [
-    { id: 'asistencias', label: 'Análisis de asistencia', icon: UserCheck },
-    { id: 'registro_asistencia', label: 'Registro de asistencia', icon: ClipboardCheck },
-  ],
-};
-
-const routinesGroup = {
-  id: 'rutinas',
-  label: 'Rutinas',
-  icon: Dumbbell,
-  items: [
-    { id: 'rutina', label: 'Crear Rutinas', icon: Dumbbell },
-    { id: 'gestion_rutinas', label: 'Ver Rutinas Asignadas', icon: FolderOpen },
-  ],
-};
-
-const infoItems = [
+  {
+    id: 'asistencia', label: 'Asistencia', icon: UserCheck,
+    grupo: [
+      { id: 'asistencias', label: 'Análisis de asistencia', icon: UserCheck },
+      { id: 'registro_asistencia', label: 'Registro de asistencia', icon: ClipboardCheck },
+    ],
+  },
+  {
+    id: 'tests', label: 'Tests', icon: ClipboardList,
+    grupo: [
+      { id: 'mis_tests', label: 'Mis tests', icon: ListChecks },
+      { id: 'crear_test', label: 'Crear test', icon: PlusCircle },
+      { id: 'tests_resultados', label: 'Resultados', icon: Award },
+      { id: 'tests_analisis', label: 'Análisis', icon: ChartColumn },
+    ],
+  },
+  {
+    id: 'cine', label: 'Cineantropometría', icon: Activity,
+    grupo: [
+      { id: 'cineantropometria', label: 'Panel', icon: Activity },
+      { id: 'cine_programar', label: 'Programar medición', icon: CalendarClock },
+      { id: 'cine_datos', label: 'Datos registrados', icon: Database },
+    ],
+  },
   { id: 'reportes', label: 'Reportes', icon: FileText },
 ];
-
-const rendimientoGroups = [testsGroup, cineGroup, sleepGroup, attendanceGroup, routinesGroup];
-
-// Grupo que se abre solo según la página actual.
-const grupoDeRuta = (path) => {
-  const tab = Object.entries(trainerRoutePaths).find(([, ruta]) => ruta === path)?.[0];
-  return rendimientoGroups.find((group) => group.items.some((item) => item.id === tab))?.id;
-};
 
 export default function SidebarTrainer({
   isOpen,
@@ -129,89 +84,47 @@ export default function SidebarTrainer({
   activeTab,
   onTabChange,
 }) {
-  const [openGroups, setOpenGroups] = useState(() => {
-    const grupo = grupoDeRuta(window.location.pathname);
-    return grupo ? { [grupo]: true } : {};
+  const [isRoutinesOpen, setIsRoutinesOpen] = useState(() => {
+    const path = window.location.pathname;
+    return path.includes('/entrenador/rutina') || path.includes('/entrenador/gestion-rutinas');
   });
+  const [gruposAbiertos, setGruposAbiertos] = useState(() => ({
+    asistencia: window.location.pathname.startsWith('/entrenador/asistencias'),
+    tests: ['/entrenador/mis-tests', '/entrenador/crear-test', '/entrenador/tests-resultados', '/entrenador/tests-analisis'].includes(window.location.pathname),
+    cine: window.location.pathname.startsWith('/entrenador/cineantropometria'),
+  }));
+  const [isSleepOpen, setIsSleepOpen] = useState(
+    () => window.location.pathname.includes('/entrenador/sueno-')
+  );
   const location = useLocation();
   const navigate = useNavigate();
   const { hasPermission } = useApplicationPermissions();
+  // Se ocultan las opciones sin permiso (también dentro de los grupos) y los grupos que quedan vacíos.
   // Cada opción pide el permiso de su sección (permisosEntrenador.js); los grupos vacíos se ocultan.
   const conPermiso = (item) => puedeVerSeccionEntrenador(item.id, hasPermission);
+  const visibleNavItems = navItems
+    .filter(conPermiso)
+    .map((item) => (item.grupo ? { ...item, grupo: item.grupo.filter(conPermiso) } : item))
+    .filter((item) => !item.grupo || item.grupo.length > 0);
   const routeActiveTab = Object.entries(trainerRoutePaths)
     .find(([, path]) => path === location.pathname)?.[0];
   const selectedTab = routeActiveTab || activeTab;
 
-  const handleNavigation = (tab) => {
-    const path = trainerRoutePaths[tab];
-    if (path) navigate(path);
-    onTabChange(tab);
+  const handleRouteNavigation = (path, tab) => {
+    navigate(path);
+    if (tab) onTabChange(tab);
     if (isOpen) toggleSidebar();
   };
 
-  const toggleGroup = (groupId) => {
-    setOpenGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }));
+  const handleNavigation = (tab) => {
+    const path = trainerRoutePaths[tab];
+    if (path) {
+      handleRouteNavigation(path, tab);
+      return;
+    }
+    onTabChange(tab);
+    if (isOpen) toggleSidebar();
   };
-
-  const renderNavGroup = (items) =>
-    items.filter(conPermiso).map((item) => {
-      const Icon = item.icon;
-      return (
-        <div
-          key={item.id}
-          onClick={() => handleNavigation(item.id)}
-          className={`user-sidebar__nav-item ${selectedTab === item.id ? 'is-active' : ''}`}
-        >
-          <Icon size={20} />
-          <span className="user-sidebar__nav-label">{item.label}</span>
-        </div>
-      );
-    });
-
-  const renderCollapsibleGroup = (group) => {
-    const visibleItems = group.items.filter(conPermiso);
-    if (visibleItems.length === 0) return null;
-    const isGroupOpen = Boolean(openGroups[group.id]);
-    const GroupIcon = group.icon;
-
-    return (
-      <div className="user-sidebar__group" key={group.id}>
-        <button
-          type="button"
-          className={`user-sidebar__nav-item user-sidebar__button user-sidebar__group-header ${isGroupOpen ? 'is-open' : ''}`}
-          onClick={() => toggleGroup(group.id)}
-        >
-          <div className="user-sidebar__group-title-wrapper">
-            <GroupIcon size={20} />
-            <span className="user-sidebar__nav-label">{group.label}</span>
-          </div>
-          {isGroupOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        </button>
-
-        {isGroupOpen && (
-          <div className="user-sidebar__submenu">
-            {visibleItems.map((item) => {
-              const ItemIcon = item.icon;
-              return (
-                <button
-                  type="button"
-                  key={item.id}
-                  className={`user-sidebar__sub-btn ${selectedTab === item.id ? 'is-active' : ''}`}
-                  onClick={() => handleNavigation(item.id)}
-                >
-                  <ItemIcon size={16} />
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const rendimientoVisible = rendimientoGroups.some((group) => group.items.some(conPermiso));
-  const informacionVisible = infoItems.some(conPermiso);
 
   return (
     <>
@@ -219,18 +132,115 @@ export default function SidebarTrainer({
 
       <aside className={`user-sidebar ${isOpen ? 'user-sidebar--mobile-open' : ''}`}>
         <nav className="user-sidebar__nav">
-          {/* PRINCIPAL */}
           <div className="user-sidebar__group-title">Principal</div>
-          {renderNavGroup(principalItems)}
+          {visibleNavItems.map((navItem) => {
+            const NavIcon = navItem.icon;
+            // Asistencia, Tests y Cineantropometría son grupos desplegables con sus opciones.
+            if (navItem.grupo) {
+              const isGroupOpen = Boolean(gruposAbiertos[navItem.id]);
+              return (
+                <div key={navItem.id} className="user-sidebar__group">
+                  <button
+                    type="button"
+                    className={`user-sidebar__nav-item ${isGroupOpen ? 'is-open' : ''}`}
+                    onClick={() => setGruposAbiertos((abiertos) => ({ ...abiertos, [navItem.id]: !abiertos[navItem.id] }))}
+                    style={{ width: '100%', border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <NavIcon size={20} />
+                      <span className="user-sidebar__nav-label">{navItem.label}</span>
+                    </div>
+                    {isGroupOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                  </button>
+                  {isGroupOpen && (
+                    <div className="user-sidebar__submenu" style={{ paddingLeft: '40px', display: 'flex', flexDirection: 'column' }}>
+                      {navItem.grupo.map((subItem) => {
+                        const SubIcon = subItem.icon;
+                        return (
+                          <button
+                            key={subItem.id}
+                            type="button"
+                            className={`user-sidebar__sub-btn ${selectedTab === subItem.id ? 'is-active' : ''}`}
+                            onClick={() => handleNavigation(subItem.id)}
+                          >
+                            <SubIcon size={16} /><span>{subItem.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            return (
+              <div
+                key={navItem.id}
+                onClick={() => handleNavigation(navItem.id)}
+                className={`user-sidebar__nav-item ${selectedTab === navItem.id ? 'is-active' : ''}`}
+              >
+                <NavIcon size={20} />
+                <span className="user-sidebar__nav-label">{navItem.label}</span>
+              </div>
+            );
+          })}
 
-          {/* RENDIMIENTO */}
-          {rendimientoVisible && <div className="user-sidebar__group-title">Rendimiento</div>}
-          {rendimientoGroups.map(renderCollapsibleGroup)}
+          {/* Sueño y Descanso: con el permiso ver_descanso (solo de sus atletas). */}
+          {puedeVerSeccionEntrenador('sueño_general', hasPermission) && (
+          <div className="user-sidebar__group">
+            <button
+              type="button"
+              className={`user-sidebar__nav-item ${isSleepOpen ? 'is-open' : ''}`}
+              onClick={() => setIsSleepOpen((isOpenNow) => !isOpenNow)}
+              style={{ width: '100%', border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <MoonStar size={20} />
+                <span className="user-sidebar__nav-label">Sueño y Descanso</span>
+              </div>
+              {isSleepOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </button>
+            {isSleepOpen && (
+              <div className="user-sidebar__submenu" style={{ paddingLeft: '40px', display: 'flex', flexDirection: 'column' }}>
+                <button type="button" className={`user-sidebar__sub-btn ${selectedTab === 'sueño_general' ? 'is-active' : ''}`} onClick={() => handleNavigation('sueño_general')}>
+                  <LayoutDashboard size={16} /><span>Vista General</span>
+                </button>
+                <button type="button" className={`user-sidebar__sub-btn ${selectedTab === 'sueño_individual' ? 'is-active' : ''}`} onClick={() => handleNavigation('sueño_individual')}>
+                  <Users size={16} /><span>Detalle Individual</span>
+                </button>
+                <button type="button" className={`user-sidebar__sub-btn ${selectedTab === 'sueño_pendientes' ? 'is-active' : ''}`} onClick={() => handleNavigation('sueño_pendientes')}>
+                  <AlertCircle size={16} /><span>Pendientes</span>
+                </button>
+              </div>
+            )}
+          </div>
+          )}
 
-          {/* INFORMACIÓN Y CONTROL */}
-          {informacionVisible && <div className="user-sidebar__group-title">Información y Control</div>}
-          {renderNavGroup(infoItems)}
+          <div className="user-sidebar__group">
+            <button
+              type="button"
+              className={`user-sidebar__nav-item ${isRoutinesOpen ? 'is-open' : ''}`}
+              onClick={() => setIsRoutinesOpen((isOpenNow) => !isOpenNow)}
+              style={{ width: '100%', border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Dumbbell size={20} />
+                <span className="user-sidebar__nav-label">Rutinas</span>
+              </div>
+              {isRoutinesOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </button>
+            {isRoutinesOpen && (
+              <div className="user-sidebar__submenu" style={{ paddingLeft: '40px', display: 'flex', flexDirection: 'column' }}>
+                <button type="button" className={`user-sidebar__sub-btn ${selectedTab === 'rutina' ? 'is-active' : ''}`} onClick={() => handleNavigation('rutina')}>
+                  <Dumbbell size={16} /><span>Crear Rutinas</span>
+                </button>
+                <button type="button" className={`user-sidebar__sub-btn ${selectedTab === 'gestion_rutinas' ? 'is-active' : ''}`} onClick={() => handleNavigation('gestion_rutinas')}>
+                  <FolderOpen size={16} /><span>Ver Rutinas Asignadas</span>
+                </button>
+              </div>
+            )}
+          </div>
         </nav>
+
       </aside>
     </>
   );

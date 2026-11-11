@@ -493,6 +493,7 @@
 
 .icon-inline { display: inline; margin-right: 4px; vertical-align: middle; }
 .icon-warning { color: #eab308; }
+.intensity-high { color: #dc2626; font-weight: 600; }
 .intensity-normal { color: var(--text-muted); }
 .subarea-name { min-width: 0; overflow-wrap: anywhere; }
 

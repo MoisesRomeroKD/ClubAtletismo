@@ -26,7 +26,6 @@ import {
   SlidersHorizontal,
   FileSignature,
   Accessibility,
-  PlusCircle,
 } from 'lucide-react';
 
 import '../../../styles/layouts/sidebar.css';
@@ -59,18 +58,12 @@ const reporteriaGroup = {
   ],
 };
 
-// Planes de entrenamiento de los entrenadores (solo consulta), al final de Rendimiento como en el entrenador.
-const planesItems = [
-  { id: 'planes-entrenamiento', label: 'Planes de entrenamiento', icon: Dumbbell },
-];
-
 const attendanceGroup = {
   id: 'asistencia',
   label: 'Asistencia',
   icon: Clock3,
   items: [
-    { id: 'asistencia_general', label: 'Vista General', icon: LayoutDashboard },
-    { id: 'asistencia_individual', label: 'Detalle Individual', icon: Users },
+    { id: 'asistencias', label: 'Análisis de asistencia', icon: Clock3 },
     { id: 'registro-asistencia', label: 'Registro de asistencia', icon: ClipboardList },
   ],
 };
@@ -81,7 +74,7 @@ const testsGroup = {
   icon: ClipboardList,
   items: [
     { id: 'tests-programados', label: 'Tests programados', icon: CalendarClock },
-    { id: 'tests-crear', label: 'Crear test', icon: PlusCircle },
+    { id: 'tests-resultados', label: 'Resultados', icon: ListChecks },
     { id: 'tests-analisis', label: 'Análisis', icon: ChartColumn },
   ],
 };
@@ -214,7 +207,6 @@ export const getAdminSidebarModules = (hasPermission) => {
     ...navItems.filter((item) => item.category === 'rendimiento'),
     ...sleepGroup.items,
     ...attendanceGroup.items,
-    ...planesItems,
     ...reporteriaGroup.items,
     ...navItems.filter((item) => item.category === 'info'),
     ...collapsibleGroups[2].items,
@@ -267,12 +259,10 @@ export default function SidebarAdmin({
   const navigate = useNavigate();
   const routePaths = {
     home: '/admin/home',
-    asistencia_general: '/admin/asistencias/general',
-    asistencia_individual: '/admin/asistencias/individual',
+    asistencias: '/admin/asistencias',
     'registro-asistencia': '/admin/asistencias/registro',
     'tests-programados': '/admin/tests/programados',
-    'tests-crear': '/admin/tests/crear',
-    'planes-entrenamiento': '/admin/planes',
+    'tests-resultados': '/admin/tests/resultados',
     'tests-analisis': '/admin/tests/analisis',
     athletes: '/admin/atletas',
     'antropometria-programar': '/admin/antropometria/programar',
@@ -357,7 +347,7 @@ export default function SidebarAdmin({
   // Un título de sección solo se muestra si alguna de sus opciones es visible para el usuario.
   const algunaVisible = (...items) => items.some((item) => puedeVerSeccionAdmin(item.id, hasPermission));
   const rendimientoVisible = algunaVisible(
-    ...testsGroup.items, ...antropometriaGroup.items, ...sleepGroup.items, ...attendanceGroup.items, ...planesItems,
+    ...testsGroup.items, ...antropometriaGroup.items, ...sleepGroup.items, ...attendanceGroup.items,
     ...navItems.filter((item) => item.category === 'rendimiento'),
   );
   const informacionVisible = algunaVisible(...reporteriaGroup.items, ...navItems.filter((item) => item.category === 'info'));
@@ -493,7 +483,6 @@ export default function SidebarAdmin({
           )}
           {renderCollapsibleGroup(sleepGroup)}
           {renderCollapsibleGroup(attendanceGroup)}
-          {renderNavGroup(planesItems)}
 
           {/* =================================================
               INFORMACIÓN Y CONTROL

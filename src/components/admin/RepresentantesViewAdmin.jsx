@@ -355,6 +355,7 @@ const RepresentantesViewAdmin = () => {
         document.body,
       )}
       <div className="filtros-escritorio">{controlesFiltro}</div>
+      <span className="representantes-admin-total">{totalCount} {totalCount === 1 ? 'representante' : 'representantes'}</span>
     </div>
   );
 

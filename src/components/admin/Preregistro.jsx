@@ -139,38 +139,6 @@ const EDAD_MINIMA_ATLETA = 9;
 const anioMaximoNacimiento = () => Number(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' }).slice(0, 4)) - EDAD_MINIMA_ATLETA;
 const maxNacimiento = () => `${anioMaximoNacimiento()}-12-31`;
 
-// Años de nacimiento que cubren las categorías deportivas configuradas (el atleta debe entrar en alguna).
-function useRangoNacimiento() {
-  const [rango, setRango] = useState(null);
-  useEffect(() => {
-    let activo = true;
-    UserService.getAthleteCategories()
-      .then((categorias) => {
-        const lista = Array.isArray(categorias) ? categorias : [];
-        if (!activo || !lista.length) return;
-        setRango({
-          desde: Math.min(...lista.map((c) => Number(c.birth_year_start))),
-          hasta: Math.max(...lista.map((c) => Number(c.birth_year_end))),
-        });
-      })
-      .catch(() => {});
-    return () => { activo = false; };
-  }, []);
-  return rango;
-}
-
-const fueraDeRango = (fecha, rango) => {
-  if (!fecha) return true;
-  if (!rango) return fecha > maxNacimiento();
-  const anio = Number(fecha.slice(0, 4));
-  return anio < rango.desde || anio > rango.hasta;
-};
-
-const mensajeRango = (rango) => (rango
-  ? `El año de nacimiento debe estar entre ${rango.desde} y ${rango.hasta} (años de las categorías deportivas del club).`
-  : `El atleta debe tener al menos ${EDAD_MINIMA_ATLETA} años: nacido en ${anioMaximoNacimiento()} o antes.`);
-
-
 // El backend puede devolver un texto o una lista de errores por campo/fila: se arma un solo mensaje legible.
 const mensajeError = (error, porDefecto) => {
   const datos = error?.response?.data;
@@ -187,7 +155,6 @@ const mensajeError = (error, porDefecto) => {
 };
 
 const Preregistro = () => {
-  const rangoNacimiento = useRangoNacimiento();
   const navigate = useNavigate();
   const { hasPermission } = useApplicationPermissions();
   // Al cerrarse el aviso de éxito se vuelve a la pantalla inicial del preregistro.
@@ -436,10 +403,6 @@ const Preregistro = () => {
           representante_relacion: formData.representante_relacion,
         }
         : formData;
-      if (rol === 'Atleta' && fueraDeRango(formData.fechaNacimiento, rangoNacimiento)) {
-        notificar(mensajeRango(rangoNacimiento), { tipo: 'aviso' });
-        return;
-      }
       if (rol === 'Entrenador' && !formData.subareas_ids.length) {
         notificar('Marca al menos una subárea del entrenador.', { tipo: 'aviso' });
         return;
@@ -748,9 +711,8 @@ const Preregistro = () => {
               value={formData.fechaNacimiento}
               onChange={handleInputChange}
               required
-              min={rangoNacimiento ? `${rangoNacimiento.desde}-01-01` : undefined}
-              max={rangoNacimiento ? `${rangoNacimiento.hasta}-12-31` : maxNacimiento()}
-              title={mensajeRango(rangoNacimiento)}
+              max={maxNacimiento()}
+              title={`El atleta debe haber nacido en ${anioMaximoNacimiento()} o antes (mínimo 9 años).`}
             />
           </div>
 

@@ -131,6 +131,11 @@
   font-weight: 600;
 }
 
+
+
+
+
+
 /* ============================================================
    DRAWER (panel lateral): DETALLE Y EDICIÓN DEL REPRESENTANTE
    Mismo patrón que el sidebar: panel fijo que se desliza + fondo oscuro detrás.
@@ -248,7 +253,16 @@
 .representantes-drawer-dato strong {
   overflow-wrap: anywhere;
 }
-.representantes-drawer-vacio {
+
+.representantes-drawer-subareas {
+  display: grid;
+  gap: 6px;
+  padding-left: 1.1rem;
+}
+
+.representantes-drawer-vacio,
+.representantes-drawer-fijo small,
+.representantes-drawer-estado small {
   color: var(--text-muted);
   font-size: 0.8rem;
 }
@@ -257,7 +271,9 @@
   display: grid;
   gap: 6px;
 }
-.representantes-drawer-campo label {
+
+.representantes-drawer-campo label,
+.representantes-drawer-etiqueta {
   font-size: 0.85rem;
   font-weight: 600;
 }
@@ -288,6 +304,31 @@
   color: var(--state-danger);
   font-size: 0.8rem;
   font-weight: 600;
+}
+
+.representantes-drawer-fijo {
+  padding: 9px 12px;
+  border: 1px dashed var(--border-main);
+  border-radius: var(--border-radius-md);
+}
+
+.representantes-drawer-estado {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+}
+
+.representantes-drawer-estado input {
+  margin-top: 3px;
+}
+
+.representantes-drawer-estado span {
+  display: grid;
+  gap: 2px;
 }
 
 .representantes-drawer-pie {
@@ -401,6 +442,12 @@
   border-color: var(--func-primary);
 }
 
+.representantes-admin-total {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
 /* Paginación (15 por página): arriba de la lista y al final */
 .representantes-admin-paginacion {
   display: flex;
@@ -441,29 +488,4 @@
   color: var(--text-muted);
   font-size: 0.85rem;
   text-align: center;
-}
-
-/* En celular los filtros van en el botón flotante: la barra no deja un recuadro vacío */
-@media (max-width: 768px) {
-  .representantes-admin-filtros {
-    display: contents;
-  }
-}
-
-/* Celular: la paginación cabe en una sola fila, como en Entrenadores */
-@media (max-width: 520px) {
-  .representantes-admin-paginacion {
-    gap: 0.5rem;
-    flex-wrap: nowrap;
-  }
-
-  .representantes-admin-pagina-btn {
-    padding: 8px 12px;
-    white-space: nowrap;
-  }
-
-  .representantes-admin-pagina-info {
-    font-size: 0.8rem;
-    text-align: center;
-  }
 }

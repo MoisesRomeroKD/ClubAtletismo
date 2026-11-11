@@ -150,6 +150,26 @@
   gap: 0.6rem;
 }
 
+.tests-ent-aplicaciones {
+  padding: 0.65rem 0.8rem;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-main);
+  border-radius: 8px;
+  font-size: 0.82rem;
+}
+
+.tests-ent-aplicaciones ul {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.tests-ent-aplicaciones p {
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+}
+
 .tests-ent-detalle-head {
   display: flex;
   flex-wrap: wrap;
@@ -162,6 +182,10 @@
   margin: 0.25rem 0 0;
   font-size: 0.85rem;
   color: var(--text-muted);
+}
+
+.tests-ent-observaciones {
+  font-style: italic;
 }
 
 /* Estados */
@@ -220,6 +244,12 @@
 .tests-ent-muted {
   font-size: 0.8rem;
   color: var(--text-muted);
+}
+
+.tests-ent-posicion {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  color: var(--func-primary);
 }
 
 .tests-ent-input-valor {
@@ -307,6 +337,17 @@
   display: flex !important;
   align-items: center;
   gap: 0.45rem;
+}
+
+.tests-ent-card--ranking {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.tests-ent-card--ranking .tests-ent-posicion {
+  font-size: 1.25rem;
+  min-width: 2rem;
+  text-align: center;
 }
 
 /* Mensajes */

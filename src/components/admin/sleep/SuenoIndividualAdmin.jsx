@@ -101,22 +101,6 @@ export default function SuenoIndividualAdmin({
     </>
   );
 
-  const periodos = (
-    <div className="sueno-ind__periodos" role="group" aria-label="Período">
-      {PERIODOS.map(([clavePeriodo, etiqueta]) => (
-        <button
-          key={clavePeriodo}
-          type="button"
-          className={`sueno-ind__periodo${timeRange === clavePeriodo ? ' sueno-ind__periodo--activo' : ''}`}
-          onClick={() => { setTimeRange(clavePeriodo); setPagina(1); }}
-          aria-pressed={timeRange === clavePeriodo}
-        >
-          {etiqueta}
-        </button>
-      ))}
-    </div>
-  );
-
   const hoy = (atleta) => (
     <span className={`sueno-ind__hoy${atleta.registrado_hoy ? ' sueno-ind__hoy--ok' : ''}`}>
       {atleta.registrado_hoy ? 'Registrado' : 'Pendiente'}
@@ -135,23 +119,22 @@ export default function SuenoIndividualAdmin({
       )}
     </div>
   );
-  // Paginación arriba de la lista (para no bajar hasta el final) y también al final.
-  const paginacion = data?.count > 0 && (
-    <div className="sueno-ind__paginacion">
-      <span>{data.count} atleta{data.count === 1 ? '' : 's'} · {data.por_pagina} por página</span>
-      <div>
-        <button type="button" onClick={() => setPagina(data.page - 1)} disabled={data.page <= 1 || cargando}>← Anterior</button>
-        <span>Página {data.page} de {data.num_pages}</span>
-        <button type="button" onClick={() => setPagina(data.page + 1)} disabled={data.page >= data.num_pages || cargando}>Siguiente →</button>
-      </div>
-    </div>
-  );
   const subareasTexto = (atleta) => atleta.subareas.map((fila) => fila.subarea).join(', ') || '—';
 
   return (
     <section className="sueno-ind">
-      {/* Período: visible en monitores; en celular va dentro del botón "Filtros" */}
-      <div className="filtros-escritorio">{periodos}</div>
+      <div className="sueno-ind__periodos" role="group" aria-label="Período">
+        {PERIODOS.map(([clavePeriodo, etiqueta]) => (
+          <button
+            key={clavePeriodo}
+            type="button"
+            className={`sueno-ind__periodo${timeRange === clavePeriodo ? ' sueno-ind__periodo--activo' : ''}`}
+            onClick={() => { setTimeRange(clavePeriodo); setPagina(1); }}
+          >
+            {etiqueta}
+          </button>
+        ))}
+      </div>
 
       <div className="sueno-ind__barra">
         <label className="sueno-ind__buscar">
@@ -177,7 +160,7 @@ export default function SuenoIndividualAdmin({
               <X size={18} />
             </button>
           </header>
-          <div className="filtros-sheet__body">{periodos}{controles}</div>
+          <div className="filtros-sheet__body">{controles}</div>
           <footer className="filtros-sheet__footer">
             <button type="button" className="filtros-sheet__btn" onClick={() => { setFiltros(FILTROS_VACIOS); setPagina(1); }}>Limpiar</button>
             <button type="button" className="filtros-sheet__btn filtros-sheet__btn--primario" onClick={() => setFiltrosAbiertos(false)}>Aplicar filtros</button>
@@ -186,7 +169,6 @@ export default function SuenoIndividualAdmin({
         document.body,
       )}
 
-      {!lista.error && paginacion}
       {lista.error ? (
         <p className="sueno-ind__error" role="alert">{lista.error}</p>
       ) : cargando && !data ? (
@@ -244,7 +226,16 @@ export default function SuenoIndividualAdmin({
         </div>
       )}
 
-      {!lista.error && paginacion}
+      {data?.count > 0 && (
+        <footer className="sueno-ind__paginacion">
+          <span>{data.count} atleta{data.count === 1 ? '' : 's'} · {data.por_pagina} por página</span>
+          <div>
+            <button type="button" onClick={() => setPagina(data.page - 1)} disabled={data.page <= 1 || cargando}>← Anterior</button>
+            <span>Página {data.page} de {data.num_pages}</span>
+            <button type="button" onClick={() => setPagina(data.page + 1)} disabled={data.page >= data.num_pages || cargando}>Siguiente →</button>
+          </div>
+        </footer>
+      )}
     </section>
   );
 }

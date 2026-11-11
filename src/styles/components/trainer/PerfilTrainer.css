@@ -281,6 +281,7 @@
 }
 
 .mi-perfil-chip-dot.primary { background: var(--primary); }
+.mi-perfil-chip-dot.tertiary { background: var(--tertiary); }
 
 /* ============================================================================
    10. READONLY MESSAGE

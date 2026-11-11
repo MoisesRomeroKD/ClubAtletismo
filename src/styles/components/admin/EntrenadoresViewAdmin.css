@@ -290,7 +290,9 @@
   gap: 6px;
   padding-left: 1.1rem;
 }
+
 .entrenadores-drawer-vacio,
+.entrenadores-drawer-fijo small,
 .entrenadores-drawer-estado small {
   color: var(--text-muted);
   font-size: 0.8rem;
@@ -300,7 +302,9 @@
   display: grid;
   gap: 6px;
 }
-.entrenadores-drawer-campo label {
+
+.entrenadores-drawer-campo label,
+.entrenadores-drawer-etiqueta {
   font-size: 0.85rem;
   font-weight: 600;
 }
@@ -331,6 +335,12 @@
   color: var(--state-danger);
   font-size: 0.8rem;
   font-weight: 600;
+}
+
+.entrenadores-drawer-fijo {
+  padding: 9px 12px;
+  border: 1px dashed var(--border-main);
+  border-radius: var(--border-radius-md);
 }
 
 .entrenadores-drawer-estado {
@@ -475,6 +485,7 @@
   outline: none;
   border-color: var(--func-primary);
 }
+
 
 /* Estado de la cuenta (Activo / Inactivo) */
 .entrenadores-admin-activo {

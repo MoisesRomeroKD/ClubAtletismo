@@ -140,12 +140,10 @@ function PlanillaTest({ testId, onVolver }) {
   if (detalle.error) return <p className="tests-ent-vacio tests-ent-error" role="alert">{detalle.error}</p>;
 
   const test = detalle.data;
-  // Los tests de otro entrenador de sus subáreas solo se consultan.
-  const propio = test.es_propio !== false;
-  const corrigiendo = propio && sePuedeCorregir(test) && hasPermission('corregir_resultados_test');
-  const editable = propio && ((test.estado === 'programado' && hasPermission('registrar_test')) || corrigiendo);
+  const corrigiendo = sePuedeCorregir(test) && hasPermission('corregir_resultados_test');
+  const editable = (test.estado === 'programado' && hasPermission('registrar_test')) || corrigiendo;
   // Test finalizado: solo los atletas con recuperación pendiente, desde su fecha, se cargan aquí.
-  const recuperaHoy = (fila) => propio && test.estado === 'realizado' && fila.recuperacion_pendiente
+  const recuperaHoy = (fila) => test.estado === 'realizado' && fila.recuperacion_pendiente
     && fila.fecha_recuperacion <= hoyCaracas() && hasPermission('registrar_test');
   const editableFila = (fila) => editable || recuperaHoy(fila);
   const columnaEstado = editable || test.convocados.some(recuperaHoy);
@@ -298,7 +296,7 @@ function PlanillaTest({ testId, onVolver }) {
                             onBlur={() => guardarFila(fila.atleta_id, actual)}
                             aria-label={`Observación de ${fila.nombre} ${fila.apellido}`}
                           />
-                        ) : observacionDe(fila)}
+                        ) : (fila.observacion || '—')}
                       </td>
                       {columnaEstado && <td>{editableFila(fila) && estadoDe(fila.atleta_id)}</td>}
                     </tr>
@@ -349,7 +347,7 @@ function PlanillaTest({ testId, onVolver }) {
                     ) : (
                       <dl>
                         <div><dt>Resultado</dt><dd>{fila.ausente ? 'Ausente' : conUnidad(fila.valor, test.prueba_unidad)}</dd></div>
-                        <div><dt>Observación</dt><dd>{observacionDe(fila)}</dd></div>
+                        {fila.observacion && <div><dt>Observación</dt><dd>{fila.observacion}</dd></div>}
                       </dl>
                     )}
                   </article>
@@ -733,10 +731,7 @@ function MisTests({ pruebas, subareas }) {
     );
   }
 
-  // Los tests de otro entrenador de sus subáreas solo se consultan.
-  const esPropio = (test) => test.es_propio !== false;
   const textoPlanilla = (test) => {
-    if (!esPropio(test)) return 'Ver resultados';
     if (test.estado === 'programado' && puedeRegistrar) return 'Abrir planilla';
     if (test.estado === 'realizado' && puedeRegistrar && test.recuperaciones_pendientes > 0) return 'Registrar recuperación';
     if (puedeCorregir && sePuedeCorregir(test)) return 'Corregir resultados';
@@ -748,12 +743,12 @@ function MisTests({ pruebas, subareas }) {
       <button type="button" className="tests-ent-btn tests-ent-btn--chico" onClick={() => setPlanillaId(test.id)}>
         {textoPlanilla(test)}
       </button>
-      {test.estado === 'programado' && puedeEditar && esPropio(test) && (
+      {test.estado === 'programado' && puedeEditar && (
         <button type="button" className="tests-ent-btn tests-ent-btn--chico tests-ent-btn--ghost" onClick={() => setEditando(test)}>
           Rectificar
         </button>
       )}
-      {test.estado === 'programado' && puedeEditar && esPropio(test) && (
+      {test.estado === 'programado' && puedeEditar && (
         <button type="button" className="tests-ent-btn tests-ent-btn--chico tests-ent-btn--peligro" onClick={() => cancelarTest(test)}>
           Cancelar
         </button>
@@ -1069,14 +1064,6 @@ const normalizarSubareas = (relaciones) => {
     lista.push({ id, nombre: detalle?.nombre || 'Subárea', areaId: detalle?.area?.id ?? null, areaNombre: detalle?.area?.nombre || '' });
     return lista;
   }, []);
-};
-
-// Observación de un resultado: si se registró (marca o ausencia) y no tiene observación, "Sin novedad";
-// si todavía no se registró nada, "Sin registro".
-const observacionDe = (fila) => {
-  const registrado = fila.ausente || (fila.valor !== null && fila.valor !== undefined && fila.valor !== '');
-  if (!registrado) return 'Sin registro';
-  return fila.observacion || 'Sin novedad';
 };
 
 export default function TestsTrainer({ seccion = 'tests' }) {

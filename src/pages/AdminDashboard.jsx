@@ -18,6 +18,7 @@ const Preregistro = lazy(() => import('../components/admin/Preregistro'));
 const RolesPermisos = lazy(() => import('../components/admin/RolesPermisos'));
 const AdministradoresView = lazy(() => import('../components/admin/AdministradoresView'));
 const TestsAdmin = lazy(() => import('../components/admin/tests/TestsAdmin'));
+const AdminEvaluacionesView = lazy(() => import('../components/admin/evaluacion/AdminEvaluacionesView'));
 const MiPerfilViewAdmin = lazy(() => import('../components/admin/MiPerfilViewAdmin'));
 const ExercisesAdmin = lazy(() => import('../components/admin/ExercisesAdmin'));
 const CategoriasDeportivasAdmin = lazy(() => import('../components/admin/CategoriasDeportivasAdmin'));
@@ -30,7 +31,6 @@ const DiscapacidadesAdmin = lazy(() => import('../components/admin/Discapacidade
 const AntropometriaAdmin = lazy(() => import('../components/admin/antropometria/AntropometriaAdmin'));
 const ParametrosAntropometria = lazy(() => import('../components/admin/antropometria/ParametrosAntropometria'));
 const AnalisisCineAdmin = lazy(() => import('../components/admin/antropometria/AnalisisCineAdmin'));
-const PlanesAdmin = lazy(() => import('../components/admin/rutinas/PlanesAdmin'));
 const AnalisisTestsAdmin = lazy(() => import('../components/admin/tests/AnalisisTestsAdmin'));
 
 import '../styles/pages/AdminDashboard.css';
@@ -40,7 +40,6 @@ import CargaCircular from '../components/layout/CargaCircular';
 
 const TESTS_SECCIONES = {
   'tests-programados': 'tests',
-  'tests-crear': 'catalogo',
   evaluaciones: 'tests',
   evaluacion: 'tests',
 };
@@ -56,14 +55,11 @@ export default function AdminDashboard({
   const navigate = useNavigate();
   const rutas = {
     '/admin/home': 'home',
-    '/admin/asistencias': 'asistencia_general',
-    '/admin/asistencias/general': 'asistencia_general',
-    '/admin/asistencias/individual': 'asistencia_individual',
+    '/admin/asistencias': 'asistencias',
     '/admin/asistencias/registro': 'registro-asistencia',
     '/admin/evaluaciones': 'tests-programados',
     '/admin/tests/programados': 'tests-programados',
-    '/admin/tests/crear': 'tests-crear',
-    '/admin/planes': 'planes-entrenamiento',
+    '/admin/tests/resultados': 'tests-resultados',
     '/admin/tests/analisis': 'tests-analisis',
     '/admin/atletas': 'athletes',
     '/admin/antropometria/programar': 'antropometria-programar',
@@ -145,6 +141,13 @@ export default function AdminDashboard({
           </section>
         )}
 
+        {/* RESULTADOS DE TESTS: rendimiento de cada atleta */}
+        {effectiveTab === 'tests-resultados' && (
+          <section className="dashboard-section">
+            <AdminEvaluacionesView />
+          </section>
+        )}
+
         {/* EVALUACIONES DEPORTIVAS */}
         {TESTS_SECCIONES[effectiveTab] && (
           <section className="dashboard-section">
@@ -175,33 +178,16 @@ export default function AdminDashboard({
         )}
 
         {/* ASISTENCIA */}
-        {['asistencias', 'asistencia_general', 'asistencia_individual'].includes(effectiveTab) && (
-          <AsistenciaAdminView
-            activeSection={effectiveTab === 'asistencia_individual' ? 'asistencia_individual' : 'asistencia_general'}
-          />
+        {effectiveTab === 'asistencias' && (
+          <AsistenciaAdminView />
         )}
         {effectiveTab === 'registro-asistencia' && (
           <RegistroAsistencia />
         )}
 
-        {/* PLANES DE ENTRENAMIENTO (solo consulta) */}
-        {effectiveTab === 'planes-entrenamiento' && (
-          <section className="dashboard-section">
-            <PlanesAdmin />
-          </section>
-        )}
-
-        {/* GESTIÓN DE ATLETAS */}
+        {/* ATLETAS */}
         {effectiveTab === 'athletes' && (
-          <section className="dashboard-section admin-gestion-section admin-gestion-section--sombra">
-            <div className="admin-gestion-header">
-              <div>
-                <h2 className="admin-gestion-titulo">Gestión de Atletas</h2>
-              </div>
-            </div>
-
-            <AtletasViewAdmin />
-          </section>
+          <AtletasViewAdmin />
         )}
 
         {/* NUEVO PRERREGISTRO */}
@@ -248,6 +234,7 @@ export default function AdminDashboard({
             <div className="admin-gestion-header">
               <div>
                 <h2 className="admin-gestion-titulo">Gestión de Representantes</h2>
+                <p className="admin-gestion-subtitulo">Directorio de padres, tutores legales y vinculación con atletas menores de edad</p>
               </div>
 
             </div>

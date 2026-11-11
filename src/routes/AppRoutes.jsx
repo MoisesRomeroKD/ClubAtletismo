@@ -126,9 +126,7 @@ export default function AppRoutes({
           <Route path="/admin/evaluaciones" element={<Navigate to="/admin/tests/programados" replace />} />
           <Route path="/admin/tests" element={<Navigate to="/admin/tests/programados" replace />} />
           <Route path="/admin/tests/programados" element={adminDashboardElement} />
-          <Route path="/admin/tests/crear" element={adminDashboardElement} />
-          <Route path="/admin/planes" element={adminDashboardElement} />
-          <Route path="/admin/tests/resultados" element={<Navigate to="/admin/tests/analisis" replace />} />
+          <Route path="/admin/tests/resultados" element={adminDashboardElement} />
           <Route path="/admin/tests/analisis" element={adminDashboardElement} />
           <Route path="/admin/atletas" element={adminDashboardElement} />
           <Route path="/admin/cineantropometria" element={<Navigate to="/admin/antropometria/programar" replace />} />
