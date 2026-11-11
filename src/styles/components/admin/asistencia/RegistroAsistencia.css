@@ -113,14 +113,6 @@
   color: var(--text-muted);
   font-size: 0.8rem;
 }
-
-.registro-asistencia__search-control {
-  display: flex;
-  align-items: stretch;
-  gap: 0.75rem;
-}
-
-.registro-asistencia__search-control input,
 .registro-asistencia__field select {
   width: 100%;
   min-width: 0;
@@ -133,21 +125,13 @@
   font: inherit;
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
-
-.registro-asistencia__search-control input:hover,
 .registro-asistencia__field select:hover {
   border-color: var(--border-input-hover);
 }
-
-.registro-asistencia__search-control input:focus,
 .registro-asistencia__field select:focus {
   border-color: var(--border-input-focus);
   outline: none;
   box-shadow: 0 0 0 3px var(--func-primary-bg-soft);
-}
-
-.registro-asistencia__search-control input::placeholder {
-  color: var(--text-muted);
 }
 
 .registro-asistencia__button {
@@ -179,8 +163,6 @@
   opacity: 0.65;
   cursor: wait;
 }
-
-.registro-asistencia__button--primary,
 .registro-asistencia__button--save {
   color: var(--clr-blanco-pura);
   background: var(--func-primary);
@@ -196,8 +178,6 @@
   background: var(--bg-surface);
   border-color: var(--border-input-hover);
 }
-
-.registro-asistencia__button--primary:hover:not(:disabled),
 .registro-asistencia__button--save:hover:not(:disabled) {
   background: var(--func-primary-hover);
 }
@@ -374,18 +354,6 @@
   box-shadow: none;
 }
 
-.registro-asistencia__empty-mark {
-  display: grid;
-  width: 2.75rem;
-  height: 2.75rem;
-  place-items: center;
-  color: var(--text-muted);
-  background: var(--bg-surface);
-  border-radius: 50%;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
 .registro-asistencia__empty strong {
   color: var(--text-main);
   font-size: 0.95rem;
@@ -404,21 +372,15 @@
     gap: 1rem;
     padding: 1rem;
   }
-
-  .registro-asistencia__search-control,
-  .registro-asistencia__athlete,
-  .registro-asistencia__actions,
-  .registro-asistencia__filters {
+.registro-asistencia__athlete,
+.registro-asistencia__actions,
+.registro-asistencia__filters {
     align-items: stretch;
     flex-direction: column;
   }
 
   .registro-asistencia__filters {
     display: flex;
-  }
-
-  .registro-asistencia__search-control {
-    gap: 0.65rem;
   }
 
   .registro-asistencia__actions {
@@ -453,9 +415,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .registro-asistencia__search-control input,
-  .registro-asistencia__field select,
-  .registro-asistencia__button {
+.registro-asistencia__field select,
+.registro-asistencia__button {
     transition: none;
   }
 }

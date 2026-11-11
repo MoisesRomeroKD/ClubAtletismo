@@ -115,11 +115,6 @@
   height: 300px;
 }
 
-.antro-atl-linea {
-  width: 100%;
-  height: 220px;
-}
-
 .antro-atl-tooltip {
   display: grid;
   gap: 0.2rem;

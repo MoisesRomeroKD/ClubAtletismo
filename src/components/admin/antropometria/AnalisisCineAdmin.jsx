@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { SlidersHorizontal, X } from 'lucide-react';
 import {
-  CartesianGrid, Legend, Line, LineChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart,
-  ResponsiveContainer, Tooltip, XAxis, YAxis,
+  PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip,
 } from 'recharts';
 import CineantropometriaService from '../../../api/services/Cineantropometriaservice';
 import { CINE_AXES } from '../../reportes/reportUtils';
@@ -26,22 +25,15 @@ const INDICADOR = {
   fuerza: 'Sentadilla ÷ peso (ratio)',
   flexibilidad: 'Test de Wells (cm)',
 };
-const COLOR_EJE = {
-  potencia: 'var(--chart-cat-1)',
-  velocidad: 'var(--chart-cat-2)',
-  resistencia: 'var(--chart-cat-3)',
-  envergadura: 'var(--chart-cat-4)',
-  fuerza: 'var(--chart-cat-5)',
-  flexibilidad: 'var(--chart-cat-6)',
+
+// Para buscar sin importar mayúsculas ni acentos ("jose" encuentra "José").
+const normalizar = (texto) => String(texto || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+const coincideAtleta = (fila, busqueda) => {
+  const termino = normalizar(busqueda);
+  if (!termino) return true;
+  return normalizar(`${fila.nombre} ${fila.apellido}`).includes(termino) || String(fila.cedula || '').includes(termino);
 };
 
-const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-const etiquetaMes = (clave) => `${MESES[Number(clave.slice(5, 7)) - 1]} ${clave.slice(2, 4)}`;
-const formatFecha = (iso) => {
-  if (!iso) return '—';
-  const [y, m, d] = iso.slice(0, 10).split('-');
-  return `${d}/${m}/${y}`;
-};
 const validos = (valores) => valores.filter((valor) => valor !== null && valor !== undefined);
 const promedioDe = (valores, decimales = 1) => {
   const lista = validos(valores);
@@ -62,7 +54,7 @@ function TooltipSimple({ active, payload, label }) {
 
 export default function AnalisisCineAdmin() {
   const [estado, setEstado] = useState({ cargando: true, filas: [], error: '' });
-  const [filtros, setFiltros] = useState({ area: '', subarea: '', categoria: '', desde: '', hasta: '' });
+  const [filtros, setFiltros] = useState({ area: '', subarea: '', categoria: '', atleta: '', desde: '', hasta: '' });
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
 
   useEffect(() => {
@@ -90,6 +82,7 @@ export default function AnalisisCineAdmin() {
     (!filtros.area || fila.area === filtros.area)
     && (!filtros.subarea || fila.subarea === filtros.subarea)
     && (!filtros.categoria || fila.categoria === filtros.categoria)
+    && coincideAtleta(fila, filtros.atleta)
     && (!filtros.desde || fila.fecha >= filtros.desde)
     && (!filtros.hasta || fila.fecha <= filtros.hasta)
   ));
@@ -100,8 +93,6 @@ export default function AnalisisCineAdmin() {
     if (!actual || fila.fecha > actual.fecha) mapa.set(fila.atleta_id, fila);
     return mapa;
   }, new Map()).values()];
-
-  const ultimaFecha = filtradas.reduce((max, fila) => (fila.fecha > max ? fila.fecha : max), '');
 
   // Resultado global de cada eje: los valores de todos los atletas, eje por eje.
   const globalPorEje = CINE_AXES.map(([eje, etiqueta]) => {
@@ -119,20 +110,6 @@ export default function AnalisisCineAdmin() {
     };
   });
   const radar = globalPorEje.map((fila) => ({ eje: fila.etiqueta, promedio: fila.puntaje, atletas: fila.atletas }));
-
-  // Evolución del puntaje global de cada eje: todas las mediciones de cada mes (todos los atletas).
-  const porMes = Object.entries(filtradas.reduce((grupos, fila) => {
-    const mes = fila.fecha.slice(0, 7);
-    (grupos[mes] = grupos[mes] || []).push(fila);
-    return grupos;
-  }, {}))
-    .sort(([a], [b]) => a.localeCompare(b))
-    .slice(-12)
-    .map(([mes, filas]) => ({
-      etiqueta: etiquetaMes(mes),
-      atletas: filas.length,
-      ...Object.fromEntries(CINE_AXES.map(([eje]) => [eje, promedioDe(filas.map((fila) => fila.ejes?.[eje]))])),
-    }));
 
   // Los 3 mejores de cada eje (última medición).
   const destacados = CINE_AXES.map(([eje, etiqueta]) => ({
@@ -159,6 +136,13 @@ export default function AnalisisCineAdmin() {
         <option value="">Todas las categorías</option>
         {opciones.categorias.map((categoria) => <option key={categoria} value={categoria}>{categoria}</option>)}
       </select>
+      <input
+        type="search"
+        value={filtros.atleta}
+        onChange={(event) => cambiar('atleta', event.target.value)}
+        placeholder="Atleta: nombre o cédula"
+        aria-label="Buscar un atleta por nombre o cédula"
+      />
       <label className="analisis-cine__fecha"><span>Desde</span>
         <input type="date" value={filtros.desde} max={filtros.hasta || undefined} onChange={(event) => cambiar('desde', event.target.value)} />
       </label>
@@ -207,7 +191,6 @@ export default function AnalisisCineAdmin() {
           <div className="analisis-cine__kpis">
             <div className="analisis-cine__kpi"><span>Atletas evaluados</span><strong>{ultimas.length}</strong></div>
             <div className="analisis-cine__kpi"><span>Mediciones</span><strong>{filtradas.length}</strong></div>
-            <div className="analisis-cine__kpi"><span>Última medición</span><strong>{formatFecha(ultimaFecha)}</strong></div>
           </div>
 
           <div className="analisis-cine__grid">
@@ -229,7 +212,8 @@ export default function AnalisisCineAdmin() {
             <section className="analisis-cine__panel">
               <h3>Resultado global por eje</h3>
               <p className="analisis-cine__nota">Cada eje con su propio indicador y unidad; el puntaje va de 0 a 100.</p>
-              <div className="analisis-cine__tabla-wrap">
+              <div className="responsive-list">
+              <div className="responsive-list__table analisis-cine__tabla-wrap">
                 <table className="analisis-cine__tabla">
                   <thead>
                     <tr><th>Eje</th><th>Indicador promedio</th><th>Rango</th><th>Puntaje</th><th>Atletas</th></tr>
@@ -247,28 +231,24 @@ export default function AnalisisCineAdmin() {
                   </tbody>
                 </table>
               </div>
-            </section>
-
-            {porMes.length > 1 && (
-              <section className="analisis-cine__panel analisis-cine__panel--ancho">
-                <h3>Evolución del puntaje global por eje</h3>
-                <div className="analisis-cine__grafico" role="img" aria-label="Puntaje global de cada eje por mes">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={porMes} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border-main)" vertical={false} />
-                      <XAxis dataKey="etiqueta" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <YAxis domain={[0, 100]} tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <Tooltip />
-                      <Legend wrapperStyle={{ fontSize: 12 }} />
-                      {CINE_AXES.map(([eje, etiqueta]) => (
-                        <Line key={eje} type="monotone" dataKey={eje} name={etiqueta} stroke={COLOR_EJE[eje]} strokeWidth={2} dot={{ r: 3 }} connectNulls />
-                      ))}
-                    </LineChart>
-                  </ResponsiveContainer>
+              {/* En celular: una tarjeta por eje */}
+              <div className="responsive-list__cards">
+                <div className="analisis-cine__ejes-cards">
+                  {globalPorEje.map((fila) => (
+                    <article key={fila.eje} className="analisis-cine__eje-card">
+                      <h4>{fila.etiqueta}<small>{fila.indicador}</small></h4>
+                      <dl>
+                        <div><dt>Indicador promedio</dt><dd>{fila.promedioIndicador ?? '—'}</dd></div>
+                        <div><dt>Rango</dt><dd>{fila.minimo === null ? '—' : `${fila.minimo} a ${fila.maximo}`}</dd></div>
+                        <div><dt>Puntaje</dt><dd><strong>{fila.puntaje ?? '—'}</strong></dd></div>
+                        <div><dt>Atletas</dt><dd>{fila.atletas}</dd></div>
+                      </dl>
+                    </article>
+                  ))}
                 </div>
-                <small className="analisis-cine__nota">Puntaje promedio de cada eje entre todas las mediciones del mes (todos los atletas medidos).</small>
-              </section>
-            )}
+              </div>
+              </div>
+            </section>
 
             <section className="analisis-cine__panel analisis-cine__panel--ancho">
               <h3>Destacados por eje</h3>

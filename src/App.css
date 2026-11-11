@@ -38,14 +38,6 @@ body, #root {
 }
 
 /* Nivel 1: layout global con sidebar */
-.layout-wrapper {
-  display: flex;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  flex-grow: 1;
-  overflow-x: hidden;
-}
 
 aside.sidebar {
   width: var(--sidebar-width);
@@ -138,35 +130,9 @@ html.scroll-bloqueado .content-area {
   margin-bottom: 1rem;
 }
 
-.skeleton-loading {
-  background: linear-gradient(
-    90deg,
-    var(--bg-surface) 25%,
-    var(--bg-card) 50%,
-    var(--bg-surface) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeletonPulse 1.4s ease-in-out infinite;
-  border-radius: var(--border-radius-md);
-}
-
 @keyframes skeletonPulse {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
-}
-
-.glass-panel {
-  background: var(--bg-card);
-  border: 1px solid var(--border-main);
-  border-radius: var(--border-radius-md);
-  padding: 1.25rem;
-  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  width: 100%;
 }
 
 /* ============================================================================

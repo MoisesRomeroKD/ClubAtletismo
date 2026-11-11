@@ -187,35 +187,6 @@ body.dark-mode .sleep-athlete-detail-panel {
   font-size: 0.95rem;
 }
 
-.sl-quick-register-slider-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.sl-quick-register-slider-row input[type='range'] {
-  flex: 1;
-  min-width: 0;
-  cursor: pointer;
-}
-
-.sl-quick-register-value {
-  font-size: 1.5rem;
-  font-weight: 800;
-  min-width: 32px;
-  flex-shrink: 0;
-  text-align: center;
-}
-
-.sl-quick-register-scale-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.7rem;
-  color: var(--sl-panel-text-muted);
-  margin-top: 4px;
-}
-
 /* ============================================================================
    BOTONES
 ============================================================================ */

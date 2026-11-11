@@ -72,97 +72,8 @@ body.dark-mode {
   display: none;
 }
 
-.hud-grid-decor {
-  position: absolute;
-  top: 8%;
-  left: 50%;
-  width: 220px;
-  height: 220px;
-  margin-left: -110px;
-  border: 1px dashed color-mix(in srgb, var(--auth-slate) 50%, transparent);
-  border-radius: 50%;
-  align-items: center;
-  justify-content: center;
-  animation: spinHUD 20s linear infinite;
-  z-index: 0;
-  display: none;
-}
-
-.hud-grid-decor::after {
-  content: '';
-  width: 80%;
-  height: 80%;
-  border: 2px solid color-mix(in srgb, var(--auth-secondary) 60%, transparent);
-  border-radius: 50%;
-  border-top-color: transparent;
-}
-
 @keyframes spinHUD {
   100% { transform: rotate(360deg); }
-}
-
-.hype-header {
-  z-index: 10;
-  display: none; /* oculto en móvil */
-}
-
-.hype-logo {
-  font-family: 'Anton', sans-serif;
-  font-size: 2.25rem;
-  font-style: italic;
-  letter-spacing: 1px;
-  color: var(--text-main);
-}
-
-.hype-logo-red {
-  color: var(--auth-secondary);
-}
-
-.hype-portal-sub {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 3px;
-  color: var(--auth-slate);
-  text-transform: uppercase;
-  margin-top: 4px;
-}
-
-.hype-center-block {
-  z-index: 10;
-  max-width: 100%;
-}
-
-.hype-metric-badge {
-  display: none; /* oculto en móvil */
-  background-color: color-mix(in srgb, var(--auth-secondary) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--auth-secondary) 40%, transparent);
-  color: var(--text-main);
-  padding: 0.5rem 1rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  transform: skewX(-6deg);
-  margin-bottom: 2rem;
-}
-
-.hype-metric-badge span {
-  display: inline-block;
-  transform: skewX(6deg);
-}
-
-.hype-title {
-  font-family: 'Anton', sans-serif;
-  font-size: 3.5rem;
-  text-transform: uppercase;
-  color: var(--text-main);
-  line-height: 1.05;
-  margin-bottom: 1.5rem;
-  display: none; /* oculto en móvil */
-}
-
-.hype-title em {
-  color: var(--auth-secondary);
-  font-style: italic;
 }
 
 .hype-quote-box {
@@ -204,23 +115,6 @@ body.dark-mode {
   gap: 2rem;
 }
 
-.telemetry-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.telemetry-val {
-  font-family: 'Anton', sans-serif;
-  color: var(--text-main);
-  font-size: 1.5rem;
-}
-
-.telemetry-lbl {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 8px;
-  color: var(--auth-slate);
-}
-
 /* ==========================================================================
    COLUMNA DERECHA: El Panel de Control del Formulario
    ========================================================================== */
@@ -236,24 +130,6 @@ body.dark-mode {
   padding: 3rem 1.5rem;
   min-height: 100vh;
   justify-content: center;
-}
-
-.back-to-landing-btn {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--auth-slate);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: color 0.3s ease;
-
-  position: static;
-  margin-bottom: 2.5rem;
-}
-
-.back-to-landing-btn:hover {
-  color: var(--text-main);
 }
 
 .form-card-wrapper {
@@ -294,16 +170,6 @@ body.dark-mode {
   width: 40px;
   height: 3px;
   background-color: var(--auth-secondary);
-}
-
-.link-tab {
-  text-decoration: none;
-  color: inherit;
-  transition: opacity 0.3s ease;
-}
-
-.link-tab:hover {
-  opacity: 0.6;
 }
 
 .auth-form-group {

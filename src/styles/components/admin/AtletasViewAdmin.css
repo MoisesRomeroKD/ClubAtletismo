@@ -49,20 +49,6 @@
 }
 
 /* Perfil Drawer Overlay */
-.atletas-perfil-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-  z-index: 40;
-}
-
-.atletas-perfil-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
-}
 
 /* Perfil Drawer Panel */
 .atletas-perfil-panel {
@@ -94,13 +80,6 @@
   align-items: center;
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--border-main);
-}
-
-.atletas-perfil-title {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  color: var(--brand-secondary);
 }
 
 .atletas-perfil-close-btn {
@@ -211,16 +190,6 @@
   background-color: var(--bg-surface);
 }
 
-.atletas-perfil-btn-primary {
-  background-color: var(--brand-secondary);
-  border: none;
-  color: var(--clr-blanco-pura);
-}
-
-.atletas-perfil-btn-primary:hover {
-  background-color: var(--clr-verde-700);
-}
-
 /* Filtros y Acciones */
 .atletas-filtros-container {
   display: flex;
@@ -268,42 +237,7 @@
   outline-offset: 2px;
 }
 
-.atletas-counter {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.atletas-btn-nuevo {
-  margin-left: auto;
-  background-color: var(--brand-secondary);
-  color: var(--clr-blanco-pura);
-  border: none;
-  padding: 9px 20px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-
-.atletas-btn-nuevo:hover {
-  background-color: var(--clr-verde-700);
-}
-
 /* Tabla */
-.atletas-tabla-wrap {
-  display: none;
-}
-
-.atletas-tabla-wrap.visible {
-  display: block;
-}
-
-.atletas-tabla-container {
-  overflow-x: auto;
-  border-radius: 8px;
-  border: 1px solid var(--border-main);
-}
 
 .atletas-tabla {
   width: 100%;
@@ -354,10 +288,6 @@
   color: var(--text-muted);
 }
 
-.atletas-tabla-contacto-sm {
-  font-size: 0.75rem;
-}
-
 .atletas-btn-ver {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-main);
@@ -375,20 +305,6 @@
 }
 
 /* Cards (responsive) */
-.atletas-cards-wrap {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
-}
-
-@media (min-width: 870px) {
-  .atletas-tabla-wrap {
-    display: block;
-  }
-  .atletas-cards-wrap {
-    display: none;
-  }
-}
 
 /* Loading */
 .atletas-loading {
@@ -608,9 +524,8 @@
 }
 
 .atletas-paginacion-btn:hover:not(:disabled) {
-  background: var(--brand-secondary);
-  color: var(--clr-blanco-pura, #fff);
-  border-color: var(--brand-secondary);
+  border-color: var(--func-primary);
+  color: var(--func-primary);
 }
 
 .atletas-paginacion-btn:disabled {
@@ -621,18 +536,13 @@
 .atletas-paginacion-info {
   font-size: 0.85rem;
   color: var(--text-muted);
-  font-family: 'JetBrains Mono', monospace;
-  white-space: nowrap;
 }
 
 /* ============================================================
    Vista de atletas (antes en estilos en línea y <style> incrustado)
    ============================================================ */
 .atletas-adm {
-  padding: 1.5rem;
-  background-color: var(--bg-main);
   color: var(--text-main);
-  border-radius: 12px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -672,23 +582,11 @@
   box-shadow: 0 0 0 1px var(--brand-secondary);
 }
 
-.atletas-adm-total {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
 /* El cambio tabla/tarjetas lo hace .responsive-list (App.css) */
 .atletas-adm-tabla-wrap {
   overflow-x: auto;
   border: 1px solid var(--border-main);
   border-radius: 8px;
-}
-
-.atletas-adm-cards {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
 }
 
 .atletas-adm-tabla {
@@ -757,104 +655,6 @@
 .atletas-adm-ver:hover {
   background-color: var(--brand-secondary);
   color: var(--clr-blanco-pura);
-}
-
-.atletas-adm-ver--card {
-  padding: 6px 14px;
-  font-size: 0.75rem;
-  white-space: nowrap;
-}
-
-.atletas-adm-card {
-  padding: 1.5rem;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-main);
-  border-radius: 12px;
-}
-
-.atletas-adm-card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.25rem;
-}
-
-.atletas-adm-card-identidad {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.atletas-adm-avatar {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-main);
-  border-radius: 50%;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.atletas-adm-card-nombre {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 600;
-}
-
-.atletas-adm-card-cedula {
-  margin: 0;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--text-muted);
-}
-
-.atletas-adm-card-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-}
-
-.atletas-adm-card-label {
-  margin: 0;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  color: var(--text-muted);
-}
-
-.atletas-adm-card-label--espaciado {
-  margin-bottom: 4px;
-}
-
-.atletas-adm-card-valor {
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.atletas-adm-card-footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border-main);
-}
-
-.atletas-adm-card-familiar {
-  margin: 0;
-  font-size: 0.85rem;
-}
-
-.atletas-adm-card-telefono {
-  margin: 0;
-  font-size: 0.75rem;
-  color: var(--text-muted);
 }
 
 /* Drawer de perfil */
@@ -1036,9 +836,7 @@
   display: grid;
   gap: 6px;
 }
-
-.atletas-editar-campo label,
-.atletas-editar-etiqueta {
+.atletas-editar-campo label {
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-main);
@@ -1074,14 +872,6 @@
   font-size: 0.8rem;
   font-weight: 600;
 }
-
-.atletas-editar-fijo {
-  padding: 9px 12px;
-  border: 1px dashed var(--border-main);
-  border-radius: var(--border-radius-md);
-}
-
-.atletas-editar-fijo small,
 .atletas-editar-nota {
   color: var(--text-muted);
   font-size: 0.8rem;
@@ -1181,4 +971,104 @@
 .atletas-adm-filtros + .atletas-paginacion {
   margin-top: 0;
   margin-bottom: 1rem;
+}
+
+/* Tarjeta en celular: mismo diseño que la de Entrenadores */
+.atletas-adm-lista-cards {
+  display: grid;
+  gap: 1rem;
+}
+
+.atletas-adm-lista-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.atletas-adm-lista-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  overflow-wrap: anywhere;
+}
+
+.atletas-adm-lista-card dl {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.atletas-adm-lista-card dt {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.atletas-adm-lista-card dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  overflow-wrap: anywhere;
+}
+
+.atletas-adm-lista-card-cedula {
+  font-weight: 600;
+  color: var(--brand-accent);
+}
+
+.atletas-adm-lista-ver {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.atletas-adm-lista-ver:hover {
+  border-color: var(--func-primary);
+  color: var(--func-primary);
+}
+
+/* En celular los filtros van en el botón flotante: la barra no deja un recuadro vacío */
+@media (max-width: 768px) {
+  .atletas-adm-filtros {
+    display: contents;
+  }
+}
+
+/* La paginación de arriba va pegada a la lista */
+.atletas-adm-filtros + .atletas-paginacion {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+/* Celular: la paginación cabe en una sola fila, como en Entrenadores */
+@media (max-width: 520px) {
+  .atletas-paginacion {
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+  }
+
+  .atletas-paginacion-btn {
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+
+  .atletas-paginacion-info {
+    font-size: 0.8rem;
+    text-align: center;
+  }
 }

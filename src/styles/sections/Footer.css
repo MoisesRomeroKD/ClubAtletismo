@@ -62,13 +62,6 @@
   margin-bottom: 1.5rem;
 }
 
-.footer-logo-img {
-  height: 72px;
-  width: 72px;
-  object-fit: contain;
-  filter: brightness(0) invert(1);
-}
-
 .footer-brand-title {
   font-family: 'Anton', sans-serif;
   font-size: 22px;

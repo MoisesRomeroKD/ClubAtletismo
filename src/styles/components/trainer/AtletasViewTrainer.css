@@ -77,12 +77,6 @@
   outline-offset: 2px;
 }
 
-.atletas-counter {
-  font-family: ui-monospace, 'JetBrains Mono', monospace;
-  font-size: .75rem;
-  color: var(--text-muted);
-}
-
 .atletas-loading {
   padding: 2rem;
   color: var(--text-muted);
@@ -160,52 +154,6 @@
    App.css (none por defecto / block en ≤869px). Aquí solo definimos el grid
    de las cards en un hijo interno (.atletas-cards-grid) para no colisionar.
 ============================================================================ */
-.atletas-cards-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
-}
-
-.atletas-trainer-card {
-  display: grid;
-  gap: 1.25rem;
-  padding: 1.5rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border-main);
-  border-radius: 12px;
-  min-width: 0;
-}
-
-.atletas-trainer-card-heading {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.atletas-trainer-card-heading h2,
-.atletas-trainer-card-heading small {
-  display: block;
-  margin: 0;
-}
-
-.atletas-trainer-card-heading h2 {
-  color: var(--text-main);
-  font-size: 1.05rem;
-  font-weight: 600;
-}
-
-.atletas-trainer-card-heading small {
-  margin-top: 3px;
-  color: var(--text-muted);
-  font-family: ui-monospace, 'JetBrains Mono', monospace;
-  font-size: .7rem;
-}
-
-.atletas-trainer-card-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
 
 .atletas-data-point {
   display: flex;
@@ -525,9 +473,8 @@
 }
 
 .atletas-paginacion-btn:hover:not(:disabled) {
-  background: var(--brand-secondary);
-  color: var(--clr-blanco-pura, #fff);
-  border-color: var(--brand-secondary);
+  border-color: var(--func-primary);
+  color: var(--func-primary);
 }
 
 .atletas-paginacion-btn:disabled {
@@ -538,14 +485,104 @@
 .atletas-paginacion-info {
   font-size: 0.85rem;
   color: var(--text-muted);
-  font-family: 'JetBrains Mono', monospace;
-  white-space: nowrap;
 }
-
-
 
 /* La paginación de arriba (debajo de los filtros) va pegada a la lista */
 .atletas-filtros-container + .atletas-paginacion {
   margin-top: 0;
   margin-bottom: 1rem;
+}
+
+/* Tarjeta en celular: mismo diseño que la de Entrenadores */
+.atletas-lista-cards {
+  display: grid;
+  gap: 1rem;
+}
+
+.atletas-lista-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+}
+
+.atletas-lista-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  overflow-wrap: anywhere;
+}
+
+.atletas-lista-card dl {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.atletas-lista-card dt {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.atletas-lista-card dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  overflow-wrap: anywhere;
+}
+
+.atletas-lista-card-cedula {
+  font-weight: 600;
+  color: var(--brand-accent);
+}
+
+.atletas-lista-ver {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.atletas-lista-ver:hover {
+  border-color: var(--func-primary);
+  color: var(--func-primary);
+}
+
+/* En celular los filtros van en el botón flotante: la barra no deja un recuadro vacío */
+@media (max-width: 768px) {
+  .atletas-filtros-container {
+    display: contents;
+  }
+}
+
+/* Celular: la paginación cabe en una sola fila, como en Entrenadores */
+@media (max-width: 520px) {
+  .atletas-paginacion {
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+  }
+
+  .atletas-paginacion-btn {
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+
+  .atletas-paginacion-info {
+    font-size: 0.8rem;
+    text-align: center;
+  }
 }
