@@ -22,7 +22,6 @@ import {
   ChartColumn,
   AlertCircle,
   CalendarClock,
-  ListChecks,
   SlidersHorizontal,
   FileSignature,
   Accessibility,
@@ -92,8 +91,7 @@ const antropometriaGroup = {
   icon: Activity,
   items: [
     { id: 'antropometria-programar', label: 'Mediciones', icon: CalendarClock },
-    { id: 'antropometria-datos', label: 'Datos registrados', icon: ListChecks },
-    { id: 'antropometria-analisis', label: 'Análisis', icon: ChartColumn },
+    { id: 'antropometria-datos', label: 'Análisis', icon: ChartColumn },
   ],
 };
 
@@ -277,7 +275,6 @@ export default function SidebarAdmin({
     athletes: '/admin/atletas',
     'antropometria-programar': '/admin/antropometria/programar',
     'antropometria-datos': '/admin/antropometria/datos',
-    'antropometria-analisis': '/admin/antropometria/analisis',
     'parametros-antropometria': '/admin/configuracion/antropometria',
     'sueño_general': '/admin/sueno/general',
     'sueño_individual': '/admin/sueno/individual',

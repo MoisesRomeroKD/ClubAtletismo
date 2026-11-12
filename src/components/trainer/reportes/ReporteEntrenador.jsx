@@ -11,6 +11,7 @@ import {
   BedDouble,
   CheckCircle2,
   ClipboardCheck,
+  Dumbbell,
   Clock3,
   Eye,
   Moon,
@@ -24,6 +25,8 @@ import {
 } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import UserService from '../../../api/services/Userservice';
+import TestService from '../../../api/services/Testservice';
+import RoutineService from '../../../api/services/RoutineService';
 import { exportToExcel, exportToPdf } from '../../../api/services/reportExport';
 import { CINE_AXES, ESTADO_LABELS, errorMessage, formatDate, formatMonth, formatNumber } from '../../reportes/reportUtils';
 import { ExportButtons, ReportSection, ReportTable, StatusBadge, TrafficLight } from '../../reportes/ReportShared';
@@ -45,6 +48,8 @@ const MOSTRAR_OPCIONES = [
   ['asistencia', 'Asistencia'],
   ['sueno', 'Calidad de sueño'],
   ['cine', 'Cineantropometría'],
+  ['tests', 'Tests'],
+  ['planes', 'Planes de entrenamiento'],
 ];
 
 const FILTROS_INICIALES = {
@@ -55,7 +60,7 @@ const FILTROS_INICIALES = {
   areaId: '',
   subareaId: '',
   roles: { atletas: true, entrenadores: false },
-  mostrar: { listados: true, asistencia: false, sueno: false, cine: false },
+  mostrar: { listados: true, asistencia: false, sueno: false, cine: false, tests: false, planes: false },
   usuario: null,
 };
 
@@ -93,34 +98,6 @@ const ATHLETE_COLUMNS = [
   },
 ];
 
-const ALERT_BASE_COLUMNS = [
-  { key: 'nombre', label: 'Nombre' },
-  { key: 'apellido', label: 'Apellido' },
-  { key: 'categoria', label: 'Categoría' },
-  { key: 'area', label: 'Área' },
-  { key: 'subarea', label: 'Subárea' },
-];
-
-const SLEEP_ALERT_COLUMNS = [
-  ...ALERT_BASE_COLUMNS,
-  {
-    key: 'promedio_sueno',
-    label: 'Sueño prom.',
-    render: (row) => <TrafficLight value="rojo">{row.promedio_sueno}/10</TrafficLight>,
-    exportValue: (row) => `${row.promedio_sueno}/10`,
-  },
-];
-
-const ATTENDANCE_ALERT_COLUMNS = [
-  ...ALERT_BASE_COLUMNS,
-  {
-    key: 'porcentaje_asistencia',
-    label: 'Asistencia',
-    render: (row) => <TrafficLight value="rojo">{row.porcentaje_asistencia}%</TrafficLight>,
-    exportValue: (row) => `${row.porcentaje_asistencia}%`,
-  },
-];
-
 const CINE_COLUMNS = [
   { key: 'nombre', label: 'Nombre' },
   { key: 'apellido', label: 'Apellido' },
@@ -136,11 +113,45 @@ const CINE_COLUMNS = [
   })),
 ];
 
+// Tests del período (por su fecha): prueba, subárea, entrenador, estado y cuántos resultados tiene.
+const TEST_COLUMNS = [
+  { key: 'fecha', label: 'Fecha', render: (row) => formatDate(row.fecha), exportValue: (row) => formatDate(row.fecha) },
+  { key: 'prueba_nombre', label: 'Test' },
+  { key: 'area_nombre', label: 'Área' },
+  { key: 'subarea_nombre', label: 'Subárea' },
+  { key: 'entrenador_nombre', label: 'Entrenador' },
+  { key: 'estado_label', label: 'Estado' },
+  {
+    key: 'resultados',
+    label: 'Resultados',
+    render: (row) => `${row.resultados_registrados} de ${row.convocados_total}`,
+    exportValue: (row) => `${row.resultados_registrados} de ${row.convocados_total}`,
+  },
+];
+
+// Planes de entrenamiento con alguna semana en el período.
+const planAsignado = (row) => {
+  const nombres = (row.assignments || []).map((item) => item.athlete_name || item.subarea_name).filter(Boolean);
+  const tipo = (row.assignments || []).some((item) => item.subarea) ? 'Grupal' : 'Personalizado';
+  return nombres.length ? `${tipo} · ${nombres.join(', ')}` : 'Sin asignar';
+};
+const planPeriodo = (row) => [formatDate(row.fecha_inicio), formatDate(row.fecha_fin)].filter(Boolean).join(' – ') || '—';
+const planEstado = (row) => (row.estado === 'publicado' ? 'Publicado' : 'Borrador');
+
+const PLAN_COLUMNS = [
+  { key: 'nombre', label: 'Plan' },
+  { key: 'trainer_nombre_completo', label: 'Entrenador' },
+  { key: 'asignado', label: 'Asignado a', render: planAsignado, exportValue: planAsignado },
+  { key: 'periodo', label: 'Período', render: planPeriodo, exportValue: planPeriodo },
+  { key: 'semanas', label: 'Semanas' },
+  { key: 'estado', label: 'Estado', render: planEstado, exportValue: planEstado },
+];
+
 const SECTION_CONFIG = {
   atletas: { title: 'Atletas', columns: ATHLETE_COLUMNS },
-  sueno: { title: 'Alerta sueño crítico', columns: SLEEP_ALERT_COLUMNS },
-  asistencia: { title: 'Alerta asistencia baja', columns: ATTENDANCE_ALERT_COLUMNS },
   cine: { title: 'Cineantropometría', columns: CINE_COLUMNS },
+  tests: { title: 'Tests', columns: TEST_COLUMNS },
+  planes: { title: 'Planes de entrenamiento', columns: PLAN_COLUMNS },
 };
 
 const toIso = (date) => {
@@ -1024,7 +1035,8 @@ function DetalleAtleta({ atletaId, params, rangoTexto, onClose }) {
   );
 }
 
-function SeccionesEntrenador({ filtros, mostrar, onVerDetalle, resumenParams, meta }) {
+// encabezado: indicadores del período; van debajo de la exportación para que esta quede siempre arriba.
+function SeccionesEntrenador({ filtros, mostrar, onVerDetalle, resumenParams, meta, encabezado }) {
   const [inputBusqueda, setInputBusqueda] = useState('');
   const [busqueda, setBusqueda] = useState('');
   const [estadoFiltro, setEstadoFiltro] = useState('');
@@ -1038,9 +1050,9 @@ function SeccionesEntrenador({ filtros, mostrar, onVerDetalle, resumenParams, me
   }, [inputBusqueda]);
 
   const verListaAtletas = mostrar.listados && verAtletas;
-  const verSueno = mostrar.sueno && verAtletas;
-  const verAsistencia = mostrar.asistencia && verAtletas;
   const verCine = mostrar.cine && verAtletas;
+  const verTests = mostrar.tests;
+  const verPlanes = mostrar.planes;
 
   const atletaParams = useMemo(() => {
     if (!verListaAtletas) return null;
@@ -1055,23 +1067,33 @@ function SeccionesEntrenador({ filtros, mostrar, onVerDetalle, resumenParams, me
     () => (atletaParams ? (page) => UserService.getAdminReport({ ...atletaParams, seccion: 'atletas', page }) : null),
     [atletaParams],
   );
-  const fetchSleepPage = useMemo(
-    () => (verSueno && reporte ? (page) => UserService.getAdminReport({ ...reporte, seccion: 'sueno', page }) : null),
-    [verSueno, reporte],
-  );
-  const fetchAttendancePage = useMemo(
-    () => (verAsistencia && reporte ? (page) => UserService.getAdminReport({ ...reporte, seccion: 'asistencia', page }) : null),
-    [verAsistencia, reporte],
-  );
   const fetchCinePage = useMemo(
     () => (verCine && reporte ? (page) => UserService.getAdminReport({ ...reporte, seccion: 'cine', page }) : null),
     [verCine, reporte],
   );
 
   const atletas = usePaginatedList(fetchAthletesPage);
-  const sueno = usePaginatedList(fetchSleepPage);
-  const asistencia = usePaginatedList(fetchAttendancePage);
   const cine = usePaginatedList(fetchCinePage);
+
+  // Tests y planes del período: área y subárea; si se eligió un usuario, los de ese entrenador o atleta.
+  const periodoParams = useMemo(() => {
+    if (!reporte) return null;
+    const params = { ...filtros.entrenadores, desde: reporte.desde, hasta: reporte.hasta };
+    if (filtros.atletas.atleta) params.atleta = filtros.atletas.atleta;
+    return params;
+  }, [reporte, filtros.entrenadores, filtros.atletas.atleta]);
+  const fetchTestsPage = useMemo(
+    () => (verTests && periodoParams ? (page) => TestService.getTests({ ...periodoParams, page }) : null),
+    [verTests, periodoParams],
+  );
+  const fetchPlanesPage = useMemo(
+    () => (verPlanes && periodoParams
+      ? (page) => RoutineService.listAdmin({ ...periodoParams, resumen: 1, page, page_size: PAGE_SIZE })
+      : null),
+    [verPlanes, periodoParams],
+  );
+  const tests = usePaginatedList(fetchTestsPage);
+  const planes = usePaginatedList(fetchPlanesPage);
 
   const athleteDisplayColumns = useMemo(() => [
     ...ATHLETE_COLUMNS,
@@ -1086,25 +1108,28 @@ function SeccionesEntrenador({ filtros, mostrar, onVerDetalle, resumenParams, me
     },
   ], [onVerDetalle]);
 
-  if (!verListaAtletas && !verSueno && !verAsistencia && !verCine) {
+  if (!verListaAtletas && !verCine && !verTests && !verPlanes && !(filtros.verAtletas && resumenParams)) {
     return (
-      <div className="report-panel report-loading">
-        No hay secciones para mostrar con estos filtros.
-      </div>
+      <>
+        {encabezado}
+        <div className="report-panel report-loading">
+          No hay secciones para mostrar con estos filtros.
+        </div>
+      </>
     );
   }
 
   const fetchAllRows = {
     atletas: () => UserService.getAdminReport({ ...atletaParams, seccion: 'atletas' }),
-    sueno: () => UserService.getAdminReport({ ...reporte, seccion: 'sueno' }),
-    asistencia: () => UserService.getAdminReport({ ...reporte, seccion: 'asistencia' }),
     cine: () => UserService.getAdminReport({ ...reporte, seccion: 'cine' }),
+    tests: () => TestService.getTests(periodoParams),
+    planes: () => RoutineService.listAdmin({ ...periodoParams, resumen: 1 }),
   };
   const visibleKeys = [
     ...(verListaAtletas ? ['atletas'] : []),
-    ...(verSueno && reporte ? ['sueno'] : []),
-    ...(verAsistencia && reporte ? ['asistencia'] : []),
     ...(verCine && reporte ? ['cine'] : []),
+    ...(verTests && periodoParams ? ['tests'] : []),
+    ...(verPlanes && periodoParams ? ['planes'] : []),
   ];
 
   const runExport = async (keys, fileName, title, format, conResumen = false) => {
@@ -1139,26 +1164,24 @@ function SeccionesEntrenador({ filtros, mostrar, onVerDetalle, resumenParams, me
       onPdf={() => runExport(keys, fileName, title, 'pdf', conResumen)}
     />
   );
-  const reportButtons = (key, fileName, title) => exportButtons(reporte ? [key] : [], fileName, title);
-  const alertasVisibles = (verSueno ? 1 : 0) + (verAsistencia ? 1 : 0);
 
   return (
     <>
       <div className="report-filter-bar">
         <div>
           <strong className="report-filter-title">Reporte de mis subáreas</strong>
-          <p className="report-filter-hint">Exporta en un solo archivo las secciones visibles con los filtros aplicados.</p>
+          <p className="report-filter-hint">Exporta en un solo archivo todo lo que está seleccionado, con los filtros aplicados.</p>
         </div>
         {exportButtons(visibleKeys, 'reporte_subareas', 'Reporte de mis subáreas', Boolean(filtros.verAtletas && resumenParams))}
       </div>
       {exportError && <div className="report-panel report-error" role="alert">{exportError}</div>}
+      {encabezado}
 
       {verListaAtletas && (
         <ReportSection
           title="Listado de atletas"
           description="Datos para inscripción en competencias. Usa «Ver detalle» para asistencia, sueño y cineantropometría."
           icon={<Users className="report-icon-primary" size={20} />}
-          actions={exportButtons(['atletas'], 'listado_atletas', 'Listado de atletas')}
         >
           <div className="report-table-filters">
             <input
@@ -1180,39 +1203,32 @@ function SeccionesEntrenador({ filtros, mostrar, onVerDetalle, resumenParams, me
         </ReportSection>
       )}
 
-      {alertasVisibles > 0 && (
-        <div className={`report-alert-grid ${alertasVisibles === 1 ? 'report-grid-single' : ''}`}>
-          {verSueno && (
-            <ReportSection
-              title="Alerta: sueño crítico"
-              description={`Atletas activos con promedio de sueño ≤ 4/10 en el período ${rangoTexto}.`}
-              icon={<Moon className="report-icon-danger" size={20} />}
-              actions={reportButtons('sueno', 'alerta_sueno', 'Alerta: sueño crítico')}
-            >
-              <SectionList list={sueno} columns={SLEEP_ALERT_COLUMNS} emptyText="Ningún atleta en sueño crítico." />
-            </ReportSection>
-          )}
-          {verAsistencia && (
-            <ReportSection
-              title="Alerta: asistencia baja"
-              description={`Atletas activos con asistencia ≤ 70% en el período ${rangoTexto}.`}
-              icon={<AlertTriangle className="report-icon-danger" size={20} />}
-              actions={reportButtons('asistencia', 'alerta_asistencia', 'Alerta: asistencia baja')}
-            >
-              <SectionList list={asistencia} columns={ATTENDANCE_ALERT_COLUMNS} emptyText="Ningún atleta con asistencia baja." />
-            </ReportSection>
-          )}
-        </div>
-      )}
-
       {verCine && (
         <ReportSection
           title="Evaluación cineantropométrica"
           description={`Última evaluación de cada atleta en el período ${rangoTexto}. Puntuación normalizada (0–100) por eje.`}
           icon={<Ruler className="report-icon-primary" size={20} />}
-          actions={reportButtons('cine', 'cineantropometria', 'Evaluación cineantropométrica')}
         >
           <SectionList list={cine} columns={CINE_COLUMNS} emptyText="No hay evaluaciones en este período." />
+        </ReportSection>
+      )}
+      {verTests && (
+        <ReportSection
+          title="Tests"
+          description={`Tests programados en el período ${rangoTexto}, con sus resultados registrados.`}
+          icon={<ClipboardCheck className="report-icon-primary" size={20} />}
+        >
+          <SectionList list={tests} columns={TEST_COLUMNS} emptyText="No hay tests en este período." />
+        </ReportSection>
+      )}
+
+      {verPlanes && (
+        <ReportSection
+          title="Planes de entrenamiento"
+          description={`Planes con alguna semana dentro del período ${rangoTexto}.`}
+          icon={<Dumbbell className="report-icon-primary" size={20} />}
+        >
+          <SectionList list={planes} columns={PLAN_COLUMNS} emptyText="No hay planes en este período." />
         </ReportSection>
       )}
     </>
@@ -1329,14 +1345,13 @@ function ReporteSubareas() {
         document.body,
       )}
 
-      {filtros.verAtletas && indicadoresKey && <ResumenAtletas params={resumenParams} />}
-
       <SeccionesEntrenador
         filtros={filtros}
         mostrar={aplicado.mostrar}
         onVerDetalle={verDetalle}
         resumenParams={resumenParams}
         meta={meta}
+        encabezado={filtros.verAtletas && indicadoresKey ? <ResumenAtletas params={resumenParams} /> : null}
       />
 
       {detalleId && (

@@ -7,7 +7,6 @@ import {
   ClipboardCheck,
   ListChecks,
   PlusCircle,
-  Award,
   ChartColumn,
   Dumbbell,
   FolderOpen,
@@ -19,7 +18,6 @@ import {
   AlertCircle,
   Activity,
   CalendarClock,
-  Database,
   FileText,
 } from 'lucide-react';
 
@@ -39,9 +37,7 @@ const trainerRoutePaths = {
   registro_asistencia: '/entrenador/asistencias/registro',
   mis_tests: '/entrenador/mis-tests',
   crear_test: '/entrenador/crear-test',
-  tests_resultados: '/entrenador/tests-resultados',
   tests_analisis: '/entrenador/tests-analisis',
-  cineantropometria: '/entrenador/cineantropometria',
   cine_programar: '/entrenador/cineantropometria/programar',
   cine_datos: '/entrenador/cineantropometria/datos',
   sueño_general: '/entrenador/sueno-general',
@@ -64,7 +60,6 @@ const testsGroup = {
   items: [
     { id: 'mis_tests', label: 'Mis tests', icon: ListChecks },
     { id: 'crear_test', label: 'Crear test', icon: PlusCircle },
-    { id: 'tests_resultados', label: 'Resultados', icon: Award },
     { id: 'tests_analisis', label: 'Análisis', icon: ChartColumn },
   ],
 };
@@ -75,8 +70,7 @@ const cineGroup = {
   icon: Activity,
   items: [
     { id: 'cine_programar', label: 'Programar medición', icon: CalendarClock },
-    { id: 'cine_datos', label: 'Datos registrados', icon: Database },
-    { id: 'cineantropometria', label: 'Análisis', icon: ChartColumn },
+    { id: 'cine_datos', label: 'Análisis', icon: ChartColumn },
   ],
 };
 

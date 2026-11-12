@@ -21,7 +21,6 @@ export const PERMISOS_SECCION_ADMIN = {
   evaluacion: ['ver_test'],
   'antropometria-programar': ['ver_cineantropometria', 'registrar_cineantropometria'],
   'antropometria-datos': ['ver_cineantropometria', 'registrar_cineantropometria'],
-  'antropometria-analisis': ['ver_cineantropometria'],
   'parametros-antropometria': ['ver_cineantropometria'],
   reportes: ['ver_reportes'],
   auditoria: ['ver_auditoria'],

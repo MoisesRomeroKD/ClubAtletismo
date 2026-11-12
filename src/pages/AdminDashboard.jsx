@@ -30,7 +30,6 @@ const DiscapacidadesAdmin = lazy(() => import('../components/admin/Discapacidade
 // COMPONENTE DE ANTROPOMETRÍA
 const AntropometriaAdmin = lazy(() => import('../components/admin/antropometria/AntropometriaAdmin'));
 const ParametrosAntropometria = lazy(() => import('../components/admin/antropometria/ParametrosAntropometria'));
-const AnalisisCineAdmin = lazy(() => import('../components/admin/antropometria/AnalisisCineAdmin'));
 const PlanesAdmin = lazy(() => import('../components/admin/rutinas/PlanesAdmin'));
 const AnalisisTestsAdmin = lazy(() => import('../components/admin/tests/AnalisisTestsAdmin'));
 
@@ -69,7 +68,6 @@ export default function AdminDashboard({
     '/admin/atletas': 'athletes',
     '/admin/antropometria/programar': 'antropometria-programar',
     '/admin/antropometria/datos': 'antropometria-datos',
-    '/admin/antropometria/analisis': 'antropometria-analisis',
     '/admin/configuracion/antropometria': 'parametros-antropometria',
     '/admin/sueno/general': 'sueño_general',
     '/admin/sueno/individual': 'sueño_individual',
@@ -139,11 +137,6 @@ export default function AdminDashboard({
         {effectiveTab === 'tests-analisis' && (
           <section className="dashboard-section">
             <AnalisisTestsAdmin />
-          </section>
-        )}
-        {effectiveTab === 'antropometria-analisis' && (
-          <section className="dashboard-section">
-            <AnalisisCineAdmin />
           </section>
         )}
 

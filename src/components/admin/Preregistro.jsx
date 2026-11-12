@@ -73,24 +73,25 @@ const ROL_SISTEMA = {
 const MASIVO_POR_ROL = {
   Atleta: {
     plural: 'Atletas',
-    descripcion: 'Cada fila representa un atleta y su representante. "subarea" es el nombre exacto de su subárea y "turno" es mañana, tarde o noche (el entrenador se asigna después con "Editar"):',
+    descripcion: 'Cada fila representa un atleta y su representante. "subarea" es el nombre exacto de su subárea, "turno" es mañana, tarde o noche y "entrenador_cedula" (opcional) es la cédula de un entrenador de esa subárea:',
     columnas: [
       ['representante_nombres', 22], ['representante_apellidos', 24], ['representante_cedula', 20],
       ['representante_telefono', 22], ['representante_relacion', 22], ['cedula', 12], ['nombres', 18],
       ['apellidos', 20], ['fecha_nacimiento', 17], ['correo', 26], ['telefono', 14], ['subarea', 18], ['turno', 10],
+      ['entrenador_cedula', 18],
     ],
     ejemplos: [
       {
         representante_nombres: 'Ana Maria', representante_apellidos: 'Perez Lopez', representante_cedula: '1234567',
         representante_telefono: '04141234567', representante_relacion: 'Madre',
         cedula: '12345678', nombres: 'Juan Jose', apellidos: 'Perez Rodriguez', fecha_nacimiento: '2005-05-15',
-        correo: 'juan.perez@gmail.com', telefono: '', subarea: '100m', turno: 'mañana',
+        correo: 'juan.perez@gmail.com', telefono: '', subarea: '100m', turno: 'mañana', entrenador_cedula: '15678901',
       },
       {
         representante_nombres: 'Ana Maria', representante_apellidos: 'Perez Lopez', representante_cedula: '1234567',
         representante_telefono: '04141234567', representante_relacion: 'Madre',
         cedula: '87654321', nombres: 'Maria Fernanda', apellidos: 'Gomez Silva', fecha_nacimiento: '2008-08-20',
-        correo: 'maria.gomez@gmail.com', telefono: '', subarea: 'Salto Alto', turno: 'tarde',
+        correo: 'maria.gomez@gmail.com', telefono: '', subarea: 'Salto Alto', turno: 'tarde', entrenador_cedula: '',
       },
     ],
   },
@@ -128,6 +129,8 @@ const FORMULARIO_VACIO = {
   // Atleta: una subárea y su turno. Entrenador: una o varias subáreas.
   subarea_id: '',
   turno: 'manana',
+  // Atleta: su entrenador en esa subárea (opcional).
+  entrenador_id: '',
   subareas_ids: [],
   // Atleta: discapacidades del catálogo (puede tener varias).
   discapacidades: [],
@@ -349,6 +352,23 @@ const Preregistro = () => {
     return () => { activo = false; clearTimeout(espera); };
   }, [cedulaAtleta, cedulaCompleta]);
 
+  // Entrenadores (activos) de la subárea elegida para el atleta.
+  const [entrenadoresSubarea, setEntrenadoresSubarea] = useState({ subarea: '', filas: [], error: '' });
+  useEffect(() => {
+    const subarea = formData.subarea_id;
+    if (!subarea) return undefined;
+    let activo = true;
+    UserService.getTrainers({ subarea })
+      .then((data) => {
+        const filas = (Array.isArray(data) ? data : data?.results || []).filter((fila) => fila.is_active !== false);
+        if (activo) setEntrenadoresSubarea({ subarea, filas, error: '' });
+      })
+      .catch(() => { if (activo) setEntrenadoresSubarea({ subarea, filas: [], error: 'No se pudieron cargar los entrenadores.' }); });
+    return () => { activo = false; };
+  }, [formData.subarea_id]);
+  const entrenadoresDeLaSubarea = entrenadoresSubarea.subarea === formData.subarea_id ? entrenadoresSubarea.filas : [];
+  const cargandoEntrenadores = Boolean(formData.subarea_id) && entrenadoresSubarea.subarea !== formData.subarea_id;
+
   const reiniciarFormulario = () => {
     setFormData(FORMULARIO_VACIO);
     setRechazados({});
@@ -365,7 +385,8 @@ const Preregistro = () => {
     if (regla) setRechazados((previos) => ({ ...previos, [name]: limpio !== value }));
     setFormData({
       ...formData,
-      [name]: limpio
+      [name]: limpio,
+      ...(name === 'subarea_id' && { entrenador_id: '' }),
     });
   };
 
@@ -445,10 +466,15 @@ const Preregistro = () => {
         return;
       }
       const sinSubareas = (datosRol) => Object.fromEntries(Object.entries(datosRol).filter(([campo]) => (
-        !['subarea_id', 'turno', 'subareas_ids'].includes(campo)
+        !['subarea_id', 'turno', 'subareas_ids', 'entrenador_id'].includes(campo)
       )));
       const datos = rol === 'Atleta'
-        ? { ...sinSubareas(datosAtleta), subarea_id: formData.subarea_id, turno: formData.turno }
+        ? {
+          ...sinSubareas(datosAtleta),
+          subarea_id: formData.subarea_id,
+          turno: formData.turno,
+          ...(formData.entrenador_id && { entrenador_id: formData.entrenador_id }),
+        }
         : {
           ...sinSubareas(Object.fromEntries(Object.entries(formData).filter(([campo]) => (
             !campo.startsWith('representante_') && campo !== 'fechaNacimiento'
@@ -791,8 +817,30 @@ const Preregistro = () => {
               <option value="noche">Noche (18:00 a 21:00)</option>
             </select>
           </div>
+          <div className="preregistro-campo">
+            <label htmlFor="atleta_entrenador">Entrenador (opcional)</label>
+            <select
+              id="atleta_entrenador"
+              name="entrenador_id"
+              value={formData.entrenador_id}
+              onChange={handleInputChange}
+              disabled={!formData.subarea_id || cargandoEntrenadores || !entrenadoresDeLaSubarea.length}
+            >
+              <option value="">
+                {!formData.subarea_id ? 'Primero elige la subárea'
+                  : cargandoEntrenadores ? 'Cargando entrenadores...'
+                    : entrenadoresDeLaSubarea.length ? 'Sin entrenador por ahora' : 'Esta subárea no tiene entrenadores'}
+              </option>
+              {entrenadoresDeLaSubarea.map((entrenador) => (
+                <option key={entrenador.user_id} value={String(entrenador.user_id)}>{entrenador.nombre_completo}</option>
+              ))}
+            </select>
+            {entrenadoresSubarea.error && entrenadoresSubarea.subarea === formData.subarea_id && (
+              <small className="preregistro-aviso" role="alert">{entrenadoresSubarea.error}</small>
+            )}
+          </div>
           <p className="preregistro-nota-subarea">
-            El entrenador del atleta se asigna después, en Atletas → Editar. Las subáreas se pueden cambiar ahí.
+            Si no eliges entrenador, se le asigna después en Atletas → Editar. Las subáreas también se pueden cambiar ahí.
           </p>
 
           {/* Discapacidades del atleta: siempre visible; puede tener varias o ninguna. */}

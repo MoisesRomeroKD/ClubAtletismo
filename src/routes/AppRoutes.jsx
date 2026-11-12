@@ -135,7 +135,7 @@ export default function AppRoutes({
           <Route path="/admin/antropometria" element={<Navigate to="/admin/antropometria/programar" replace />} />
           <Route path="/admin/antropometria/programar" element={adminDashboardElement} />
           <Route path="/admin/antropometria/datos" element={adminDashboardElement} />
-          <Route path="/admin/antropometria/analisis" element={adminDashboardElement} />
+          <Route path="/admin/antropometria/analisis" element={<Navigate to="/admin/antropometria/datos" replace />} />
           <Route path="/admin/configuracion/antropometria" element={adminDashboardElement} />
           <Route path="/admin/prerregistro" element={adminDashboardElement} />
           <Route path="/admin/prerregistros-pendientes" element={adminDashboardElement} />
@@ -155,10 +155,10 @@ export default function AppRoutes({
           <Route path="/entrenador/asistencias/registro" element={trainerDashboardElement} />
           <Route path="/entrenador/mis-tests" element={trainerDashboardElement} />
           <Route path="/entrenador/crear-test" element={trainerDashboardElement} />
-          <Route path="/entrenador/tests-resultados" element={trainerDashboardElement} />
+          <Route path="/entrenador/tests-resultados" element={<Navigate to="/entrenador/tests-analisis" replace />} />
           <Route path="/entrenador/tests-analisis" element={trainerDashboardElement} />
           <Route path="/entrenador/asignar-test" element={<Navigate to="/entrenador/mis-tests" replace />} />
-          <Route path="/entrenador/cineantropometria" element={trainerDashboardElement} />
+          <Route path="/entrenador/cineantropometria" element={<Navigate to="/entrenador/cineantropometria/datos" replace />} />
           <Route path="/entrenador/cineantropometria/programar" element={trainerDashboardElement} />
           <Route path="/entrenador/cineantropometria/datos" element={trainerDashboardElement} />
           <Route path="/entrenador/sueno-general" element={trainerDashboardElement} />

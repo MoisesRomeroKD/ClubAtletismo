@@ -127,7 +127,7 @@ const SleepQualityCard = ({ score, pendingList, isLoading, error }) => (
     <div className="pending-sleep-section">
       <h4 className="sub-title">
         <AlertCircle size={14} className="icon-warning" />
-        Pendientes por ingresar su nota ({isLoading || error ? '--' : pendingList.length})
+        Pendientes por registrar su sueño ({isLoading || error ? '--' : pendingList.length})
       </h4>
       {isLoading ? (
         <p className="areas-empty">Cargando registros de sueño...</p>
@@ -145,7 +145,7 @@ const SleepQualityCard = ({ score, pendingList, isLoading, error }) => (
       ) : (
         <p className="all-done-msg">
           <CheckCircle2 size={14} />
-          ¡Todos los atletas ingresaron su calificación de sueño!
+          ¡Todos los atletas registraron su sueño de hoy!
         </p>
       )}
     </div>
@@ -243,9 +243,9 @@ export const TrainerDashboardView = () => {
         icon={AlertCircle}
       />
       <StatCard
-        title="Pendientes Nota Sueño"
+        title="Pendientes de sueño"
         value={kpi('pendientes_sueno')}
-        subtitle="Activos sin registro hoy (1-10)"
+        subtitle="Activos sin registrar su sueño hoy"
         icon={Moon}
       />
 

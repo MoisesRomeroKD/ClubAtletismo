@@ -24,9 +24,7 @@ const TRAINER_ROUTE_PATHS = {
   registro_asistencia: '/entrenador/asistencias/registro',
   mis_tests: '/entrenador/mis-tests',
   crear_test: '/entrenador/crear-test',
-  tests_resultados: '/entrenador/tests-resultados',
   tests_analisis: '/entrenador/tests-analisis',
-  cineantropometria: '/entrenador/cineantropometria',
   cine_programar: '/entrenador/cineantropometria/programar',
   cine_datos: '/entrenador/cineantropometria/datos',
   'sueño_general': '/entrenador/sueno-general',
@@ -53,7 +51,6 @@ const RoutineManager = lazyWithDelay(() => import('../components/trainer/builder
 const TrainerDashboardView = lazyWithDelay(() => import('../components/trainer/dashboard/TrainerDashboardView'));
 
 // 📐 Importación perezosa del Módulo de Cineantropometría
-const AnalisisCineTrainer = lazyWithDelay(() => import('../components/trainer/cineantropometria/AnalisisCineTrainer'));
 const MedicionesTrainer = lazyWithDelay(() => import('../components/trainer/cineantropometria/MedicionesTrainer'));
 
 // 💤 Importación perezosa de los componentes del módulo de Sueño y Descanso
@@ -75,7 +72,6 @@ const PerfilTrainer = lazyWithDelay(() => import('../components/trainer/perfilTr
 
 const ReporteEntrenador = lazyWithDelay(() => import('../components/trainer/reportes/ReporteEntrenador'));
 const TestsTrainer = lazyWithDelay(() => import('../components/trainer/tests/TestsTrainer'));
-const ResultadosTestsTrainer = lazyWithDelay(() => import('../components/trainer/tests/ResultadosTestsTrainer'));
 const AnalisisTestsTrainer = lazyWithDelay(() => import('../components/trainer/tests/AnalisisTestsTrainer'));
 
 // 🎨 Color asociado a cada nivel de calidad de sueño (1-10)
@@ -405,11 +401,6 @@ export default function TrainerDashboard({
             </div>
           )}
 
-          {effectiveAction === 'tests_resultados' && (
-            <div className="view-fade-in">
-              <ResultadosTestsTrainer />
-            </div>
-          )}
 
           {effectiveAction === 'reportes' && (
             <div className="view-fade-in">
@@ -420,12 +411,6 @@ export default function TrainerDashboard({
           {effectiveAction === 'perfil' && (
             <div className="view-fade-in">
               <PerfilTrainer />
-            </div>
-          )}
-
-          {(effectiveAction === 'cineantropometria' || effectiveAction === 'cineantropometria_trainer') && (
-            <div className="view-fade-in">
-              <AnalisisCineTrainer />
             </div>
           )}
 

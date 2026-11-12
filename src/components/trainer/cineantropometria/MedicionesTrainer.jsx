@@ -575,7 +575,8 @@ function DatosRegistrados({ subareas }) {
   }, [inputBuscar]);
 
   const params = useMemo(() => Object.fromEntries(Object.entries(filtros).filter(([, valor]) => valor)), [filtros]);
-  const fetchPage = useMemo(() => (page) => CineantropometriaService.getDatos({ ...params, page }), [params]);
+  // Un atleta por fila (sin repetir), con su última medición; la exportación lleva todas las mediciones.
+  const fetchPage = useMemo(() => (page) => CineantropometriaService.getDatos({ ...params, por_atleta: 1, page }), [params]);
   const lista = usePaginado(fetchPage);
 
   const exportar = async (formato) => {
@@ -658,30 +659,34 @@ function DatosRegistrados({ subareas }) {
         </div>
       </div>
 
+      {/* Paginación arriba de la lista (para no bajar hasta el final) y también al final. */}
+      <Paginacion page={lista.page} total={lista.total} onChange={lista.setPage} />
       {lista.error ? (
         <p className="antro-adm-vacio antro-adm-error" role="alert">{lista.error}</p>
       ) : lista.cargando ? (
         <p className="antro-adm-vacio">Cargando datos...</p>
       ) : !lista.filas.length ? (
-        <p className="antro-adm-vacio">No hay evaluaciones con esos filtros.</p>
+        <p className="antro-adm-vacio">No hay atletas con esos filtros.</p>
       ) : (
         <div className="responsive-list">
           <div className="responsive-list__table antro-adm-tabla-wrap">
             <table className="antro-adm-tabla">
               <thead>
-                <tr><th>Fecha</th><th>Atleta</th><th>Categoría</th><th>Subárea</th><th>Altura</th><th>Peso</th><th>Acciones</th></tr>
+                <tr><th>Atleta</th><th>Cédula</th><th>Categoría</th><th>Subárea</th><th>Última medición</th><th>Altura</th><th>Peso</th><th>Mediciones</th><th>Acciones</th></tr>
               </thead>
               <tbody>
                 {lista.filas.map((fila) => (
-                  <tr key={fila.id}>
-                    <td>{formatFecha(fila.fecha)}</td>
+                  <tr key={fila.atleta_id}>
                     <td className="antro-adm-fuerte">{fila.nombre} {fila.apellido}</td>
+                    <td>{fila.cedula}</td>
                     <td>{fila.categoria || '—'}</td>
                     <td>{fila.subarea}</td>
+                    <td>{fila.fecha ? formatFecha(fila.fecha) : 'Sin medición'}</td>
                     <td>{numero(fila.altura_cm, ' cm')}</td>
                     <td>{numero(fila.peso_kg, ' kg')}</td>
+                    <td>{fila.evaluaciones}</td>
                     <td>
-                      <button type="button" className="antro-adm-btn antro-adm-btn--chico" onClick={() => setAtletaId(fila.atleta_id)}>Ver historial</button>
+                      <button type="button" className="antro-adm-btn antro-adm-btn--chico" disabled={!fila.evaluaciones} onClick={() => setAtletaId(fila.atleta_id)}>Ver historial</button>
                     </td>
                   </tr>
                 ))}
@@ -691,16 +696,18 @@ function DatosRegistrados({ subareas }) {
           <div className="responsive-list__cards">
             <div className="antro-adm-cards">
               {lista.filas.map((fila) => (
-                <article className="antro-adm-card" key={fila.id}>
+                <article className="antro-adm-card" key={fila.atleta_id}>
                   <div className="antro-adm-card-head">
                     <h4>{fila.nombre} {fila.apellido}</h4>
-                    <span className="antro-adm-muted">{formatFecha(fila.fecha)}</span>
+                    <span className="antro-adm-muted">{fila.fecha ? formatFecha(fila.fecha) : 'Sin medición'}</span>
                   </div>
                   <dl>
+                    <div><dt>Cédula</dt><dd>{fila.cedula}</dd></div>
                     <div><dt>Subárea</dt><dd>{fila.subarea} · {fila.categoria || 'Sin categoría'}</dd></div>
                     <div><dt>Altura / Peso</dt><dd>{numero(fila.altura_cm, ' cm')} · {numero(fila.peso_kg, ' kg')}</dd></div>
+                    <div><dt>Mediciones</dt><dd>{fila.evaluaciones}</dd></div>
                   </dl>
-                  <button type="button" className="antro-adm-btn antro-adm-btn--chico" onClick={() => setAtletaId(fila.atleta_id)}>Ver historial</button>
+                  <button type="button" className="antro-adm-btn antro-adm-btn--chico" disabled={!fila.evaluaciones} onClick={() => setAtletaId(fila.atleta_id)}>Ver historial</button>
                 </article>
               ))}
             </div>
@@ -721,8 +728,8 @@ const SECCIONES = {
     descripcion: 'Agenda mediciones en tus subáreas y registra los datos de cada atleta convocado.',
   },
   datos: {
-    titulo: 'Datos registrados',
-    descripcion: 'Mediciones de los atletas de tus subáreas. Abre el historial de un atleta para ver cómo se desarrolla.',
+    titulo: 'Análisis',
+    descripcion: 'Tus atletas, cada uno una vez, con su última medición. Abre su historial para ver cómo se desarrolla.',
   },
 };
 

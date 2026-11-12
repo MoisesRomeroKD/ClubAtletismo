@@ -1,1 +1,0 @@
-import{A as e}from"./index-Cx2WSYo0.js";var t={list:async()=>(await e.get(`/v1/rutinas/ejercicios`)).data,create:async t=>(await e.post(`/v1/rutinas/ejercicios`,t)).data,update:async(t,n)=>(await e.put(`/v1/rutinas/ejercicios/${t}`,n)).data,delete:async t=>(await e.delete(`/v1/rutinas/ejercicios/${t}`)).data};export{t};

@@ -143,7 +143,9 @@ function PlanillaTest({ testId, onVolver }) {
   // Los tests de otro entrenador de sus subáreas solo se consultan.
   const propio = test.es_propio !== false;
   const corrigiendo = propio && sePuedeCorregir(test) && hasPermission('corregir_resultados_test');
-  const editable = propio && ((test.estado === 'programado' && hasPermission('registrar_test')) || corrigiendo);
+  // Los resultados se cargan desde el día programado (antes, el sistema lo rechaza).
+  const antesDeSuDia = test.estado === 'programado' && test.fecha > hoyCaracas();
+  const editable = propio && ((test.estado === 'programado' && !antesDeSuDia && hasPermission('registrar_test')) || corrigiendo);
   // Test finalizado: solo los atletas con recuperación pendiente, desde su fecha, se cargan aquí.
   const recuperaHoy = (fila) => propio && test.estado === 'realizado' && fila.recuperacion_pendiente
     && fila.fecha_recuperacion <= hoyCaracas() && hasPermission('registrar_test');
@@ -224,6 +226,12 @@ function PlanillaTest({ testId, onVolver }) {
         </div>
         <EstadoBadge estado={test.estado} label={test.estado_label} />
       </div>
+
+      {propio && antesDeSuDia && (
+        <p className="tests-ent-aviso" role="status">
+          Todavía no es el día programado: este test es el {formatFecha(test.fecha)}. Los resultados se cargan desde ese día.
+        </p>
+      )}
 
       {corrigiendo && (
         <p className="tests-ent-progreso">

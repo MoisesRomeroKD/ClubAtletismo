@@ -2,28 +2,37 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
+// Tema por defecto: oscuro. Solo se guarda lo que la persona elige con el botón (clave propia: la vieja
+// 'theme' se guardaba sola con el claro y dejaría a todos en claro).
+const CLAVE_TEMA = 'tema_elegido';
+
+const leerTemaElegido = () => {
+  try {
+    return localStorage.getItem(CLAVE_TEMA);
+  } catch {
+    return null;
+  }
+};
+
 export const ThemeProvider = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) return savedTheme === 'dark';
-    return document.body.classList.contains('dark-mode');
-  });
+  const [isDarkMode, setIsDarkMode] = useState(() => leerTemaElegido() !== 'light');
 
   useEffect(() => {
     const body = document.body;
-    if (isDarkMode) {
-      body.classList.add('dark-mode');
-      body.classList.remove('light-mode');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      body.classList.add('light-mode');
-      body.classList.remove('dark-mode');
-      localStorage.setItem('theme', 'light');
-    }
+    body.classList.toggle('dark-mode', isDarkMode);
+    body.classList.toggle('light-mode', !isDarkMode);
   }, [isDarkMode]);
 
   const toggleTheme = () => {
-    setIsDarkMode((prev) => !prev);
+    setIsDarkMode((prev) => {
+      const siguiente = !prev;
+      try {
+        localStorage.setItem(CLAVE_TEMA, siguiente ? 'dark' : 'light');
+      } catch {
+        // Sin acceso al almacenamiento: el cambio vale solo mientras la página esté abierta.
+      }
+      return siguiente;
+    });
   };
 
   return (
