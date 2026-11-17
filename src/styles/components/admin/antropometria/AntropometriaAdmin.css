@@ -343,6 +343,49 @@
   font-size: 0.95rem;
 }
 
+/* Comparar dos evaluaciones del atleta */
+.antro-adm-comparar {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.antro-adm-comparar-selects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 0.75rem;
+}
+
+.antro-adm-comparar-selects label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.antro-adm-comparar-selects select {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.antro-adm-comparar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.antro-adm-dif {
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+
+.antro-adm-dif--sube { color: var(--state-success); }
+.antro-adm-dif--baja { color: var(--state-danger); }
+
 /* Tabla y tarjetas (el cambio lo hace .responsive-list de App.css) */
 .antro-adm-tabla-wrap {
   border: 1px solid var(--border-main);

@@ -79,6 +79,28 @@
 .antro-atl-cambio--sube { color: var(--state-success); }
 .antro-atl-cambio--baja { color: var(--state-danger); }
 
+/* Comparar evaluaciones: dos selects por fecha */
+.antro-atl-selects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.antro-atl-selects label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.antro-atl-selects select {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.85rem;
+}
+
 .antro-atl-destacado {
   margin: 0;
   padding: 0.75rem 1rem;

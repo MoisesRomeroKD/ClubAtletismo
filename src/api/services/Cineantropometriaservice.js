@@ -52,7 +52,7 @@ const CineantropometriaService = {
 
   compareEvaluations: async (currentId, previousId) => {
     const response = await podApi.get(
-      `${BASE}/${currentId}/compare/${previousId}`
+      `${BASE}/${currentId}/compare/${previousId}/`
     );
 
     return response.data;

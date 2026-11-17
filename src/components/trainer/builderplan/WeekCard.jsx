@@ -115,7 +115,7 @@ export const WeekCard = React.memo(({ week, onWeekUpdate, exercises, catalogStat
             className="form-control" 
             style={{padding: '4px 8px', fontSize: '0.8rem', width: '130px'}} 
             value={week.startDate}
-            min={week.startDate && week.startDate < hoyCaracas() ? week.startDate : hoyCaracas()}
+            min={week.fechaGuardada && week.fechaGuardada < hoyCaracas() ? week.fechaGuardada : hoyCaracas()}
             onChange={(e) => onWeekUpdate({ ...week, startDate: e.target.value })}
             onClick={e => e.stopPropagation()} 
             aria-label={`Fecha de inicio de la semana ${week.weekNumber}`}

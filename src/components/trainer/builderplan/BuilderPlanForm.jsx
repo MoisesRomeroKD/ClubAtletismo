@@ -21,18 +21,53 @@ const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Ame
 
 const getList = (response) => (Array.isArray(response) ? response : response?.results || []);
 
-const formatError = (value) => {
-  if (typeof value === 'string') return value;
-  if (Array.isArray(value)) return value.map(formatError).filter(Boolean).join(' ');
-  if (value && typeof value === 'object') {
-    return Object.entries(value).map(([field, detail]) => `${field}: ${formatError(detail)}`).join(' ');
-  }
-  return '';
+// Nombres en español de los campos que devuelve el servidor (antes salía "weeks: ..." o nada).
+const CAMPOS = {
+  nombre: 'Nombre del plan', descripcion: 'Descripción', weeks: 'Semanas', numero_semana: 'Número de semana',
+  fecha_inicio: 'Fecha de inicio', objetivo: 'Objetivo', sessions: 'Sesiones', dia_semana: 'Día',
+  session_exercises: 'Ejercicios', exercise: 'Ejercicio', series: 'Series', repeticiones: 'Repeticiones',
+  micro_pausa: 'Micro pausa', macro_pausa: 'Macro pausa', intensidad: 'Intensidad', assignments: 'Asignación',
+  athlete: 'Atleta', subarea: 'Subárea', entrenador: 'Entrenador',
 };
 
-const getErrorMessage = (error) => formatError(error.response?.data?.detail ?? error.response?.data)
-  || error.message
-  || 'No se pudo guardar el plan.';
+// Cómo se nombra cada elemento de una lista: "Semana 2 · Martes · Ejercicio 3".
+const ETIQUETA_ELEMENTO = {
+  weeks: (item, indice) => `Semana ${item?.numero_semana ?? indice + 1}`,
+  sessions: (item, indice) => item?.dia_semana || `Sesión ${indice + 1}`,
+  session_exercises: (_item, indice) => `Ejercicio ${indice + 1}`,
+  assignments: () => 'Asignación',
+};
+
+// Junta los errores del servidor en frases legibles, usando lo enviado para nombrar semanas y días.
+const juntarErrores = (valor, enviado, prefijo = '') => {
+  if (valor === null || valor === undefined) return [];
+  if (typeof valor === 'string') return [prefijo ? `${prefijo}: ${valor}` : valor];
+  if (Array.isArray(valor)) return valor.flatMap((item) => juntarErrores(item, enviado, prefijo));
+  if (typeof valor !== 'object') return [];
+  return Object.entries(valor).flatMap(([campo, detalle]) => {
+    if (ETIQUETA_ELEMENTO[campo] && Array.isArray(detalle) && detalle.some((item) => item && typeof item === 'object')) {
+      return detalle.flatMap((item, indice) => {
+        const etiqueta = ETIQUETA_ELEMENTO[campo](enviado?.[campo]?.[indice], indice);
+        return juntarErrores(item, enviado?.[campo]?.[indice], [prefijo, etiqueta].filter(Boolean).join(' · '));
+      });
+    }
+    const nombre = ['detail', 'non_field_errors'].includes(campo) ? '' : (CAMPOS[campo] || campo);
+    return juntarErrores(detalle, enviado?.[campo], [prefijo, nombre].filter(Boolean).join(' · '));
+  });
+};
+
+/** Mensaje claro de por qué falló una petición (sin conexión, error del servidor o datos inválidos). */
+const getErrorMessage = (error, enviado = null, accion = 'guardar el plan') => {
+  if (!error?.response) {
+    return `No se pudo ${accion}: el servidor no respondió (sin conexión o tardó demasiado). Revisa tu conexión e intenta de nuevo.`;
+  }
+  const { status, data } = error.response;
+  if (status >= 500) {
+    return `No se pudo ${accion}: el servidor tuvo un problema (error ${status}). Intenta de nuevo en un momento; si sigue pasando, avisa al administrador.`;
+  }
+  const mensajes = data && typeof data === 'object' ? juntarErrores(data, enviado) : [];
+  return mensajes.length ? mensajes.join(' ') : `No se pudo ${accion} (error ${status}).`;
+};
 
 /**
  * Componente Contenedor Principal BuilderPlanForm
@@ -42,7 +77,6 @@ const getErrorMessage = (error) => formatError(error.response?.data?.detail ?? e
 export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
   const {
     currentStep,
-    nextStep,
     prevStep,
     goToStep,
     planDetails,
@@ -62,6 +96,8 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
   const semanaVisible = Math.min(semanaActiva, Math.max(weeks.length - 1, 0));
   const inicioDeslizar = useRef(null);
   const [planId, setPlanId] = useState(plan?.id || null);
+  // Al editar, la fecha de inicio que el plan ya tenía se puede conservar aunque sea pasada.
+  const fechaInicioGuardada = plan?.weeks?.[0]?.fecha_inicio || '';
   const [assignments, setAssignments] = useState(() => (plan?.assignments || []).map((item) => (
     item.athlete
       ? { type: 'athlete', id: item.athlete, name: item.athlete_name || `Atleta ${item.athlete}` }
@@ -110,9 +146,9 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
         exercises: exercisesResult.status === 'fulfilled' ? getList(exercisesResult.value) : [],
         loading: { athletes: false, subareas: false, exercises: false },
         errors: {
-          athletes: athletesResult.status === 'rejected' ? getErrorMessage(athletesResult.reason) : '',
-          subareas: subareasResult.status === 'rejected' ? getErrorMessage(subareasResult.reason) : '',
-          exercises: exercisesResult.status === 'rejected' ? getErrorMessage(exercisesResult.reason) : '',
+          athletes: athletesResult.status === 'rejected' ? getErrorMessage(athletesResult.reason, null, 'cargar los atletas') : '',
+          subareas: subareasResult.status === 'rejected' ? getErrorMessage(subareasResult.reason, null, 'cargar las subáreas') : '',
+          exercises: exercisesResult.status === 'rejected' ? getErrorMessage(exercisesResult.reason, null, 'cargar los ejercicios') : '',
         },
       });
     });
@@ -133,6 +169,15 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
       })),
     })));
   }, [plan, directory.exercises, setWeeks]);
+
+  // Fecha de fin del plan: el último día de la última semana (su fecha de inicio + 6 días). Sale de las
+  // semanas reales, así que si se cambia a mano la fecha de una semana, el fin la sigue.
+  const ultimaSemana = weeks[weeks.length - 1];
+  const fechaFin = (() => {
+    if (!ultimaSemana?.startDate) return '';
+    const [y, m, d] = ultimaSemana.startDate.split('-').map(Number);
+    return new Date(Date.UTC(y, m - 1, d + 6)).toISOString().slice(0, 10);
+  })();
 
   const toggleWeekPreview = (weekId) => {
     setExpandedPreviewWeek((prev) => (prev === weekId ? null : weekId));
@@ -162,17 +207,32 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
     )),
   });
 
-  // El borrador solo exige nombre, asignación y fechas; el objetivo y los ejercicios se exigen al publicar.
-  const validatePlan = (publicar) => {
+  // Paso 1 (parámetros y asignación): sin esto no se pasa al cronograma.
+  const validarPaso1 = () => {
     if (!planDetails.name.trim()) return 'El nombre del plan es obligatorio.';
     if (!weeks.length || weeks.length > 8) return 'El plan debe tener entre 1 y 8 semanas.';
+    if (!startDate) return 'Indica la fecha de inicio del plan.';
+    if (startDate < hoyCaracas() && startDate !== fechaInicioGuardada) {
+      return 'La fecha de inicio del plan no puede ser anterior a hoy.';
+    }
     if (!assignments.length) return 'Asigna el plan a un atleta o a una subárea.';
+    return '';
+  };
+
+  // Paso 2 (cronograma): cada semana con fecha válida y objetivo, y al menos un ejercicio.
+  const validarPaso2 = () => {
+    const hoy = hoyCaracas();
     for (const week of weeks) {
       if (!week.startDate) return `Indica la fecha de inicio de la semana ${week.weekNumber}.`;
-      if (publicar && !week.objective.trim()) return `Indica el objetivo de la semana ${week.weekNumber}.`;
+      // El calendario no deja elegir días pasados, pero escribiéndola a mano sí: se revisa aquí
+      // (al editar se puede dejar la fecha que ya tenía guardada).
+      if (week.startDate < hoy && week.startDate !== week.fechaGuardada) {
+        return `La fecha de inicio de la semana ${week.weekNumber} no puede ser anterior a hoy.`;
+      }
+      if (!week.objective.trim()) return `Indica el objetivo de la semana ${week.weekNumber}.`;
     }
     const scheduled = weeks.flatMap((week) => week.sessions).flatMap((session) => session.exercises);
-    if (publicar && !scheduled.length) return 'Agrega al menos un ejercicio a una sesión.';
+    if (!scheduled.length) return 'Agrega al menos un ejercicio a una sesión.';
     if (scheduled.some((exercise) => (
       !exercise.exerciseId || !Number.isInteger(Number(exercise.sets)) || Number(exercise.sets) < 1
       || !Number.isInteger(Number(exercise.reps)) || Number(exercise.reps) < 1
@@ -180,32 +240,49 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
     return '';
   };
 
-  const savePlan = async (publish) => {
-    const validationError = validatePlan(publish);
+  // Ya no se guardan borradores: el plan se publica completo (nombre, asignación, fechas, objetivos y ejercicios).
+  const validatePlan = () => validarPaso1() || validarPaso2();
+
+  // No se avanza de paso con datos incompletos (antes se podía llegar a "Publicar" con todo vacío).
+  // Si falta algo, se avisa qué y se lleva al paso donde se completa.
+  const irAPaso = (paso) => {
+    const faltaPaso1 = paso >= 2 ? validarPaso1() : '';
+    if (faltaPaso1) {
+      setFeedback({ type: 'error', message: faltaPaso1 });
+      goToStep(1);
+      return;
+    }
+    const faltaPaso2 = paso >= 3 ? validarPaso2() : '';
+    if (faltaPaso2) {
+      setFeedback({ type: 'error', message: faltaPaso2 });
+      goToStep(2);
+      return;
+    }
+    setFeedback({ type: '', message: '' });
+    goToStep(paso);
+  };
+
+  // Se guarda y se publica en una sola petición: si algo falla, no queda un plan a medias.
+  const savePlan = async () => {
+    const validationError = validatePlan();
     if (validationError) {
       setFeedback({ type: 'error', message: validationError });
       return;
     }
     setSaving(true);
     setFeedback({ type: '', message: '' });
+    const payload = { ...buildPayload(), publicar: true };
     try {
-      const payload = buildPayload();
       const saved = planId
         ? await RoutineService.update(planId, payload)
         : await RoutineService.create(payload);
-      setPlanId(saved.id);
-      if (publish) {
-        await RoutineService.publish(saved.id);
-        setFeedback({ type: 'success', message: 'Plan publicado correctamente.' });
-      } else {
-        setFeedback({ type: 'success', message: 'Borrador guardado correctamente.' });
-      }
+      setFeedback({ type: 'success', message: planId ? 'Plan actualizado correctamente.' : 'Plan publicado correctamente.' });
       setPlanId(null);
       setAssignments([]);
       resetBuilder();
       onSaved?.(saved);
     } catch (error) {
-      setFeedback({ type: 'error', message: getErrorMessage(error) });
+      setFeedback({ type: 'error', message: getErrorMessage(error, payload, 'publicar el plan') });
     } finally {
       setSaving(false);
     }
@@ -219,7 +296,7 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
         </p>
       )}
       {/* NAVEGADOR SUPERIOR DE PASOS (STEPPER) */}
-      <Stepper currentStep={currentStep} onSelectStep={goToStep} />
+      <Stepper currentStep={currentStep} onSelectStep={irAPaso} />
 
       <div
         style={{
@@ -292,9 +369,13 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
                       max="8"
                     className="form-control"
                     value={numWeeks}
-                    onChange={(e) =>
-                      setNumWeeks(Math.min(8, Math.max(1, parseInt(e.target.value) || 1)))
-                    }
+                    // Son de 1 a 8 semanas (un dígito): se toma el último dígito escrito. Antes, con 1 escrito
+                    // y al teclear 5 quedaba "15" y se recortaba a 8.
+                    onChange={(e) => {
+                      const digito = Number(e.target.value.replace(/\D/g, '').slice(-1));
+                      if (digito >= 1 && digito <= 8) setNumWeeks(digito);
+                    }}
+                    onFocus={(e) => e.target.select()}
                   />
                 </div>
 
@@ -304,7 +385,7 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
                     type="date"
                     className="form-control"
                     value={startDate}
-                    min={startDate && startDate < hoyCaracas() ? startDate : hoyCaracas()}
+                    min={fechaInicioGuardada && fechaInicioGuardada < hoyCaracas() ? fechaInicioGuardada : hoyCaracas()}
                     onChange={(e) => setStartDate(e.target.value)}
                   />
                 </div>
@@ -317,6 +398,7 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
                 totalWeeks={weeks.length}
                 totalExercises={totalExercises}
                 startDate={startDate}
+                endDate={fechaFin}
                 readOnly={false}
                 assignments={assignments}
                 athletes={directory.athletes}
@@ -337,7 +419,7 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
                 }}>
                   Cancelar
                 </button>
-                <button className="btn btn-primary" type="button" onClick={nextStep}>
+                <button className="btn btn-primary" type="button" onClick={() => irAPaso(2)}>
                   Siguiente: Cronograma →
                 </button>
               </div>
@@ -399,10 +481,7 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
                   ← Volver a Parámetros
                 </button>
                 <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-                  <button className="btn btn-outline" type="button" disabled={saving} onClick={() => savePlan(false)}>
-                    <Icons.Save /> Guardar Borrador
-                  </button>
-                  <button className="btn btn-primary" onClick={nextStep}>
+                  <button className="btn btn-primary" type="button" onClick={() => irAPaso(3)}>
                     Siguiente: Vista Previa y Publicación →
                   </button>
                 </div>
@@ -472,7 +551,11 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
                   </div>
                   <div>
                     <strong>Fecha de Inicio:</strong>{" "}
-                    {startDate || "No definida"}
+                    {startDate ? startDate.split('-').reverse().join('/') : "No definida"}
+                  </div>
+                  <div>
+                    <strong>Fecha de Fin:</strong>{" "}
+                    {fechaFin ? fechaFin.split('-').reverse().join('/') : "No definida"}
                   </div>
                   <div>
                     <strong>Volumen Total:</strong> {weeks.length} Semanas (
@@ -613,11 +696,8 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
                   ← Modificar Cronograma
                 </button>
                 <div style={{ display: "flex", gap: "12px" }}>
-                  <button className="btn btn-outline" type="button" disabled={saving} onClick={() => savePlan(false)}>
-                    <Icons.Save /> Guardar Borrador
-                  </button>
-                  <button className="btn btn-primary" type="button" disabled={saving} onClick={() => savePlan(true)}>
-                    <Icons.Publish /> Confirmar y Publicar Plan
+                  <button className="btn btn-primary" type="button" disabled={saving} onClick={savePlan}>
+                    <Icons.Publish /> {saving ? 'Publicando...' : 'Confirmar y Publicar Plan'}
                   </button>
                 </div>
               </div>

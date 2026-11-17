@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import MainNav from '../components/layout/user/MainNav';
 import UserService from '../api/services/Userservice';
-import RoutineService from '../api/services/RoutineService';
 import '../styles/pages/AthleteDashboard.css';
 
 import SleepQualityDashboard from '../components/atleta/AthleteSleep/SleepQualityDashboard'; 
@@ -12,6 +11,7 @@ import AntropometriaAtletaView from '../components/atleta/antropometria/Antropom
 import HomeAtleta from '../components/atleta/home/HomeAtleta';
 import TestsAtleta from '../components/atleta/tests/TestsAtleta';
 import PerfilAtleta from '../components/atleta/perfil/PerfilAtleta';
+import RutinasAtleta from '../components/atleta/rutinas/RutinasAtleta';
 import CargaCircular from '../components/layout/CargaCircular';
 
 const ATHLETE_ROUTE_PATHS = {
@@ -47,8 +47,6 @@ export default function AthleteDashboard({ onActionChange, onLogout, isDarkMode,
 
   const [userData, setUserData] = useState({ name: '', id: null });
   const [sleepData, setSleepData] = useState([]);
-  const [routine, setRoutine] = useState([]);
-  const [routineError, setRoutineError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -66,21 +64,14 @@ export default function AthleteDashboard({ onActionChange, onLogout, isDarkMode,
     const fetchAthleteData = async () => {
       try {
         setIsLoading(true);
-        const [sleepRes, routineRes] = await Promise.allSettled([
+        // Las rutinas las carga su propia vista (con filtros y paginación).
+        const [sleepRes] = await Promise.allSettled([
           UserService.getSleepHistoryByAthlete(storedId),
-          RoutineService.list(),
         ]);
 
         if (sleepRes.status === 'fulfilled' && sleepRes.value) {
           const sleepHistorial = sleepRes.value.historial || sleepRes.value;
           setSleepData(Array.isArray(sleepHistorial) ? sleepHistorial : []);
-        }
-
-        if (routineRes.status === 'fulfilled') {
-          const plans = Array.isArray(routineRes.value) ? routineRes.value : routineRes.value?.results || [];
-          setRoutine(plans);
-        } else {
-          setRoutineError(routineRes.reason?.response?.data?.detail || 'No se pudieron cargar tus rutinas.');
         }
       } catch (error) {
         console.error("Error de sincronización:", error);
@@ -114,43 +105,8 @@ export default function AthleteDashboard({ onActionChange, onLogout, isDarkMode,
             <HomeAtleta onNavigate={handleTabChange} />
           )}
 
-          {/* VISTA RUTINA */}
-          {effectiveAction === 'rutina' && (
-            <div className="dashboard-card max-w-mid" style={{ padding: '1.5rem', backgroundColor: 'var(--bg-card)', borderRadius: '12px' }}>
-              <h3 className="section-title" style={{ borderBottom: '2px solid var(--func-primary)', display: 'inline-block', paddingBottom: '5px' }}>
-                Mi Plan Semanal
-              </h3>
-              {routineError ? (
-                <div role="alert" className="empty-state" style={{ marginTop: '1rem' }}>{routineError}</div>
-              ) : routine.length ? (
-                <div className="routine-list" style={{ marginTop: '1rem' }}>
-                  {routine.map((plan) => (
-                    <article className="routine-item" key={plan.id} style={{ display: 'block', padding: '12px 0', borderBottom: '1px solid var(--border-main)' }}>
-                      <h4>{plan.nombre}</h4>
-                      {plan.weeks.map((week) => (
-                        <section key={week.id}>
-                          <strong>Semana {week.numero_semana} · {week.fecha_inicio} – {week.fecha_fin}</strong>
-                          <p>{week.objetivo}</p>
-                          {week.sessions.map((session) => (
-                            <div key={session.id}>
-                              <span className="day-label">{session.dia_semana}</span>
-                              {session.session_exercises.map((item) => (
-                                <p className="task-text" key={item.id}>
-                                  {item.exercise_name} · {item.series} series × {item.repeticiones} reps · micro {item.micro_pausa || 'Consultar'} · macro {item.macro_pausa || 'Consultar'} · {item.intensidad || 'Intensidad por consultar'}
-                                </p>
-                              ))}
-                            </div>
-                          ))}
-                        </section>
-                      ))}
-                    </article>
-                  ))}
-                </div>
-              ) : (
-                <div className="empty-state" style={{ marginTop: '1rem', color: 'var(--clr-gris-base)' }}>No tienes rutinas asignadas aún.</div>
-              )}
-            </div>
-          )}
+          {/* VISTA RUTINA: sus planes con filtros (misma vista que el entrenador) */}
+          {effectiveAction === 'rutina' && <RutinasAtleta />}
 
           {/* VISTA SUEÑO */}
           {effectiveAction === 'sueno' && (

@@ -629,10 +629,12 @@ function EditarTest({ test, pruebas, subareas, onGuardado, onCancelar }) {
         </label>
         <label>
           <span>Fecha</span>
+          {/* Mínimo: hoy, o la fecha que el test ya tenía (si es pasada se puede conservar). Antes el mínimo
+              seguía a lo escrito y dejaba poner cualquier fecha pasada. */}
           <input
             type="date"
             value={form.fecha}
-            min={form.fecha < hoyCaracas() ? form.fecha : hoyCaracas()}
+            min={test.fecha < hoyCaracas() ? test.fecha : hoyCaracas()}
             onChange={(event) => setForm({ ...form, fecha: event.target.value })}
             required
           />

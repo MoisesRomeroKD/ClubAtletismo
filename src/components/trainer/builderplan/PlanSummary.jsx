@@ -7,6 +7,13 @@
 
 import React, { useState } from 'react';
 
+// Fechas del resumen en formato dd/mm/aaaa.
+const formatFecha = (iso) => {
+  if (!iso) return 'No definida';
+  const [y, m, d] = iso.slice(0, 10).split('-');
+  return `${d}/${m}/${y}`;
+};
+
 /* =======================================================================================
  * ¡ATENCIÓN IA!: MANTÉN TODOS LOS COMENTARIOS INTACTOS A CONTINUACIÓN.
  * DO NOT STRIP OR REFACTOR THE COMMENTS BELOW. MAINTAIN COMPREHENSIVE DOCUMENTATION.
@@ -24,6 +31,7 @@ import React, { useState } from 'react';
  * @param {number} props.totalWeeks - Duración total en semanas/microciclos.
  * @param {number} props.totalExercises - Sumatoria global de ejercicios del plan.
  * @param {string} props.startDate - Fecha estimada de inicio.
+ * @param {string} [props.endDate] - Fecha de fin: el último día de la última semana (su inicio + 6 días).
  * @param {Function} [props.onAssignmentChange] - Callback que notifica los ítems asignados al componente padre.
  * @param {boolean} [props.readOnly=false] - Modo de solo lectura para evitar renderizar controles de formulario en barras laterales o vistas previas.
  * @param {Array} [props.assignedItems=[]] - Ítems previamente asignados para mostrar en modo solo lectura.
@@ -33,6 +41,7 @@ export const PlanSummary = React.memo(({
   totalWeeks, 
   totalExercises, 
   startDate, 
+  endDate,
   onAssignmentChange,
   readOnly = false,
   assignments = [],
@@ -83,7 +92,12 @@ export const PlanSummary = React.memo(({
       {/* MÉTRICAS GLOBALES DEL PLAN */}
       <div className="flex-between summary-row">
         <span className="summary-label">Fecha de Inicio</span>
-        <span className="summary-value">{startDate || 'No definida'}</span>
+        <span className="summary-value">{formatFecha(startDate)}</span>
+      </div>
+
+      <div className="flex-between summary-row">
+        <span className="summary-label">Fecha de Fin</span>
+        <span className="summary-value">{formatFecha(endDate)}</span>
       </div>
 
       <div className="flex-between summary-row">

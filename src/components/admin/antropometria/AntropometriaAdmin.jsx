@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowLeft, Plus, SlidersHorizontal, X } from 'lucide-react';
-import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts';
 import CineantropometriaService from '../../../api/services/Cineantropometriaservice';
 import UserService from '../../../api/services/Userservice';
 import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
@@ -202,7 +202,7 @@ function DetalleMedicion({ medicionId, puedeRegistrar, onVolver }) {
 
   const medicion = detalle.data;
   const editable = puedeRegistrar && medicion.estado !== 'cancelada';
-  const pendientes = medicion.convocados.filter((fila) => !fila.evaluacion).length;
+  const pendientes = medicion.convocados.filter((fila) => !fila.evaluacion && !fila.medido_en).length;
 
   return (
     <section className="antro-adm-panel">
@@ -233,6 +233,8 @@ function DetalleMedicion({ medicionId, puedeRegistrar, onVolver }) {
                   <span className="antro-adm-registrado">
                     ✓ Registrado · {numero(fila.evaluacion.altura_cm, ' cm')} · {numero(fila.evaluacion.peso_kg, ' kg')}
                   </span>
+                ) : fila.medido_en ? (
+                  <span className="antro-adm-muted">Ya medido ese día en {fila.medido_en}</span>
                 ) : editable && abierto !== fila.atleta_id ? (
                   <button type="button" className="antro-adm-btn antro-adm-btn--chico" onClick={() => setAbierto(fila.atleta_id)}>
                     Registrar mediciones
@@ -466,6 +468,144 @@ function ProgramarMedicion({ subareas, puedeEditar, puedeRegistrar }) {
   );
 }
 
+/* Diferencia de puntaje entre dos evaluaciones: ▲ sube, ▼ baja, = igual. */
+function Diferencia({ valor }) {
+  if (valor === 0) return <span className="antro-adm-dif">= 0.00</span>;
+  const sube = valor > 0;
+  return (
+    <span className={`antro-adm-dif antro-adm-dif--${sube ? 'sube' : 'baja'}`}>
+      {sube ? '▲ +' : '▼ −'}{Math.abs(valor).toFixed(2)}
+    </span>
+  );
+}
+
+/* ---------------- Comparar dos evaluaciones del atleta (por fecha) ---------------- */
+function CompararEvaluaciones({ evaluaciones }) {
+  // Por defecto: actual = la más reciente, anterior = la penúltima (la lista viene de la más nueva a la más vieja).
+  const [eleccion, setEleccion] = useState({ actual: evaluaciones[0]?.id ?? null, anterior: evaluaciones[1]?.id ?? null });
+  const [resultado, setResultado] = useState({ clave: '', data: null, error: '' });
+  const clave = `${eleccion.actual}-${eleccion.anterior}`;
+  const valida = evaluaciones.length >= 2 && eleccion.actual && eleccion.anterior && eleccion.actual !== eleccion.anterior;
+
+  useEffect(() => {
+    if (!valida) return undefined;
+    let activo = true;
+    CineantropometriaService.compareEvaluations(eleccion.actual, eleccion.anterior)
+      .then((data) => { if (activo) setResultado({ clave, data, error: '' }); })
+      .catch((error) => { if (activo) setResultado({ clave, data: null, error: mensajeError(error, 'No se pudo comparar las evaluaciones.') }); });
+    return () => { activo = false; };
+  }, [valida, clave, eleccion.actual, eleccion.anterior]);
+
+  if (evaluaciones.length < 2) {
+    return (
+      <section className="antro-adm-comparar">
+        <h4 className="antro-adm-subtitulo">Comparar evaluaciones</h4>
+        <p className="antro-adm-vacio">Se necesitan al menos dos evaluaciones para comparar.</p>
+      </section>
+    );
+  }
+
+  const etiqueta = (evaluacion) => `${formatFecha(evaluacion.fecha)} · ${evaluacion.subarea}`;
+  const fechaDe = (id) => formatFecha(evaluaciones.find((evaluacion) => evaluacion.id === id)?.fecha);
+  const listo = resultado.clave === clave;
+  const filas = listo && resultado.data ? resultado.data.comparison : [];
+  const radar = filas.map((fila) => ({ label: fila.axis, actual: fila.current_score, anterior: fila.previous_score }));
+  const nombreActual = `Actual (${fechaDe(eleccion.actual)})`;
+  const nombreAnterior = `Anterior (${fechaDe(eleccion.anterior)})`;
+
+  return (
+    <section className="antro-adm-comparar">
+      <h4 className="antro-adm-subtitulo">Comparar evaluaciones</h4>
+      <div className="antro-adm-comparar-selects">
+        <label>
+          Evaluación actual
+          <select
+            value={eleccion.actual ?? ''}
+            onChange={(e) => setEleccion((previa) => ({ ...previa, actual: Number(e.target.value) }))}
+          >
+            {evaluaciones.map((evaluacion) => (
+              <option key={evaluacion.id} value={evaluacion.id} disabled={evaluacion.id === eleccion.anterior}>{etiqueta(evaluacion)}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Evaluación anterior
+          <select
+            value={eleccion.anterior ?? ''}
+            onChange={(e) => setEleccion((previa) => ({ ...previa, anterior: Number(e.target.value) }))}
+          >
+            {evaluaciones.map((evaluacion) => (
+              <option key={evaluacion.id} value={evaluacion.id} disabled={evaluacion.id === eleccion.actual}>{etiqueta(evaluacion)}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      {!listo ? (
+        <p className="antro-adm-vacio">Comparando...</p>
+      ) : resultado.error ? (
+        <p className="antro-adm-vacio antro-adm-error" role="alert">{resultado.error}</p>
+      ) : (
+        <div className="antro-adm-comparar-grid">
+          <div className="antro-adm-radar" role="img" aria-label={`Comparación de 6 ejes: ${filas.map((f) => `${f.axis} ${f.previous_score} a ${f.current_score}`).join(', ')}`}>
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart data={radar} outerRadius="68%">
+                <PolarGrid stroke="var(--border-main)" />
+                <PolarAngleAxis dataKey="label" tick={{ fill: 'var(--text-main)', fontSize: 11 }} />
+                <PolarRadiusAxis domain={[0, 100]} tick={{ fill: 'var(--text-muted)', fontSize: 9 }} axisLine={false} />
+                <Radar name={nombreAnterior} dataKey="anterior" stroke="var(--text-muted)" fill="var(--text-muted)" fillOpacity={0.1} strokeWidth={2} strokeDasharray="4 4" />
+                <Radar name={nombreActual} dataKey="actual" stroke="var(--accent-card)" fill="var(--accent-card)" fillOpacity={0.25} strokeWidth={2} dot={{ r: 3, fill: 'var(--accent-card)' }} />
+                <Tooltip
+                  formatter={(valor, nombre) => [`${valor} pts`, nombre]}
+                  contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border-main)', borderRadius: 8, color: 'var(--text-main)' }}
+                  labelStyle={{ color: 'var(--text-main)' }}
+                />
+                <Legend wrapperStyle={{ fontSize: 12, color: 'var(--text-muted)' }} />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="responsive-list">
+            <div className="responsive-list__table antro-adm-tabla-wrap">
+              <table className="antro-adm-tabla">
+                <thead>
+                  <tr><th>Eje</th><th>Puntaje anterior</th><th>Puntaje actual</th><th>Diferencia</th></tr>
+                </thead>
+                <tbody>
+                  {filas.map((fila) => (
+                    <tr key={fila.axis}>
+                      <td className="antro-adm-fuerte">{fila.axis}</td>
+                      <td>{fila.previous_score.toFixed(2)}</td>
+                      <td>{fila.current_score.toFixed(2)}</td>
+                      <td><Diferencia valor={fila.difference} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="responsive-list__cards">
+              <div className="antro-adm-cards">
+                {filas.map((fila) => (
+                  <article className="antro-adm-card" key={fila.axis}>
+                    <div className="antro-adm-card-head">
+                      <h4>{fila.axis}</h4>
+                      <Diferencia valor={fila.difference} />
+                    </div>
+                    <dl>
+                      <div><dt>Anterior</dt><dd>{fila.previous_score.toFixed(2)}</dd></div>
+                      <div><dt>Actual</dt><dd>{fila.current_score.toFixed(2)}</dd></div>
+                    </dl>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
 /* ---------------- Historial de un atleta ---------------- */
 function HistorialAtleta({ atletaId, onVolver }) {
   const [estado, setEstado] = useState({ id: null, data: null, error: '' });
@@ -516,6 +656,8 @@ function HistorialAtleta({ atletaId, onVolver }) {
               </article>
             ))}
           </div>
+
+          <CompararEvaluaciones key={atleta.id} evaluaciones={evaluaciones} />
 
           <h4 className="antro-adm-subtitulo">Historial de evaluaciones</h4>
           <div className="responsive-list">

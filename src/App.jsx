@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { revocarSesionEnServidor } from './api/cerrarSesion.js';
+import { vigilarFechas } from './utils/vigilarFechas';
 import { BrowserRouter as Router, useNavigate } from "react-router-dom";
 
 import { ThemeProvider } from "./context/ThemeContext";
@@ -176,6 +177,11 @@ export default function App() {
       window.removeEventListener('storage', syncRole);
     };
   }, []);
+
+  /* ==========================================================
+     FECHAS ESCRITAS A MANO FUERA DE RANGO (todos los campos de fecha)
+     ========================================================== */
+  useEffect(() => vigilarFechas(), []);
 
   /* ==========================================================
      LOGOUT COMPLETO

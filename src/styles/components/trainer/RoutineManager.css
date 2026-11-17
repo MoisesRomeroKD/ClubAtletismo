@@ -736,3 +736,420 @@
     transition: none;
   }
 }
+
+/* =========================================================================
+ * Lista de planes (entrenador, administrador y atleta): tabla en monitores,
+ * tarjetas en celular, barra de filtros y lista de atletas asignados.
+ * ========================================================================= */
+.rutinas-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: .6rem;
+  margin-bottom: 1rem;
+}
+
+.rutinas-toolbar select,
+.rutinas-buscar,
+.rutinas-fecha input {
+  min-height: 40px;
+  padding: .5rem .65rem;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: .85rem;
+}
+
+.rutinas-toolbar select {
+  min-width: 170px;
+}
+
+.rutinas-buscar {
+  flex: 1 1 240px;
+}
+
+.rutinas-fecha {
+  display: grid;
+  gap: .2rem;
+}
+
+.rutinas-fecha span {
+  color: var(--text-muted);
+  font-size: .72rem;
+  font-weight: 600;
+}
+
+.rutinas-toolbar-acciones {
+  margin-left: auto;
+}
+
+.rutinas-paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  margin: .75rem 0;
+  color: var(--text-muted);
+  font-size: .85rem;
+}
+
+.rutinas-paginacion button {
+  padding: .4rem .8rem;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.rutinas-paginacion button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.rutinas-vacio {
+  padding: 1.25rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.rutinas-error {
+  color: var(--state-danger);
+}
+
+.rutinas-tabla-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+}
+
+.rutinas-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .875rem;
+}
+
+.rutinas-tabla th,
+.rutinas-tabla td {
+  padding: .75rem .9rem;
+  border-bottom: 1px solid var(--border-main);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.rutinas-tabla th {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.rutinas-tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.rutinas-tabla tbody tr:hover {
+  background: var(--bg-surface);
+}
+
+.rutinas-fuerte {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.rutinas-fuerte .routine-manager-status {
+  margin-left: .5rem;
+}
+
+.rutinas-asignado {
+  display: grid;
+  gap: .2rem;
+  min-width: 0;
+}
+
+.rutinas-asignado span {
+  overflow-wrap: anywhere;
+}
+
+.rutinas-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  width: fit-content;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--func-primary);
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rutinas-link:hover {
+  text-decoration: underline;
+}
+
+.rutinas-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+}
+
+.rutinas-btn-chico {
+  min-height: 34px;
+  padding: .35rem .8rem;
+  font-size: .8rem;
+}
+
+.rutinas-cards {
+  display: grid;
+  gap: .85rem;
+}
+
+.rutinas-card {
+  display: grid;
+  gap: .85rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border-color: var(--border-main);
+  box-shadow: var(--shadow-card);
+}
+
+.rutinas-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+.rutinas-card__head h3 {
+  margin: 0;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.rutinas-card dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .6rem 1rem;
+  margin: 0;
+  padding: .75rem 0;
+  border-top: 1px solid var(--border-main);
+  border-bottom: 1px solid var(--border-main);
+}
+
+.rutinas-card dt {
+  color: var(--text-muted);
+  font-size: .72rem;
+  font-weight: 600;
+}
+
+.rutinas-card dd {
+  margin: .15rem 0 0;
+  font-size: .85rem;
+  overflow-wrap: anywhere;
+}
+
+.rutinas-card__ancho {
+  grid-column: 1 / -1;
+}
+
+.rutinas-card .rutinas-acciones .btn {
+  flex: 1;
+}
+
+/* Atletas asignados dentro del detalle del plan */
+.routine-detail__asignados {
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-surface);
+}
+
+.routine-detail__asignados + .routine-detail__asignados {
+  margin-top: .5rem;
+}
+
+.routine-detail__asignados summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: .6rem .75rem;
+  font-size: .85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.routine-detail__asignados summary small {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.routine-detail__asignados ol {
+  display: grid;
+  gap: .35rem;
+  max-height: 320px;
+  margin: 0;
+  padding: 0 .6rem .6rem;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.routine-detail__asignados li {
+  display: grid;
+  gap: .1rem;
+  padding: .45rem .6rem;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  background: var(--bg-card);
+  font-size: .8rem;
+}
+
+.routine-detail__asignados li span {
+  color: var(--text-muted);
+  font-size: .75rem;
+}
+
+/* Creado por: marca "Tú" en los planes propios del entrenador */
+.rutinas-creado {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .4rem;
+}
+
+.rutinas-tu {
+  padding: .1rem .5rem;
+  border-radius: 999px;
+  background: var(--func-primary-bg-soft);
+  color: var(--func-primary);
+  font-size: .7rem;
+  font-weight: 700;
+}
+
+/* Eliminar (solo administrador con permiso) */
+.rutinas-btn-peligro {
+  border: 1px solid var(--state-danger);
+  background: transparent;
+  color: var(--state-danger);
+}
+
+.rutinas-btn-peligro:hover:not(:disabled) {
+  background: var(--state-danger);
+  color: var(--clr-blanco-pura);
+}
+
+.rutinas-confirmar {
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+/* Lista de atletas a los que llega el plan */
+.rutinas-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.rutinas-modal__fondo {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(0, 0, 0, .45);
+  cursor: pointer;
+}
+
+.rutinas-modal__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(520px, 100%);
+  max-height: min(80vh, 640px);
+  border: 1px solid var(--border-main);
+  border-radius: 14px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  color: var(--text-main);
+}
+
+.rutinas-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.rutinas-modal__header h3 {
+  margin: .2rem 0 0;
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.rutinas-modal__body {
+  overflow-y: auto;
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.rutinas-modal__grupo h4 {
+  margin: 0 0 .6rem;
+  color: var(--func-primary);
+  font-size: .85rem;
+}
+
+.rutinas-modal__lista {
+  display: grid;
+  gap: .4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: atleta;
+}
+
+.rutinas-modal__lista li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .55rem .75rem;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  font-size: .85rem;
+}
+
+.rutinas-modal__lista li span {
+  color: var(--text-muted);
+  font-size: .78rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .rutinas-modal {
+    place-items: end stretch;
+    padding: 0;
+  }
+
+  .rutinas-modal__panel {
+    width: 100%;
+    max-height: 85vh;
+    border-radius: 14px 14px 0 0;
+  }
+
+  .rutinas-modal__lista li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .15rem;
+  }
+}

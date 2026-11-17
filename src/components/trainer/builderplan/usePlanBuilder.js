@@ -38,10 +38,12 @@ const createWeeksStructure = (count, globalStartDate, existingWeeks = []) => {
     const computedDates = computeWeekDates(globalStartDate, i);
 
     if (existing) {
+      // Las fechas siguen siempre a la fecha de inicio del plan: si se borra (por ejemplo, porque se
+      // escribió una fecha pasada y se vació el campo), las semanas también quedan sin fecha.
       newWeeks.push({
         ...existing,
-        startDate: computedDates.startDate || existing.startDate,
-        endDate: computedDates.endDate || existing.endDate,
+        startDate: computedDates.startDate,
+        endDate: computedDates.endDate,
       });
     } else {
       newWeeks.push({
@@ -77,6 +79,8 @@ export const usePlanBuilder = (initialWeeksCount = 8, initialPlan = null) => {
       weekNumber: week.numero_semana,
       objective: week.objetivo || '',
       startDate: week.fecha_inicio || '',
+      // Fecha guardada: al editar se puede conservar aunque ya haya pasado; una nueva tiene que ser desde hoy.
+      fechaGuardada: week.fecha_inicio || '',
       endDate: week.fecha_fin || '',
       sessions: (week.sessions || []).map((session) => ({
         id: `session-${session.id}`,
