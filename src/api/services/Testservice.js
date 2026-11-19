@@ -13,6 +13,8 @@ const TestService = {
   createTest: async (data) => (await podApi.post(`${BASE}/tests/`, data)).data,
   updateTest: async (id, data) => (await podApi.patch(`${BASE}/tests/${id}/`, data)).data,
   getTest: async (id) => (await podApi.get(`${BASE}/tests/${id}/`)).data,
+  // Administrador con eliminar_test, solo tests sin resultados cargados.
+  eliminarTest: async (id) => { await podApi.delete(`${BASE}/tests/${id}/`); },
   // Planilla del entrenador: cada fila se guarda al momento y luego se finaliza el test.
   saveResultadoAtleta: async (id, atletaId, data) => (await podApi.put(`${BASE}/tests/${id}/resultados/${atletaId}/`, data)).data,
   finalizarTest: async (id) => (await podApi.post(`${BASE}/tests/${id}/finalizar/`)).data,

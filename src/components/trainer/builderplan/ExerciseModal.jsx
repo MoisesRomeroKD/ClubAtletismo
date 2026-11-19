@@ -21,7 +21,7 @@ import { Icons } from './Icons';
  */
 export const ExerciseModal = React.memo(({ open, onClose, onSave, initialData, exercises = [], catalogState }) => {
   const [exerciseDetails, setExerciseDetails] = useState({
-    exerciseId: '', description: '', sets: '', reps: '', micro: '', macro: '', intensity: ''
+    exerciseId: '', description: '', sets: '', reps: '', micro: '', macro: ''
   });
   const [formError, setFormError] = useState('');
 
@@ -36,11 +36,10 @@ export const ExerciseModal = React.memo(({ open, onClose, onSave, initialData, e
         reps: initialData.reps || '',
         micro: initialData.micro || '',
         macro: initialData.macro || '',
-        intensity: initialData.intensity || ''
       });
     } else {
       setFormError('');
-      setExerciseDetails({ exerciseId: '', description: '', sets: '', reps: '', micro: '', macro: '', intensity: '' });
+      setExerciseDetails({ exerciseId: '', description: '', sets: '', reps: '', micro: '', macro: '' });
     }
   }, [initialData, open]);
 
@@ -142,10 +141,6 @@ export const ExerciseModal = React.memo(({ open, onClose, onSave, initialData, e
             <div className="form-group">
               <label className="form-label">Repeticiones / Distancia</label>
               <input type="number" name="reps" min="1" step="1" required className="form-control" value={exerciseDetails.reps} onChange={handleChange} />
-            </div>
-            <div className="form-group col-span-2">
-              <label className="form-label">Intensidad (%1RM, RPE o %VMAX)</label>
-              <input type="text" name="intensity" className="form-control" value={exerciseDetails.intensity} onChange={handleChange} />
             </div>
             <div className="form-group">
               <label className="form-label">Micro Pausa (seg)</label>

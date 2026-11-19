@@ -7,6 +7,7 @@ import UserService from '../../../api/services/Userservice';
 import { exportToExcel, exportToPdf } from '../../../api/services/reportExport';
 // Misma presentación que la consulta del administrador (mismas clases antro-adm-*).
 import '../../../styles/components/admin/antropometria/AntropometriaAdmin.css';
+import { notificar } from '../../../utils/notificar';
 
 // Hoy en hora de Caracas: las fechas que se programan son desde hoy en adelante.
 const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' });
@@ -147,6 +148,7 @@ function FormularioMediciones({ medicionId, atleta, medicionesPorEje, onGuardado
     ]));
     try {
       await CineantropometriaService.registrarMedicion(medicionId, { atleta: atleta.atleta_id, measurements });
+      notificar(`Mediciones de ${atleta.nombre} ${atleta.apellido} guardadas.`, { tipo: 'exito' });
       onGuardado();
     } catch (err) {
       setError(mensajeError(err, 'No se pudieron guardar las mediciones.'));
@@ -295,6 +297,7 @@ function ProgramarMedicion({ subareas, puedeEditar, puedeRegistrar }) {
     setError('');
     try {
       await CineantropometriaService.createMedicion(form);
+      notificar('Medición programada correctamente.', { tipo: 'exito' });
       setForm(null);
       setRecarga((n) => n + 1);
     } catch (err) {
@@ -307,6 +310,7 @@ function ProgramarMedicion({ subareas, puedeEditar, puedeRegistrar }) {
     setError('');
     try {
       await CineantropometriaService.updateMedicion(medicion.id, { estado });
+      notificar(estado === 'cancelada' ? 'Medición cancelada.' : 'Medición marcada como realizada.', { tipo: 'exito' });
       setRecarga((n) => n + 1);
     } catch (err) {
       setError(mensajeError(err, 'No se pudo actualizar la medición.'));
@@ -317,12 +321,15 @@ function ProgramarMedicion({ subareas, puedeEditar, puedeRegistrar }) {
     return <DetalleMedicion medicionId={detalleId} puedeRegistrar={puedeRegistrar} onVolver={() => { setDetalleId(null); setRecarga((n) => n + 1); }} />;
   }
 
+  // Las mediciones de otras subáreas (las ve el suplente) solo se registran: programar, marcar realizada o
+  // cancelar sigue siendo en las subáreas propias.
+  const mias = new Set(subareas.map((subarea) => String(subarea.id)));
   const acciones = (medicion) => (
     <div className="antro-adm-fila-acciones">
       <button type="button" className="antro-adm-btn antro-adm-btn--chico" onClick={() => setDetalleId(medicion.id)}>
         {puedeRegistrar && medicion.estado !== 'cancelada' ? 'Registrar mediciones' : 'Ver atletas'}
       </button>
-      {puedeEditar && medicion.estado === 'programada' && (
+      {puedeEditar && medicion.estado === 'programada' && mias.has(String(medicion.subarea)) && (
         <>
           <button type="button" className="antro-adm-btn antro-adm-btn--chico antro-adm-btn--ghost" onClick={() => cambiarEstado(medicion, 'realizada')}>
             Marcar realizada

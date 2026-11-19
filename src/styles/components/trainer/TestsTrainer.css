@@ -179,6 +179,11 @@
   color: var(--func-primary);
 }
 
+.tests-ent-estado--vencido {
+  background: color-mix(in srgb, var(--state-warning) 18%, transparent);
+  color: var(--state-warning);
+}
+
 .tests-ent-estado--realizado {
   background: color-mix(in srgb, var(--state-success) 15%, transparent);
   color: var(--state-success);

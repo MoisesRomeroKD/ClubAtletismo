@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { SlidersHorizontal, X } from 'lucide-react';
 import podApi from '../api/podApi';
 import '../styles/components/admin/asistencia/RegistroAsistencia.css';
+import { notificar } from '../utils/notificar';
 
 const attendanceApi = '/v1/asistencias/';
 const PAGE_SIZE = 15;
@@ -224,6 +225,7 @@ export default function RegistroAsistencia({ soloMisSubareas = false }) {
       setMessage({ text: response.data.message, type: 'success' });
       // El atleta solo sale de la página en pantalla: no se recarga ni entra otro en su lugar.
       // Si la página queda vacía, se piden los 15 que siguen después de él.
+      notificar(`Asistencia de ${athlete.nombre} registrada: ${status}.`, { tipo: 'exito' });
       const quedan = pageData.results.filter((item) => item.fila_id !== athlete.fila_id);
       const total = Math.max(pageData.total_resultados - 1, 0);
       setPageData((current) => ({

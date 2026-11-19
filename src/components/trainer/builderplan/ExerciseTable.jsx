@@ -11,7 +11,7 @@ import { Icons } from './Icons';
 /**
  * Componente ExerciseTable
  * Renderiza la tabla detallada de ejercicios programados para un día/sesión.
- * Incluye métricas de series, repeticiones, micro, macro e intensidad con acciones
+ * Incluye métricas de series, repeticiones, micro y macro pausa con acciones
  * rápidas para editar, duplicar y eliminar filas.
  * 
  * Optimizado con `React.memo` para evitar re-renderizados innecesarios.
@@ -43,7 +43,6 @@ export const ExerciseTable = React.memo(({ exercises, onEdit, onDelete, onDuplic
             <th style={{ textAlign: 'center' }}>Reps</th>
             <th style={{ textAlign: 'center' }}>Micro</th>
             <th style={{ textAlign: 'center' }}>Macro</th>
-            <th style={{ textAlign: 'center' }}>Intensidad</th>
             <th style={{ textAlign: 'right' }}>Acciones</th>
           </tr>
         </thead>
@@ -54,16 +53,11 @@ export const ExerciseTable = React.memo(({ exercises, onEdit, onDelete, onDuplic
               {/* Nombre del ejercicio */}
               <td style={{ fontWeight: 500 }}>{row.exercise}</td>
               
-              {/* Métricas de volumen e intensidad */}
+              {/* Métricas de volumen y pausas */}
               <td style={{ textAlign: 'center' }}>{row.sets}</td>
               <td style={{ textAlign: 'center' }}>{row.reps}</td>
               <td style={{ textAlign: 'center' }}>{row.micro}</td>
               <td style={{ textAlign: 'center' }}>{row.macro}</td>
-              
-              {/* Badge de intensidad condicional */}
-              <td style={{ textAlign: 'center' }}>
-                {row.intensity ? <span className="chip">{row.intensity}</span> : '-'}
-              </td>
               
               {/* Botones de acción rápida */}
               <td style={{ textAlign: 'right' }}>
@@ -88,7 +82,7 @@ export const ExerciseTable = React.memo(({ exercises, onEdit, onDelete, onDuplic
           <article className="exercise-card" key={row.id}>
             <strong>{row.exercise}</strong>
             <div className="exercise-card-stats"><span>Series <b>{row.sets}</b></span><span>Reps <b>{row.reps}</b></span><span>Micro <b>{row.micro}</b></span><span>Macro <b>{row.macro}</b></span></div>
-            <div className="exercise-card-footer"><span className="chip">{row.intensity || '-'}</span><div style={{ display: 'flex', gap: '4px' }}><button className="btn-icon primary" title="Editar" onClick={() => onEdit(row)}><Icons.Edit /></button><button className="btn-icon" title="Duplicar" onClick={() => onDuplicate(row)}><Icons.Duplicate /></button><button className="btn-icon danger" title="Eliminar" onClick={() => onDelete(row.id)}><Icons.Delete /></button></div></div>
+            <div className="exercise-card-footer"><div style={{ display: 'flex', gap: '4px', marginLeft: 'auto' }}><button className="btn-icon primary" title="Editar" onClick={() => onEdit(row)}><Icons.Edit /></button><button className="btn-icon" title="Duplicar" onClick={() => onDuplicate(row)}><Icons.Duplicate /></button><button className="btn-icon danger" title="Eliminar" onClick={() => onDelete(row.id)}><Icons.Delete /></button></div></div>
           </article>
         ))}
       </div>

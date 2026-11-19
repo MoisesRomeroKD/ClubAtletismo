@@ -114,6 +114,9 @@ export default function Login({ setRole }) {
   });
   const [inactivas, setInactivas] = useState(leerInactivas);
   const cuentaInactiva = inactivas.includes(loginData.username.trim().toLowerCase());
+  // Cuenta bloqueada por 3 intentos fallidos: el aviso queda fijo mientras se escriba ese mismo usuario.
+  const [bloqueo, setBloqueo] = useState({ usuario: '', mensaje: '' });
+  const cuentaBloqueada = Boolean(bloqueo.usuario) && bloqueo.usuario === loginData.username.trim().toLowerCase();
 
 
   // ==========================================================
@@ -338,6 +341,16 @@ export default function Login({ setRole }) {
         return;
       }
 
+      if (primero(error.response?.data?.status) === 'locked') {
+        setShowNotification(false);
+        setBloqueo({
+          usuario: loginData.username.trim().toLowerCase(),
+          mensaje: primero(error.response?.data?.message)
+            || 'Tu cuenta está bloqueada por 3 intentos fallidos. Usa «¿Olvidaste tu contraseña?» para desbloquearla.',
+        });
+        return;
+      }
+
       const errorMsg =
         primero(error.response?.data?.message) ||
         error.response?.data?.detail ||
@@ -508,6 +521,12 @@ export default function Login({ setRole }) {
               </div>
             ) : (
             <>
+            {cuentaBloqueada && (
+              <div className="auth-alerta-inactiva" role="alert">
+                {bloqueo.mensaje} También puedes pedirle a un administrador del club que la desbloquee.
+              </div>
+            )}
+
             {/* ==================================================
                 RECUPERACIÓN
                 ================================================== */}

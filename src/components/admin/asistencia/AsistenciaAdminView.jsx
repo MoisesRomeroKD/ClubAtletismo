@@ -8,6 +8,7 @@ import { Users, Activity, Calendar as CalendarIcon, ChevronRight, ChevronLeft, S
 import '../../../styles/components/admin/asistencia/AsistenciaAdminView.css';
 import UserService from '../../../api/services/Userservice';
 import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
+import { notificar } from '../../../utils/notificar';
 
 // Búsqueda de personas: cédula (con o sin V/E, puntos o guiones) o nombre completo en cualquier orden,
 // sin importar mayúsculas ni acentos ("moises romero" encuentra "Moisés Arturo Romero").
@@ -307,6 +308,7 @@ const CorreccionesSemana = ({ sessions, today, onCorregir }) => {
     setEditando((actual) => ({ ...actual, guardando: true, error: '' }));
     try {
       await onCorregir(editando.registroId, { status: estado, detail: editando.detail });
+      notificar('Asistencia corregida correctamente.', { tipo: 'exito' });
       setEditando(null);
     } catch (error) {
       setEditando((actual) => ({

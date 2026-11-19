@@ -3,6 +3,7 @@ import UserService from '../../../api/services/Userservice';
 import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
 import '../../../styles/components/admin/sleep/AdminSleepDashboard.css';
 import CargaCircular from '../../layout/CargaCircular';
+import { notificar } from '../../../utils/notificar';
 
 const SleepGeneralView = lazy(() => import('../../trainer/sleeptracker/SleepGeneralView'));
 const SuenoIndividualAdmin = lazy(() => import('./SuenoIndividualAdmin'));
@@ -116,6 +117,7 @@ export default function SleepQualityDashboard({ activeSection = 'sueño_general'
     if (response.status !== 'success') {
       throw new Error(response.message || 'No se pudo registrar el sueño.');
     }
+    notificar('Registro de sueño guardado.', { tipo: 'exito' });
     setSystemDate(getCaracasDate());
     setRecarga((n) => n + 1);
     if (panel.atleta?.id === athleteId) cargarHistorial(panel.atleta);
@@ -125,6 +127,7 @@ export default function SleepQualityDashboard({ activeSection = 'sueño_general'
   // Corrige la calidad de un registro ya guardado (hasta una semana después de su fecha).
   const corregirSueno = async (registroId, quality) => {
     await UserService.corregirSueno(registroId, quality);
+    notificar('Registro de sueño corregido.', { tipo: 'exito' });
     setPanel((actual) => ({
       ...actual,
       registros: actual.registros.map((registro) => (

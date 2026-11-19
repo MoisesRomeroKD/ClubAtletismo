@@ -252,7 +252,6 @@ function DetallePlan({ plan, onClose, mostrarAsignados = false }) {
                               ['Repeticiones', exercise.repeticiones],
                               ['Micro pausa', exercise.micro_pausa],
                               ['Macro pausa', exercise.macro_pausa],
-                              ['Intensidad', exercise.intensidad],
                             ].filter(([, value]) => tieneValor(value));
                             return (
                               <article className="routine-detail__exercise" key={exercise.id}>

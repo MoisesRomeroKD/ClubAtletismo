@@ -483,3 +483,65 @@
     max-height: none;
   }
 }
+
+/* Planilla del administrador suplente y estado vencido (mismos estilos que la del entrenador). */
+.tests-adm-btn--peligro {
+  background: transparent;
+  border-color: var(--state-danger);
+  color: var(--state-danger);
+}
+
+.tests-adm-estado--vencido {
+  background: color-mix(in srgb, var(--state-warning) 18%, transparent);
+  color: var(--state-warning);
+}
+
+.tests-adm-input-valor {
+  width: 110px;
+  padding: 0.35rem 0.5rem;
+}
+
+.tests-adm-input-obs {
+  width: 100%;
+  min-width: 140px;
+  padding: 0.35rem 0.5rem;
+}
+
+.tests-adm-card-campos {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.tests-adm-card-campos label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.tests-adm-card-campos input[type="number"],
+.tests-adm-card-campos input[type="text"] {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+}
+
+.tests-adm-fila-estado {
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+
+.tests-adm-fila-estado--ok {
+  color: var(--state-success);
+}
+
+.tests-adm-fila-estado--error {
+  color: var(--state-danger);
+}
+
+.tests-adm-progreso {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}

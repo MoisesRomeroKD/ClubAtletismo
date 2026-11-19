@@ -93,7 +93,6 @@ export const usePlanBuilder = (initialWeeksCount = 8, initialPlan = null) => {
           reps: String(exercise.repeticiones),
           micro: exercise.micro_pausa || '',
           macro: exercise.macro_pausa || '',
-          intensity: exercise.intensidad || '',
         })),
       })),
     }));

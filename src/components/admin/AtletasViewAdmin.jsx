@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Eye, SlidersHorizontal, X } from 'lucide-react';
+import { Eye, Lock, SlidersHorizontal, X } from 'lucide-react';
 import UserService from '../../api/services/Userservice';
+import { notificar } from '../../utils/notificar';
 import { useApplicationPermissions } from '../../context/ApplicationPermissionsContext';
 import '../../styles/components/admin/AtletasViewAdmin.css';
 
@@ -674,6 +675,7 @@ const AtletasViewAdmin = () => {
     setAtletas((prev) => prev.map((item) => (
       item.user_id === user_id ? { ...item, estado, estado_motivo } : item
     )));
+    notificar('Estado del atleta actualizado.', { tipo: 'exito' });
     setEstadoAtleta(null);
   };
 
@@ -756,9 +758,38 @@ const AtletasViewAdmin = () => {
   }, []);
 
   const handleVerPerfil = (item) => setPerfilAbierto(item);
+
+  // Bloqueado por 3 intentos fallidos: se ve la etiqueta; con desbloquear_usuarios, también el botón.
+  const puedeDesbloquear = hasPermission('desbloquear_usuarios');
+  const [desbloqueando, setDesbloqueando] = useState(null);
+  const desbloquear = async (item) => {
+    const nombre = item.name || 'el atleta';
+    if (!window.confirm(`¿Desbloquear la cuenta de ${nombre}? Podrá volver a iniciar sesión con su contraseña.`)) return;
+    setDesbloqueando(item.user_id);
+    try {
+      await UserService.desbloquearUsuario(item.user_id);
+      setAtletas((lista) => lista.map((fila) => (fila.user_id === item.user_id ? { ...fila, bloqueado: false } : fila)));
+      notificar(`Se desbloqueó la cuenta de ${nombre}.`, { tipo: 'exito' });
+    } catch (err) {
+      notificar(err?.response?.data?.detail || 'No se pudo desbloquear la cuenta.', { tipo: 'error' });
+    } finally {
+      setDesbloqueando(null);
+    }
+  };
+  const bloqueoDe = (item) => (item.bloqueado ? (
+    <span className="usuario-bloqueo">
+      <span className="usuario-bloqueado"><Lock size={12} aria-hidden="true" />Bloqueado</span>
+      {puedeDesbloquear && (
+        <button type="button" className="usuario-desbloquear" disabled={desbloqueando === item.user_id} onClick={() => desbloquear(item)}>
+          {desbloqueando === item.user_id ? 'Desbloqueando...' : 'Desbloquear'}
+        </button>
+      )}
+    </span>
+  ) : null);
   const handleCerrarPerfil = () => setPerfilAbierto(null);
   // Al guardar la edición se reemplaza el atleta en la lista y en el perfil abierto.
   const handleAtletaEditado = (actualizado) => {
+    notificar(`Se guardaron los cambios de ${actualizado.name || 'el atleta'}.`, { tipo: 'exito' });
     setAtletas((prev) => prev.map((item) => (item.user_id === actualizado.user_id ? { ...item, ...actualizado } : item)));
     setPerfilAbierto((actual) => (actual ? { ...actual, ...actualizado } : actual));
   };
@@ -898,6 +929,7 @@ const AtletasViewAdmin = () => {
                       <button type="button" className="atletas-adm-ver" onClick={() => handleVerPerfil(item)}>
                         Ver perfil
                       </button>
+                      {bloqueoDe(item)}
                     </td>
                   </tr>
                 ))}
@@ -918,6 +950,7 @@ const AtletasViewAdmin = () => {
                   <div><dt>Representante</dt><dd>{nombreRepresentantes(item.representantes) || '—'}</dd></div>
                   <div><dt>Teléfono (repr.)</dt><dd>{telefonoRepresentante(item.representantes) || '—'}</dd></div>
                   <div><dt>Estado</dt><dd>{renderEstadoControl(item)}</dd></div>
+                  {item.bloqueado && <div><dt>Acceso</dt><dd>{bloqueoDe(item)}</dd></div>}
                 </dl>
                 <button type="button" className="atletas-adm-lista-ver" onClick={() => handleVerPerfil(item)}>
                   <Eye size={15} aria-hidden="true" />Ver detalle

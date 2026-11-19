@@ -183,11 +183,6 @@ const SubAreaPlansCard = ({ plans, isLoading, error }) => (
                     <span className="session-time"><Dumbbell size={12} className="icon-inline" /> {ejercicio.series} x {ejercicio.repeticiones}</span>
                     <span className="session-type">{ejercicio.nombre}</span>
                   </div>
-                  {ejercicio.intensidad && (
-                    <div className="session-meta">
-                      <span className="intensity-normal">{ejercicio.intensidad}</span>
-                    </div>
-                  )}
                 </div>
               ))}
             </div>

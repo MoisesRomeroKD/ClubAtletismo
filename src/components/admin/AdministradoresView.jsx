@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Eye, SlidersHorizontal, X } from 'lucide-react';
+import { Eye, Lock, SlidersHorizontal, X } from 'lucide-react';
 import podApi from '../../api/podApi';
+import UserService from '../../api/services/Userservice';
+import { notificar } from '../../utils/notificar';
 import { useApplicationPermissions } from '../../context/ApplicationPermissionsContext';
 import '../../styles/components/admin/AdministradoresView.css';
 
@@ -299,10 +301,42 @@ const AdministradoresView = () => {
     setAviso(`Se guardaron los cambios de ${actualizado.nombre_completo}.`);
   };
 
+
+  // Bloqueado por 3 intentos fallidos: se ve la etiqueta; con desbloquear_usuarios, también el botón.
+  const puedeDesbloquear = hasPermission('desbloquear_usuarios');
+  const [desbloqueando, setDesbloqueando] = useState(null);
+  const desbloquear = async (item) => {
+    const nombre = item.nombre_completo || item.username;
+    if (!window.confirm(`¿Desbloquear la cuenta de ${nombre}? Podrá volver a iniciar sesión con su contraseña.`)) return;
+    setDesbloqueando(item.id);
+    try {
+      await UserService.desbloquearUsuario(item.id);
+      setAdministradores((lista) => lista.map((fila) => (fila.id === item.id ? { ...fila, bloqueado: false } : fila)));
+      notificar(`Se desbloqueó la cuenta de ${nombre}.`, { tipo: 'exito' });
+    } catch (err) {
+      notificar(err?.response?.data?.detail || 'No se pudo desbloquear la cuenta.', { tipo: 'error' });
+    } finally {
+      setDesbloqueando(null);
+    }
+  };
+  const bloqueoDe = (item) => (item.bloqueado ? (
+    <span className="usuario-bloqueo">
+      <span className="usuario-bloqueado"><Lock size={12} aria-hidden="true" />Bloqueado</span>
+      {puedeDesbloquear && (
+        <button type="button" className="usuario-desbloquear" disabled={desbloqueando === item.id} onClick={() => desbloquear(item)}>
+          {desbloqueando === item.id ? 'Desbloqueando...' : 'Desbloquear'}
+        </button>
+      )}
+    </span>
+  ) : null);
+
   const botonDetalle = (admin) => (
-    <button type="button" className="administradores-editar" onClick={() => { setAviso(''); setDetalle(admin); }}>
-      <Eye size={15} aria-hidden="true" />Ver detalle
-    </button>
+    <>
+      <button type="button" className="administradores-editar" onClick={() => { setAviso(''); setDetalle(admin); }}>
+        <Eye size={15} aria-hidden="true" />Ver detalle
+      </button>
+      {bloqueoDe(admin)}
+    </>
   );
 
   const hayFiltros = Boolean(filtros.buscar || filtros.estado);

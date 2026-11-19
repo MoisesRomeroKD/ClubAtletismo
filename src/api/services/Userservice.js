@@ -348,6 +348,9 @@ const UserService = {
     return response.data;
   },
 
+  // Quita el bloqueo por 3 intentos fallidos (administrador con desbloquear_usuarios).
+  desbloquearUsuario: async (userId) => (await podApi.post(`/v1/users/${userId}/desbloquear/`)).data,
+
   getMyEvaluaciones: async () => {
     const response = await podApi.get('/v1/evaluacion/mis-evaluaciones/');
     return response.data;

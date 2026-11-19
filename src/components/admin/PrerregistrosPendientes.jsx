@@ -6,6 +6,7 @@ import UserService from '../../api/services/Userservice';
 import { useApplicationPermissions } from '../../context/ApplicationPermissionsContext';
 import '../../styles/components/admin/Preregistro.css';
 import '../../styles/components/admin/PrerregistrosPendientes.css';
+import { notificar } from '../../utils/notificar';
 
 const PrerregistrosPendientes = () => {
   const [pendientes, setPendientes] = useState([]);
@@ -187,6 +188,7 @@ const PrerregistrosPendientes = () => {
     try {
       const { data } = await podApi.patch(`/v1/users/preregistro/pendientes/${edicion.id}/correo/`, { correo: edicion.correo });
       setPendientes((actuales) => actuales.map((fila) => (fila.id === data.id ? { ...fila, correo: data.correo } : fila)));
+      notificar('Correo actualizado correctamente.', { tipo: 'exito' });
       cancelarCorreo();
     } catch (error) {
       setEdicion((actual) => ({

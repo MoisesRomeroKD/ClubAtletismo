@@ -376,3 +376,41 @@ html.scroll-bloqueado .content-area {
   font-weight: 600;
   line-height: 1.4;
 }
+
+/* Cuenta bloqueada por 3 intentos fallidos (listas de atletas, entrenadores y administradores). */
+.usuario-bloqueo {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.usuario-bloqueado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--state-danger);
+  background: color-mix(in srgb, var(--state-danger) 12%, transparent);
+}
+
+.usuario-desbloquear {
+  min-height: 32px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid var(--state-danger);
+  background: transparent;
+  color: var(--state-danger);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.usuario-desbloquear:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}

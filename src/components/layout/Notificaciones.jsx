@@ -5,7 +5,8 @@ import '../../styles/layouts/Notificaciones.css';
 
 /*
  * NOTIFICACIONES (reemplazan a alert): se apilan arriba a la derecha, debajo del topbar.
- * Cada una tiene botón ✕ y se cierra sola a los 5 segundos. Si trae alCerrar, se ejecuta al cerrarse.
+ * Cada una tiene botón ✕ y se cierra sola a los 5 segundos (las fijas, solo con la ✕). Si trae alCerrar,
+ * se ejecuta al cerrarse.
  */
 const DURACION_MS = 5000;
 const ICONOS = { exito: CheckCircle2, error: AlertCircle, aviso: AlertTriangle, info: Info };
@@ -14,6 +15,7 @@ function Notificacion({ notificacion, onCerrar }) {
   const Icono = ICONOS[notificacion.tipo] || Info;
 
   useEffect(() => {
+    if (notificacion.fijo) return undefined;
     const temporizador = setTimeout(() => onCerrar(notificacion), DURACION_MS);
     return () => clearTimeout(temporizador);
   }, [notificacion, onCerrar]);
@@ -28,7 +30,9 @@ function Notificacion({ notificacion, onCerrar }) {
       <button type="button" className="notificacion__cerrar" onClick={() => onCerrar(notificacion)} aria-label="Cerrar notificación">
         <X size={16} />
       </button>
-      <span className="notificacion__tiempo" style={{ animationDuration: `${DURACION_MS}ms` }} aria-hidden="true" />
+      {!notificacion.fijo && (
+        <span className="notificacion__tiempo" style={{ animationDuration: `${DURACION_MS}ms` }} aria-hidden="true" />
+      )}
     </div>
   );
 }

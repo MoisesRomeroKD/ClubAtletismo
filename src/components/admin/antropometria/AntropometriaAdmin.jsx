@@ -6,6 +6,7 @@ import CineantropometriaService from '../../../api/services/Cineantropometriaser
 import UserService from '../../../api/services/Userservice';
 import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
 import '../../../styles/components/admin/antropometria/AntropometriaAdmin.css';
+import { notificar } from '../../../utils/notificar';
 
 // Hoy en hora de Caracas: las fechas que se programan son desde hoy en adelante.
 const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' });
@@ -146,6 +147,7 @@ function FormularioMediciones({ medicionId, atleta, medicionesPorEje, onGuardado
     ]));
     try {
       await CineantropometriaService.registrarMedicion(medicionId, { atleta: atleta.atleta_id, measurements });
+      notificar(`Mediciones de ${atleta.nombre} ${atleta.apellido} guardadas.`, { tipo: 'exito' });
       onGuardado();
     } catch (err) {
       setError(mensajeError(err, 'No se pudieron guardar las mediciones.'));
@@ -294,6 +296,7 @@ function ProgramarMedicion({ subareas, puedeEditar, puedeRegistrar }) {
     setError('');
     try {
       await CineantropometriaService.createMedicion(form);
+      notificar('Medición programada correctamente.', { tipo: 'exito' });
       setForm(null);
       setRecarga((n) => n + 1);
     } catch (err) {
@@ -306,6 +309,7 @@ function ProgramarMedicion({ subareas, puedeEditar, puedeRegistrar }) {
     setError('');
     try {
       await CineantropometriaService.updateMedicion(medicion.id, { estado });
+      notificar(estado === 'cancelada' ? 'Medición cancelada.' : 'Medición marcada como realizada.', { tipo: 'exito' });
       setRecarga((n) => n + 1);
     } catch (err) {
       setError(mensajeError(err, 'No se pudo actualizar la medición.'));

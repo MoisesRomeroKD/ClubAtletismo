@@ -10,6 +10,7 @@ import UserService from '../api/services/Userservice';
 import CargaCircular from '../components/layout/CargaCircular';
 import { useApplicationPermissions } from '../context/ApplicationPermissionsContext';
 import { permisosDeSeccionEntrenador } from '../components/layout/user/permisosEntrenador';
+import { notificar } from '../utils/notificar';
 
 // 💤 Datos y contexto del módulo de Sueño y Descanso (sin coachContext)
 // Los pendientes de sueño son siempre los de hoy.
@@ -265,6 +266,7 @@ export default function TrainerDashboard({
     if (response.status !== 'success') {
       throw new Error(response.message || 'No se pudo registrar el sueño');
     }
+    notificar('Registro de sueño guardado.', { tipo: 'exito' });
     // Actualizar estado local inmediatamente para descontar el contador sin parpadeos
     setTrainerData((prev) => {
       if (!prev) return prev;
@@ -303,6 +305,7 @@ export default function TrainerDashboard({
   // Corrige la calidad de un registro ya guardado (hasta una semana después de su fecha).
   const corregirSueno = async (registroId, quality) => {
     await UserService.corregirSueno(registroId, quality);
+    notificar('Registro de sueño corregido.', { tipo: 'exito' });
     setSleepRecords((prev) => prev.map((record) => (
       (record.registroId ?? record.id) === registroId ? { ...record, quality: Number(quality) } : record
     )));

@@ -5,6 +5,7 @@ import TestService from '../../../api/services/Testservice';
 import UserService from '../../../api/services/Userservice';
 import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
 import '../../../styles/components/trainer/TestsTrainer.css';
+import { notificar } from '../../../utils/notificar';
 
 // Hoy en hora de Caracas: las fechas que se programan son desde hoy en adelante.
 const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' });
@@ -26,8 +27,10 @@ const UNIDADES = [
   ['pts', 'Puntos'],
 ];
 
+// Vencido: programado y ya pasó su fecha sin finalizarse (aún se cargan resultados, se finaliza o se cancela).
 const ESTADOS = [
   ['programado', 'Programado'],
+  ['vencido', 'Vencido'],
   ['realizado', 'Realizado'],
   ['cancelado', 'Cancelado'],
 ];
@@ -81,8 +84,9 @@ function Paginacion({ page, total, onChange }) {
   );
 }
 
-function EstadoBadge({ estado, label }) {
-  return <span className={`tests-ent-estado tests-ent-estado--${estado}`}>{label}</span>;
+function EstadoBadge({ test }) {
+  const estado = test.vencido ? 'vencido' : test.estado;
+  return <span className={`tests-ent-estado tests-ent-estado--${estado}`}>{test.estado_label}</span>;
 }
 
 /* ---------------- Planilla de toma: cada fila se guarda al momento ---------------- */
@@ -112,7 +116,6 @@ const errorDeLimites = (valor, test) => {
 const pasoDe = (decimales) => (decimales === 0 ? '1' : decimales === 1 ? '0.1' : '0.01');
 
 function PlanillaTest({ testId, onVolver }) {
-  const { hasPermission } = useApplicationPermissions();
   const [detalle, setDetalle] = useState({ id: null, data: null, error: '' });
   const [valores, setValores] = useState({});
   const [guardados, setGuardados] = useState({});
@@ -140,15 +143,17 @@ function PlanillaTest({ testId, onVolver }) {
   if (detalle.error) return <p className="tests-ent-vacio tests-ent-error" role="alert">{detalle.error}</p>;
 
   const test = detalle.data;
-  // Los tests de otro entrenador de sus subáreas solo se consultan.
-  const propio = test.es_propio !== false;
-  const corrigiendo = propio && sePuedeCorregir(test) && hasPermission('corregir_resultados_test');
+  // Qué puede hacer lo dice el servidor: el dueño con sus permisos, o un suplente (suplir_entrenador) que carga
+  // los resultados cuando falta el responsable. Los tests de otro entrenador, sin suplencia, solo se consultan.
+  const registra = Boolean(test.puede_registrar);
+  const suplente = registra && !test.es_propio;
+  const corrigiendo = Boolean(test.puede_corregir) && sePuedeCorregir(test);
   // Los resultados se cargan desde el día programado (antes, el sistema lo rechaza).
   const antesDeSuDia = test.estado === 'programado' && test.fecha > hoyCaracas();
-  const editable = propio && ((test.estado === 'programado' && !antesDeSuDia && hasPermission('registrar_test')) || corrigiendo);
+  const editable = (test.estado === 'programado' && !antesDeSuDia && registra) || corrigiendo;
   // Test finalizado: solo los atletas con recuperación pendiente, desde su fecha, se cargan aquí.
-  const recuperaHoy = (fila) => propio && test.estado === 'realizado' && fila.recuperacion_pendiente
-    && fila.fecha_recuperacion <= hoyCaracas() && hasPermission('registrar_test');
+  const recuperaHoy = (fila) => registra && test.estado === 'realizado' && fila.recuperacion_pendiente
+    && fila.fecha_recuperacion <= hoyCaracas();
   const editableFila = (fila) => editable || recuperaHoy(fila);
   const columnaEstado = editable || test.convocados.some(recuperaHoy);
   const actualDe = (atletaId) => valores[atletaId] || filaVacia;
@@ -224,10 +229,22 @@ function PlanillaTest({ testId, onVolver }) {
           <h3>{test.prueba_nombre}</h3>
           <p>{test.area_nombre} · {test.subarea_nombre} · {formatFecha(test.fecha)} · unidad: {test.prueba_unidad} · resultado de 0 a {Number(test.prueba_valor_maximo)}</p>
         </div>
-        <EstadoBadge estado={test.estado} label={test.estado_label} />
+        <EstadoBadge test={test} />
       </div>
 
-      {propio && antesDeSuDia && (
+      {suplente && (
+        <p className="tests-ent-aviso" role="status">
+          Estás cargando como suplente: este test es de {test.entrenador_nombre || 'otro entrenador'}. Queda registrado quién cargó cada resultado.
+        </p>
+      )}
+
+      {test.vencido && registra && (
+        <p className="tests-ent-aviso" role="status">
+          Este test está vencido: pasó su fecha ({formatFecha(test.fecha)}) y no se finalizó. Carga los resultados y finalízalo.
+        </p>
+      )}
+
+      {registra && antesDeSuDia && (
         <p className="tests-ent-aviso" role="status">
           Todavía no es el día programado: este test es el {formatFecha(test.fecha)}. Los resultados se cargan desde ese día.
         </p>
@@ -446,6 +463,7 @@ function CrearTest({ pruebas, subareas, onCreado, onCancelar }) {
     setError('');
     try {
       const creado = await TestService.createTest({ ...form, atletas: elegidos });
+      notificar('Test creado correctamente.', { tipo: 'exito' });
       onCreado(creado);
     } catch (err) {
       setError(mensajeError(err, 'No se pudo crear el test.'));
@@ -598,6 +616,7 @@ function EditarTest({ test, pruebas, subareas, onGuardado, onCancelar }) {
     setError('');
     try {
       await TestService.updateTest(test.id, { ...form, atletas: elegidos });
+      notificar('Test rectificado correctamente.', { tipo: 'exito' });
       onGuardado();
     } catch (err) {
       setError(mensajeError(err, 'No se pudo rectificar el test.'));
@@ -703,8 +722,6 @@ function MisTests({ pruebas, subareas }) {
   const [editando, setEditando] = useState(null);
   const { hasPermission } = useApplicationPermissions();
   const puedeRegistrar = hasPermission('registrar_test');
-  const puedeEditar = hasPermission('editar_test');
-  const puedeCorregir = hasPermission('corregir_resultados_test');
   // En celular los filtros van en el panel del botón flotante "Filtros" (mismo diseño que Reportes).
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
   const [error, setError] = useState('');
@@ -721,6 +738,7 @@ function MisTests({ pruebas, subareas }) {
     setError('');
     try {
       await TestService.updateTest(test.id, { estado: 'cancelado' });
+      notificar(`Test "${test.prueba_nombre}" cancelado.`, { tipo: 'exito' });
       setRecarga((n) => n + 1);
     } catch (err) {
       setError(mensajeError(err, 'No se pudo cancelar el test.'));
@@ -743,13 +761,11 @@ function MisTests({ pruebas, subareas }) {
     );
   }
 
-  // Los tests de otro entrenador de sus subáreas solo se consultan.
-  const esPropio = (test) => test.es_propio !== false;
+  // Lo que puede hacer en cada test lo dice el servidor (dueño o suplente); los demás solo se consultan.
   const textoPlanilla = (test) => {
-    if (!esPropio(test)) return 'Ver resultados';
-    if (test.estado === 'programado' && puedeRegistrar) return 'Abrir planilla';
-    if (test.estado === 'realizado' && puedeRegistrar && test.recuperaciones_pendientes > 0) return 'Registrar recuperación';
-    if (puedeCorregir && sePuedeCorregir(test)) return 'Corregir resultados';
+    if (test.estado === 'programado' && test.puede_registrar) return test.es_propio ? 'Abrir planilla' : 'Cargar como suplente';
+    if (test.estado === 'realizado' && test.puede_registrar && test.recuperaciones_pendientes > 0) return 'Registrar recuperación';
+    if (test.puede_corregir && sePuedeCorregir(test)) return 'Corregir resultados';
     return 'Ver resultados';
   };
 
@@ -758,12 +774,12 @@ function MisTests({ pruebas, subareas }) {
       <button type="button" className="tests-ent-btn tests-ent-btn--chico" onClick={() => setPlanillaId(test.id)}>
         {textoPlanilla(test)}
       </button>
-      {test.estado === 'programado' && puedeEditar && esPropio(test) && (
+      {test.puede_editar && (
         <button type="button" className="tests-ent-btn tests-ent-btn--chico tests-ent-btn--ghost" onClick={() => setEditando(test)}>
           Rectificar
         </button>
       )}
-      {test.estado === 'programado' && puedeEditar && esPropio(test) && (
+      {test.puede_editar && (
         <button type="button" className="tests-ent-btn tests-ent-btn--chico tests-ent-btn--peligro" onClick={() => cancelarTest(test)}>
           Cancelar
         </button>
@@ -853,9 +869,12 @@ function MisTests({ pruebas, subareas }) {
                 {lista.filas.map((test) => (
                   <tr key={test.id}>
                     <td>{formatFecha(test.fecha)}</td>
-                    <td className="tests-ent-fuerte">{test.prueba_nombre}</td>
+                    <td className="tests-ent-fuerte">
+                      {test.prueba_nombre}
+                      {!test.es_propio && <small className="tests-ent-muted"> · {test.entrenador_nombre}</small>}
+                    </td>
                     <td>{test.subarea_nombre}</td>
-                    <td><EstadoBadge estado={test.estado} label={test.estado_label} /></td>
+                    <td><EstadoBadge test={test} /></td>
                     <td>{test.resultados_registrados} de {test.convocados_total}</td>
                     <td>{accionesDe(test)}</td>
                   </tr>
@@ -869,11 +888,12 @@ function MisTests({ pruebas, subareas }) {
                 <article className="tests-ent-card" key={test.id}>
                   <div className="tests-ent-card-head">
                     <h4>{test.prueba_nombre}</h4>
-                    <EstadoBadge estado={test.estado} label={test.estado_label} />
+                    <EstadoBadge test={test} />
                   </div>
                   <dl>
                     <div><dt>Fecha</dt><dd>{formatFecha(test.fecha)}</dd></div>
                     <div><dt>Subárea</dt><dd>{test.subarea_nombre}</dd></div>
+                    {!test.es_propio && <div><dt>Entrenador</dt><dd>{test.entrenador_nombre}</dd></div>}
                     <div><dt>Resultados</dt><dd>{test.resultados_registrados} de {test.convocados_total}</dd></div>
                   </dl>
                   {accionesDe(test)}
@@ -922,6 +942,7 @@ function CatalogoPruebas({ pruebas, subareas, onCambio }) {
   const alternarActiva = async (prueba) => {
     try {
       await TestService.updatePrueba(prueba.id, { activa: !prueba.activa });
+      notificar(`"${prueba.nombre}" ${prueba.activa ? 'desactivada' : 'activada'}.`, { tipo: 'exito' });
       onCambio();
     } catch (error) {
       setMensaje({ tipo: 'error', texto: mensajeError(error, 'No se pudo actualizar la prueba.') });

@@ -14,6 +14,7 @@ import { Icons } from "./Icons";
 import UserService from "../../../api/services/Userservice";
 import exercisesService from "../../../api/services/ExercisesService";
 import RoutineService from "../../../api/services/RoutineService";
+import { notificar } from "../../../utils/notificar";
 import "../../../styles/components/trainer/BuilderPlanForm.css";
 
 // Hoy en hora de Caracas: las fechas que se programan son desde hoy en adelante.
@@ -26,7 +27,7 @@ const CAMPOS = {
   nombre: 'Nombre del plan', descripcion: 'Descripción', weeks: 'Semanas', numero_semana: 'Número de semana',
   fecha_inicio: 'Fecha de inicio', objetivo: 'Objetivo', sessions: 'Sesiones', dia_semana: 'Día',
   session_exercises: 'Ejercicios', exercise: 'Ejercicio', series: 'Series', repeticiones: 'Repeticiones',
-  micro_pausa: 'Micro pausa', macro_pausa: 'Macro pausa', intensidad: 'Intensidad', assignments: 'Asignación',
+  micro_pausa: 'Micro pausa', macro_pausa: 'Macro pausa', assignments: 'Asignación',
   athlete: 'Atleta', subarea: 'Subárea', entrenador: 'Entrenador',
 };
 
@@ -198,7 +199,6 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
           repeticiones: Number(exercise.reps),
           micro_pausa: exercise.micro || '',
           macro_pausa: exercise.macro || '',
-          intensidad: exercise.intensity || '',
         })),
       })),
     })),
@@ -276,7 +276,11 @@ export default function BuilderPlanForm({ plan = null, onSaved, onCancel }) {
       const saved = planId
         ? await RoutineService.update(planId, payload)
         : await RoutineService.create(payload);
-      setFeedback({ type: 'success', message: planId ? 'Plan actualizado correctamente.' : 'Plan publicado correctamente.' });
+      const nombrePlan = saved?.nombre || payload.nombre || '';
+      const texto = planId ? 'Plan actualizado correctamente' : 'Plan publicado correctamente';
+      // Fijo: se queda hasta que lo cierren (el formulario se cierra o se limpia al guardar).
+      notificar(nombrePlan ? `${texto}: «${nombrePlan}».` : `${texto}.`, { tipo: 'exito', fijo: true });
+      setFeedback({ type: '', message: '' });
       setPlanId(null);
       setAssignments([]);
       resetBuilder();

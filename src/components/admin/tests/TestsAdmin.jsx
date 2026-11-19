@@ -4,14 +4,22 @@ import { ArrowLeft, Plus, SlidersHorizontal, X } from 'lucide-react';
 import TestService from '../../../api/services/Testservice';
 import { useApplicationPermissions } from '../../../context/ApplicationPermissionsContext';
 import '../../../styles/components/admin/tests/TestsAdmin.css';
+import { notificar } from '../../../utils/notificar';
 
 const PAGE_SIZE = 15;
 
 // Hoy en hora de Caracas: la recuperación se programa desde hoy en adelante.
 const hoyCaracas = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Caracas' });
 
+// Un test finalizado se puede corregir (permiso corregir_resultados_test) hasta una semana después de su fecha.
+const DIAS_PARA_CORREGIR = 7;
+const diasDesde = (fecha) => Math.round((new Date(hoyCaracas()) - new Date(fecha)) / 86400000);
+const sePuedeCorregir = (test) => test.estado === 'realizado' && diasDesde(test.fecha) <= DIAS_PARA_CORREGIR;
+
+// Vencido: programado y ya pasó su fecha sin finalizarse (aún se cargan resultados, se finaliza o se cancela).
 const ESTADOS = [
   ['programado', 'Programado'],
+  ['vencido', 'Vencido'],
   ['realizado', 'Realizado'],
   ['cancelado', 'Cancelado'],
 ];
@@ -98,8 +106,9 @@ function Paginacion({ page, total, onChange }) {
   );
 }
 
-function EstadoBadge({ estado, label }) {
-  return <span className={`tests-adm-estado tests-adm-estado--${estado}`}>{label}</span>;
+function EstadoBadge({ test }) {
+  const estado = test.vencido ? 'vencido' : test.estado;
+  return <span className={`tests-adm-estado tests-adm-estado--${estado}`}>{test.estado_label}</span>;
 }
 
 /* ---------------- Reprogramar: recuperación individual de un test finalizado ---------------- */
@@ -203,7 +212,7 @@ function DetalleTest({ testId, onVolver }) {
           <p>Entrenador: {test.entrenador_nombre || '—'}</p>
           {test.observaciones && <p className="tests-adm-observaciones">{test.observaciones}</p>}
         </div>
-        <EstadoBadge estado={test.estado} label={test.estado_label} />
+        <EstadoBadge test={test} />
       </div>
 
       <Paginacion page={paginaActual} total={test.convocados.length} onChange={setPagina} />
@@ -253,6 +262,478 @@ function DetalleTest({ testId, onVolver }) {
         <Reprogramar test={test} onReprogramado={(data) => setDetalle({ id: testId, data, error: '' })} />
       )}
     </section>
+  );
+}
+
+/* ---------------- Planilla (administrador suplente: permiso suplir_entrenador) ---------------- */
+// Copia de la planilla del entrenador: el administrador suplente carga resultados y finaliza el test cuando
+// falta el responsable. Cada resultado queda con quién lo registró.
+const filaVacia = { valor: '', ausente: false, observacion: '' };
+
+const valoresDeFila = (fila) => ({
+  valor: fila.valor === null || fila.valor === undefined ? '' : String(fila.valor),
+  ausente: Boolean(fila.ausente),
+  observacion: fila.observacion || '',
+});
+
+const mismaFila = (a, b) => a.valor === b.valor && a.ausente === b.ausente && a.observacion === b.observacion;
+
+// Límites de la prueba: de 0 a su valor máximo y con sus decimales ('' si el valor sirve).
+const errorDeLimites = (valor, test) => {
+  if (valor === '') return '';
+  const numero = Number(valor);
+  if (!Number.isFinite(numero)) return 'Escribe un número.';
+  if (numero < 0) return 'No puede ser negativo.';
+  if (numero > Number(test.prueba_valor_maximo)) return `Máximo ${Number(test.prueba_valor_maximo)} ${test.prueba_unidad}.`;
+  const decimales = (String(valor).split('.')[1] || '').replace(/0+$/, '').length;
+  if (decimales > test.prueba_decimales) {
+    return test.prueba_decimales === 0 ? 'Debe ser un número entero.' : `Hasta ${test.prueba_decimales} decimales.`;
+  }
+  return '';
+};
+const pasoDe = (decimales) => (decimales === 0 ? '1' : decimales === 1 ? '0.1' : '0.01');
+
+function PlanillaAdmin({ testId, onVolver }) {
+  const [detalle, setDetalle] = useState({ id: null, data: null, error: '' });
+  const [valores, setValores] = useState({});
+  const [guardados, setGuardados] = useState({});
+  const [estadoFila, setEstadoFila] = useState({});
+  const [finalizando, setFinalizando] = useState(false);
+  const [mensaje, setMensaje] = useState({ tipo: '', texto: '' });
+  const [recarga, setRecarga] = useState(0);
+
+  useEffect(() => {
+    let activo = true;
+    TestService.getTest(testId)
+      .then((data) => {
+        if (!activo) return;
+        const iniciales = Object.fromEntries(data.convocados.map((fila) => [fila.atleta_id, valoresDeFila(fila)]));
+        setDetalle({ id: testId, data, error: '' });
+        setValores(iniciales);
+        setGuardados(iniciales);
+        setEstadoFila({});
+      })
+      .catch((error) => { if (activo) setDetalle({ id: testId, data: null, error: mensajeError(error, 'No se pudo cargar el test.') }); });
+    return () => { activo = false; };
+  }, [testId, recarga]);
+
+  if (detalle.id !== testId) return <p className="tests-adm-vacio">Cargando planilla...</p>;
+  if (detalle.error) return <p className="tests-adm-vacio tests-adm-error" role="alert">{detalle.error}</p>;
+
+  const test = detalle.data;
+  // Qué puede hacer lo dice el servidor: el dueño con sus permisos, o un suplente (suplir_entrenador) que carga
+  // los resultados cuando falta el responsable. Los tests de otro entrenador, sin suplencia, solo se consultan.
+  const registra = Boolean(test.puede_registrar);
+  const suplente = registra && !test.es_propio;
+  const corrigiendo = Boolean(test.puede_corregir) && sePuedeCorregir(test);
+  // Los resultados se cargan desde el día programado (antes, el sistema lo rechaza).
+  const antesDeSuDia = test.estado === 'programado' && test.fecha > hoyCaracas();
+  const editable = (test.estado === 'programado' && !antesDeSuDia && registra) || corrigiendo;
+  // Test finalizado: solo los atletas con recuperación pendiente, desde su fecha, se cargan aquí.
+  const recuperaHoy = (fila) => registra && test.estado === 'realizado' && fila.recuperacion_pendiente
+    && fila.fecha_recuperacion <= hoyCaracas();
+  const editableFila = (fila) => editable || recuperaHoy(fila);
+  const columnaEstado = editable || test.convocados.some(recuperaHoy);
+  const actualDe = (atletaId) => valores[atletaId] || filaVacia;
+
+  const guardarFila = async (atletaId, fila) => {
+    if (guardados[atletaId] && mismaFila(guardados[atletaId], fila)) return;
+    const errorLimite = fila.ausente ? '' : errorDeLimites(fila.valor, test);
+    if (errorLimite) {
+      setEstadoFila((prev) => ({ ...prev, [atletaId]: { tipo: 'error', texto: errorLimite } }));
+      return;
+    }
+    setEstadoFila((prev) => ({ ...prev, [atletaId]: { tipo: 'guardando', texto: 'Guardando...' } }));
+    try {
+      const guardada = await TestService.saveResultadoAtleta(testId, atletaId, {
+        valor: fila.ausente ? null : fila.valor,
+        ausente: fila.ausente,
+        observacion: fila.observacion,
+      });
+      setGuardados((prev) => ({ ...prev, [atletaId]: valoresDeFila(guardada) }));
+      setEstadoFila((prev) => ({ ...prev, [atletaId]: { tipo: 'ok', texto: 'Guardado' } }));
+    } catch (error) {
+      setEstadoFila((prev) => ({ ...prev, [atletaId]: { tipo: 'error', texto: mensajeError(error, 'No se guardó') } }));
+    }
+  };
+
+  const cambiar = (atletaId, campo, valor) => {
+    setValores((prev) => ({ ...prev, [atletaId]: { ...actualDe(atletaId), [campo]: valor } }));
+  };
+
+  // El check de ausente se guarda al marcarlo; el resultado y la observación al salir del campo.
+  const cambiarAusente = (atletaId, ausente) => {
+    const fila = { ...actualDe(atletaId), ausente, valor: ausente ? '' : actualDe(atletaId).valor };
+    setValores((prev) => ({ ...prev, [atletaId]: fila }));
+    guardarFila(atletaId, fila);
+  };
+
+  const sinResultado = test.convocados.filter((fila) => {
+    const guardada = guardados[fila.atleta_id] || filaVacia;
+    return !guardada.ausente && guardada.valor === '';
+  }).length;
+
+  const finalizar = async () => {
+    const aviso = sinResultado
+      ? `Hay ${sinResultado} atleta(s) sin resultado ni marcados como ausentes. ¿Finalizar el test de todas formas?`
+      : '¿Finalizar el test? Después solo se podrán corregir los resultados con el permiso de corregir resultados, hasta una semana después de su fecha.';
+    if (!window.confirm(aviso)) return;
+    setFinalizando(true);
+    setMensaje({ tipo: '', texto: '' });
+    try {
+      await TestService.finalizarTest(testId);
+      setMensaje({ tipo: 'ok', texto: 'Test finalizado.' });
+      setRecarga((n) => n + 1);
+    } catch (error) {
+      setMensaje({ tipo: 'error', texto: mensajeError(error, 'No se pudo finalizar el test.') });
+    } finally {
+      setFinalizando(false);
+    }
+  };
+
+  const estadoDe = (atletaId) => {
+    const estado = estadoFila[atletaId];
+    if (!estado) return null;
+    return <span className={`tests-adm-fila-estado tests-adm-fila-estado--${estado.tipo}`} role={estado.tipo === 'error' ? 'alert' : 'status'}>{estado.texto}</span>;
+  };
+
+  return (
+    <section className="tests-adm-panel">
+      <button type="button" className="tests-adm-btn tests-adm-btn--ghost" onClick={onVolver}>
+        <ArrowLeft size={16} aria-hidden="true" />Volver a la lista
+      </button>
+      <div className="tests-adm-detalle-head">
+        <div>
+          <h3>{test.prueba_nombre}</h3>
+          <p>{test.area_nombre} · {test.subarea_nombre} · {formatFecha(test.fecha)} · unidad: {test.prueba_unidad} · resultado de 0 a {Number(test.prueba_valor_maximo)}</p>
+        </div>
+        <EstadoBadge test={test} />
+      </div>
+
+      {suplente && (
+        <p className="tests-adm-aviso" role="status">
+          Estás cargando como suplente: este test es de {test.entrenador_nombre || 'otro entrenador'}. Queda registrado quién cargó cada resultado.
+        </p>
+      )}
+
+      {test.vencido && registra && (
+        <p className="tests-adm-aviso" role="status">
+          Este test está vencido: pasó su fecha ({formatFecha(test.fecha)}) y no se finalizó. Carga los resultados y finalízalo.
+        </p>
+      )}
+
+      {registra && antesDeSuDia && (
+        <p className="tests-adm-aviso" role="status">
+          Todavía no es el día programado: este test es el {formatFecha(test.fecha)}. Los resultados se cargan desde ese día.
+        </p>
+      )}
+
+      {corrigiendo && (
+        <p className="tests-adm-progreso">
+          Estás corrigiendo un test finalizado: cada cambio se guarda solo y queda en la auditoría.
+          {' '}Se puede corregir hasta una semana después de la fecha del test.
+        </p>
+      )}
+
+      {!editable && test.convocados.some(recuperaHoy) && (
+        <p className="tests-adm-progreso">
+          Recuperación: carga aquí el resultado de los atletas reprogramados. Cada fila se guarda sola.
+        </p>
+      )}
+
+      {editable && !corrigiendo && (
+        <p className="tests-adm-progreso">
+          Cada fila se guarda sola: el resultado y la observación al salir del campo, y "Ausente" al marcarlo.
+          {' '}Faltan {sinResultado} de {test.convocados.length} atletas.
+        </p>
+      )}
+
+      {!test.convocados.length ? (
+        <p className="tests-adm-vacio">Este test no tiene atletas.</p>
+      ) : (
+        <div className="responsive-list">
+          <div className="responsive-list__table tests-adm-tabla-wrap">
+            <table className="tests-adm-tabla">
+              <thead>
+                <tr><th>Atleta</th><th>Cédula</th><th>Categoría</th><th>Resultado ({test.prueba_unidad})</th><th>Ausente</th><th>Observación</th>{columnaEstado && <th>Estado</th>}</tr>
+              </thead>
+              <tbody>
+                {test.convocados.map((fila) => {
+                  const actual = actualDe(fila.atleta_id);
+                  return (
+                    <tr key={fila.atleta_id}>
+                      <td className="tests-adm-fuerte">
+                        {fila.nombre} {fila.apellido}
+                        {fila.fecha_recuperacion && (
+                          <small className="tests-adm-muted"> · Recuperación {formatFecha(fila.fecha_recuperacion)}{fila.recuperacion_pendiente ? '' : ' (presentó)'}</small>
+                        )}
+                      </td>
+                      <td>{fila.cedula}</td>
+                      <td>{fila.categoria || '—'}</td>
+                      <td>
+                        {editableFila(fila) ? (
+                          <input
+                            type="number" min="0" max={test.prueba_valor_maximo} step={pasoDe(test.prueba_decimales)} inputMode="decimal"
+                            className="tests-adm-input-valor"
+                            value={actual.ausente ? '' : actual.valor}
+                            disabled={actual.ausente}
+                            onChange={(event) => cambiar(fila.atleta_id, 'valor', event.target.value)}
+                            onBlur={() => guardarFila(fila.atleta_id, actual)}
+                            aria-label={`Resultado de ${fila.nombre} ${fila.apellido}`}
+                          />
+                        ) : (fila.ausente ? 'Ausente' : conUnidad(fila.valor, test.prueba_unidad))}
+                      </td>
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={actual.ausente}
+                          disabled={!editableFila(fila)}
+                          onChange={(event) => cambiarAusente(fila.atleta_id, event.target.checked)}
+                          aria-label={`${fila.nombre} ${fila.apellido} ausente`}
+                        />
+                      </td>
+                      <td>
+                        {editableFila(fila) ? (
+                          <input
+                            type="text" className="tests-adm-input-obs"
+                            value={actual.observacion}
+                            onChange={(event) => cambiar(fila.atleta_id, 'observacion', event.target.value)}
+                            onBlur={() => guardarFila(fila.atleta_id, actual)}
+                            aria-label={`Observación de ${fila.nombre} ${fila.apellido}`}
+                          />
+                        ) : observacionDe(fila)}
+                      </td>
+                      {columnaEstado && <td>{editableFila(fila) && estadoDe(fila.atleta_id)}</td>}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div className="responsive-list__cards">
+            <div className="tests-adm-cards">
+              {test.convocados.map((fila) => {
+                const actual = actualDe(fila.atleta_id);
+                return (
+                  <article className="tests-adm-card" key={fila.atleta_id}>
+                    <div className="tests-adm-card-head">
+                      <h4>{fila.nombre} {fila.apellido}</h4>
+                      {editableFila(fila) && estadoDe(fila.atleta_id)}
+                    </div>
+                    <p className="tests-adm-card-sub">
+                      Cédula {fila.cedula} · {fila.categoria || 'Sin categoría'}
+                      {fila.fecha_recuperacion && ` · Recuperación ${formatFecha(fila.fecha_recuperacion)}${fila.recuperacion_pendiente ? '' : ' (presentó)'}`}
+                    </p>
+                    {editableFila(fila) ? (
+                      <div className="tests-adm-card-campos">
+                        <label>
+                          <span>Resultado ({test.prueba_unidad})</span>
+                          <input
+                            type="number" min="0" max={test.prueba_valor_maximo} step={pasoDe(test.prueba_decimales)} inputMode="decimal"
+                            value={actual.ausente ? '' : actual.valor}
+                            disabled={actual.ausente}
+                            onChange={(event) => cambiar(fila.atleta_id, 'valor', event.target.value)}
+                            onBlur={() => guardarFila(fila.atleta_id, actual)}
+                          />
+                        </label>
+                        <label className="tests-adm-check">
+                          <input type="checkbox" checked={actual.ausente} onChange={(event) => cambiarAusente(fila.atleta_id, event.target.checked)} />
+                          Ausente
+                        </label>
+                        <label>
+                          <span>Observación</span>
+                          <input
+                            type="text" value={actual.observacion}
+                            onChange={(event) => cambiar(fila.atleta_id, 'observacion', event.target.value)}
+                            onBlur={() => guardarFila(fila.atleta_id, actual)}
+                          />
+                        </label>
+                      </div>
+                    ) : (
+                      <dl>
+                        <div><dt>Resultado</dt><dd>{fila.ausente ? 'Ausente' : conUnidad(fila.valor, test.prueba_unidad)}</dd></div>
+                        <div><dt>Observación</dt><dd>{observacionDe(fila)}</dd></div>
+                      </dl>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {mensaje.texto && (
+        <p className={mensaje.tipo === 'ok' ? 'tests-adm-ok' : 'tests-adm-error'} role={mensaje.tipo === 'ok' ? 'status' : 'alert'}>{mensaje.texto}</p>
+      )}
+
+      {editable && !corrigiendo && test.convocados.length > 0 && (
+        <div className="tests-adm-acciones">
+          <button type="button" className="tests-adm-btn" disabled={finalizando} onClick={finalizar}>
+            Finalizar test
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* ---------------- Rectificar test (administrador, permiso editar_test) ---------------- */
+function EditarTestAdmin({ test, pruebas, subareas, onGuardado, onCancelar }) {
+  const [detalle, setDetalle] = useState({ id: null, convocados: [], error: '' });
+  const [form, setForm] = useState({
+    prueba: String(test.prueba),
+    fecha: test.fecha,
+    observaciones: test.observaciones || '',
+  });
+  const [disponibles, setDisponibles] = useState({ clave: '', filas: [], error: '' });
+  const [seleccion, setSeleccion] = useState(null);
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let activo = true;
+    TestService.getTest(test.id)
+      .then((data) => { if (activo) setDetalle({ id: test.id, convocados: data.convocados || [], error: '' }); })
+      .catch((err) => { if (activo) setDetalle({ id: test.id, convocados: [], error: mensajeError(err, 'No se pudo cargar el test.') }); });
+    return () => { activo = false; };
+  }, [test.id]);
+
+  const clave = `${test.subarea}-${form.prueba}`;
+  useEffect(() => {
+    let activo = true;
+    TestService.getAtletasDisponibles({ subarea: test.subarea, prueba: form.prueba, excluir_test: test.id, entrenador: test.entrenador })
+      .then((filas) => { if (activo) setDisponibles({ clave, filas: Array.isArray(filas) ? filas : [], error: '' }); })
+      .catch((err) => { if (activo) setDisponibles({ clave, filas: [], error: mensajeError(err, 'No se pudieron cargar los atletas.') }); });
+    return () => { activo = false; };
+  }, [clave, test.subarea, test.id, test.entrenador, form.prueba]);
+
+  const cargando = detalle.id !== test.id;
+  // Quien ya tiene resultado cargado no se puede quitar, y con resultados la prueba ya no cambia.
+  const conResultado = new Set(
+    detalle.convocados.filter((fila) => fila.ausente || fila.valor !== null).map((fila) => fila.atleta_id),
+  );
+  const elegidos = seleccion ?? detalle.convocados.map((fila) => fila.atleta_id);
+  const areaId = subareas.find((subarea) => subarea.id === test.subarea)?.area_id ?? null;
+  const pruebasDelArea = pruebas.filter((prueba) => prueba.area === areaId && (prueba.activa || prueba.id === test.prueba));
+
+  // La lista: los atletas que lleva el entrenador responsable en la subárea, más los convocados que ya no estén ahí.
+  const filas = disponibles.clave === clave ? disponibles.filas : [];
+  const lista = [
+    ...filas,
+    ...detalle.convocados
+      .filter((fila) => !filas.some((atleta) => atleta.atleta_id === fila.atleta_id))
+      .map((fila) => ({ ...fila, pendiente: false })),
+  ];
+
+  const alternar = (atletaId) => {
+    setSeleccion(elegidos.includes(atletaId) ? elegidos.filter((id) => id !== atletaId) : [...elegidos, atletaId]);
+  };
+
+  const enviar = async (event) => {
+    event.preventDefault();
+    if (!elegidos.length) {
+      setError('Elige al menos un atleta.');
+      return;
+    }
+    setGuardando(true);
+    setError('');
+    try {
+      await TestService.updateTest(test.id, { ...form, atletas: elegidos });
+      notificar('Test rectificado correctamente.', { tipo: 'exito' });
+      onGuardado();
+    } catch (err) {
+      setError(mensajeError(err, 'No se pudo rectificar el test.'));
+    } finally {
+      setGuardando(false);
+    }
+  };
+
+  if (cargando) return <p className="tests-adm-vacio">Cargando test...</p>;
+  if (detalle.error) return <p className="tests-adm-vacio tests-adm-error" role="alert">{detalle.error}</p>;
+
+  return (
+    <form className="tests-adm-panel tests-adm-form" onSubmit={enviar}>
+      <h3>Rectificar test · {test.subarea_nombre} · {test.entrenador_nombre}</h3>
+      <div className="tests-adm-form-grid">
+        <label>
+          <span>Prueba</span>
+          <select
+            value={form.prueba}
+            onChange={(event) => setForm({ ...form, prueba: event.target.value })}
+            disabled={conResultado.size > 0}
+            required
+          >
+            {pruebasDelArea.map((prueba) => (
+              <option key={prueba.id} value={String(prueba.id)}>{prueba.nombre} ({prueba.unidad})</option>
+            ))}
+          </select>
+          {conResultado.size > 0 && <small className="tests-adm-muted">Ya tiene resultados: la prueba no se puede cambiar.</small>}
+        </label>
+        <label>
+          <span>Fecha</span>
+          {/* Mínimo: hoy, o la fecha que el test ya tenía (si es pasada se puede conservar). Antes el mínimo
+              seguía a lo escrito y dejaba poner cualquier fecha pasada. */}
+          <input
+            type="date"
+            value={form.fecha}
+            min={test.fecha < hoyCaracas() ? test.fecha : hoyCaracas()}
+            onChange={(event) => setForm({ ...form, fecha: event.target.value })}
+            required
+          />
+        </label>
+        <label>
+          <span>Observaciones</span>
+          <input
+            type="text"
+            value={form.observaciones}
+            onChange={(event) => setForm({ ...form, observaciones: event.target.value })}
+          />
+        </label>
+      </div>
+
+      <div className="tests-adm-atletas">
+        <div className="tests-adm-atletas-head">
+          <strong>Atletas convocados ({elegidos.length})</strong>
+        </div>
+        {disponibles.error ? (
+          <p className="tests-adm-error" role="alert">{disponibles.error}</p>
+        ) : disponibles.clave !== clave ? (
+          <p className="tests-adm-muted">Cargando atletas...</p>
+        ) : (
+          <div className="tests-adm-atletas-lista">
+            {lista.map((atleta) => {
+              const bloqueado = atleta.pendiente || conResultado.has(atleta.atleta_id);
+              return (
+                <label key={atleta.atleta_id} className={`tests-adm-atleta${bloqueado ? ' tests-adm-atleta--bloqueado' : ''}`}>
+                  <input
+                    type="checkbox"
+                    checked={elegidos.includes(atleta.atleta_id)}
+                    disabled={bloqueado}
+                    onChange={() => alternar(atleta.atleta_id)}
+                  />
+                  <span className="tests-adm-atleta-info">
+                    <strong>{atleta.nombre} {atleta.apellido}</strong>
+                    <small>Cédula {atleta.cedula}{atleta.categoria ? ` · ${atleta.categoria}` : ''}</small>
+                    {conResultado.has(atleta.atleta_id) && <small className="tests-adm-aviso">Ya tiene resultado cargado</small>}
+                    {atleta.pendiente && <small className="tests-adm-aviso">Ya tiene esta prueba pendiente en otro test</small>}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {error && <p className="tests-adm-error" role="alert">{error}</p>}
+
+      <div className="tests-adm-acciones">
+        <button type="button" className="tests-adm-btn tests-adm-btn--ghost" onClick={onCancelar}>Cancelar</button>
+        <button type="submit" className="tests-adm-btn" disabled={guardando || !elegidos.length}>
+          {guardando ? 'Guardando...' : 'Guardar cambios'}
+        </button>
+      </div>
+    </form>
   );
 }
 
@@ -326,6 +807,7 @@ function AsignarTest({ pruebas, filtrosBase, onCreado, onCancelar }) {
     setError('');
     try {
       const creado = await TestService.createTest({ ...form, atletas: elegidos });
+      notificar('Test asignado correctamente.', { tipo: 'exito' });
       onCreado(creado);
     } catch (err) {
       setError(mensajeError(err, 'No se pudo asignar el test.'));
@@ -434,8 +916,11 @@ function TestsProgramados({ pruebas, filtrosBase }) {
   const [trimestre, setTrimestre] = useState('');
   const trimestres = useMemo(() => opcionesTrimestre(), []);
   const [detalleId, setDetalleId] = useState(null);
+  const [planillaId, setPlanillaId] = useState(null);
+  const [editando, setEditando] = useState(null);
   const [recarga, setRecarga] = useState(0);
   const [formAbierto, setFormAbierto] = useState(false);
+  const [error, setError] = useState('');
   const { hasPermission } = useApplicationPermissions();
   // Sin el permiso asignar_test no se muestra el botón ni el formulario.
   const puedeAsignar = hasPermission('asignar_test');
@@ -459,8 +944,84 @@ function TestsProgramados({ pruebas, filtrosBase }) {
     : filtrosBase.subareas;
 
   if (detalleId) {
-    return <DetalleTest testId={detalleId} onVolver={() => setDetalleId(null)} />;
+    return <DetalleTest testId={detalleId} onVolver={() => { setDetalleId(null); setRecarga((n) => n + 1); }} />;
   }
+
+  if (planillaId) {
+    return <PlanillaAdmin testId={planillaId} onVolver={() => { setPlanillaId(null); setRecarga((n) => n + 1); }} />;
+  }
+
+  if (editando) {
+    return (
+      <EditarTestAdmin
+        test={editando}
+        pruebas={pruebas}
+        subareas={filtrosBase.subareas}
+        onCancelar={() => setEditando(null)}
+        onGuardado={() => { setEditando(null); setRecarga((n) => n + 1); }}
+      />
+    );
+  }
+
+  const cancelarTest = async (test) => {
+    if (!window.confirm(`¿Cancelar el test "${test.prueba_nombre}" de ${test.subarea_nombre} del ${formatFecha(test.fecha)}?`)) return;
+    setError('');
+    try {
+      await TestService.updateTest(test.id, { estado: 'cancelado' });
+      notificar(`Test "${test.prueba_nombre}" cancelado.`, { tipo: 'exito' });
+      setRecarga((n) => n + 1);
+    } catch (err) {
+      setError(mensajeError(err, 'No se pudo cancelar el test.'));
+    }
+  };
+
+  // Solo tests sin ningún resultado ni ausencia cargada (si no, se cancela).
+  const eliminarTest = async (test) => {
+    if (!window.confirm(`¿Eliminar el test "${test.prueba_nombre}" de ${test.subarea_nombre} del ${formatFecha(test.fecha)}? No se puede deshacer.`)) return;
+    setError('');
+    try {
+      await TestService.eliminarTest(test.id);
+      notificar(`Test "${test.prueba_nombre}" eliminado.`, { tipo: 'exito' });
+      setRecarga((n) => n + 1);
+    } catch (err) {
+      setError(mensajeError(err, 'No se pudo eliminar el test.'));
+    }
+  };
+
+  // Lo que se puede hacer con cada test lo dice el servidor (puede_*); reprogramar, el permiso reprogramar_test.
+  const accionesDe = (test) => (
+    <div className="tests-adm-fila-acciones">
+      {test.puede_registrar && test.estado !== 'cancelado' && (test.estado === 'programado' || test.recuperaciones_pendientes > 0) ? (
+        <button type="button" className="tests-adm-btn tests-adm-btn--chico" onClick={() => setPlanillaId(test.id)}>
+          {test.estado === 'programado' ? 'Cargar resultados' : 'Registrar recuperación'}
+        </button>
+      ) : (
+        <button type="button" className="tests-adm-btn tests-adm-btn--chico" onClick={() => setDetalleId(test.id)}>
+          Ver resultados
+        </button>
+      )}
+      {test.estado === 'realizado' && hasPermission('reprogramar_test') && (
+        <button type="button" className="tests-adm-btn tests-adm-btn--chico tests-adm-btn--ghost" onClick={() => setDetalleId(test.id)}>
+          Reprogramar
+        </button>
+      )}
+      {test.puede_editar && (
+        <button type="button" className="tests-adm-btn tests-adm-btn--chico tests-adm-btn--ghost" onClick={() => setEditando(test)}>
+          Rectificar
+        </button>
+      )}
+      {test.puede_editar && (
+        <button type="button" className="tests-adm-btn tests-adm-btn--chico tests-adm-btn--peligro" onClick={() => cancelarTest(test)}>
+          Cancelar
+        </button>
+      )}
+      {test.puede_eliminar && (
+        <button type="button" className="tests-adm-btn tests-adm-btn--chico tests-adm-btn--peligro" onClick={() => eliminarTest(test)}>
+          Eliminar
+        </button>
+      )}
+    </div>
+  );
 
   // Filtros: se pintan en la barra (monitores) y en el panel "Filtros" (celular).
   const controlesFiltro1 = (
@@ -535,6 +1096,8 @@ function TestsProgramados({ pruebas, filtrosBase }) {
         />
       )}
 
+      {error && <p className="tests-adm-error" role="alert">{error}</p>}
+
       {/* Paginación arriba de la lista (para no bajar hasta el final) y también al final. */}
       <Paginacion page={lista.page} total={lista.total} onChange={lista.setPage} />
       {lista.error ? (
@@ -557,13 +1120,9 @@ function TestsProgramados({ pruebas, filtrosBase }) {
                     <td className="tests-adm-fuerte">{test.prueba_nombre}</td>
                     <td>{test.entrenador_nombre || '—'}</td>
                     <td>{test.subarea_nombre}</td>
-                    <td><EstadoBadge estado={test.estado} label={test.estado_label} /></td>
+                    <td><EstadoBadge test={test} /></td>
                     <td>{test.resultados_registrados} de {test.convocados_total}</td>
-                    <td>
-                      <button type="button" className="tests-adm-btn tests-adm-btn--chico" onClick={() => setDetalleId(test.id)}>
-                        Ver resultados
-                      </button>
-                    </td>
+                    <td>{accionesDe(test)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -575,7 +1134,7 @@ function TestsProgramados({ pruebas, filtrosBase }) {
                 <article className="tests-adm-card" key={test.id}>
                   <div className="tests-adm-card-head">
                     <h4>{test.prueba_nombre}</h4>
-                    <EstadoBadge estado={test.estado} label={test.estado_label} />
+                    <EstadoBadge test={test} />
                   </div>
                   <dl>
                     <div><dt>Fecha</dt><dd>{formatFecha(test.fecha)}</dd></div>
@@ -583,11 +1142,7 @@ function TestsProgramados({ pruebas, filtrosBase }) {
                     <div><dt>Subárea</dt><dd>{test.subarea_nombre}</dd></div>
                     <div><dt>Resultados</dt><dd>{test.resultados_registrados} de {test.convocados_total}</dd></div>
                   </dl>
-                  <div className="tests-adm-fila-acciones">
-                    <button type="button" className="tests-adm-btn tests-adm-btn--chico" onClick={() => setDetalleId(test.id)}>
-                      Ver resultados
-                    </button>
-                  </div>
+                  {accionesDe(test)}
                 </article>
               ))}
             </div>
@@ -639,6 +1194,7 @@ function CatalogoPruebas({ pruebas, areas, onCambio }) {
   const alternarActiva = async (prueba) => {
     try {
       await TestService.updatePrueba(prueba.id, { activa: !prueba.activa });
+      notificar(`"${prueba.nombre}" ${prueba.activa ? 'desactivado' : 'activado'}.`, { tipo: 'exito' });
       onCambio();
     } catch (error) {
       setMensaje({ tipo: 'error', texto: mensajeError(error, 'No se pudo actualizar el test.') });

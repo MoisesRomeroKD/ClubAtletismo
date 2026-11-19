@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Search, Plus, Edit2, Trash2, X, Dumbbell } from 'lucide-react';
 import exercisesService from '../../api/services/ExercisesService';
 import '../../styles/components/admin/ExercisesAdmin.css';
+import { notificar } from '../../utils/notificar';
 
 export default function ExercisesAdmin() {
   const [exercises, setExercises] = useState([]);
@@ -72,6 +73,7 @@ export default function ExercisesAdmin() {
 
     try {
       await exercisesService.delete(id);
+      notificar('Ejercicio eliminado.', { tipo: 'exito' });
       await loadExercises();
     } catch (err) {
       setError('No se pudo eliminar el ejercicio. ' + (err.response?.data?.detail || err.message));
@@ -95,6 +97,7 @@ export default function ExercisesAdmin() {
         await exercisesService.create(formData);
       }
 
+      notificar(editingExercise ? 'Ejercicio actualizado correctamente.' : 'Ejercicio creado correctamente.', { tipo: 'exito' });
       setShowModal(false);
       await loadExercises();
     } catch (err) {

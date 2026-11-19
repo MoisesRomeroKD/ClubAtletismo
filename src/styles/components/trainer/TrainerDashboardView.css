@@ -67,7 +67,6 @@
 .welcome-content,
 .metric-value-container,
 .session-info,
-.session-meta,
 .subarea-header {
   min-width: 0;
   max-width: 100%;
@@ -83,8 +82,7 @@
 .area-group-title,
 .subarea-row,
 .subarea-header h4,
-.session-type,
-.session-meta {
+.session-type {
   overflow-wrap: anywhere;
 }
 
@@ -457,13 +455,6 @@
 
 .session-type { font-weight: 600; text-align: right; min-width: 0; }
 
-.session-meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  font-size: 0.72rem;
-  opacity: 0.8;
-}
 
 .all-done-msg {
   display: flex;
@@ -493,7 +484,6 @@
 
 .icon-inline { display: inline; margin-right: 4px; vertical-align: middle; }
 .icon-warning { color: #eab308; }
-.intensity-normal { color: var(--text-muted); }
 .subarea-name { min-width: 0; overflow-wrap: anywhere; }
 
 /* ============================================================================
@@ -725,7 +715,6 @@
 
   .session-item { padding: 0.5rem; }
   .session-info { font-size: 0.75rem; }
-  .session-meta { font-size: 0.65rem; }
 
   .pending-item { padding: 0.4rem 0.5rem; font-size: 0.7rem; }
   .subarea-tag { font-size: 0.6rem; padding: 0.1rem 0.35rem; }

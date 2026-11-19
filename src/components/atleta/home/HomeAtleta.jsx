@@ -273,7 +273,6 @@ export default function HomeAtleta({ onNavigate }) {
                     <div key={ejercicio.id} className="home-atl-ejercicio">
                       <span className="home-atl-series"><Dumbbell size={12} aria-hidden="true" /> {ejercicio.series} x {ejercicio.repeticiones}</span>
                       <span className="home-atl-ejercicio-nombre">{ejercicio.nombre}</span>
-                      {ejercicio.intensidad && <span className="home-atl-intensidad">{ejercicio.intensidad}</span>}
                     </div>
                   ))}
                 </div>
